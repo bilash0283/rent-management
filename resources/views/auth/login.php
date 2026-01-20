@@ -1,4 +1,3 @@
-<?php session_start(); ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +7,7 @@
 <body class="bg-gray-100">
 
 <div class="min-h-screen flex items-center justify-center">
-  <form method="POST" action="/login-action"
+  <form method="POST" action="/OFFICE/rent-manage/public/login-action.php"
     class="bg-white p-6 rounded shadow w-96">
 
     <h2 class="text-2xl font-bold mb-4 text-center">Admin Login</h2>

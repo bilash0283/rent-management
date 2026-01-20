@@ -12,13 +12,14 @@ class Database {
             $this->host,
             $this->user,
             $this->pass,
-            $this->db
+            $this->db,
+            $this->port   // 👈 এখানে port
         );
+
         if($this->conn->connect_error){
-            die("DB Error");
+            die("DB Error: " . $this->conn->connect_error);
         }
         return $this->conn;
     }
 }
-
 ?>
