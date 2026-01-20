@@ -12,7 +12,7 @@ $email    = trim($_POST['email'] ?? '');
 $password = trim($_POST['password'] ?? '');
 
 if ($email === '' || $password === '') {
-    $_SESSION['error'] = "Email এবং Password দিতে হবে";
+    $_SESSION['error'] = "Please Enter Email and Password";
     header("Location: /OFFICE/rent-manage/public/login");
     exit;
 }
@@ -25,7 +25,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows !== 1) {
-    $_SESSION['error'] = "এই Email দিয়ে কোনো Admin পাওয়া যায়নি";
+    $_SESSION['error'] = "Email Not Found !";
     header("Location: /OFFICE/rent-manage/public/login");
     exit;
 }
@@ -33,7 +33,7 @@ if ($result->num_rows !== 1) {
 $user = $result->fetch_assoc();
 
 if (!password_verify($password, $user['password'])) {
-    $_SESSION['error'] = "Password ভুল হয়েছে";
+    $_SESSION['error'] = "Wrong Password!";
     header("Location: /OFFICE/rent-manage/public/login");
     exit;
 }
