@@ -23,8 +23,7 @@
         <a href="/OFFICE/rent-manage/public/reports" class="block py-2 px-4 rounded hover:bg-blue-100 <?= ($_SERVER['REQUEST_URI']==='/OFFICE/rent-manage/public/reports')?'bg-blue-100':'' ?>">Reports</a>
     </nav>
     <div class="p-4 border-t">
-        <div class="text-gray-700 font-semibold"><?= $_SESSION['admin_name'] ?></div>
-        <a href="/OFFICE/rent-manage/public/logout" class="mt-2 block bg-red-600 text-white text-center py-2 rounded hover:bg-red-700">Logout</a>
+        <a href="/OFFICE/rent-manage/public/" class="mt-2 block bg-red-600 text-white text-center py-2 rounded hover:bg-red-700">Logout</a>
     </div>
 </aside>
 
