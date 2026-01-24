@@ -17,8 +17,6 @@ if ($email === '' || $password === '') {
     exit;
 }
 
-
-
 $stmt = $db->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
 $stmt->bind_param("s", $email);
 $stmt->execute();
