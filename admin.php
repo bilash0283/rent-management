@@ -4,8 +4,20 @@
 <!-- main content  -->
  <main class="nxl-container">
     <?php 
-        include "pages/dashboard.php";
+        if(isset($_GET['page'])){
+            $page = $_GET['page'];
+
+            if($page = 'building'){
+                include 'pages/building.php';
+            }
+        }else{
+             include 'pages/dashboard.php';
+        }
+        
     ?>
+
+    <!-- footer section  -->
+    <?php include "includes/footer.php" ?>
  </main>
 <!-- main content  -->
 

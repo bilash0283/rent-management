@@ -1,7 +1,7 @@
 <nav class="nxl-navigation">
         <div class="navbar-wrapper">
             <div class="m-header">
-                <a href="index.html" class="b-brand">
+                <a href="admin.php" class="b-brand">
                     <!-- ========   change your logo hear   ============ -->
                     <img src="public/assets/images/logo-full.png" alt="" class="logo logo-lg" />
                     <img src="public/assets/images/logo-abbr.png" alt="" class="logo logo-sm" />
@@ -13,15 +13,28 @@
                         <label>Navigation</label>
                     </li>
                     <li class="nxl-item nxl-hasmenu">
-                        <a href="javascript:void(0);" class="nxl-link">
+                        <a href="admin.php" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-airplay"></i></span>
                             <span class="nxl-mtext">Dashboards</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                         </a>
-                        <ul class="nxl-submenu">
+                        <!-- <ul class="nxl-submenu">
                             <li class="nxl-item"><a class="nxl-link" href="index.html">CRM</a></li>
                             <li class="nxl-item"><a class="nxl-link" href="analytics.html">Analytics</a></li>
-                        </ul>
+                        </ul> -->
                     </li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="admin.php?page='building'" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-briefcase"></i></span>
+                            <span class="nxl-mtext">Building</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <!-- <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="projects.html">Projects</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="projects-view.html">Projects View</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="projects-create.html">Projects Create</a></li>
+                        </ul> -->
+                    </li>
+
                     <li class="nxl-item nxl-hasmenu">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-cast"></i></span>
@@ -93,17 +106,7 @@
                             <li class="nxl-item"><a class="nxl-link" href="leads-create.html">Leads Create</a></li>
                         </ul>
                     </li>
-                    <li class="nxl-item nxl-hasmenu">
-                        <a href="javascript:void(0);" class="nxl-link">
-                            <span class="nxl-micon"><i class="feather-briefcase"></i></span>
-                            <span class="nxl-mtext">Projects</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
-                        </a>
-                        <ul class="nxl-submenu">
-                            <li class="nxl-item"><a class="nxl-link" href="projects.html">Projects</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="projects-view.html">Projects View</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="projects-create.html">Projects Create</a></li>
-                        </ul>
-                    </li>
+                    
                     <li class="nxl-item nxl-hasmenu">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-layout"></i></span>
