@@ -20,6 +20,14 @@
             include 'pages/Tenant.php';
             break;
 
+        case 'bill':
+            include 'pages/Bill.php';
+            break;
+
+        case 'setting':
+            include 'pages/Setting.php';
+            break;
+
         default:
             include 'pages/dashboard.php';
             break;
