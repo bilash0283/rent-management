@@ -35,7 +35,24 @@ if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id
 
     <header class="nxl-header">
         <div class="header-wrapper">
-            
+             <!--! [Start] Header Left !-->
+            <div class="header-left d-flex align-items-center gap-4">
+                <!--! [Start] nxl-head-mobile-toggler !-->
+                <a href="javascript:void(0);" class="nxl-head-mobile-toggler" id="mobile-collapse">
+                    <div class="hamburger hamburger--arrowturn">
+                        <div class="hamburger-box">
+                            <div class="hamburger-inner"></div>
+                        </div>
+                    </div>
+                </a>
+                <!--! [Start] nxl-head-mobile-toggler !-->
+               
+                <!--! [Start] nxl-lavel-mega-menu !-->
+                
+                <!--! [End] nxl-lavel-mega-menu !-->
+            </div>
+            <!--! [End] Header Left !-->
+
             <!--! [Start] Header Right !-->
             <div class="header-right ms-auto">
                 <div class="d-flex align-items-center">
