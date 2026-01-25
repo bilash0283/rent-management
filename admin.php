@@ -3,17 +3,28 @@
 
 <!-- main content  -->
  <main class="nxl-container">
-    <?php 
-        if(isset($_GET['page'])){
-            $page = $_GET['page'];
+    <?php
 
-            if($page = 'building'){
-                include 'pages/building.php';
-            }
-        }else{
-             include 'pages/dashboard.php';
-        }
-        
+    $page = $_GET['page'] ?? '';
+
+    switch ($page) {
+        case 'building':
+            include 'pages/building.php';
+            break;
+
+        case 'unit':
+            include 'pages/Unit.php';
+            break;
+
+        case 'tenant':
+            include 'pages/Tenant.php';
+            break;
+
+        default:
+            include 'pages/dashboard.php';
+            break;
+    }
+
     ?>
 
     <!-- footer section  -->

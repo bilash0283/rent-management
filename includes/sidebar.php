@@ -24,7 +24,7 @@
                     </li>
 
                     <li class="nxl-item nxl-hasmenu">
-                        <a href="admin.php?page='building'" class="nxl-link">
+                        <a href="admin.php?page=building" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-briefcase"></i></span>
                             <span class="nxl-mtext">Building</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                         </a>
@@ -38,15 +38,26 @@
                     <li class="nxl-item nxl-hasmenu">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-cast"></i></span>
-                            <span class="nxl-mtext">Reports</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                            <span class="nxl-mtext">Unit</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                         </a>
                         <ul class="nxl-submenu">
-                            <li class="nxl-item"><a class="nxl-link" href="reports-sales.html">Sales Report</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="reports-leads.html">Leads Report</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="reports-project.html">Project Report</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="reports-timesheets.html">Timesheets Report</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="admin.php?page=unit">Building One</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="admin.php?page=unit">Building Two</a></li>
                         </ul>
                     </li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="admin.php?page=tenant" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-users"></i></span>
+                            <span class="nxl-mtext">Tenant</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        </a>
+                        <!-- <ul class="nxl-submenu">
+                            <li class="nxl-item"><a class="nxl-link" href="customers.html">Customers</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="customers-view.html">Customers View</a></li>
+                            <li class="nxl-item"><a class="nxl-link" href="customers-create.html">Customers Create</a></li>
+                        </ul> -->
+                    </li>
+
                     <li class="nxl-item nxl-hasmenu">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-send"></i></span>
@@ -84,17 +95,7 @@
                             <li class="nxl-item"><a class="nxl-link" href="invoice-create.html">Invoice Create</a></li>
                         </ul>
                     </li>
-                    <li class="nxl-item nxl-hasmenu">
-                        <a href="javascript:void(0);" class="nxl-link">
-                            <span class="nxl-micon"><i class="feather-users"></i></span>
-                            <span class="nxl-mtext">Customers</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
-                        </a>
-                        <ul class="nxl-submenu">
-                            <li class="nxl-item"><a class="nxl-link" href="customers.html">Customers</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="customers-view.html">Customers View</a></li>
-                            <li class="nxl-item"><a class="nxl-link" href="customers-create.html">Customers Create</a></li>
-                        </ul>
-                    </li>
+                    
                     <li class="nxl-item nxl-hasmenu">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-alert-circle"></i></span>

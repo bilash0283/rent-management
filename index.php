@@ -21,15 +21,18 @@
         } else {
             $_SESSION = [];
             while ($row = mysqli_fetch_assoc($user_sql)) {
-                $_SESSION['id']          = $row['id'];
-                $_SESSION['name']        = $row['name'];
-                $_SESSION['email']       = $row['email'];
-                $_SESSION['phone']       = $row['phone'];
+                $email                   = $row['email'];
                 $password                = $row['password'];
-                $_SESSION['role']        = $row['role'];
+                $role                    = $row['role'];
 
 
-                if($input_password == $password && $_SESSION['role'] == 1 && $input_email = $_SESSION['email']){
+                if($input_password == $password && $role == 1 && $input_email = $email){
+                    $_SESSION['id']          = $row['id'];
+                    $_SESSION['name']        = $row['name'];
+                    $_SESSION['email']       = $row['email'];
+                    $_SESSION['phone']       = $row['phone'];
+                    $_SESSION['role']        = $row['role'];
+
                     header('location:admin.php');
                 }else{
                     // echo "<div class='alert alert-danger mt-2 text-center'>Only Admin Allowed!</div>";

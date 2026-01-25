@@ -6,13 +6,12 @@
             document.write(new Date().getFullYear());
         </script>
     </p>
-    <p><span>By: <a target="_blank" href="https://wrapbootstrap.com/user/theme_ocean"
-                target="_blank">theme_ocean</a></span> • <span>Distributed by: <a target="_blank"
-                href="https://themewagon.com" target="_blank">ThemeWagon</a></span></p>
+    <p><span>powered by : <a target="_blank" href="https://gsc.co.com"
+                target="_blank">GSC</a></span> </p>
     <div class="d-flex align-items-center gap-4">
-        <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Help</a>
-        <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Terms</a>
-        <a href="javascript:void(0);" class="fs-11 fw-semibold text-uppercase">Privacy</a>
+        <a href="" class="fs-11 fw-semibold text-uppercase">Help</a>
+        <a href="" class="fs-11 fw-semibold text-uppercase">Terms</a>
+        <a href="" class="fs-11 fw-semibold text-uppercase">Privacy</a>
     </div>
 </footer>
 <!-- [ Footer ] end -->
