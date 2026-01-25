@@ -2,7 +2,7 @@
     include "database/db.php";
     session_start();
     if (!empty($_SESSION["role"]) || !empty($_SESSION['email']) || !empty($_SESSION['id'])) {
-        header('location:dashboard.php');
+        header('location:admin.php');
     }
 
     $error = '';
@@ -29,11 +29,11 @@
                 $_SESSION['role']        = $row['role'];
 
 
-                if($input_password == $password && $_SESSION['role'] == 1){
-                    header('location:dashboard.php');
+                if($input_password == $password && $_SESSION['role'] == 1 && $input_email = $_SESSION['email']){
+                    header('location:admin.php');
                 }else{
                     // echo "<div class='alert alert-danger mt-2 text-center'>Only Admin Allowed!</div>";
-                    $error = "Only Admin Allowed!";
+                    $error = "Invalid Email or Password";
                 }
 
 

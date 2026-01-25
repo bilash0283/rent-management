@@ -32,7 +32,7 @@ if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id
     <!-- sidebar  -->
     <?php include "includes/sidebar.php"; ?>
     <!-- top header  -->
-     
+
     <header class="nxl-header">
         <div class="header-wrapper">
             
@@ -135,8 +135,8 @@ if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id
                                 <div class="d-flex align-items-center">
                                     <img src="public/assets/images/avatar/1.png" alt="user-image" class="img-fluid user-avtar" />
                                     <div>
-                                        <h6 class="text-dark mb-0">Alexandra Della <span class="badge bg-soft-success text-success ms-1">PRO</span></h6>
-                                        <span class="fs-12 fw-medium text-muted">alex@example.com</span>
+                                        <h6 class="text-dark mb-0"><?php echo $_SESSION['name'] ?> <span class="badge bg-soft-success text-success ms-1">PRO</span></h6>
+                                        <span class="fs-12 fw-medium text-muted"><?php echo $_SESSION['email'] ?></span>
                                     </div>
                                 </div>
                             </div>
