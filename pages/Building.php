@@ -1,7 +1,4 @@
 <?php
-
-$message = '';
-
 $message = '';
 
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
@@ -24,6 +21,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
     $delete_query = "DELETE FROM building WHERE id = $id";
 
     if (mysqli_query($db, $delete_query)) {
+
         $message = '
         <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
             <strong>Success!</strong> Building Delete Successfull 
@@ -223,6 +221,3 @@ $result = mysqli_query($db, $sql) or die("Query failed: " . mysqli_error($db));
     </div>
 
 </div>
-
-<!-- Make sure Bootstrap JS is included somewhere in your layout for alert dismiss -->
-<!-- <script src="path/to/bootstrap.bundle.min.js"></script> -->

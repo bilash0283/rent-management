@@ -32,20 +32,21 @@
             include 'pages/CreateBuilding.php';
             break;
 
+        case 'CreateUnit':
+            include 'pages/CreateUnit.php';
+            break;
+
         default:
             include 'pages/dashboard.php';
             break;
     }
-
     ?>
 
     <!-- footer section  -->
     <?php include "includes/footer.php" ?>
  </main>
 <!-- main content  -->
-
-<!-- theem_setting  -->
-
+ 
 <!-- footer  -->
     <script src="public/assets/vendors/js/vendors.min.js"></script>
     <script src="public/assets/vendors/js/daterangepicker.min.js"></script>

@@ -1,3 +1,10 @@
+<?php 
+    // include "../database/db.php";
+    $sql = "SELECT * FROM building ORDER BY id DESC";
+    $result = mysqli_query($db, $sql) or die("Query failed: " . mysqli_error($db));
+    
+?>
+
 <nav class="nxl-navigation">
     <div class="navbar-wrapper">
         <div class="m-header">
@@ -41,8 +48,13 @@
                         <span class="nxl-mtext">Unit</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
                     <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=unit">Building One</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=unit">Building Two</a></li>
+                        <?php 
+                            while($row = mysqli_fetch_assoc($result)){
+                                $id   = $row['id'];
+                                $name = $row['name'];
+                        ?>
+                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=unit&id=<?php echo $id; ?>"><?php echo $name; ?></a></li>
+                        <?php } ?>
                     </ul>
                 </li>
 
