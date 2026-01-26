@@ -47,83 +47,96 @@
 ?>
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rent-Manage | Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent-Manage | Admin Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            background: #f2f4f8;
+        }
+        .login-card {
+            border-radius: 15px;
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
 
 <div class="container vh-100 d-flex align-items-center justify-content-center">
     <div class="col-md-4">
 
-        <div class="card border-0 shadow-lg rounded-4">
+        <div class="card shadow-lg login-card">
             <div class="card-body p-4">
 
                 <div class="text-center mb-4">
-                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                         style="width:60px;height:60px;">
-                        <i class="bi bi-person-fill fs-3"></i>
+                    <div class="bg-primary text-white rounded-circle d-inline-flex
+                                align-items-center justify-content-center mb-3"
+                         style="width:70px;height:70px;">
+                        <i class="fas fa-user-shield fa-2x"></i>
                     </div>
-                    <h3 class="fw-bold">Welcome Back</h3>
-                    <p class="text-muted small">Login to your account</p>
+                    <h4 class="font-weight-bold">Admin Login</h4>
+                    <small class="text-muted">Sign in to dashboard</small>
                 </div>
 
-                <!-- ERROR MESSAGE -->
                 <?php if($error): ?>
-                    <div class="alert alert-danger text-center small">
+                    <div class="alert alert-danger text-center">
                         <?= $error ?>
                     </div>
                 <?php endif; ?>
 
-                <!-- LOGIN FORM -->
                 <form method="POST">
 
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Email Address</label>
+                    <div class="form-group">
+                        <!-- <label>Email Address</label> -->
                         <div class="input-group">
-                            <span class="input-group-text bg-white">
-                                <i class="bi bi-envelope"></i>
-                            </span>
-                            <input type="email" name="email" class="form-control" placeholder="admin@mail.com" required>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                            </div>
+                            <input type="email" name="email"
+                                   class="form-control"
+                                   placeholder="admin@mail.com" required>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label small fw-semibold">Password</label>
+                    <div class="form-group">
+                        <!-- <label>Password</label> -->
                         <div class="input-group">
-                            <span class="input-group-text bg-white">
-                                <i class="bi bi-lock"></i>
-                            </span>
-                            <input type="password" name="password" class="form-control" placeholder="********" required>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                            <input type="password" name="password"
+                                   class="form-control"
+                                   placeholder="********" required>
                         </div>
                     </div>
 
                     <button type="submit" name="sign_in"
-                            class="btn btn-primary w-100 py-2 fw-bold rounded-3">
-                        SIGN IN
+                            class="btn btn-primary btn-block font-weight-bold">
+                        LOGIN
                     </button>
+
                 </form>
 
             </div>
         </div>
 
         <p class="text-center text-muted mt-4 small">
-            © <?php echo date('Y'); ?> Rent Management System
+            © <?= date('Y'); ?> Rent Management System
         </p>
 
     </div>

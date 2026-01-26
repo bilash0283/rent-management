@@ -1,11 +1,9 @@
 <?php
-// Assuming $db is your mysqli connection
 
 $message = "";
 $building_id = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : 0;
 $is_edit = $building_id > 0;
 
-// Helper function to convert type number → name
 function getBuildingTypeName($type) {
     $types = [
         1 => 'Residential',
