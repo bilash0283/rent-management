@@ -7,7 +7,7 @@ if(!$db){
     echo "Database connection Error!";
 } else {
     mysqli_set_charset($db, "utf8mb4");
-    echo "DB connect successful";
+    // echo "DB connect successful";
 }
 ?>
 

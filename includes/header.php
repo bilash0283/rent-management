@@ -46,11 +46,6 @@ if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id
                         </div>
                     </div>
                 </a>
-                <!--! [Start] nxl-head-mobile-toggler !-->
-               
-                <!--! [Start] nxl-lavel-mega-menu !-->
-                
-                <!--! [End] nxl-lavel-mega-menu !-->
             </div>
             <!--! [End] Header Left !-->
 
@@ -67,14 +62,7 @@ if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id
                             </a>
                         </div>
                     </div>
-                    <div class="nxl-h-item dark-light-theme">
-                        <a href="javascript:void(0);" class="nxl-head-link me-0 dark-button">
-                            <i class="feather-moon"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="nxl-head-link me-0 light-button" style="display: none">
-                            <i class="feather-sun"></i>
-                        </a>
-                    </div>
+                   
                     <!-- full screen  -->
                     
                     <!-- notification  -->

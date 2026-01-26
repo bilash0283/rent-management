@@ -1,5 +1,51 @@
+<?php
+
+$message = '';
+
+$message = '';
+
+if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
+
+    $id = (int) $_GET['id'];
+
+    $sql = "SELECT image FROM building WHERE id = $id";
+    $result = mysqli_query($db, $sql);
+
+    if ($result && $row = mysqli_fetch_assoc($result)) {
+
+        if (!empty($row['image'])) {
+            $file = "public/uploads/buildings/" . $row['image'];
+            if (file_exists($file)) {
+                unlink($file);
+            }
+        }
+    }
+
+    $delete_query = "DELETE FROM building WHERE id = $id";
+
+    if (mysqli_query($db, $delete_query)) {
+        $message = '
+        <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
+            <strong>Success!</strong> Building Delete Successfull 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>';
+    } else {
+        $message = '
+        <div class="alert alert-danger alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
+            <strong>Error!</strong> Delete Failed : ' . mysqli_error($db) . '
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>';
+    }
+}
+
+// Fetch all buildings
+$sql = "SELECT * FROM building ORDER BY id DESC";
+$result = mysqli_query($db, $sql) or die("Query failed: " . mysqli_error($db));
+?>
+
 <div class="nxl-content">
-    <!-- [ page-header ] start -->
+
+    <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-left d-flex align-items-center">
             <div class="page-header-title">
@@ -18,7 +64,7 @@
                     <a href="javascript:void(0);" class="btn btn-icon btn-light-brand" data-bs-toggle="collapse"
                         data-bs-target="#collapseOne">
                         <i class="feather-bar-chart"></i>
-                    </a>                    
+                    </a>
                     <a href="admin.php?page=CreateBuilding" class="btn btn-primary">
                         <i class="feather-plus me-2"></i>
                         <span>Create Building</span>
@@ -32,221 +78,151 @@
             </div>
         </div>
     </div>
+
+    <!-- Filter collapse (placeholder) -->
     <div id="collapseOne" class="accordion-collapse collapse page-header-collapse">
         <div class="accordion-body pb-2">
             <div class="row">
-                <h1>This is filter section</h1>
+                <div class="col-12">
+                    <h6>Filter Section (Coming Soon)</h6>
+                </div>
             </div>
         </div>
     </div>
-    <!-- [ page-header ] end -->
 
-    <!-- [ Main Content ] start -->
+    <!-- Main Content -->
     <div class="main-content">
         <div class="row">
-            <!-- [Leads] start -->
             <div class="col-xxl-12">
                 <div class="card stretch stretch-full">
                     <div class="card-header">
-                        <h5 class="card-title">Buildings</h5>
-                        <div class="card-header-action">
-                            <div class="card-header-btn">
-                                <div data-bs-toggle="tooltip" title="Delete">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-danger"
-                                        data-bs-toggle="remove"> </a>
-                                </div>
-                                <div data-bs-toggle="tooltip" title="Refresh">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-warning"
-                                        data-bs-toggle="refresh"> </a>
-                                </div>
-                                <div data-bs-toggle="tooltip" title="Maximize/Minimize">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-success"
-                                        data-bs-toggle="expand"> </a>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <a href="javascript:void(0);" class="avatar-text avatar-sm" data-bs-toggle="dropdown"
-                                    data-bs-offset="25, 25">
-                                    <div data-bs-toggle="tooltip" title="Options">
-                                        <i class="feather-more-vertical"></i>
-                                    </div>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-at-sign"></i>New</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-calendar"></i>Event</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-bell"></i>Snoozed</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-trash-2"></i>Deleted</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-settings"></i>Settings</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-life-buoy"></i>Tips & Tricks</a>
-                                </div>
-                            </div>
-                        </div>
+                        <h5 class="card-title">Buildings List</h5>
+                        <!-- Show message if any -->
+                        <?php if ($message !== ''): ?>
+                            <?= $message ?>
+                        <?php endif; ?>
                     </div>
+
                     <div class="card-body custom-card-action p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr class="border-b">
-                                        <th scope="row">Users</th>
-                                        <th>Proposal</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th class="text-end">Actions</th>
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Building Type</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Location</th>
+                                        <th scope="col" class="text-end">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="avatar-image">
-                                                    <img src="assets/images/avatar/2.png" alt="" class="img-fluid">
-                                                </div>
-                                                <a href="javascript:void(0);">
-                                                    <span class="d-block">Archie Cantones</span>
-                                                    <span
-                                                        class="fs-12 d-block fw-normal text-muted">arcie.tones@gmail.com</span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-gray-200 text-dark">Sent</span>
-                                        </td>
-                                        <td>11/06/2023 10:53</td>
-                                        <td>
-                                            <span class="badge bg-soft-success text-success">Completed</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <a href="javascript:void(0);"><i class="feather-more-vertical"></i></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="avatar-image">
-                                                    <img src="assets/images/avatar/3.png" alt="" class="img-fluid">
-                                                </div>
-                                                <a href="javascript:void(0);">
-                                                    <span class="d-block">Holmes Cherryman</span>
-                                                    <span
-                                                        class="fs-12 d-block fw-normal text-muted">golms.chan@gmail.com</span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-gray-200 text-dark">New</span>
-                                        </td>
-                                        <td>11/06/2023 10:53</td>
-                                        <td>
-                                            <span class="badge bg-soft-primary text-primary">In Progress </span>
-                                        </td>
-                                        <td class="text-end">
-                                            <a href="javascript:void(0);"><i class="feather-more-vertical"></i></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="avatar-image">
-                                                    <img src="assets/images/avatar/4.png" alt="" class="img-fluid">
-                                                </div>
-                                                <a href="javascript:void(0);">
-                                                    <span class="d-block">Malanie Hanvey</span>
-                                                    <span
-                                                        class="fs-12 d-block fw-normal text-muted">lanie.nveyn@gmail.com</span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-gray-200 text-dark">Sent</span>
-                                        </td>
-                                        <td>11/06/2023 10:53</td>
-                                        <td>
-                                            <span class="badge bg-soft-success text-success">Completed</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <a href="javascript:void(0);"><i class="feather-more-vertical"></i></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="avatar-image">
-                                                    <img src="assets/images/avatar/5.png" alt="" class="img-fluid">
-                                                </div>
-                                                <a href="javascript:void(0);">
-                                                    <span class="d-block">Kenneth Hune</span>
-                                                    <span
-                                                        class="fs-12 d-block fw-normal text-muted">nneth.une@gmail.com</span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-gray-200 text-dark">Returning</span>
-                                        </td>
-                                        <td>11/06/2023 10:53</td>
-                                        <td>
-                                            <span class="badge bg-soft-warning text-warning">Not Interested</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <a href="javascript:void(0);"><i class="feather-more-vertical"></i></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="avatar-image">
-                                                    <img src="assets/images/avatar/6.png" alt="" class="img-fluid">
-                                                </div>
-                                                <a href="javascript:void(0);">
-                                                    <span class="d-block">Valentine Maton</span>
-                                                    <span
-                                                        class="fs-12 d-block fw-normal text-muted">alenine.aton@gmail.com</span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-gray-200 text-dark">Sent</span>
-                                        </td>
-                                        <td>11/06/2023 10:53</td>
-                                        <td>
-                                            <span class="badge bg-soft-success text-success">Completed</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <a href="javascript:void(0);"><i class="feather-more-vertical"></i></a>
-                                        </td>
-                                    </tr>
+                                    <?php if (mysqli_num_rows($result) > 0): ?>
+                                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php
+                                                    $img_path = !empty($row['image'])
+                                                        ? "public/uploads/buildings/" . htmlspecialchars($row['image'])
+                                                        : "assets/images/no-image.png";
+                                                    ?>
+                                                    <img src="<?= $img_path ?>" alt="Building Image" class="rounded"
+                                                        style="width: 60px; height: 60px; object-fit: cover;">
+                                                </td>
+                                                <td>
+                                                    <strong><?= htmlspecialchars($row['name']) ?></strong>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $type = $row['building_type'] ?? null;
+
+                                                    switch ($type) {
+                                                        case 1:
+                                                            echo 'Residential';
+                                                            break;
+                                                        case 2:
+                                                            echo 'Commercial';
+                                                            break;
+                                                        case 3:
+                                                            echo 'Industrial';
+                                                            break;
+                                                        case 4:
+                                                            echo 'Institutional';
+                                                            break;
+                                                        default:
+                                                            echo '—';
+                                                            break;
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td><?= htmlspecialchars($row['address'] ?? '—') ?></td>
+                                                <td>
+                                                    <?php
+                                                    $desc = htmlspecialchars($row['description'] ?? '');
+                                                    echo strlen($desc) > 80 ? substr($desc, 0, 80) . '...' : $desc;
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($row['location'])): ?>
+                                                        <a href="<?= htmlspecialchars($row['location']) ?>" target="_blank">
+                                                            <i class="feather-eye"></i>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        —
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-end">
+                                                    <div class="d-flex justify-content-end gap-2">
+                                                        <!-- Edit Button -->
+                                                        <a href="admin.php?page=CreateBuilding&id=<?= $row['id'] ?>"
+                                                            class="btn btn-sm btn-icon btn-light-primary"
+                                                            title="Edit this building" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top">
+                                                            <i class="feather-edit-2"></i>
+                                                        </a>
+
+                                                        <!-- Delete Button -->
+                                                        <a href="admin.php?page=building&action=delete&id=<?= $row['id'] ?>"
+                                                            class="btn btn-sm btn-icon btn-light-danger delete-btn"
+                                                            onclick="return confirm('Are you sure you want to delete this building?\n\nThis action cannot be undone.');"
+                                                            title="Delete this building" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top">
+                                                            <i class="feather-trash-2"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="7" class="text-center py-5 text-muted">
+                                                No buildings found.
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+
+                    <!-- Pagination (placeholder - implement real pagination later) -->
                     <div class="card-footer">
-                        <ul class="list-unstyled d-flex align-items-center gap-2 mb-0 pagination-common-style">
-                            <li>
-                                <a href="javascript:void(0);"><i class="bi bi-arrow-left"></i></a>
-                            </li>
+                        <ul
+                            class="list-unstyled d-flex align-items-center gap-2 mb-0 pagination-common-style justify-content-center">
+                            <li><a href="javascript:void(0);"><i class="bi bi-arrow-left"></i></a></li>
                             <li><a href="javascript:void(0);" class="active">1</a></li>
                             <li><a href="javascript:void(0);">2</a></li>
-                            <li>
-                                <a href="javascript:void(0);"><i class="bi bi-dot"></i></a>
-                            </li>
-                            <li><a href="javascript:void(0);">8</a></li>
-                            <li><a href="javascript:void(0);">9</a></li>
-                            <li>
-                                <a href="javascript:void(0);"><i class="bi bi-arrow-right"></i></a>
-                            </li>
+                            <li><a href="javascript:void(0);">3</a></li>
+                            <li><a href="javascript:void(0);"><i class="bi bi-arrow-right"></i></a></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <!-- [Leads] end -->
         </div>
     </div>
-    <!-- [ Main Content ] end -->
+
 </div>
+
+<!-- Make sure Bootstrap JS is included somewhere in your layout for alert dismiss -->
+<!-- <script src="path/to/bootstrap.bundle.min.js"></script> -->
