@@ -48,7 +48,7 @@
             <div class="col-xxl-12">
                 <div class="card stretch stretch-full">
                     <div class="card-header">
-                        <h5 class="card-title">Leads</h5>
+                        <h5 class="card-title">Buildings</h5>
                         <div class="card-header-action">
                             <div class="card-header-btn">
                                 <div data-bs-toggle="tooltip" title="Delete">

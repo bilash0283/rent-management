@@ -1,5 +1,6 @@
 <?php 
 session_start();
+include "database/db.php";
 if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id'])) {
     header('location:index.php');
 }
