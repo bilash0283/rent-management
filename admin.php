@@ -28,6 +28,10 @@
             include 'pages/Setting.php';
             break;
 
+        case 'CreateBuilding':
+            include 'pages/CreateBuilding.php';
+            break;
+
         default:
             include 'pages/dashboard.php';
             break;

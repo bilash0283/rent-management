@@ -1,10 +1,51 @@
 <div class="nxl-content">
+    <!-- [ page-header ] start -->
+    <div class="page-header">
+        <div class="page-header-left d-flex align-items-center">
+            <div class="page-header-title">
+                <h5 class="m-b-10">Building Manage</h5>
+            </div>
+        </div>
+        <div class="page-header-right ms-auto">
+            <div class="page-header-right-items">
+                <div class="d-flex d-md-none">
+                    <a href="javascript:void(0)" class="page-header-right-close-toggle">
+                        <i class="feather-arrow-left me-2"></i>
+                        <span>Back</span>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
+                    <a href="javascript:void(0);" class="btn btn-icon btn-light-brand" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne">
+                        <i class="feather-bar-chart"></i>
+                    </a>                    
+                    <a href="admin.php?page=CreateBuilding" class="btn btn-primary">
+                        <i class="feather-plus me-2"></i>
+                        <span>Create Building</span>
+                    </a>
+                </div>
+            </div>
+            <div class="d-md-none d-flex align-items-center">
+                <a href="javascript:void(0)" class="page-header-right-open-toggle">
+                    <i class="feather-align-right fs-20"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="collapseOne" class="accordion-collapse collapse page-header-collapse">
+        <div class="accordion-body pb-2">
+            <div class="row">
+                <h1>This is filter section</h1>
+            </div>
+        </div>
+    </div>
+    <!-- [ page-header ] end -->
+
     <!-- [ Main Content ] start -->
     <div class="main-content">
         <div class="row">
-            <h4>Building Mangae Page</h4>
             <!-- [Leads] start -->
-            <div class="col-xxl-8">
+            <div class="col-xxl-12">
                 <div class="card stretch stretch-full">
                     <div class="card-header">
                         <h5 class="card-title">Leads</h5>
