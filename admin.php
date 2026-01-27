@@ -20,6 +20,10 @@
             include 'pages/Tenant.php';
             break;
 
+        case 'CreateTenant':
+            include 'pages/CreateTenant.php';
+            break;
+
         case 'bill':
             include 'pages/Bill.php';
             break;
