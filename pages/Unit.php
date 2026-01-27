@@ -22,8 +22,8 @@
 
         if ($result && $row = mysqli_fetch_assoc($result)) {
 
-            if (!empty($row['image'])) {
-                $file = "public/uploads/units/" . $row['image'];
+            if (!empty($row['unit_image'])) {
+                $file = "public/uploads/units/" . $row['unit_image'];
                 if (file_exists($file)) {
                     unlink($file);
                 }
@@ -66,6 +66,8 @@
         <div class="card shadow-sm">
             <div class="card-header">
                 <h6 class="mb-0">Unit List</h6>
+                
+                <?php if(isset($message)){echo $message;} ?>
             </div>
 
             <div class="card-body p-0">
@@ -117,7 +119,7 @@
                                             <i class="feather-edit"></i>
                                         </a>
 
-                                        <a href="admin.php?page=unit&action=delete&delete_id=<?= $row['id'] ?>"
+                                        <a href="admin.php?page=unit&id=<?php echo $building_id; ?>&action=delete&delete_id=<?= $row['id']; ?>"
                                            class="btn btn-sm btn-light-danger"
                                            onclick="return confirm('Are you sure?');">
                                             <i class="feather-trash-2"></i>

@@ -22,11 +22,31 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 
     if (mysqli_query($db, $delete_query)) {
 
-        $message = '
-        <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
-            <strong>Success!</strong> Building Delete Successfull 
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>';
+        if (isset($id)) {
+
+            $sql_unit = "SELECT unit_image FROM unit WHERE building_name = $id";
+            $result_unit = mysqli_query($db, $sql_unit);
+
+            while ($result_unit && $unit_imge = mysqli_fetch_assoc($result_unit)) {
+
+                if (!empty($unit_imge['unit_image'])) {
+                    $files_unit = "public/uploads/units/" . $unit_imge['unit_image'];
+                    if (file_exists($files_unit)) {
+                        unlink($files_unit);
+                    }
+                }
+            }
+
+            $delete_query = "DELETE FROM unit WHERE building_name = $id";
+
+            if (mysqli_query($db, $delete_query)) {
+                $message = '
+                <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
+                    <strong>Success!</strong> Building Delete Successfull 
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>';
+            }
+        }
     } else {
         $message = '
         <div class="alert alert-danger alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
