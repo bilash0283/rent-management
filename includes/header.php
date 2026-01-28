@@ -27,6 +27,7 @@ if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id
     <link rel="stylesheet" type="text/css" href="public/assets/vendors/css/vendors.min.css" />
     <link rel="stylesheet" type="text/css" href="public/assets/vendors/css/daterangepicker.min.css" />
     <link rel="stylesheet" type="text/css" href="public/assets/css/theme.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>

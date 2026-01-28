@@ -88,89 +88,74 @@ $tenants = mysqli_query($db, "
 ");
 ?>
 
-<!DOCTYPE html>
-<html>
+<div class="container my-4 px-4">
+    <h4 class="py-3">Add Tenant</h4>
+    <?= $message ?>
+    <form method="POST" enctype="multipart/form-data" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="name" class="form-control" placeholder="Tenant Name" required>
+            </div>
 
-<head>
-    <title>Tenant Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
+            <div class="col-md-6">
+                <input type="text" name="phone" class="form-control" placeholder="Phone" required>
+            </div>
 
-<body>
+            <div class="col-md-6">
+                <input type="email" name="email" class="form-control" placeholder="Email">
+            </div>
 
-    <div class="container my-4 px-4">
-        <h4 class="py-3">Add Tenant</h4>
-        <?= $message ?>
-        <form method="POST" enctype="multipart/form-data" class="row g-3">
-                <div class="col-md-6">
-                    <input type="text" name="name" class="form-control" placeholder="Tenant Name" required>
-                </div>
+            <div class="col-md-6">
+                <input type="number" name="family" class="form-control" placeholder="Family Member">
+            </div>
 
-                <div class="col-md-6">
-                    <input type="text" name="phone" class="form-control" placeholder="Phone" required>
-                </div>
+            <div class="col-12">
+                <textarea name="address" class="form-control" placeholder="Permanent Address" required></textarea>
+            </div>
 
-                <div class="col-md-6">
-                    <input type="email" name="email" class="form-control" placeholder="Email">
-                </div>
+            <div class="col-md-6">
+                <select name="building" id="building" class="form-control" required>
+                    <option value="">Select Building</option>
+                    <?php
+                    $b = mysqli_query($db, "SELECT id, name FROM building");
+                    while ($row = mysqli_fetch_assoc($b)) {
+                        echo "<option value='{$row['id']}'>{$row['name']}</option>";
+                    }
+                    ?>
+                </select>
+            </div>
 
-                <div class="col-md-6">
-                    <input type="number" name="family" class="form-control" placeholder="Family Member">
-                </div>
+            <div class="col-md-6">
+                <select name="unit" id="unit" class="form-control" required>
+                    <option value="">Select Unit</option>
+                </select>
+            </div>
 
-                <div class="col-12">
-                    <textarea name="address" class="form-control" placeholder="Permanent Address" required></textarea>
-                </div>
+            <div class="col-md-6">
+                <label>Tenant Image</label>
+                <input type="file" name="tenant_image" class="form-control">
+            </div>
 
-                <div class="col-md-6">
-                    <select name="building" id="building" class="form-control" required>
-                        <option value="">Select Building</option>
-                        <?php
-                        $b = mysqli_query($db, "SELECT id,name FROM building");
-                        while ($row = mysqli_fetch_assoc($b)) {
-                            echo "<option value='{$row['id']}'>{$row['name']}</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
+            <div class="col-md-6">
+                <label>NID Image</label>
+                <input type="file" name="nid_image" class="form-control">
+            </div>
 
-                <div class="col-md-6">
-                    <select name="unit" id="unit" class="form-control" required>
-                        <option value="">Select Unit</option>
-                    </select>
-                </div>
+            <div class="col-12">
+                <button name="add_tenant" class="btn btn-primary">Save Tenant</button>
+            </div>
+    </form>
+</div>
 
-                <div class="col-md-6">
-                    <label>Tenant Image</label>
-                    <input type="file" name="tenant_image" class="form-control">
-                </div>
+<script>
+    $('#building').on('change', function () {
+        let buildingID = $(this).val();
+        $('#unit').html('<option>Loading...</option>');
 
-                <div class="col-md-6">
-                    <label>NID Image</label>
-                    <input type="file" name="nid_image" class="form-control">
-                </div>
-
-                <div class="col-12">
-                    <button name="add_tenant" class="btn btn-primary">Save Tenant</button>
-                </div>
-        </form>
-    </div>
-
-        <script>
-            $('#building').on('change', function () {
-                let buildingID = $(this).val();
-                $('#unit').html('<option>Loading...</option>');
-
-                $.post('', {
-                    ajax: 'get_units',
-                    building_id: buildingID
-                }, function (data) {
-                    $('#unit').html(data);
-                });
-            });
-        </script>
-
-</body>
-
-</html>
+        $.post('', {
+            ajax: 'get_units',
+            building_id: buildingID
+        }, function (data) {
+            $('#unit').html(data);
+        });
+    });
+</script>
