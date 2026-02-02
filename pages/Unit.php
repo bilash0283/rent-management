@@ -61,9 +61,9 @@
                 while($buil = mysqli_fetch_assoc($result_building)){
                 $buil_id   = $buil['id'];
                 $buil_name = $buil['name'];
+                echo $buil_name;
                 }
             ?>
-            <?= htmlspecialchars($buil_name) ?>
         </h5>
 
         <a href="admin.php?page=CreateUnit&buliding_id=<?php echo $building_id; ?>" class="btn btn-primary">
@@ -76,7 +76,6 @@
         <div class="card shadow-sm">
             <div class="card-header">
                 <h6 class="mb-0">Unit List</h6>
-                
                 <?php if(isset($message)){echo $message;} ?>
             </div>
 
@@ -87,9 +86,9 @@
                             <tr>
                                 <th>Image</th>
                                 <th>Unit Name</th>
-                                <th>Floor</th>
+                                <th>Description</th>
                                 <th>Rent</th>
-                                <th>Bill</th>
+                                <th>Bills</th>
                                 <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -113,20 +112,20 @@
                                     </td>
 
                                     <td><?= htmlspecialchars($row['unit_name']) ?></td>
-                                    <td>
-                                        <?php 
-                                            $building_id = $row['building_name'];
-                                            $sql_building = "SELECT * FROM building WHERE id = $building_id ";
-                                            $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
-                                            while($buil = mysqli_fetch_assoc($result_building)){
-                                            $buil_id   = $buil['id'];
-                                            $buil_name = $buil['name'];
-                                            }
-                                        ?>
-                                        <?= htmlspecialchars($buil_name) ?>
-                                    </td>
+                                    
                                     <td><?= htmlspecialchars($row['floor'] ?? '-') ?></td>
-                                    <td>৳ <?= number_format($row['rent'], 2) ?></td>
+                                    <td>
+                                        Advance : ৳ <?= number_format($row['advance'], 2) ?><br>
+                                        Rent    : ৳ <?= number_format($row['rent'], 2) ?>
+                                    </td>
+                                    <td>
+                                        Gas : ৳ <?= number_format($row['Gas'], 2) ?><br>
+                                        Water : ৳ <?= number_format($row['Water'], 2) ?><br>
+                                        Electricity : ৳ <?= number_format($row['Electricity'], 2) ?><br>
+                                        Internet : ৳ <?= number_format($row['Internet'], 2) ?><br>
+                                        Maintenance : ৳ <?= number_format($row['Maintenance'], 2) ?><br>
+                                        Others : ৳ <?= number_format($row['Others'], 2) ?><br>
+                                    </td>
 
                                     <td>
                                         <span class="badge <?= $row['status']=='Available' ? 'bg-success' : 'bg-danger' ?>">

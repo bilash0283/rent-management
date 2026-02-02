@@ -23,7 +23,14 @@ $unit = [
     'unit_type' => 'Flat',
     'size' => '',
     'rent' => '',
-    'unit_image' => ''
+    'unit_image' => '',
+    'Gas' => '',
+    'Water' => '',
+    'Electricity' => '',
+    'Internet' => '',
+    'Maintenance' => '',
+    'Others' => '',
+    'advance' => ''
 ];
 
 if ($edit_id) {
@@ -42,6 +49,13 @@ if (isset($_POST['btn'])) {
     $size      = $_POST['size'];
     $rent      = $_POST['rent'];
     $status    = 'Available';
+    $Gas       = $_POST['Gas'];
+    $Water     = $_POST['Water'];
+    $Electricity     = $_POST['Electricity'];
+    $Internet     = $_POST['Internet'];
+    $Maintenance     = $_POST['Maintenance'];
+    $Others     = $_POST['Others'];
+    $advance    = $_POST['advance'];
 
     // ======================
     // IMAGE HANDLE
@@ -79,7 +93,14 @@ if (isset($_POST['btn'])) {
                 unit_type='$unit_type',
                 size='$size',
                 rent='$rent',
-                unit_image='$image_name'
+                advance='$advance',
+                unit_image='$image_name',
+                Gas='$Gas',
+                Water='$Water',
+                Electricity='$Electricity',
+                Internet='$Internet',
+                Maintenance='$Maintenance',
+                Others='$Others'
                 WHERE id=$edit_id";
 
         $message = mysqli_query($db, $sql)
@@ -90,9 +111,9 @@ if (isset($_POST['btn'])) {
 
         // INSERT
         $sql = "INSERT INTO unit
-                (unit_name, building_name, floor, unit_type, size, rent, unit_image, status)
+                (unit_name, building_name, floor, unit_type, size, rent, advance, unit_image, status, Gas, Water, Electricity, Internet, Maintenance, Others)
                 VALUES
-                ('$unit_name','$building_id','$floor','$unit_type','$size','$rent','$image_name','$status')";
+                ('$unit_name','$building_id','$floor','$unit_type','$size','$rent', '$advance', '$image_name','$status','$Gas','$Water','$Electricity','$Internet','$Maintenance','$Others')";
 
         $message = mysqli_query($db, $sql)
             ? "<div class='alert alert-success'>Unit created successfully</div>"
@@ -143,7 +164,7 @@ if (isset($_POST['btn'])) {
                             <!-- Floor -->
                             <div class="row mb-4 align-items-center">
                                 <div class="col-lg-4">
-                                    <label class="fw-semibold">Floor</label>
+                                    <label class="fw-semibold">Description</label>
                                 </div>
                                 <div class="col-lg-8">
                                     <input type="text" name="floor"
@@ -184,9 +205,62 @@ if (isset($_POST['btn'])) {
                                     <label class="fw-semibold">Rent</label>
                                 </div>
                                 <div class="col-lg-8">
-                                    <input type="number" step="0.01" name="rent"
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="number" step="0.01" name="rent"
                                            value="<?= htmlspecialchars($unit['rent']) ?>"
-                                           class="form-control" required>
+                                           class="form-control" placeholder="Rent" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="number" step="0.01" name="advance"
+                                           value="<?= htmlspecialchars($unit['advance']) ?>"
+                                           class="form-control" placeholder="Advance" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4 align-items-center">
+                                <div class="col-lg-4">
+                                    <label class="fw-semibold">Bills</label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="number" step="0.01" name="Gas"
+                                           value="<?= htmlspecialchars($unit['Gas']) ?>"
+                                           class="form-control" placeholder="Gas" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="number" step="0.01" name="Water"
+                                           value="<?= htmlspecialchars($unit['Water']) ?>"
+                                           class="form-control" placeholder="Water" required>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <input type="number" step="0.01" name="Electricity"
+                                           value="<?= htmlspecialchars($unit['Electricity']) ?>"
+                                           class="form-control" placeholder="Electricity" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="number" step="0.01" name="Internet"
+                                           value="<?= htmlspecialchars($unit['Internet']) ?>"
+                                           class="form-control" placeholder="Internet" required>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <input type="number" step="0.01" name="Maintenance"
+                                           value="<?= htmlspecialchars($unit['Maintenance']) ?>"
+                                           class="form-control" placeholder="Maintenance" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="number" step="0.01" name="Others"
+                                           value="<?= htmlspecialchars($unit['Others']) ?>"
+                                           class="form-control" placeholder="Others" required>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
