@@ -4,43 +4,40 @@ $editData = null;
 
 /* ================= AJAX : LOAD UNIT ================= */
 if (isset($_POST['ajax']) && $_POST['ajax'] === 'get_units') {
-    $building_id = (int)$_POST['building_id'];
 
-    $q = mysqli_query($db, "
-        SELECT id, unit_name 
-        FROM unit 
-        WHERE building_name = $building_id 
-        AND status = 'Available'
-        ORDER BY unit_name ASC
-    ");
+    $building_id  = (int)$_POST['building_id'];
+    $selected_unit = isset($_POST['selected_unit']) ? (int)$_POST['selected_unit'] : 0;
+
+    if ($selected_unit > 0) {
+        // EDIT MODE → Available + current rented unit
+        $sql = "
+            SELECT id, unit_name, rent, advance
+            FROM unit
+            WHERE building_name = $building_id
+            AND (status = 'Available' OR id = $selected_unit)
+            ORDER BY unit_name ASC
+        ";
+    } else {
+        // ADD MODE → Only available units
+        $sql = "
+            SELECT id, unit_name, rent, advance
+            FROM unit
+            WHERE building_name = $building_id
+            AND status = 'Available'
+            ORDER BY unit_name ASC
+        ";
+    }
+
+    $q = mysqli_query($db, $sql);
 
     echo '<option value="">Select Unit</option>';
     while ($row = mysqli_fetch_assoc($q)) {
-        echo "<option value='{$row['id']}'>{$row['unit_name']}</option>";
+        $selected = ($row['id'] == $selected_unit) ? 'selected' : '';
+        echo "<option value='{$row['id']}' $selected>
+                {$row['unit_name']} (R-৳{$row['rent']}) (A-৳{$row['advance']})
+              </option>";
     }
     exit;
-}
-
-/* ================= DELETE TENANT ================= */
-if (isset($_GET['action']) && $_GET['action'] === 'delete') {
-    $id = (int)$_GET['id'];
-
-    $q = mysqli_query($db, "SELECT tenant_image, nid_image, unit_id FROM tenants WHERE id=$id");
-    if ($row = mysqli_fetch_assoc($q)) {
-
-        if ($row['tenant_image'] && file_exists("public/uploads/tenants/" . $row['tenant_image'])) {
-            unlink("public/uploads/tenants/" . $row['tenant_image']);
-        }
-
-        if ($row['nid_image'] && file_exists("public/uploads/nid/" . $row['nid_image'])) {
-            unlink("public/uploads/nid/" . $row['nid_image']);
-        }
-
-        mysqli_query($db, "UPDATE unit SET status='Available' WHERE id=" . $row['unit_id']);
-    }
-
-    mysqli_query($db, "DELETE FROM tenants WHERE id=$id");
-    $message = "<div class='alert alert-success'>Tenant deleted successfully</div>";
 }
 
 /* ================= EDIT FETCH ================= */
@@ -48,11 +45,13 @@ if (isset($_GET['edit_id'])) {
     $id = (int)$_GET['edit_id'];
     $q = mysqli_query($db, "SELECT * FROM tenants WHERE id=$id");
     $editData = mysqli_fetch_assoc($q);
+    $old_unit_id = $editData['unit_id'];
 }
 
 /* ================= ADD / UPDATE TENANT ================= */
 if (isset($_POST['save_tenant'])) {
 
+    $id       = $_POST['id'];
     $name     = $_POST['name'];
     $phone    = $_POST['phone'];
     $email    = $_POST['email'];
@@ -60,24 +59,26 @@ if (isset($_POST['save_tenant'])) {
     $family   = $_POST['family'];
     $building = $_POST['building'];
     $unit     = $_POST['unit'];
-    $id       = $_POST['id'];
 
-    /* Tenant Image */
     $tenant_img = $_POST['old_tenant_image'];
     if (!empty($_FILES['tenant_image']['name'])) {
-        $tenant_img = time() . '_' . $_FILES['tenant_image']['name'];
-        move_uploaded_file($_FILES['tenant_image']['tmp_name'], "public/uploads/tenants/" . $tenant_img);
+        $tenant_img = time().'_'.$_FILES['tenant_image']['name'];
+        move_uploaded_file($_FILES['tenant_image']['tmp_name'], "public/uploads/tenants/".$tenant_img);
     }
 
-    /* NID Image */
     $nid_img = $_POST['old_nid_image'];
     if (!empty($_FILES['nid_image']['name'])) {
-        $nid_img = time() . '_' . $_FILES['nid_image']['name'];
-        move_uploaded_file($_FILES['nid_image']['tmp_name'], "public/uploads/nid/" . $nid_img);
+        $nid_img = time().'_'.$_FILES['nid_image']['name'];
+        move_uploaded_file($_FILES['nid_image']['tmp_name'], "public/uploads/nid/".$nid_img);
     }
 
     if ($id) {
-        // UPDATE
+
+        if($unit != $old_unit_id && !empty($unit)){
+            mysqli_query($db, "UPDATE unit SET status='Available' WHERE id=$old_unit_id");
+            mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");
+        }
+        // UPDATE TENANT
         mysqli_query($db, "
             UPDATE tenants SET
                 name='$name',
@@ -94,7 +95,7 @@ if (isset($_POST['save_tenant'])) {
 
         $message = "<div class='alert alert-success'>Tenant updated successfully</div>";
     } else {
-        // ADD
+        // ADD TENANT
         mysqli_query($db, "
             INSERT INTO tenants
             (name, phone, email, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id)
@@ -103,18 +104,10 @@ if (isset($_POST['save_tenant'])) {
         ");
 
         mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");
+
         $message = "<div class='alert alert-success'>Tenant added successfully</div>";
     }
 }
-
-/* ================= FETCH TENANTS ================= */
-$tenants = mysqli_query($db, "
-    SELECT t.*, b.name AS building_name, u.unit_name 
-    FROM tenants t
-    JOIN building b ON t.building_id = b.id
-    JOIN unit u ON t.unit_id = u.id
-    ORDER BY t.id DESC
-");
 ?>
 
 <div class="container my-4 px-4">
@@ -139,7 +132,7 @@ $tenants = mysqli_query($db, "
         </div>
 
         <div class="col-md-6">
-            <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>" placeholder="Family Member" required>
+            <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>" placeholder="Family Member">
         </div>
 
         <div class="col-12">
@@ -161,22 +154,8 @@ $tenants = mysqli_query($db, "
 
         <div class="col-md-6">
             <select name="unit" id="unit" class="form-control" required>
-                <?php if ($editData): ?>
-                    <option value="<?= $editData['unit_id'] ?>" selected>Current Unit</option>
-                <?php else: ?>
-                    <option value="">Select Unit</option>
-                <?php endif; ?>
+                <option value="">Select Unit</option>
             </select>
-        </div>
-
-        <div class="col-md-6">
-            <label>Tenant Image</label>
-            <input type="file" name="tenant_image" class="form-control">
-        </div>
-
-        <div class="col-md-6">
-            <label>NID Image</label>
-            <input type="file" name="nid_image" class="form-control">
         </div>
 
         <div class="col-12">
@@ -188,15 +167,28 @@ $tenants = mysqli_query($db, "
 </div>
 
 <script>
-$('#building').on('change', function () {
-    let buildingID = $(this).val();
+function loadUnits(buildingID, selectedUnit = 0) {
     $('#unit').html('<option>Loading...</option>');
-
     $.post('', {
         ajax: 'get_units',
-        building_id: buildingID
+        building_id: buildingID,
+        selected_unit: selectedUnit
     }, function (data) {
         $('#unit').html(data);
     });
+}
+
+$('#building').on('change', function () {
+    loadUnits($(this).val());
 });
+
+/* ===== AUTO LOAD UNIT ON EDIT ===== */
+<?php if ($editData): ?>
+$(document).ready(function () {
+    loadUnits(
+        <?= (int)$editData['building_id'] ?>,
+        <?= (int)$editData['unit_id'] ?>
+    );
+});
+<?php endif; ?>
 </script>
