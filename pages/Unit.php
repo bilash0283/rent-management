@@ -54,7 +54,17 @@
 
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">Unit Manage</h5>
+        <h5 class="mb-0">
+            <?php 
+                $sql_building = "SELECT * FROM building WHERE id = $building_id ";
+                $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
+                while($buil = mysqli_fetch_assoc($result_building)){
+                $buil_id   = $buil['id'];
+                $buil_name = $buil['name'];
+                }
+            ?>
+            <?= htmlspecialchars($buil_name) ?>
+        </h5>
 
         <a href="admin.php?page=CreateUnit&buliding_id=<?php echo $building_id; ?>" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create Unit
@@ -77,9 +87,9 @@
                             <tr>
                                 <th>Image</th>
                                 <th>Unit Name</th>
-                                <th>Building</th>
                                 <th>Floor</th>
                                 <th>Rent</th>
+                                <th>Bill</th>
                                 <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -103,7 +113,18 @@
                                     </td>
 
                                     <td><?= htmlspecialchars($row['unit_name']) ?></td>
-                                    <td><?= htmlspecialchars($row['building_name']) ?></td>
+                                    <td>
+                                        <?php 
+                                            $building_id = $row['building_name'];
+                                            $sql_building = "SELECT * FROM building WHERE id = $building_id ";
+                                            $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
+                                            while($buil = mysqli_fetch_assoc($result_building)){
+                                            $buil_id   = $buil['id'];
+                                            $buil_name = $buil['name'];
+                                            }
+                                        ?>
+                                        <?= htmlspecialchars($buil_name) ?>
+                                    </td>
                                     <td><?= htmlspecialchars($row['floor'] ?? '-') ?></td>
                                     <td>৳ <?= number_format($row['rent'], 2) ?></td>
 

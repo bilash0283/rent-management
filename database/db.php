@@ -11,7 +11,6 @@ if(!$db){
 }
 ?>
 
-<!-- college-details.php?name=uk -->
 
 
 
