@@ -139,7 +139,7 @@ $tenants = mysqli_query($db, "
         </div>
 
         <div class="col-md-6">
-            <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>" placeholder="Family Member">
+            <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>" placeholder="Family Member" required>
         </div>
 
         <div class="col-12">
