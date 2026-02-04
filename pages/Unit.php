@@ -119,12 +119,30 @@
                                         Rent    : ৳ <?= number_format($row['rent'], 2) ?>
                                     </td>
                                     <td>
-                                        Gas : ৳ <?= number_format($row['Gas'], 2) ?><br>
-                                        Water : ৳ <?= number_format($row['Water'], 2) ?><br>
-                                        Electricity : ৳ <?= number_format($row['Electricity'], 2) ?><br>
-                                        Internet : ৳ <?= number_format($row['Internet'], 2) ?><br>
-                                        Maintenance : ৳ <?= number_format($row['Maintenance'], 2) ?><br>
-                                        Others : ৳ <?= number_format($row['Others'], 2) ?><br>
+                                        <?php if (!empty($row['Gas'])) { ?>
+                                            Gas : ৳ <?= number_format($row['Gas'], 2) ?><br>
+                                        <?php } ?>
+
+                                        <?php if (!empty($row['Water'])) { ?>
+                                            Water : ৳ <?= number_format($row['Water'], 2) ?><br>
+                                        <?php } ?>
+
+                                        <?php if (!empty($row['Electricity'])) { ?>
+                                            Electricity : ৳ <?= number_format($row['Electricity'], 2) ?><br>
+                                        <?php } ?>
+
+                                        <?php if (!empty($row['Internet'])) { ?>
+                                            Internet : ৳ <?= number_format($row['Internet'], 2) ?><br>
+                                        <?php } ?>
+
+                                        <?php if (!empty($row['Maintenance'])) { ?>
+                                            Maintenance : ৳ <?= number_format($row['Maintenance'], 2) ?><br>
+                                        <?php } ?>
+
+                                        <?php if (!empty($row['Others'])) { ?>
+                                            Others : ৳ <?= number_format($row['Others'], 2) ?><br>
+                                        <?php } ?>
+
                                     </td>
 
                                     <td>
