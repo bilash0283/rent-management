@@ -40,6 +40,10 @@
             include 'pages/CreateUnit.php';
             break;
 
+        case 'Agreement':
+            include 'pages/Agreement.php';
+            break;
+
         default:
             include 'pages/dashboard.php';
             break;
