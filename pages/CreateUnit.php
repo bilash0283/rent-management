@@ -214,7 +214,7 @@ if (isset($_POST['btn'])) {
                                         <div class="col-md-6">
                                             <input type="number" step="0.01" name="advance"
                                            value="<?= htmlspecialchars($unit['advance']) ?>"
-                                           class="form-control" placeholder="Advance" required>
+                                           class="form-control" placeholder="Advance" >
                                         </div>
                                     </div>
                                 </div>
@@ -229,36 +229,36 @@ if (isset($_POST['btn'])) {
                                         <div class="col-md-6">
                                             <input type="number" step="0.01" name="Gas"
                                            value="<?= htmlspecialchars($unit['Gas']) ?>"
-                                           class="form-control" placeholder="Gas" required>
+                                           class="form-control" placeholder="Gas" >
                                         </div>
                                         <div class="col-md-6">
                                             <input type="number" step="0.01" name="Water"
                                            value="<?= htmlspecialchars($unit['Water']) ?>"
-                                           class="form-control" placeholder="Water" required>
+                                           class="form-control" placeholder="Water" >
                                         </div>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <input type="number" step="0.01" name="Electricity"
                                            value="<?= htmlspecialchars($unit['Electricity']) ?>"
-                                           class="form-control" placeholder="Electricity" required>
+                                           class="form-control" placeholder="Electricity" >
                                         </div>
                                         <div class="col-md-6">
                                             <input type="number" step="0.01" name="Internet"
                                            value="<?= htmlspecialchars($unit['Internet']) ?>"
-                                           class="form-control" placeholder="Internet" required>
+                                           class="form-control" placeholder="Internet" >
                                         </div>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <input type="number" step="0.01" name="Maintenance"
                                            value="<?= htmlspecialchars($unit['Maintenance']) ?>"
-                                           class="form-control" placeholder="Maintenance" required>
+                                           class="form-control" placeholder="Maintenance" >
                                         </div>
                                         <div class="col-md-6">
                                             <input type="number" step="0.01" name="Others"
                                            value="<?= htmlspecialchars($unit['Others']) ?>"
-                                           class="form-control" placeholder="Others" required>
+                                           class="form-control" placeholder="Others" >
                                         </div>
                                     </div>
                                 </div>
