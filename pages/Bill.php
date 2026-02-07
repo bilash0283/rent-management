@@ -57,7 +57,7 @@ $result = mysqli_query($db, $query);
 
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">Bill Manage</h5>
+        <h5 class="mb-0">Bill Month (<?php echo date('M - Y') ?>)</h5>
 
         <a href="admin.php?page=CreateTenant" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create Bill

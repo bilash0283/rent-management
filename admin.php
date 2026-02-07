@@ -12,8 +12,16 @@
             include 'pages/building.php';
             break;
 
+        case 'CreateBuilding':
+            include 'pages/CreateBuilding.php';
+            break;
+
         case 'unit':
             include 'pages/Unit.php';
+            break;
+
+        case 'CreateUnit':
+            include 'pages/CreateUnit.php';
             break;
 
         case 'tenant':
@@ -30,14 +38,6 @@
 
         case 'setting':
             include 'pages/Setting.php';
-            break;
-
-        case 'CreateBuilding':
-            include 'pages/CreateBuilding.php';
-            break;
-
-        case 'CreateUnit':
-            include 'pages/CreateUnit.php';
             break;
 
         case 'Agreement':
