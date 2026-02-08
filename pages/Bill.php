@@ -1,7 +1,6 @@
 <?php
 $message = "";
 
-/* ================= DELETE TENANT ================= */
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete_id'])) {
 
     $id = (int) $_GET['delete_id'];
@@ -19,7 +18,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete
             if (file_exists($file)) unlink($file);
         }
 
-        // Unit back to Available
         mysqli_query($db, "UPDATE unit SET status='Available' WHERE id=".$row['unit_id']);
     }
 
@@ -38,7 +36,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete
     }
 }
 
-/* ================= FETCH TENANTS ================= */
 $query = "
     SELECT 
         t.*, 
@@ -77,9 +74,9 @@ $result = mysqli_query($db, $query);
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>SL</th>
-                                <th>Name</th>
-                                <th>Description</th>
+                                <th>Tenant</th>
+                                <th>Payment Method</th>
+                                <th>Status</th>
                                 <th>Amount</th>
                                 <th class="text-end">Action</th>
                             </tr>

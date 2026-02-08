@@ -19,7 +19,7 @@
                 <li class="nxl-item nxl-caption">
                     <label>Navigation</label>
                 </li>
-                <li class="nxl-item nxl-hasmenu">
+                <li class="">
                     <a href="admin.php" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-airplay"></i></span>
                         <span class="nxl-mtext">Dashboards</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
