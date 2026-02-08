@@ -158,6 +158,16 @@ if (isset($_POST['save_tenant'])) {
             </select>
         </div>
 
+        <div class="col-md-6">
+            <label for="tenant_image" >Tenant Image</label>
+            <input type="file" name="tenant_image" class="form-control">
+        </div>
+
+        <div class="col-md-6">
+            <label for="nid_image" >Nid Image</label>
+            <input type="file" name="nid_image" class="form-control">
+        </div>
+
         <div class="col-12">
             <button name="save_tenant" class="btn btn-primary">
                 <?= $editData ? 'Update Tenant' : 'Save Tenant' ?>
