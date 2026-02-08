@@ -160,11 +160,17 @@ if (isset($_POST['save_tenant'])) {
 
         <div class="col-md-6">
             <label for="tenant_image" >Tenant Image</label>
+            <?php if(!empty($editData['tenant_image'])){ ?>
+            <img src="<?php echo 'public/uploads/tenants/'.$editData['tenant_image'] ?? 'No Image Found!' ?>" alt="" style="width:40px; border-radius:50%; height: 40px;">
+            <?php } else {echo "<span class='text-danger'>Please Upload Image File!</span>";}?>
             <input type="file" name="tenant_image" class="form-control">
         </div>
 
         <div class="col-md-6">
             <label for="nid_image" >Nid Image</label>
+            <?php if(!empty($editData['nid_image'])){ ?>
+            <img src="<?php echo 'public/uploads/nid/'.$editData['nid_image'] ?? 'No Image Found!' ?>" alt="" style="width:40px; border-radius:50%; height: 40px;">
+            <?php } else {echo "<span class='text-danger'>Please Upload Image File!</span>";}?>
             <input type="file" name="nid_image" class="form-control">
         </div>
 
