@@ -36,6 +36,10 @@
             include 'pages/Bill.php';
             break;
 
+        case 'editbill':
+            include 'pages/EditBill.php';
+            break;
+
         case 'setting':
             include 'pages/Setting.php';
             break;

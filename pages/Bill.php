@@ -125,7 +125,7 @@ body {
                                         <a href="" class="btn btn-sm btn-light-info me-1" title="Invoice">
                                             <i class="feather-download"></i>
                                         </a>
-                                        <a href="" class="btn btn-sm btn-light-primary" title="Edit">
+                                        <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>" class="btn btn-sm btn-light-primary" title="Edit">
                                             <i class="feather-edit"></i>
                                         </a>
                                     </td>
