@@ -10,9 +10,9 @@ $result = mysqli_query($db, $query);
     <div class="page-header d-flex align-items-center justify-content-between">
         <h5 class="mb-0">Bill Month (<?php echo date('M - Y') ?>)</h5>
 
-        <a href="admin.php?page=CreateTenant" class="btn btn-primary">
+        <!-- <a href="admin.php?page=CreateTenant" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create Bill
-        </a>
+        </a> -->
     </div>
 
     <!-- Main Content -->
@@ -68,11 +68,11 @@ $result = mysqli_query($db, $query);
                                         echo 'Paid    = ৳ ' . $advance . '<br>';
                                         echo 'Due     = ৳ 00';
                                         ?>
-                                        <a href="javascript:void(0)" class="btn btn-sm btn-info mt-1" data-toggle="modal"
+                                        <a href="" class="btn btn-sm btn-info mt-1" data-toggle="modal"
                                             data-target="#ielts_show<?php echo $tent_id ?>">
                                             Details
                                         </a>
-                                    </td>                                   
+                                    </td>
 
                                     <td>
                                         Rent = ৳ <?php echo $rent; ?><br>
