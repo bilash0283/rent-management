@@ -1,61 +1,65 @@
 <?php
-if (isset($_GET['buliding_id'])) {
-    $building_id = $_GET['buliding_id'];
-}
-
 include "database/db.php";
 
 $message = "";
 
 // ==========================
-// GET BUILDING ID
+// GET IDs SAFELY
 // ==========================
-$building_id = $_GET['buliding_id'] ?? 0;
+$building_id = isset($_GET['buliding_id']) ? (int)$_GET['buliding_id'] : 0;
+$edit_id     = isset($_GET['edit_id']) ? (int)$_GET['edit_id'] : null;
 
 // ==========================
-// EDIT MODE DATA FETCH
+// DEFAULT UNIT DATA
 // ==========================
-$edit_id = $_GET['edit_id'] ?? null;
-
 $unit = [
     'unit_name' => '',
     'floor' => '',
     'unit_type' => 'Flat',
     'size' => '',
-    'rent' => '',
+    'rent' => 0,
+    'advance' => 0,
     'unit_image' => '',
-    'Gas' => '',
-    'Water' => '',
-    'Electricity' => '',
-    'Internet' => '',
-    'Maintenance' => '',
-    'Others' => '',
-    'advance' => ''
+    'Gas' => 0,
+    'Water' => 0,
+    'Electricity' => 0,
+    'Internet' => 0,
+    'Maintenance' => 0,
+    'Others' => 0
 ];
 
+// ==========================
+// EDIT MODE FETCH
+// ==========================
 if ($edit_id) {
     $get = mysqli_query($db, "SELECT * FROM unit WHERE id=$edit_id");
-    $unit = mysqli_fetch_assoc($get);
+    if ($get && mysqli_num_rows($get)) {
+        $unit = mysqli_fetch_assoc($get);
+    }
 }
 
 // ==========================
-// ADD / UPDATE SUBMIT
+// FORM SUBMIT
 // ==========================
 if (isset($_POST['btn'])) {
 
-    $unit_name = $_POST['unit_name'];
-    $floor     = $_POST['floor'];
-    $unit_type = $_POST['unit_type'];
-    $size      = $_POST['size'];
-    $rent      = $_POST['rent'];
-    $status    = 'Available';
-    $Gas       = $_POST['Gas'];
-    $Water     = $_POST['Water'];
-    $Electricity     = $_POST['Electricity'];
-    $Internet     = $_POST['Internet'];
-    $Maintenance     = $_POST['Maintenance'];
-    $Others     = $_POST['Others'];
-    $advance    = $_POST['advance'];
+    // TEXT FIELDS
+    $unit_name = mysqli_real_escape_string($db, $_POST['unit_name']);
+    $floor     = mysqli_real_escape_string($db, $_POST['floor']);
+    $unit_type = mysqli_real_escape_string($db, $_POST['unit_type']);
+    $size      = mysqli_real_escape_string($db, $_POST['size']);
+
+    // NUMERIC FIELDS (EMPTY → 0)
+    $rent        = (float) ($_POST['rent'] ?? 0);
+    $advance     = (float) ($_POST['advance'] ?? 0);
+    $Gas         = (float) ($_POST['Gas'] ?? 0);
+    $Water       = (float) ($_POST['Water'] ?? 0);
+    $Electricity = (float) ($_POST['Electricity'] ?? 0);
+    $Internet    = (float) ($_POST['Internet'] ?? 0);
+    $Maintenance = (float) ($_POST['Maintenance'] ?? 0);
+    $Others      = (float) ($_POST['Others'] ?? 0);
+
+    $status = 'Available';
 
     // ======================
     // IMAGE HANDLE
@@ -64,12 +68,9 @@ if (isset($_POST['btn'])) {
 
     if (!empty($_FILES['unit_image']['name'])) {
 
-        // delete old image
         if (!empty($unit['unit_image'])) {
             $old = "public/uploads/units/" . $unit['unit_image'];
-            if (file_exists($old)) {
-                unlink($old);
-            }
+            if (file_exists($old)) unlink($old);
         }
 
         $ext = pathinfo($_FILES['unit_image']['name'], PATHINFO_EXTENSION);
@@ -82,26 +83,25 @@ if (isset($_POST['btn'])) {
     }
 
     // ======================
-    // INSERT OR UPDATE
+    // UPDATE
     // ======================
     if ($edit_id) {
 
-        // UPDATE
         $sql = "UPDATE unit SET
-                unit_name='$unit_name',
-                floor='$floor',
-                unit_type='$unit_type',
-                size='$size',
-                rent='$rent',
-                advance='$advance',
-                unit_image='$image_name',
-                Gas='$Gas',
-                Water='$Water',
-                Electricity='$Electricity',
-                Internet='$Internet',
-                Maintenance='$Maintenance',
-                Others='$Others'
-                WHERE id=$edit_id";
+            unit_name='$unit_name',
+            floor='$floor',
+            unit_type='$unit_type',
+            size='$size',
+            rent=$rent,
+            advance=$advance,
+            unit_image='$image_name',
+            Gas=$Gas,
+            Water=$Water,
+            Electricity=$Electricity,
+            Internet=$Internet,
+            Maintenance=$Maintenance,
+            Others=$Others
+            WHERE id=$edit_id";
 
         $message = mysqli_query($db, $sql)
             ? "<div class='alert alert-success'>Unit updated successfully</div>"
@@ -109,11 +109,14 @@ if (isset($_POST['btn'])) {
 
     } else {
 
+        // ======================
         // INSERT
+        // ======================
         $sql = "INSERT INTO unit
-                (unit_name, building_name, floor, unit_type, size, rent, advance, unit_image, status, Gas, Water, Electricity, Internet, Maintenance, Others)
-                VALUES
-                ('$unit_name','$building_id','$floor','$unit_type','$size','$rent', '$advance', '$image_name','$status','$Gas','$Water','$Electricity','$Internet','$Maintenance','$Others')";
+        (unit_name, building_name, floor, unit_type, size, rent, advance, unit_image, status, Gas, Water, Electricity, Internet, Maintenance, Others)
+        VALUES
+        ('$unit_name', $building_id, '$floor', '$unit_type', '$size', $rent, $advance, '$image_name', '$status',
+         $Gas, $Water, $Electricity, $Internet, $Maintenance, $Others)";
 
         $message = mysqli_query($db, $sql)
             ? "<div class='alert alert-success'>Unit created successfully</div>"
@@ -121,7 +124,6 @@ if (isset($_POST['btn'])) {
     }
 }
 ?>
-
 
 
 <div class="nxl-content">
@@ -134,7 +136,7 @@ if (isset($_POST['btn'])) {
             </h5>
         </div>
         <div class="page-header-right">
-            <a href="admin.php?page=unit&id=<?= $building_id ? $building_id : $edit_id ?>" class="btn btn-primary">Back</a>
+            <a href="admin.php?page=unit&id=<?= $building_id ?>" class="btn btn-primary">Back</a>
         </div>
     </div>
 

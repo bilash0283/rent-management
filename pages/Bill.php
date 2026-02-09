@@ -65,7 +65,13 @@
                                     <?php echo $advance; ?>
                                 </td>
                                 <td>
-                                    Rent : ৳ <?php echo $rent; ?>
+                                    Rent = ৳ <?php echo $rent; ?><br>
+                                    <?php if(!empty($Gas)){echo 'Gas = ৳ '.$Gas;} ?><br>
+                                    <?php if(!empty($Water)){echo 'Water = ৳ '.$Water;} ?><br>
+                                    <?php if(!empty($Electricity)){echo 'Gas = ৳ '.$Electricity;} ?><br>
+                                    <?php if(!empty($Internet)){echo 'Gas = ৳ '.$Internet;} ?><br>
+                                    <?php if(!empty($Others)){echo 'Gas = ৳ '.$Others;} ?><br>
+                                    Total Amount = ৳ <?php echo $rent+$Gas+$Water+$Electricity+$Internet+$Others; ?>
                                 </td>
                             </tr>
                             <?php } ?>
