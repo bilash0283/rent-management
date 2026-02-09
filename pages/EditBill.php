@@ -26,7 +26,20 @@
 
 
     // Advace Save SQL 
-    
+    if(isset($_POST['advance_save'])){
+        $advance_pay_amount = $_POST['advance_amount'];
+
+        $advance_add_sql = mysqli_query($db,"
+            INSERT INTO `advance`
+            (`tenant_id`, `unit_id`, `paid_amount`, `date`)
+            VALUES ('$tent_id', '$unit_id', '$advance_pay_amount', NOW())
+        ");
+
+        if($advance_add_sql){
+            header("Location: admin.php?page=editbill&unit_id=$unit_id");
+            exit();
+        }
+    }
 
 ?>
 
@@ -60,20 +73,20 @@
                             <!-- Unit Name -->
                             <div class="row mb-4 align-items-center">
                                 <div class="col-lg-6">
-                                    <label class="fw-semibold">Advance Amount ৳ = <?= $advance ?></label><br>
+                                    <label class="fw-semibold">Advance Amount = <?= '৳ '.$advance ?></label><br>
                                     <b>Payment History</b><br>
                                     <?php 
                                         $advance_sql = mysqli_query($db,"SELECT * FROM `advance` WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ");
 
                                         while($advance_his = mysqli_fetch_assoc($advance_sql)){
-                                        $add_pay_date = $advance_his['paid_amount'];
+                                        $add_pay_date = $advance_his['date'];
                                         $add_paid_amount = $advance_his['paid_amount'];
                                     ?>
-                                    <label class="fw-semibold"><?= $add_pay_date ?> ৳ = <?= $add_paid_amount ?></label><br>
+                                    <label class="fw-semibold text-success"><?= date("d-F-y h:i A", strtotime($add_pay_date)); ?> -> ৳ = <?= $add_paid_amount ?></label><br>
                                     <?php } ?>
                                 </div>
                                 <div class="col-lg-6">
-                                    <input type="number" name="advace_amount" class="form-control" placeholder="Advance Amount" required>
+                                    <input type="number" name="advance_amount" class="form-control" placeholder="Advance Amount" required>
                                 </div>
                             </div>
 

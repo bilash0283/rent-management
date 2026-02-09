@@ -68,4 +68,5 @@
     <script src="public/assets/js/dashboard-init.min.js"></script>
 </body>
 </html>
+<?php ob_end_flush();  ?>
 <!-- footer  -->
