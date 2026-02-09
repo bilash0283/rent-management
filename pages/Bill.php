@@ -1,4 +1,8 @@
+<?php 
+    $query  = "SELECT * FROM unit wHERE status = 'Rented' ORDER BY id DESC";
+    $result = mysqli_query($db, $query);
 
+?>
 
 <div class="nxl-content">
 
@@ -25,14 +29,46 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Tenant</th>
-                                <th>Payment Method</th>
-                                <th>Status</th>
+                                <th>Advance</th>
                                 <th>Amount</th>
+                                <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <?php 
+                                while($row = mysqli_fetch_assoc($result)){
+                                    $unit_id = $row['id'];
+                                    $advance = $row['advance'];
+                                    $rent = $row['rent'];
+                                    $Gas = $row['Gas'];
+                                    $Water = $row['Water'];
+                                    $Electricity = $row['Electricity'];
+                                    $Internet = $row['Internet'];
+                                    $Maintenance = $row['Maintenance'];
+                                    $Others = $row['Others'];
+                                    $building_name = $row['building_name'];
+                                
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php 
+                                        $sql_tenant = mysqli_query($db,"SELECT * FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' ");
+                                        while($tent_row = mysqli_fetch_assoc($sql_tenant)){
+                                            $name = $tent_row['name'];
 
+                                            echo $name;
+                                        }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php echo $advance; ?>
+                                </td>
+                                <td>
+                                    Rent : ৳ <?php echo $rent; ?>
+                                </td>
+                            </tr>
+                            <?php } ?>
                         </tbody>                      
                     </table>
                 </div>
