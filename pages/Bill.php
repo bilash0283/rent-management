@@ -4,6 +4,29 @@ $result = mysqli_query($db, $query);
 
 ?>
 
+<style>
+/* FORCE ENABLE PAGE */
+body {
+    pointer-events: auto !important;
+    overflow: auto !important;
+}
+
+/* REMOVE STUCK OVERLAY */
+.modal-backdrop,
+.nxl-overlay,
+.overlay,
+.fullscreen-overlay {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+/* FIX MODAL LAYER */
+.modal {
+    pointer-events: auto !important;
+    z-index: 99999 !important;
+}
+</style>
+
 <div class="nxl-content">
 
     <!-- Page Header -->
@@ -68,10 +91,11 @@ $result = mysqli_query($db, $query);
                                         echo 'Paid    = ৳ ' . $advance . '<br>';
                                         echo 'Due     = ৳ 00';
                                         ?>
-                                        <a href="" class="btn btn-sm btn-info mt-1" data-toggle="modal"
+                                        <!-- <a href="" class="btn btn-sm btn-info mt-1" data-toggle="modal"
                                             data-target="#ielts_show<?php echo $tent_id ?>">
                                             Details
-                                        </a>
+                                        </a> -->
+                                       
                                     </td>
 
                                     <td>
@@ -101,7 +125,7 @@ $result = mysqli_query($db, $query);
                                         <a href="" class="btn btn-sm btn-light-info me-1" title="Invoice">
                                             <i class="feather-download"></i>
                                         </a>
-                                        <a href=">" class="btn btn-sm btn-light-primary" title="Edit">
+                                        <a href="" class="btn btn-sm btn-light-primary" title="Edit">
                                             <i class="feather-edit"></i>
                                         </a>
                                     </td>
@@ -113,5 +137,4 @@ $result = mysqli_query($db, $query);
             </div>
         </div>
     </div>
-
 </div>
