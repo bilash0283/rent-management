@@ -49,6 +49,8 @@ $result = mysqli_query($db, $query);
                                 $Others = $row['Others'];
                                 $building_name = $row['building_name'];
 
+                                $total_bill = $rent + $Gas + $Water + $Electricity + $Internet + $Others;
+
                                 ?>
                                 <tr>
                                     <td>
@@ -87,23 +89,33 @@ $result = mysqli_query($db, $query);
                                     </td>
 
                                     <td>
-                                        Rent = ৳ <?php echo $rent; ?><br>
-                                        <?php if (!empty($Gas)) {
-                                            echo 'Gas = ৳ ' . $Gas;
-                                        } ?><br>
-                                        <?php if (!empty($Water)) {
-                                            echo 'Water = ৳ ' . $Water;
-                                        } ?><br>
-                                        <?php if (!empty($Electricity)) {
-                                            echo 'Gas = ৳ ' . $Electricity;
-                                        } ?><br>
-                                        <?php if (!empty($Internet)) {
-                                            echo 'Gas = ৳ ' . $Internet;
-                                        } ?><br>
-                                        <?php if (!empty($Others)) {
-                                            echo 'Gas = ৳ ' . $Others;
-                                        } ?><br>
-                                        Total Amount = ৳ <?php echo $rent + $Gas + $Water + $Electricity + $Internet + $Others; ?>
+                                        <?php
+                                            $pay_info = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
+                                            mysqli_data_seek($pay_info, 0); // rewind result to loop again
+                                            while ($pay_info_sh = mysqli_fetch_assoc($pay_info)){
+                                                $billing_month_db = $pay_info_sh['billing_month'];
+                                                $paid_amount_db = $pay_info_sh['paid_amount'];
+                                                $due_amount_db = $pay_info_sh['due_amount'];
+                                                $created_at = $pay_info_sh['created_at'];
+                                            }
+                                        ?>
+
+                                        <span class="fw-semibold text-primary">
+                                            Total = ৳ <?= number_format($total_bill, 2) ?>
+                                        </span><br>
+
+                                        <?php if (!empty($paid_amount_db)) { ?>
+                                            <span class="fw-semibold text-success">
+                                                Paid = ৳ <?= number_format($paid_amount_db, 2) ?>
+                                            </span><br>
+                                        <?php } ?>
+
+                                        <?php if (!empty($due_amount_db)) { ?>
+                                            <span class="fw-semibold text-danger">
+                                                Due = ৳ <?= number_format($due_amount_db, 2) ?>
+                                            </span><br>
+                                        <?php } ?>
+
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-success">Paid</button>

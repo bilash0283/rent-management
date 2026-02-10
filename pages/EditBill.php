@@ -2,7 +2,6 @@
 if (isset($_GET['unit_id'])) {
     $unit_id = $_GET['unit_id'];
 }
-$this_month = date("Y-m");
 
 $query = "SELECT * FROM unit wHERE id = '$unit_id'";
 $result = mysqli_query($db, $query);
@@ -188,24 +187,37 @@ if(isset($_POST['save_bill'])){
                                             ?>
                                         </div>
                                         <?php 
-                                        
+                                            $pay_info = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
+                                            while($pay_info_row = mysqli_fetch_assoc($pay_info)){
+                                                $billing_month_db = $pay_info_row['billing_month'];
+                                                $paid_amount_db = $pay_info_row['paid_amount'];
+                                                $due_amount_db = $pay_info_row['due_amount'];
+                                            }
                                         ?>
                                         <div class="col-md-6">
                                             <div class="mb-2">
                                                 <span class="text-muted">Bill Month :</span>
-                                                <span >Febuery 2026</span>
+                                                <span>
+                                                    <?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?>
+                                                </span>
                                             </div>
 
                                             <div class="mb-2">
                                                 <span class="text-muted">Total Paid :</span>
-                                                <span class="fw-semibold text-success">৳
-                                                    <?= number_format($total_paid, 2) ?></span>
+                                                <span class="fw-semibold text-success">
+                                                    <?php
+                                                    if (!empty($paid_amount_db)) {
+                                                        echo '৳ ' . number_format($paid_amount_db, 2);
+                                                    }
+                                                    ?>
+                                                </span>
                                             </div>
 
                                             <div class="mb-3">
                                                 <span class="text-muted">Due Amount :</span>
-                                                <span class="fw-bold text-danger">৳
-                                                    <?= number_format($payable, 2) ?></span>
+                                                <span class="fw-bold text-danger">
+                                                    <?= !empty($due_amount_db) ? '৳ ' . number_format($due_amount_db, 2) : '' ?>
+                                                </span>
                                             </div>
                                         </div>
 
@@ -213,16 +225,24 @@ if(isset($_POST['save_bill'])){
                                     <div class="mt-2">
                                         <h6 class="fw-bold mb-2">Payment History</h6>
                                         <?php
-                                        mysqli_data_seek($advance_sql, 0); // rewind result to loop again
-                                        while ($advance_his = mysqli_fetch_assoc($advance_sql)):
-                                            $add_pay_date = $advance_his['date'];
-                                            $add_paid_amount = $advance_his['paid_amount'];
+                                        mysqli_data_seek($pay_info, 0); // rewind result to loop again
+                                        while ($pay_info_sh = mysqli_fetch_assoc($pay_info)):
+                                                $billing_month_db = $pay_info_sh['billing_month'];
+                                                $total_amount_db = $pay_info_sh['total_amount'];
+                                                $paid_amount_db = $pay_info_sh['paid_amount'];
+                                                $due_amount_db = $pay_info_sh['due_amount'];
+                                                $created_at = $pay_info_sh['created_at'];
                                             ?>
                                             <div class="d-flex justify-content-between align-items-center mb-1">
                                                 <small
-                                                    class="text-muted"><?= date("d-M-Y h:i A", strtotime($add_pay_date)) ?></small>
-                                                <span class="text-success fw-semibold">৳
-                                                    <?= number_format($add_paid_amount, 2) ?></span>
+                                                    class="text-muted"><?= date("d-M-Y h:i A", strtotime($created_at)) ?>
+                                                </small>
+                                                <span><?= date("M Y", strtotime($billing_month_db)) ?></span>
+                                                <span class="text-success fw-semibold">৳ <?=$total_amount_db.' - ৳ '.$paid_amount_db ?>
+                                                </span>
+                                                 <span class="text-danger fw-semibold">৳
+                                                    <?= number_format($due_amount_db, 2) ?>
+                                                </span>
                                             </div>
                                         <?php endwhile; ?>
                                     </div>
