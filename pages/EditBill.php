@@ -2,6 +2,7 @@
 if (isset($_GET['unit_id'])) {
     $unit_id = $_GET['unit_id'];
 }
+$this_month = date("Y-m");
 
 $query = "SELECT * FROM unit wHERE id = '$unit_id'";
 $result = mysqli_query($db, $query);
@@ -38,6 +39,23 @@ if (isset($_POST['advance_save'])) {
         header("Location: admin.php?page=editbill&unit_id=$unit_id");
         exit();
     }
+}
+
+// save_bill
+
+if(isset($_POST['save_bill'])){
+    $billing_month = $_POST['billing_month'];
+    $total_amount = $_POST['total_amount'];
+    $paid_amount = $_POST['paid_amount'];
+    $due_amount = $total_amount-$paid_amount;
+
+    $bill_sql = mysqli_query($db,"INSERT INTO `invoices`(`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `created_at`) VALUES ('$tent_id','$unit_id','$billing_month','$total_amount','$paid_amount','$due_amount',now())");
+
+     if ($bill_sql) {
+        header("Location: admin.php?page=editbill&unit_id=$unit_id");
+        exit();
+    }
+    
 }
 
 ?>
@@ -144,37 +162,84 @@ if (isset($_POST['advance_save'])) {
                             <!-- Unit Name -->
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <label class="fw-semibold">Bills & Payment Summary</label><br>
-                                    Rent = ৳ <?php echo $rent; ?><br>
-                                    <?php if (!empty($Gas)) {
-                                        echo 'Gas = ৳ ' . $Gas;
-                                    } ?><br>
-                                    <?php if (!empty($Water)) {
-                                        echo 'Water = ৳ ' . $Water;
-                                    } ?><br>
-                                    <?php if (!empty($Electricity)) {
-                                        echo 'Gas = ৳ ' . $Electricity;
-                                    } ?><br>
-                                    <?php if (!empty($Internet)) {
-                                        echo 'Gas = ৳ ' . $Internet;
-                                    } ?><br>
-                                    <?php if (!empty($Others)) {
-                                        echo 'Gas = ৳ ' . $Others;
-                                    } ?><br>
-                                    Total Bill = ৳ <?php echo $rent + $Gas + $Water + $Electricity + $Internet + $Others; ?>
+                                    <h6 class="fw-bold mb-2">Bills & Payment Summary</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            Rent = ৳ <?php echo $rent; ?><br>
+                                            <?php if (!empty($Gas)) {
+                                                echo 'Gas = ৳ ' . $Gas;
+                                            } ?><br>
+                                            <?php if (!empty($Water)) {
+                                                echo 'Water = ৳ ' . $Water;
+                                            } ?><br>
+                                            <?php if (!empty($Electricity)) {
+                                                echo 'Gas = ৳ ' . $Electricity;
+                                            } ?><br>
+                                            <?php if (!empty($Internet)) {
+                                                echo 'Gas = ৳ ' . $Internet;
+                                            } ?><br>
+                                            <?php if (!empty($Others)) {
+                                                echo 'Gas = ৳ ' . $Others;
+                                            } ?><br>
+                                            
+                                            Total Bill = ৳ <?php
+                                            $total_bill = $rent + $Gas + $Water + $Electricity + $Internet + $Others;
+                                            echo  $total_bill;
+                                            ?>
+                                        </div>
+                                        <?php 
+                                        
+                                        ?>
+                                        <div class="col-md-6">
+                                            <div class="mb-2">
+                                                <span class="text-muted">Bill Month :</span>
+                                                <span >Febuery 2026</span>
+                                            </div>
 
+                                            <div class="mb-2">
+                                                <span class="text-muted">Total Paid :</span>
+                                                <span class="fw-semibold text-success">৳
+                                                    <?= number_format($total_paid, 2) ?></span>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <span class="text-muted">Due Amount :</span>
+                                                <span class="fw-bold text-danger">৳
+                                                    <?= number_format($payable, 2) ?></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="mt-2">
+                                        <h6 class="fw-bold mb-2">Payment History</h6>
+                                        <?php
+                                        mysqli_data_seek($advance_sql, 0); // rewind result to loop again
+                                        while ($advance_his = mysqli_fetch_assoc($advance_sql)):
+                                            $add_pay_date = $advance_his['date'];
+                                            $add_paid_amount = $advance_his['paid_amount'];
+                                            ?>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <small
+                                                    class="text-muted"><?= date("d-M-Y h:i A", strtotime($add_pay_date)) ?></small>
+                                                <span class="text-success fw-semibold">৳
+                                                    <?= number_format($add_paid_amount, 2) ?></span>
+                                            </div>
+                                        <?php endwhile; ?>
+                                    </div>
                                 </div>
+
                                 <div class="col-lg-6">
-                                    <?php 
-                                        $this_month = date("F Y", strtotime("2026-02-01"));
-                                    ?>
                                     <div>
-                                        <label class="fw-semibold">Advance Amount</label> 
-                                        <input type="text" name="unit_name" class="form-control" required>
+                                        <label class="fw-semibold">Total Bill</label> 
+                                        <input type="number" name="total_amount" value="<?= $total_bill ?>" class="form-control" required>
                                     </div>
                                     <div>
-                                        <label class="fw-semibold">Advance Amount</label>
-                                        <input type="text" name="unit_name" class="form-control" required>
+                                        <label class="fw-semibold">Pay Amount</label> 
+                                        <input type="text" name="paid_amount" class="form-control" required>
+                                    </div>
+                                    <div>
+                                        <label class="fw-semibold">Bill Month</label>
+                                        <input type="month" name="billing_month"  value="<?php echo $this_month; ?>"  class="form-control" required>
                                     </div>
                                     <button type="submit" name="save_bill" class="btn btn-success mt-3">
                                         Save
