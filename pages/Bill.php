@@ -4,29 +4,6 @@ $result = mysqli_query($db, $query);
 
 ?>
 
-<style>
-/* FORCE ENABLE PAGE */
-body {
-    pointer-events: auto !important;
-    overflow: auto !important;
-}
-
-/* REMOVE STUCK OVERLAY */
-.modal-backdrop,
-.nxl-overlay,
-.overlay,
-.fullscreen-overlay {
-    display: none !important;
-    pointer-events: none !important;
-}
-
-/* FIX MODAL LAYER */
-.modal {
-    pointer-events: auto !important;
-    z-index: 99999 !important;
-}
-</style>
-
 <div class="nxl-content">
 
     <!-- Page Header -->
@@ -86,16 +63,27 @@ body {
                                         ?>
                                     </td>
                                     <td>
-                                        <?php
-                                        echo 'Advance = ৳ ' . $advance . '<br>';
-                                        echo 'Paid    = ৳ ' . $advance . '<br>';
-                                        echo 'Due     = ৳ 00';
+                                       <?php
+                                            // Total Advance Paid
+                                            $total_paid = 0;
+
+                                            $advance_sql = mysqli_query($db, "SELECT * FROM `advance` WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
+                                            while ($advance_his = mysqli_fetch_assoc($advance_sql)) {
+                                                $total_paid += $advance_his['paid_amount'];
+                                            }
+
+                                            // Remaining Payable Amount
+                                            $payable = max($advance - $total_paid, 0); // avoid negative
+
+                                            // Show Advance and Paid
+                                            echo '<span style="color: #0d6efd; font-weight: 600;">Advance = ৳ ' . $advance . '</span><br>';  // Blue
+                                            echo '<span style="color: #198754; font-weight: 600;">Paid    = ৳ ' . $total_paid . '</span><br>'; // Green
+
+                                            // Show Due only if payable > 0
+                                            if ($payable > 0) {
+                                                echo '<span style="color: #dc3545; font-weight: 600;">Due     = ৳ ' . $payable . '</span><br>'; // Red
+                                            }
                                         ?>
-                                        <!-- <a href="" class="btn btn-sm btn-info mt-1" data-toggle="modal"
-                                            data-target="#ielts_show<?php echo $tent_id ?>">
-                                            Details
-                                        </a> -->
-                                       
                                     </td>
 
                                     <td>

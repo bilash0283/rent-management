@@ -24,6 +24,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete
     }
 
     if (mysqli_query($db, "DELETE FROM tenants WHERE id=$id")) {
+        $delete_advace = mysqli_query($db,"DELETE FROM `advance` WHERE tenant_id = $id ");
         $message = '
         <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0">
             <strong>Success!</strong> Tenant Delete Successfully
