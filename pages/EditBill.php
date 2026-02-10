@@ -144,14 +144,39 @@ if (isset($_POST['advance_save'])) {
                             <!-- Unit Name -->
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <label class="fw-semibold">Bills & Payment Summary</label>
+                                    <label class="fw-semibold">Bills & Payment Summary</label><br>
+                                    Rent = ৳ <?php echo $rent; ?><br>
+                                    <?php if (!empty($Gas)) {
+                                        echo 'Gas = ৳ ' . $Gas;
+                                    } ?><br>
+                                    <?php if (!empty($Water)) {
+                                        echo 'Water = ৳ ' . $Water;
+                                    } ?><br>
+                                    <?php if (!empty($Electricity)) {
+                                        echo 'Gas = ৳ ' . $Electricity;
+                                    } ?><br>
+                                    <?php if (!empty($Internet)) {
+                                        echo 'Gas = ৳ ' . $Internet;
+                                    } ?><br>
+                                    <?php if (!empty($Others)) {
+                                        echo 'Gas = ৳ ' . $Others;
+                                    } ?><br>
+                                    Total Bill = ৳ <?php echo $rent + $Gas + $Water + $Electricity + $Internet + $Others; ?>
+
                                 </div>
                                 <div class="col-lg-6">
+                                    <?php 
+                                        $this_month = date("F Y", strtotime("2026-02-01"));
+                                    ?>
+                                    <div>
+                                        <label class="fw-semibold">Advance Amount</label> 
+                                        <input type="text" name="unit_name" class="form-control" required>
+                                    </div>
                                     <div>
                                         <label class="fw-semibold">Advance Amount</label>
                                         <input type="text" name="unit_name" class="form-control" required>
                                     </div>
-                                    <button type="submit" name="btn" class="btn btn-success mt-3">
+                                    <button type="submit" name="save_bill" class="btn btn-success mt-3">
                                         Save
                                     </button>
                                 </div>

@@ -104,7 +104,6 @@ $result = mysqli_query($db, $query);
                                             echo 'Gas = ৳ ' . $Others;
                                         } ?><br>
                                         Total Amount = ৳ <?php echo $rent + $Gas + $Water + $Electricity + $Internet + $Others; ?>
-                                        <a href="" class="btn btn-sm btn-info">Details</a>
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-success">Paid</button>
