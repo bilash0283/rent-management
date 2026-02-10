@@ -24,7 +24,6 @@ while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
     $tent_id = $tent_row['id'];
 }
 
-
 // Advace Save SQL 
 if (isset($_POST['advance_save'])) {
     $advance_pay_amount = $_POST['advance_amount'];
@@ -40,9 +39,6 @@ if (isset($_POST['advance_save'])) {
         exit();
     }
 }
-
-
-
 
 ?>
 
@@ -68,10 +64,10 @@ if (isset($_POST['advance_save'])) {
             <div class="col-lg-12">
                 <div class="card stretch stretch-full">
                     <form method="POST" enctype="multipart/form-data">
-                        <div class="card-body general-info">
+                        <div class="card-body px-3 general-info">
 
                             <!-- Unit Name -->
-                            <div class="row mb-4">
+                            <div class="row">
                                 <div class="col-lg-6">
                                     <?php
                                     // Total Advance Paid
@@ -143,23 +139,19 @@ if (isset($_POST['advance_save'])) {
                     <hr style="width: 75%;" class="mx-auto">
 
                     <form method="POST" enctype="multipart/form-data">
-                        <div class="card-body general-info">
+                        <div class="card-body px-3 general-info">
 
                             <!-- Unit Name -->
-                            <div class="row mb-4 align-items-center">
-                                <div class="col-lg-4">
-                                    <label class="fw-semibold">Advance Amount</label>
-                                </div>
-                                <div class="col-lg-8">
-                                    <input type="text" name="unit_name" class="form-control" required>
-                                </div>
-                            </div>
-
-                            <!-- Submit -->
                             <div class="row">
-                                <div class="col-lg-4"></div>
-                                <div class="col-lg-8">
-                                    <button type="submit" name="btn" class="btn btn-success">
+                                <div class="col-lg-6">
+                                    <label class="fw-semibold">Bills & Payment Summary</label>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div>
+                                        <label class="fw-semibold">Advance Amount</label>
+                                        <input type="text" name="unit_name" class="form-control" required>
+                                    </div>
+                                    <button type="submit" name="btn" class="btn btn-success mt-3">
                                         Save
                                     </button>
                                 </div>
