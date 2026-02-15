@@ -47,33 +47,23 @@ if(isset($_POST['save_bill'])){
     $total_amount  = $_POST['total_amount'];
     $paid_amount   = $_POST['paid_amount'];
     $status        = $_POST['status'];
+    $note          = $_POST['note'];
     $due_amount    = $total_amount - $paid_amount;
 
-    $month_sql = mysqli_query($db,"SELECT billing_month FROM invoices WHERE billing_month = '$billing_month' ");
-    // while($ex_month_row = mysqli_fetch_assoc($month_sql)){
-    //     $ex_month = $ex_month_row['billing_month'];
-
-    //     if($ex_month == $billing_month){
-    //         echo "Billing Month - ".$billing_month;
-    //         exit();
-    //     }else{
-    //         echo "New Month - ".$billing_month;
-    //         exit();
-    //     }
-    // }
-
-    if(mysqli_num_rows($month_sql) > 0){
-        echo "new month";
-        exit();
-    }else{
-        echo "month already exist";
-        exit();
+    $month_sql = mysqli_query($db,"SELECT id,billing_month FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = = '$tent_id' LIMIT 1 ");
+    while($ex_month_row = mysqli_fetch_assoc($month_sql)){
+        $id_db = $ex_month_row['id'];
+        $tenant_id_db = $ex_month_row['tenant_id'];
     }
-
-    $bill_sql = mysqli_query($db,"INSERT INTO `invoices`
-    (`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `status`, `created_at`) 
-    VALUES 
-    ('$tent_id','$unit_id','$billing_month','$total_amount','$paid_amount','$due_amount','$status',now())");
+    
+    if(mysqli_num_rows($month_sql) > 0){
+        $bill_sql = mysqli_query($db,"UPDATE invoices SET paid_amount= '$paid_amount', status='$status',note ='$note' WHERE id = '$id_db' AND tenant_id = '$tenant_id_db' ");
+    }else{
+        $bill_sql = mysqli_query($db,"INSERT INTO `invoices`
+        (`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `status`, `created_at`) 
+        VALUES 
+        ('$tent_id','$unit_id','$billing_month','$total_amount','$paid_amount','$due_amount','$status',now())");
+    }
 
     if ($bill_sql) {
         header("Location: admin.php?page=editbill&unit_id=$unit_id");
@@ -300,6 +290,10 @@ if(isset($_POST['save_bill'])){
                                             <option value="Unpaid" <?php if($status == 'Unpaid'){ echo 'selected'; } ?>>Unpaid</option>
                                             <option value="Partial" <?php if($status == 'Partial'){ echo 'selected'; } ?>>Partial</option>
                                         </select>
+                                    </div>
+                                    <div>
+                                        <label class="fw-semibold">Note</label> 
+                                        <input type="text" name="note" class="form-control" >
                                     </div>
                                     <button type="submit" name="save_bill" class="btn btn-success mt-3">
                                         Save
