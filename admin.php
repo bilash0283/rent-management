@@ -48,6 +48,10 @@
             include 'pages/Agreement.php';
             break;
 
+        case 'invoice':
+            include 'pages/invoice.php';
+            break;
+
         default:
             include 'pages/dashboard.php';
             break;

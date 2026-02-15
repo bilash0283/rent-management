@@ -168,8 +168,8 @@ if(isset($_POST['save_bill'])){
                                     <input type="number" name="advance_amount" class="form-control mb-3"
                                         placeholder="Advance Amount" required>
 
-                                    <button type="submit" name="advance_save" class="btn btn-success">
-                                        Save
+                                    <button type="submit" name="advance_save" class="btn btn-success btn-sm">
+                                        Save Advance
                                     </button>
                                 </div>
                             </div>
@@ -322,8 +322,8 @@ if(isset($_POST['save_bill'])){
                                         <label class="fw-semibold">Note</label> 
                                         <input type="text" name="note" class="form-control" >
                                     </div>
-                                    <button type="submit" name="save_bill" class="btn btn-success mt-3">
-                                        Save
+                                    <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3">
+                                        Save Payment
                                     </button>
                                 </div>
                             </div>
@@ -381,12 +381,12 @@ if(isset($_POST['save_bill'])){
                                                 </td>
                                                     <td class="text-center pe-4">
                                                     <div class="btn-group">
-                                                        <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                        <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
                                                             <i class="bi bi-pencil-square"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-outline-success" title="view">
+                                                        </button> -->
+                                                        <a href="admin.php?page=invoice&id=<?php echo $tent_id; ?>" class="btn btn-sm btn-outline-success" title="view">
                                                             <i class="bi bi-eye"></i>
-                                                        </button>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
