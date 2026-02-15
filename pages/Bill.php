@@ -120,10 +120,9 @@ $result = mysqli_query($db, $query);
 
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-<?php if($status == 'Paid'){ echo 'success'; } else { echo 'danger'; } ?>">
+                                        <button class="btn btn-sm btn-<?php if($status == 'Paid'){ echo 'success'; }else if($status == 'Unpaid'){echo 'danger';} else if($status == 'Partial') { echo 'warning'; } ?>">
                                             <?= htmlspecialchars($status); ?>
                                         </button>
-
                                     </td>
                                     <td>
                                         <a href="" class="btn btn-sm btn-light-info me-1" title="Invoice">
