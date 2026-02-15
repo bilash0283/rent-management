@@ -116,25 +116,27 @@ $result = mysqli_query($db, $query);
                                         </span>
                                     </td>
 
-                                    <td class="text-end flex justify-content-between align-items-center">
-                                        <a href="admin.php?page=Agreement&id=<?= $row['id'] ?>"
-                                        class="btn btn-sm btn-light-info me-1"
-                                        title="View">
-                                            <i class="feather-download"></i>
-                                        </a>
+                                    <td>
+                                        <div class="btn-group ">
+                                            <a href="admin.php?page=Agreement&id=<?= $row['id'] ?>"
+                                            class="btn btn-sm btn-light-info "
+                                            title="View">
+                                                <i class="feather-download"></i>
+                                            </a>
 
-                                        <a href="admin.php?page=CreateTenant&edit_id=<?= $row['id'] ?>"
-                                        class="btn btn-sm btn-light-primary me-1"
-                                        title="Edit">
-                                            <i class="feather-edit"></i>
-                                        </a>
+                                            <a href="admin.php?page=CreateTenant&edit_id=<?= $row['id'] ?>"
+                                            class="btn btn-sm btn-light-primary"
+                                            title="Edit">
+                                                <i class="feather-edit"></i>
+                                            </a>
 
-                                        <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>"
-                                        class="btn btn-sm btn-light-danger"
-                                        onclick="return confirm('Are you sure?');"
-                                        title="Delete">
-                                            <i class="feather-trash-2"></i>
-                                        </a>
+                                            <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>"
+                                            class="btn btn-sm btn-light-danger"
+                                            onclick="return confirm('Are you sure?');"
+                                            title="Delete">
+                                                <i class="feather-trash-2"></i>
+                                            </a>
+                                        </div>
                                     </td>
 
                                 </tr>

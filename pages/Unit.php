@@ -151,17 +151,19 @@
                                         </span>
                                     </td>
 
-                                    <td class="text-end">
-                                        <a href="admin.php?page=CreateUnit&edit_id=<?= $row['id'] ?>"
-                                           class="btn btn-sm btn-light-primary">
-                                            <i class="feather-edit"></i>
-                                        </a>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="admin.php?page=CreateUnit&edit_id=<?= $row['id'] ?>"
+                                            class="btn btn-sm btn-light-primary">
+                                                <i class="feather-edit"></i>
+                                            </a>
 
-                                        <a href="admin.php?page=unit&id=<?php echo $building_id; ?>&action=delete&delete_id=<?= $row['id']; ?>"
-                                           class="btn btn-sm btn-light-danger"
-                                           onclick="return confirm('Are you sure?');">
-                                            <i class="feather-trash-2"></i>
-                                        </a>
+                                            <a href="admin.php?page=unit&id=<?php echo $building_id; ?>&action=delete&delete_id=<?= $row['id']; ?>"
+                                            class="btn btn-sm btn-light-danger"
+                                            onclick="return confirm('Are you sure?');">
+                                                <i class="feather-trash-2"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
 

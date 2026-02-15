@@ -89,8 +89,16 @@ $result = mysqli_query($db, $query);
                                     </td>
 
                                     <td>
+                                        <span class="fw-semibold text-primary">
+                                            Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
+                                        </span><br>
                                         <?php
-                                            $pay_info = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
+                                            $pay_info = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ");
+                                            if(!mysqli_num_rows($pay_info) > 0){
+                                                echo '<span class="fw-bold text-danger">';
+                                                echo 'Due = ৳ ' . number_format($total_bill, 2);
+                                                echo '</span>';
+                                            }else{
                                             mysqli_data_seek($pay_info, 0); // rewind result to loop again
                                             while ($pay_info_sh = mysqli_fetch_assoc($pay_info)){
                                                 $billing_month_db = $pay_info_sh['billing_month'];
@@ -98,13 +106,7 @@ $result = mysqli_query($db, $query);
                                                 $due_amount_db = $pay_info_sh['due_amount'];
                                                 $created_at = $pay_info_sh['created_at'];
                                                 $status = $pay_info_sh['status'];
-                                            }
-                                            
                                         ?>
-
-                                        <span class="fw-semibold text-primary">
-                                            Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
-                                        </span><br>
 
                                         <?php if (!empty($paid_amount_db)) { ?>
                                             <span class="fw-semibold text-success">
@@ -116,21 +118,32 @@ $result = mysqli_query($db, $query);
                                             <span class="fw-semibold text-danger">
                                                 Due = ৳ <?= number_format($due_amount_db, 2) ?? '' ?>
                                             </span><br>
-                                        <?php } ?>
+                                        <?php } } }?>
 
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-<?php if($status == 'Paid'){ echo 'success'; }else if($status == 'Unpaid'){echo 'danger';} else if($status == 'Partial') { echo 'warning'; }else{echo 'primary';} ?>">
-                                            <?= htmlspecialchars($status ?? 'Pending'); ?>
+                                        <?php 
+                                        if(!mysqli_num_rows($pay_info) > 0){
+                                            echo "<button class='btn btn-sm btn-primary'>Pending</button>";
+                                        }else{
+                                        ?>
+                                        <button class="btn btn-sm btn-<?php if($status == 'Paid'){ echo 'success'; }else if($status == 'Unpaid'){echo 'danger';} else if($status == 'Partial') { echo 'warning'; } ?>">
+                                            <?= htmlspecialchars($status); ?>
                                         </button>
+                                        <?php } ?>
                                     </td>
+                                    
                                     <td>
-                                        <a href="" class="btn btn-sm btn-light-info me-1" title="Invoice">
-                                            <i class="feather-download"></i>
-                                        </a>
-                                        <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>" class="btn btn-sm btn-light-primary" title="Edit">
-                                            <i class="feather-edit"></i>
-                                        </a>
+                                        
+                                        <div class="btn-group text-end">
+                                            <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button> -->
+                                            <!-- <button class="btn btn-sm btn-outline-success" title="view">
+                                                <i class="bi bi-eye"></i>
+                                            </button> -->
+                                            <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>" class="text-end btn btn-sm btn-outline-success" title="Add Payment">Add Payment</a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php } ?>
