@@ -274,25 +274,40 @@ if(isset($_POST['save_bill'])){
 
                                 <div class="col-lg-6">
                                     <div>
-                                        <label class="fw-semibold">Total Bill</label> 
-                                        <input type="number" name="total_amount" value="<?= $total_bill ?>" class="form-control" required>
-                                    </div>
-                                    <div>
-                                        <label class="fw-semibold">Pay Amount</label> 
+                                        <label class="fw-semibold">Amount *</label> 
                                         <input type="text" name="paid_amount" class="form-control" required>
                                     </div>
-                                    <div>
-                                        <label class="fw-semibold">Bill Month</label>
-                                        <input type="month" name="billing_month"  value="<?php echo $this_month; ?>"  class="form-control" required>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold">For Month *<small class="text-warning">(Invoice)</small></label>
+                                            <input type="month" name="billing_month"  value="<?php echo $this_month; ?>"  class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold" for="status">Status *</label>
+                                            <select name="status" id="status" class="form-control form-select" required>
+                                                <option selected disabled>Select One</option>
+                                                <option value="Paid" <?php if($status == 'Paid'){ echo 'selected'; } ?>>Paid</option>
+                                                <option value="Unpaid" <?php if($status == 'Unpaid'){ echo 'selected'; } ?>>Unpaid</option>
+                                                <option value="Partial" <?php if($status == 'Partial'){ echo 'selected'; } ?>>Partial</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label class="fw-semibold" for="status">Status</label>
-                                        <select name="status" id="status" class="form-control form-select" required>
-                                            <option selected disabled>Select One</option>
-                                            <option value="Paid" <?php if($status == 'Paid'){ echo 'selected'; } ?>>Paid</option>
-                                            <option value="Unpaid" <?php if($status == 'Unpaid'){ echo 'selected'; } ?>>Unpaid</option>
-                                            <option value="Partial" <?php if($status == 'Partial'){ echo 'selected'; } ?>>Partial</option>
-                                        </select>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="payment_date">Payment date *</label>
+                                            <input type="date" class="form-control" name="payment_date">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="payment_method">Payment Method *</label>
+                                            <select name="payment_method" id="" class="form-control form-select">
+                                                <option value="Cash">Cash</option>
+                                                <option value="Bkash">Bkash</option>
+                                                <option value="Nagad">Nagad</option>
+                                                <option value="Back Transfer">Back Transfer</option>
+                                                <option value="Card">Card</option>
+                                                <option value="Manager">Manager</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="fw-semibold">Note</label> 
@@ -357,12 +372,12 @@ if(isset($_POST['save_bill'])){
                                                 </td>
                                                     <td class="text-center pe-4">
                                                     <div class="btn-group">
-                                                    <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-success" title="view">
-                                                        <i class="bi bi-eye"></i>
-                                                    </button>
+                                                        <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-success" title="view">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -376,77 +391,30 @@ if(isset($_POST['save_bill'])){
                     <!-- payment History  -->
                     <div class="card mx-3 px-3">
                         <div class="mt-2">
-                            <h6 class="fw-bold my-2">Payment history & Math</h6>
+                            <h6 class="fw-bold my-2">Payment history </h6>
                             <div class="table-responsive mt-3">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                        <th scope="col" class="ps-4">Date</th>
-                                        <th scope="col" class="text-end">Total</th>
-                                        <th scope="col" class="text-end">Paid</th>
-                                        <th scope="col" class="text-end">Due</th>
-                                        <th scope="col" class="text-center">Status</th>
-                                        <th scope="col" class="text-center pe-4">Action</th>
+                                            <th scope="col" class="ps-4">Date</th>
+                                            <th scope="col" class="text-end">Bill Month</th>
+                                            <th scope="col" class="text-end">Payment Method</th>
+                                            <th scope="col" class="text-end">Bill Summary</th>
+                                            <th scope="col" class="text-center">Note</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                        <td class="ps-4 fw-medium">15 Feb 2026</td>
-                                        <td class="text-end fw-semibold">৳ 12,500</td>
-                                        <td class="text-end text-success fw-semibold">৳ 12,500</td>
-                                        <td class="text-end text-danger fw-semibold">৳ 0</td>
-                                        <td class="text-center">
-                                            <span class="badge bg-success px-3 py-2">Paid</span>
-                                        </td>
-                                        <td class="text-center pe-4">
-                                            <div class="btn-group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Delete">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                            </div>
-                                        </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="ps-4 fw-medium">15 Jan 2026</td>
-                                            <td class="text-end fw-semibold">৳ 12,500</td>
-                                            <td class="text-end text-success fw-semibold">৳ 8,000</td>
-                                            <td class="text-end text-warning fw-semibold">৳ 4,500</td>
-                                            <td class="text-center">
-                                                <span class="badge bg-warning px-3 py-2 text-dark">Partial</span>
+                                            <td class="ps-4 fw-medium">15 Feb 2026</td>
+                                            <td class="text-end fw-semibold f-w-bold text-uppercase text-secendary">15 Feb 2026</td>
+                                            <td class="text-end text-success fw-semibold">Cash</td>
+                                            <td class="text-end text-danger fw-semibold">
+                                               <span class="text-primary">৳ 1200</span> <br>
+                                               <span class="text-success">৳ 1200</span> <br>
+                                               <span class="text-danger">৳ 1200</span>
                                             </td>
                                             <td class="text-center pe-4">
-                                                <div class="btn-group">
-                                                <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" title="Delete">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                                </div>
-                                            </td>
-                                            </tr>
-
-                                            <tr>
-                                            <td class="ps-4 fw-medium">15 Dec 2025</td>
-                                            <td class="text-end fw-semibold">৳ 12,500</td>
-                                            <td class="text-end text-danger fw-semibold">৳ 0</td>
-                                            <td class="text-end text-danger fw-semibold">৳ 12,500</td>
-                                            <td class="text-center">
-                                                <span class="badge bg-danger px-3 py-2">Unpaid</span>
-                                            </td>
-                                            <td class="text-center pe-4">
-                                                <div class="btn-group">
-                                                <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" title="Delete">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                                </div>
+                                                <small class="text-secendary">This is testing Note</small>
                                             </td>
                                         </tr>
                                     </tbody>
