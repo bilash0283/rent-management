@@ -50,14 +50,17 @@ if(isset($_POST['save_bill'])){
     $note          = $_POST['note'];
     $due_amount    = $total_amount - $paid_amount;
 
-    $month_sql = mysqli_query($db,"SELECT id,billing_month FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = = '$tent_id' LIMIT 1 ");
+    $month_sql = mysqli_query($db,"SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
     while($ex_month_row = mysqli_fetch_assoc($month_sql)){
         $id_db = $ex_month_row['id'];
-        $tenant_id_db = $ex_month_row['tenant_id'];
+        $old_total = $ex_month_row['total_amount'];
+        $old_paid = $ex_month_row['paid_amount'];
     }
-    
+    $update_paid_amount = $old_paid+$paid_amount;
+    $update_due_amount = $old_total-$update_paid_amount;
+
     if(mysqli_num_rows($month_sql) > 0){
-        $bill_sql = mysqli_query($db,"UPDATE invoices SET paid_amount= '$paid_amount', status='$status',note ='$note' WHERE id = '$id_db' AND tenant_id = '$tenant_id_db' ");
+        $bill_sql = mysqli_query($db,"UPDATE invoices SET paid_amount= '$update_paid_amount', due_amount = '$update_due_amount', status='$status',note ='$note' WHERE id = '$id_db' AND tenant_id = '$tent_id' ");
     }else{
         $bill_sql = mysqli_query($db,"INSERT INTO `invoices`
         (`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `status`, `created_at`) 
@@ -304,9 +307,69 @@ if(isset($_POST['save_bill'])){
                         </div>
                     </form>
 
+                    <!-- bill summary  -->
                     <div class="card mx-3 px-3">
                         <div class="mt-2">
                             <h6 class="fw-bold my-2">Monthly bills (invoice history)</h6>
+                            <div class="table-responsive mt-3">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Bill Month</th>
+                                            <th scope="col" class="text-end">Total</th>
+                                            <th scope="col" class="text-end">Paid</th>
+                                            <th scope="col" class="text-end">Due</th>
+                                            <th scope="col" class="text-center">Status</th>
+                                            <th scope="col" class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        mysqli_data_seek($pay_info, 0); // rewind result
+                                        while ($pay_info_sh = mysqli_fetch_assoc($pay_info)):
+                                            $billing_month_db = $pay_info_sh['billing_month'];
+                                            $total_amount_db = $pay_info_sh['total_amount'];
+                                            $paid_amount_db = $pay_info_sh['paid_amount'];
+                                            $due_amount_db = $pay_info_sh['due_amount'];
+                                            $status = $pay_info_sh['status'];
+                                        ?>
+                                            <tr>
+                                                <td class="fw-bold text-secondary">
+                                                    <?= date("M Y", strtotime($billing_month_db)) ?>
+                                                </td>
+                                                <td class="text-end text-dark">
+                                                    ৳ <?= number_format($total_amount_db, 2) ?>
+                                                </td>
+                                                <td class="text-end text-success fw-semibold">
+                                                    ৳ <?= number_format($paid_amount_db, 2) ?>
+                                                </td>
+                                                <td class="text-end text-danger fw-bold">
+                                                    ৳ <?= number_format($due_amount_db, 2) ?>
+                                                </td>
+                                                <td class="text-center">
+                                                    <?php if($status == 'Paid'): ?>
+                                                        <span class="bg-success text-white p-1 rounded-2">Paid</span>
+                                                    <?php elseif($status == 'Unpaid'): ?>
+                                                        <span class="badge bg-light-danger text-danger">Pending</span>
+                                                    <?php elseif($status == 'Partial'): ?>
+                                                        <span class="badge bg-light-warning text-warning">Partial</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <a href="" class="bg-primary text-white p-1 rounded-2">view</a>
+                                                </td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- payment History  -->
+                    <div class="card mx-3 px-3">
+                        <div class="mt-2">
+                            <h6 class="fw-bold my-2">Payment history & Math</h6>
                             <div class="table-responsive mt-3">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
@@ -361,6 +424,7 @@ if(isset($_POST['save_bill'])){
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
