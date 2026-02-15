@@ -291,9 +291,9 @@ if(isset($_POST['save_bill'])){
                         <div class="mt-2">
                             <h6 class="fw-bold my-2">Monthly bills (invoice history)</h6>
                             <div class="d-flex mb-3 justify-content-between align-items-center mb-1">
-                                <span>Date</span>
                                 <span>Bill Month</span>
-                                <span>Total - Paid</span>
+                                <span>Total</span>
+                                <span>Total</span>
                                 <span>Due</span>
                             </div>
                             <?php
@@ -308,14 +308,17 @@ if(isset($_POST['save_bill'])){
                                 ?>
                                 
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <small
-                                        class="text-muted"><?= date("d-M-Y h:i A", strtotime($created_at)) ?>
-                                    </small>
-                                    <span><?= date("M Y", strtotime($billing_month_db)) ?></span>
-                                    <span class="text-success fw-semibold">৳ <?=$total_amount_db.' - ৳ '.$paid_amount_db ?>
+                                    <span>
+                                        <?= date("M Y", strtotime($billing_month_db)) ?>
                                     </span>
-                                        <span class="text-danger fw-semibold">৳
-                                        <?= number_format($due_amount_db, 2) ?>
+                                    <span class="text-success fw-semibold">
+                                        ৳ <?=$total_amount_db ?>
+                                    </span>
+                                    <span class="text-success fw-semibold"> 
+                                        ৳ <?= $paid_amount_db ?>
+                                    </span>
+                                    <span class="text-danger fw-semibold">
+                                        ৳ <?= number_format($due_amount_db, 2) ?>
                                     </span>
                                 </div>
                             <?php endwhile; ?>
