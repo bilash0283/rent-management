@@ -97,28 +97,33 @@ $result = mysqli_query($db, $query);
                                                 $paid_amount_db = $pay_info_sh['paid_amount'];
                                                 $due_amount_db = $pay_info_sh['due_amount'];
                                                 $created_at = $pay_info_sh['created_at'];
+                                                $status = $pay_info_sh['status'];
                                             }
+                                            
                                         ?>
 
                                         <span class="fw-semibold text-primary">
-                                            Total = ৳ <?= number_format($total_bill, 2) ?>
+                                            Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
                                         </span><br>
 
                                         <?php if (!empty($paid_amount_db)) { ?>
                                             <span class="fw-semibold text-success">
-                                                Paid = ৳ <?= number_format($paid_amount_db, 2) ?>
+                                                Paid = ৳ <?= number_format($paid_amount_db, 2) ?? '' ?>
                                             </span><br>
                                         <?php } ?>
 
                                         <?php if (!empty($due_amount_db)) { ?>
                                             <span class="fw-semibold text-danger">
-                                                Due = ৳ <?= number_format($due_amount_db, 2) ?>
+                                                Due = ৳ <?= number_format($due_amount_db, 2) ?? '' ?>
                                             </span><br>
                                         <?php } ?>
 
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-success">Paid</button>
+                                        <button class="btn btn-sm btn-<?php if($status == 'Paid'){ echo 'success'; } else { echo 'danger'; } ?>">
+                                            <?= htmlspecialchars($status); ?>
+                                        </button>
+
                                     </td>
                                     <td>
                                         <a href="" class="btn btn-sm btn-light-info me-1" title="Invoice">
