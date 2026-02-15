@@ -348,11 +348,11 @@ if(isset($_POST['save_bill'])){
                                                 </td>
                                                 <td class="text-center">
                                                     <?php if($status == 'Paid'): ?>
-                                                        <span class="bg-success text-white p-1 rounded-2">Paid</span>
+                                                        <small class="bg-success text-white p-1 rounded-2">Paid</small>
                                                     <?php elseif($status == 'Unpaid'): ?>
-                                                        <span class="badge bg-light-danger text-danger">Pending</span>
+                                                        <small class="bg-danger text-white p-1 rounded-2">Pending</small>
                                                     <?php elseif($status == 'Partial'): ?>
-                                                        <span class="badge bg-light-warning text-warning">Partial</span>
+                                                        <small class="bg-warning text-white p-1 rounded-2">Partial</small>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
@@ -371,54 +371,77 @@ if(isset($_POST['save_bill'])){
                         <div class="mt-2">
                             <h6 class="fw-bold my-2">Payment history & Math</h6>
                             <div class="table-responsive mt-3">
-                                <table class="table table-hover align-middle">
+                                <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light">
                                         <tr>
-                                            <th scope="col">Bill Month</th>
-                                            <th scope="col" class="text-end">Total</th>
-                                            <th scope="col" class="text-end">Paid</th>
-                                            <th scope="col" class="text-end">Due</th>
-                                            <th scope="col" class="text-center">Status</th>
-                                            <th scope="col" class="text-center">Action</th>
+                                        <th scope="col" class="ps-4">Date</th>
+                                        <th scope="col" class="text-end">Total</th>
+                                        <th scope="col" class="text-end">Paid</th>
+                                        <th scope="col" class="text-end">Due</th>
+                                        <th scope="col" class="text-center">Status</th>
+                                        <th scope="col" class="text-center pe-4">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                        mysqli_data_seek($pay_info, 0); // rewind result
-                                        while ($pay_info_sh = mysqli_fetch_assoc($pay_info)):
-                                            $billing_month_db = $pay_info_sh['billing_month'];
-                                            $total_amount_db = $pay_info_sh['total_amount'];
-                                            $paid_amount_db = $pay_info_sh['paid_amount'];
-                                            $due_amount_db = $pay_info_sh['due_amount'];
-                                            $status = $pay_info_sh['status'];
-                                        ?>
-                                            <tr>
-                                                <td class="fw-bold text-secondary">
-                                                    <?= date("M Y", strtotime($billing_month_db)) ?>
-                                                </td>
-                                                <td class="text-end text-dark">
-                                                    ৳ <?= number_format($total_amount_db, 2) ?>
-                                                </td>
-                                                <td class="text-end text-success fw-semibold">
-                                                    ৳ <?= number_format($paid_amount_db, 2) ?>
-                                                </td>
-                                                <td class="text-end text-danger fw-bold">
-                                                    ৳ <?= number_format($due_amount_db, 2) ?>
-                                                </td>
-                                                <td class="text-center">
-                                                    <?php if($status == 'Paid'): ?>
-                                                        <span class="badge bg-light-success text-success">Paid</span>
-                                                    <?php elseif($status == 'Unpaid'): ?>
-                                                        <span class="badge bg-light-danger text-danger">Pending</span>
-                                                    <?php elseif($status == 'Partial'): ?>
-                                                        <span class="badge bg-light-warning text-warning">Partial</span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td>
-                                                    <a href="" class="bg-primary text-white p-1 rounded-2">view</a>
-                                                </td>
-                                            </tr>
-                                        <?php endwhile; ?>
+                                        <tr>
+                                        <td class="ps-4 fw-medium">15 Feb 2026</td>
+                                        <td class="text-end fw-semibold">৳ 12,500</td>
+                                        <td class="text-end text-success fw-semibold">৳ 12,500</td>
+                                        <td class="text-end text-danger fw-semibold">৳ 0</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success px-3 py-2">Paid</span>
+                                        </td>
+                                        <td class="text-center pe-4">
+                                            <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            </div>
+                                        </td>
+                                        </tr>
+
+                                        <tr>
+                                        <td class="ps-4 fw-medium">15 Jan 2026</td>
+                                        <td class="text-end fw-semibold">৳ 12,500</td>
+                                        <td class="text-end text-success fw-semibold">৳ 8,000</td>
+                                        <td class="text-end text-warning fw-semibold">৳ 4,500</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-warning px-3 py-2 text-dark">Partial</span>
+                                        </td>
+                                        <td class="text-center pe-4">
+                                            <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            </div>
+                                        </td>
+                                        </tr>
+
+                                        <tr>
+                                        <td class="ps-4 fw-medium">15 Dec 2025</td>
+                                        <td class="text-end fw-semibold">৳ 12,500</td>
+                                        <td class="text-end text-danger fw-semibold">৳ 0</td>
+                                        <td class="text-end text-danger fw-semibold">৳ 12,500</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-danger px-3 py-2">Unpaid</span>
+                                        </td>
+                                        <td class="text-center pe-4">
+                                            <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            </div>
+                                        </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
