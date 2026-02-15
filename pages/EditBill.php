@@ -289,7 +289,7 @@ if(isset($_POST['save_bill'])){
 
                     <div class="card mx-3 px-3">
                         <div class="mt-2">
-                            <h6 class="fw-bold my-2">Payment History</h6>
+                            <h6 class="fw-bold my-2">Monthly bills (invoice history)</h6>
                             <div class="d-flex mb-3 justify-content-between align-items-center mb-1">
                                 <span>Date</span>
                                 <span>Bill Month</span>
