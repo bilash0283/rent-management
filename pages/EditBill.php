@@ -44,28 +44,34 @@ if (isset($_POST['advance_save'])) {
 if(isset($_POST['save_bill'])){
 
     $billing_month = $_POST['billing_month'];
-    $total_amount  = $_POST['total_amount'];
-    $paid_amount   = $_POST['paid_amount'];
+    $total_amount  = intval($_POST['total_amount']);
+    $paid_amount   = intval($_POST['paid_amount']);
     $status        = $_POST['status'];
     $note          = $_POST['note'];
-    $due_amount    = $total_amount - $paid_amount;
+    $due_amount    = $total_amount-$paid_amount;
+    $payment_date = !empty($_POST['payment_date']) ? $_POST['payment_date'] : date('Y-m-d');
+    $payment_method= $_POST['payment_method'];
 
     $month_sql = mysqli_query($db,"SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
     while($ex_month_row = mysqli_fetch_assoc($month_sql)){
         $id_db = $ex_month_row['id'];
-        $old_total = $ex_month_row['total_amount'];
-        $old_paid = $ex_month_row['paid_amount'];
+        $old_total = intval($ex_month_row['total_amount']);
+        $old_paid = intval($ex_month_row['paid_amount']);
     }
     $update_paid_amount = $old_paid+$paid_amount;
     $update_due_amount = $old_total-$update_paid_amount;
 
     if(mysqli_num_rows($month_sql) > 0){
         $bill_sql = mysqli_query($db,"UPDATE invoices SET paid_amount= '$update_paid_amount', due_amount = '$update_due_amount', status='$status',note ='$note' WHERE id = '$id_db' AND tenant_id = '$tent_id' ");
+
+        $bill_history = mysqli_query($db,"INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$update_due_amount','$note','$payment_date')");
     }else{
         $bill_sql = mysqli_query($db,"INSERT INTO `invoices`
         (`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `status`, `created_at`) 
         VALUES 
         ('$tent_id','$unit_id','$billing_month','$total_amount','$paid_amount','$due_amount','$status',now())");
+
+        $bill_history = mysqli_query($db,"INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$due_amount','$note','$payment_date')");
     }
 
     if ($bill_sql) {
@@ -252,18 +258,19 @@ if(isset($_POST['save_bill'])){
                                                         $billing_month = date("M Y", strtotime($due_mon['billing_month']));
                                                         $due_amount = (float)$due_mon['due_amount'];
                                                         $total_due += $due_amount;
-                                                        
                                                         echo '<span class="fw-bold text-danger">';
                                                         echo 'Due - ' . htmlspecialchars($billing_month) . ' = ৳ ' . number_format($due_amount, 2);
                                                         echo '</span><br>';
-                                                    }
+                                                }
                                                 } else {
                                                     echo '<span class="text-success">No Due Found</span><br>';
                                                 }
 
-                                                echo '<span class="fw-bold text-danger">Total Due = ৳ ' . number_format($total_due, 2) . '</span>';
+                                                if($total_due > 0){
+                                                    echo '<span class="fw-bold text-danger">Total Due = ৳ ' . number_format($total_due, 2) . '</span>';
 
-                                                $stmt->close();
+                                                    $stmt->close();
+                                                }
                                                 ?>
                                             </div>
                                         </div>
@@ -273,6 +280,7 @@ if(isset($_POST['save_bill'])){
                                 </div>
 
                                 <div class="col-lg-6">
+                                    <input type="number" hidden name="total_amount" value="<?php echo $total_bill;  ?>">
                                     <div>
                                         <label class="fw-semibold">Amount *</label> 
                                         <input type="text" name="paid_amount" class="form-control" required>
@@ -286,20 +294,21 @@ if(isset($_POST['save_bill'])){
                                             <label class="fw-semibold" for="status">Status *</label>
                                             <select name="status" id="status" class="form-control form-select" required>
                                                 <option selected disabled>Select One</option>
-                                                <option value="Paid" <?php if($status == 'Paid'){ echo 'selected'; } ?>>Paid</option>
-                                                <option value="Unpaid" <?php if($status == 'Unpaid'){ echo 'selected'; } ?>>Unpaid</option>
-                                                <option value="Partial" <?php if($status == 'Partial'){ echo 'selected'; } ?>>Partial</option>
+                                                <option value="Paid" >Paid</option>
+                                                <option value="Unpaid" >Unpaid</option> 
+                                                <option value="Partial" >Partial</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="payment_date">Payment date *</label>
-                                            <input type="date" class="form-control" name="payment_date">
+                                            <input type="date" class="form-control" name="payment_date" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="payment_method">Payment Method *</label>
-                                            <select name="payment_method" id="" class="form-control form-select">
+                                            <select name="payment_method" id="" class="form-control form-select" required>
+                                                <option selected disabled>Select One</option>
                                                 <option value="Cash">Cash</option>
                                                 <option value="Bkash">Bkash</option>
                                                 <option value="Nagad">Nagad</option>
@@ -404,19 +413,33 @@ if(isset($_POST['save_bill'])){
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php 
+                                            $history_sql = mysqli_query($db,"SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' ");
+
+                                            while($pay_history = mysqli_fetch_assoc($history_sql)){
+                                                $bill_his = $pay_history['bill_month'];
+                                                $pay_method_his = $pay_history['payment_method'];
+                                                $total_his = $pay_history['total'];
+                                                $paid_his = $pay_history['paid'];
+                                                $due_his = $pay_history['due'];
+                                                $note_his = $pay_history['note'];
+                                                $pay_date_his = $pay_history['payment_date'];
+                                                                                    
+                                        ?>
                                         <tr>
-                                            <td class="ps-4 fw-medium">15 Feb 2026</td>
-                                            <td class="text-end fw-semibold f-w-bold text-uppercase text-secendary">15 Feb 2026</td>
-                                            <td class="text-end text-success fw-semibold">Cash</td>
+                                            <td class="ps-4 fw-medium"><?= date('d M Y', strtotime($pay_date_his)) ?></td>
+                                            <td class="text-end fw-semibold f-w-bold text-uppercase text-secendary"><?= date(' M Y', strtotime($bill_his)) ?></td>
+                                            <td class="text-end text-success fw-semibold"><?= $pay_method_his ?></td>
                                             <td class="text-end text-danger fw-semibold">
-                                               <span class="text-primary">৳ 1200</span> <br>
-                                               <span class="text-success">৳ 1200</span> <br>
-                                               <span class="text-danger">৳ 1200</span>
+                                               <span class="text-primary">৳ <?= $total_his ?></span> <br>
+                                               <span class="text-success">৳ <?= $paid_his ?></span> <br>
+                                               <span class="text-danger">৳ <?= $due_his ?></span>
                                             </td>
                                             <td class="text-center pe-4">
-                                                <small class="text-secendary">This is testing Note</small>
+                                                <small class="text-secendary"><?= $note_his ?></small>
                                             </td>
                                         </tr>
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </div>

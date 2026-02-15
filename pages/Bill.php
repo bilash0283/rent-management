@@ -120,8 +120,8 @@ $result = mysqli_query($db, $query);
 
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-<?php if($status == 'Paid'){ echo 'success'; }else if($status == 'Unpaid'){echo 'danger';} else if($status == 'Partial') { echo 'warning'; } ?>">
-                                            <?= htmlspecialchars($status); ?>
+                                        <button class="btn btn-sm btn-<?php if($status == 'Paid'){ echo 'success'; }else if($status == 'Unpaid'){echo 'danger';} else if($status == 'Partial') { echo 'warning'; }else{echo 'primary';} ?>">
+                                            <?= htmlspecialchars($status ?? 'Pending'); ?>
                                         </button>
                                     </td>
                                     <td>
