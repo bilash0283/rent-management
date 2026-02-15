@@ -40,14 +40,35 @@ if (isset($_POST['advance_save'])) {
     }
 }
 
-// save_bill
-
+// save_Invoice
 if(isset($_POST['save_bill'])){
+
     $billing_month = $_POST['billing_month'];
     $total_amount  = $_POST['total_amount'];
     $paid_amount   = $_POST['paid_amount'];
     $status        = $_POST['status'];
     $due_amount    = $total_amount - $paid_amount;
+
+    $month_sql = mysqli_query($db,"SELECT billing_month FROM invoices WHERE billing_month = '$billing_month' ");
+    // while($ex_month_row = mysqli_fetch_assoc($month_sql)){
+    //     $ex_month = $ex_month_row['billing_month'];
+
+    //     if($ex_month == $billing_month){
+    //         echo "Billing Month - ".$billing_month;
+    //         exit();
+    //     }else{
+    //         echo "New Month - ".$billing_month;
+    //         exit();
+    //     }
+    // }
+
+    if(mysqli_num_rows($month_sql) > 0){
+        echo "new month";
+        exit();
+    }else{
+        echo "month already exist";
+        exit();
+    }
 
     $bill_sql = mysqli_query($db,"INSERT INTO `invoices`
     (`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `status`, `created_at`) 
