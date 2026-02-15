@@ -333,7 +333,7 @@ if(isset($_POST['save_bill'])){
                                             $due_amount_db = $pay_info_sh['due_amount'];
                                             $status = $pay_info_sh['status'];
                                         ?>
-                                            <tr>
+                                            <tr class="mb-1">
                                                 <td class="fw-bold text-secondary">
                                                     <?= date("M Y", strtotime($billing_month_db)) ?>
                                                 </td>
@@ -355,8 +355,15 @@ if(isset($_POST['save_bill'])){
                                                         <small class="bg-warning text-white p-1 rounded-2">Partial</small>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td>
-                                                    <a href="" class="bg-primary text-white p-1 rounded-2">view</a>
+                                                    <td class="text-center pe-4">
+                                                    <div class="btn-group">
+                                                    <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-success" title="view">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endwhile; ?>
@@ -404,43 +411,43 @@ if(isset($_POST['save_bill'])){
                                         </tr>
 
                                         <tr>
-                                        <td class="ps-4 fw-medium">15 Jan 2026</td>
-                                        <td class="text-end fw-semibold">৳ 12,500</td>
-                                        <td class="text-end text-success fw-semibold">৳ 8,000</td>
-                                        <td class="text-end text-warning fw-semibold">৳ 4,500</td>
-                                        <td class="text-center">
-                                            <span class="badge bg-warning px-3 py-2 text-dark">Partial</span>
-                                        </td>
-                                        <td class="text-center pe-4">
-                                            <div class="btn-group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Delete">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                            </div>
-                                        </td>
-                                        </tr>
+                                            <td class="ps-4 fw-medium">15 Jan 2026</td>
+                                            <td class="text-end fw-semibold">৳ 12,500</td>
+                                            <td class="text-end text-success fw-semibold">৳ 8,000</td>
+                                            <td class="text-end text-warning fw-semibold">৳ 4,500</td>
+                                            <td class="text-center">
+                                                <span class="badge bg-warning px-3 py-2 text-dark">Partial</span>
+                                            </td>
+                                            <td class="text-center pe-4">
+                                                <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                                </div>
+                                            </td>
+                                            </tr>
 
-                                        <tr>
-                                        <td class="ps-4 fw-medium">15 Dec 2025</td>
-                                        <td class="text-end fw-semibold">৳ 12,500</td>
-                                        <td class="text-end text-danger fw-semibold">৳ 0</td>
-                                        <td class="text-end text-danger fw-semibold">৳ 12,500</td>
-                                        <td class="text-center">
-                                            <span class="badge bg-danger px-3 py-2">Unpaid</span>
-                                        </td>
-                                        <td class="text-center pe-4">
-                                            <div class="btn-group">
-                                            <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger" title="Delete">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                            </div>
-                                        </td>
+                                            <tr>
+                                            <td class="ps-4 fw-medium">15 Dec 2025</td>
+                                            <td class="text-end fw-semibold">৳ 12,500</td>
+                                            <td class="text-end text-danger fw-semibold">৳ 0</td>
+                                            <td class="text-end text-danger fw-semibold">৳ 12,500</td>
+                                            <td class="text-center">
+                                                <span class="badge bg-danger px-3 py-2">Unpaid</span>
+                                            </td>
+                                            <td class="text-center pe-4">
+                                                <div class="btn-group">
+                                                <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
