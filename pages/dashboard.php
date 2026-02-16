@@ -11,15 +11,41 @@ $unit = mysqli_query($db, "SELECT * FROM unit ");
 $total_unit = mysqli_num_rows($unit);
 while ($unit_info = mysqli_fetch_assoc($unit)) {
     $unit_id = $unit_info['id'];
-    $unit_id = $unit_info['id'];
-    $unit_id = $unit_info['id'];
-    $unit_id = $unit_info['id'];
-    $unit_id = $unit_info['id'];
+    $rent = intval($unit_info['rent']);
+    $Gas = intval($unit_info['Gas']);
+    $Water = intval($unit_info['Water']);
+    $Electricity = intval($unit_info['Electricity']);
+    $Internet = intval($unit_info['Internet']);
+    $Maintenance = intval($unit_info['Maintenance']);
+    $Others = intval($unit_info['Others']);
+
+    $total_bill = $rent + $Gas + $Water + $Electricity + $Maintenance + $Others;
+
+    $advance = intval($unit_info['advance']);
+}
+
+// Invoice 
+$invoice = mysqli_query($db, "SELECT * FROM invoices ");
+$total_invoice = mysqli_num_rows($invoice);
+while ($invoice_info = mysqli_fetch_assoc($invoice)) {
+    $invoice_id = $invoice_info['id'];
+    $tenant_id = $invoice_info['tenant_id'];
+    $unit_id = $invoice_info['unit_id'];
+    $billing_month = $invoice_info['billing_month'];
+    $total_amount = $invoice_info['total_amount'];
+    $paid_amount = $invoice_info['paid_amount'];
+    $due_amount = $invoice_info['due_amount'];
+    $status = $invoice_info['status'];
 }
 
 // tenant 
 $tenant = mysqli_query($db, "SELECT * FROM tenants ");
 $total_tenant = mysqli_num_rows($tenant);
+
+while ($tenant_info = mysqli_fetch_assoc($tenant)) {
+    $tenant_id = $tenant_info['id'];
+}
+
 
 ?>
 
@@ -105,100 +131,68 @@ $total_tenant = mysqli_num_rows($tenant);
                     </a>
                 </div>
             </div>
+            <!-- Dashboard Cards -->
 
-            <!-- [Monthly Payment Records] end -->
-            <div class="col-xxl-8">
-                <div class="card stretch stretch-full">
-                    <div class="card-header">
-                        <h5 class="card-title">Monthly Payment Record</h5>
-                        <div class="card-header-action">
-                            <div class="card-header-btn">
-                                <div data-bs-toggle="tooltip" title="Delete">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-danger"
-                                        data-bs-toggle="remove"> </a>
-                                </div>
-                                <div data-bs-toggle="tooltip" title="Refresh">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-warning"
-                                        data-bs-toggle="refresh"> </a>
-                                </div>
-                                <div data-bs-toggle="tooltip" title="Maximize/Minimize">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-success"
-                                        data-bs-toggle="expand"> </a>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <a href="javascript:void(0);" class="avatar-text avatar-sm" data-bs-toggle="dropdown"
-                                    data-bs-offset="25, 25">
-                                    <div data-bs-toggle="tooltip" title="Options">
-                                        <i class="feather-more-vertical"></i>
-                                    </div>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-at-sign"></i>New</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-calendar"></i>Event</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-bell"></i>Snoozed</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-trash-2"></i>Deleted</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-settings"></i>Settings</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-life-buoy"></i>Tips & Tricks</a>
+            <!-- test  -->
+                <?php
+                // Assuming $db is your connection
+                
+                $result = mysqli_query($db, "SELECT 
+                SUM(total_amount) AS total_bill,
+                SUM(paid_amount)  AS total_paid,
+                SUM(due_amount)   AS total_due
+                FROM invoices");
+
+                $summary = mysqli_fetch_assoc($result);
+
+                // Fallback to 0 if no rows or NULL sums
+                $total_bill = number_format($summary['total_bill'] ?? 0, 2);
+                $total_paid = number_format($summary['total_paid'] ?? 0, 2);
+                $total_due = number_format($summary['total_due'] ?? 0, 2);
+
+                // Optional: also get total number of invoices
+                $count_result = mysqli_query($db, "SELECT COUNT(*) AS total_invoices FROM invoices");
+                $count_row = mysqli_fetch_assoc($count_result);
+                $total_invoices = $count_row['total_invoices'] ?? 0;
+                ?>
+
+                <!-- ===================== -->
+                <!--     ANALYTICS CARDS   -->
+                <!-- ===================== -->
+                <div class="container my-5">
+                    <h2 class="text-center mb-4">Billing Analytics</h2>
+
+                    <div class="container my-5">
+                        <div class="card-group shadow">
+
+                            <div class="card bg-primary text-white border-0">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Total Bills</h5>
+                                    <p class="card-text display-5 fw-bold mb-1"><?= $total_bill ?></p>
+                                    <small>All invoices</small>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card-body custom-card-action p-0">
-                        <div id="payment-records-chart"></div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row g-4">
-                            <div class="col-lg-3">
-                                <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Awaiting</div>
-                                    <h6 class="fw-bold text-dark">$5,486</h6>
-                                    <div class="progress mt-2 ht-3">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 81%">
-                                        </div>
-                                    </div>
+
+                            <div class="card bg-success text-white border-0">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Total Paid</h5>
+                                    <p class="card-text display-5 fw-bold mb-1"><?= $total_paid ?></p>
+                                    <small>Collected</small>
                                 </div>
                             </div>
-                            <div class="col-lg-3">
-                                <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Completed</div>
-                                    <h6 class="fw-bold text-dark">$9,275</h6>
-                                    <div class="progress mt-2 ht-3">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 82%">
-                                        </div>
-                                    </div>
+
+                            <div class="card bg-danger text-white border-0">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Total Due</h5>
+                                    <p class="card-text display-5 fw-bold mb-1"><?= $total_due ?></p>
+                                    <small>Outstanding</small>
                                 </div>
                             </div>
-                            <div class="col-lg-3">
-                                <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Rejected</div>
-                                    <h6 class="fw-bold text-dark">$3,868</h6>
-                                    <div class="progress mt-2 ht-3">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 68%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Revenue</div>
-                                    <h6 class="fw-bold text-dark">$50,668</h6>
-                                    <div class="progress mt-2 ht-3">
-                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 75%"></div>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- [Monthly Payment Records] end -->
+            <!-- test  -->
 
             <!-- [Payment Records] end -->
             <div class="col-xxl-8">
@@ -293,74 +287,6 @@ $total_tenant = mysqli_num_rows($tenant);
                 </div>
             </div>
             <!-- [Payment Records] end -->
-
-            <!-- [Total Sales] start -->
-            <div class="col-xxl-4">
-                <div class="card stretch stretch-full overflow-hidden">
-                    <div class="bg-primary text-white">
-                        <div class="p-4">
-                            <span class="badge bg-light text-primary text-dark float-end">12%</span>
-                            <div class="text-start">
-                                <h4 class="text-reset">30,569</h4>
-                                <p class="text-reset m-0">Total Sales</p>
-                            </div>
-                        </div>
-                        <div id="total-sales-color-graph"></div>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="hstack gap-3">
-                                <div class="avatar-image avatar-lg p-2 rounded">
-                                    <img class="img-fluid" src="public/assets/images/brand/shopify.png" alt="" />
-                                </div>
-                                <div>
-                                    <a href="javascript:void(0);" class="d-block">Shopify eCommerce Store</a>
-                                    <span class="fs-12 text-muted">Development</span>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark">$1200</div>
-                                <div class="fs-12 text-end">6 Projects</div>
-                            </div>
-                        </div>
-                        <hr class="border-dashed my-3" />
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="hstack gap-3">
-                                <div class="avatar-image avatar-lg p-2 rounded">
-                                    <img class="img-fluid" src="public/assets/images/brand/app-store.png" alt="" />
-                                </div>
-                                <div>
-                                    <a href="javascript:void(0);" class="d-block">iOS Apps Development</a>
-                                    <span class="fs-12 text-muted">Development</span>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark">$1450</div>
-                                <div class="fs-12 text-end">3 Projects</div>
-                            </div>
-                        </div>
-                        <hr class="border-dashed my-3" />
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="hstack gap-3">
-                                <div class="avatar-image avatar-lg p-2 rounded">
-                                    <img class="img-fluid" src="public/assets/images/brand/figma.png" alt="" />
-                                </div>
-                                <div>
-                                    <a href="javascript:void(0);" class="d-block">Figma Dashboard Design</a>
-                                    <span class="fs-12 text-muted">UI/UX Design</span>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark">$1250</div>
-                                <div class="fs-12 text-end">5 Projects</div>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="javascript:void(0);" class="card-footer fs-11 fw-bold text-uppercase text-center py-4">Full
-                        Details</a>
-                </div>
-            </div>
-            <!-- [Total Sales] end !-->
 
         </div>
     </div>

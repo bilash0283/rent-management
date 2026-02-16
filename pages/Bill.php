@@ -94,7 +94,7 @@ $result = mysqli_query($db, $query);
                                             Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
                                         </span><br>
                                         <?php
-                                            $pay_info = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ");
+                                            $pay_info = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
                                             if(!mysqli_num_rows($pay_info) > 0){
                                                 echo '<span class="fw-bold text-danger">';
                                                 echo 'Due = ৳ ' . number_format($total_bill, 2);
