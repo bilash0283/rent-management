@@ -64,14 +64,14 @@ if (isset($_POST['save_bill'])) {
     if (mysqli_num_rows($month_sql) > 0) {
         $bill_sql = mysqli_query($db, "UPDATE invoices SET paid_amount= '$update_paid_amount', due_amount = '$update_due_amount', status='$status',note ='$note' WHERE id = '$id_db' AND tenant_id = '$tent_id' ");
 
-        $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$update_due_amount','$note','$payment_date')");
+        $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$paid_amount','$update_due_amount','$note','$payment_date')");
     } else {
         $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
         (`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `status`, `created_at`) 
         VALUES 
         ('$tent_id','$unit_id','$billing_month','$total_amount','$paid_amount','$due_amount','$status',now())");
 
-        $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$due_amount','$note','$payment_date')");
+        $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$paid_amount','$due_amount','$note','$payment_date')");
     }
 
     if ($bill_sql) {
@@ -415,6 +415,7 @@ if (isset($_POST['save_bill'])) {
                                             <th scope="col" class="ps-4">Date</th>
                                             <th scope="col" class="text-end">Bill Month</th>
                                             <th scope="col" class="text-end">Payment Method</th>
+                                            <th scope="col" class="text-end">Payment Amount</th>
                                             <th scope="col" class="text-end">Bill Summary</th>
                                             <th scope="col" class="text-center">Note</th>
                                         </tr>
@@ -431,15 +432,17 @@ if (isset($_POST['save_bill'])) {
                                             $due_his = $pay_history['due'];
                                             $note_his = $pay_history['note'];
                                             $pay_date_his = $pay_history['payment_date'];
-
+                                            $paid_amount_his = $pay_history['paid_amount'];
                                             ?>
                                             <tr>
                                                 <td class="ps-4 fw-medium"><?= date('d M Y', strtotime($pay_date_his)) ?>
                                                 </td>
                                                 <td class="text-end fw-semibold f-w-bold text-uppercase text-secendary">
-                                                    <?= date(' M Y', strtotime($bill_his)) ?></td>
-                                                <td class="text-end text-success fw-semibold"><?= $pay_method_his ?></td>
-                                                <td class="text-end text-danger fw-semibold">
+                                                    <?= date(' M Y', strtotime($bill_his)) ?>
+                                                </td>
+                                                <td class="text-end text-secendary fw-semibold"><?= $pay_method_his ?></td>
+                                                <td class="text-end text-success fw-semibold"><?= $paid_amount_his ?></td>
+                                                <td class="text-end fw-semibold">
                                                     <span class="text-primary">৳ <?= $total_his ?></span> <br>
                                                     <span class="text-success">৳ <?= $paid_his ?></span> <br>
                                                     <span class="text-danger">৳ <?= $due_his ?></span>

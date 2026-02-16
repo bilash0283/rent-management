@@ -252,22 +252,22 @@ while ($tenant_info = mysqli_fetch_assoc($tenant)) {
                         <div class="card-group shadow">
                             <div class="card bg-primary text-white border-0">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Total Bills</h5>
-                                    <p class="card-text display-6 fw-bold mb-1">৳ <?= $total_bill ?></p>
+                                    <h5 class="card-title text-white">Total Bills</h5>
+                                    <h4 class="card-text text-white fw-bold mb-1"><small>৳</small> <?= $total_bill ?></h4>
                                     <small>All invoices</small>
                                 </div>
                             </div>
                             <div class="card bg-success text-white border-0">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Total Paid</h5>
-                                    <p class="card-text display-6 fw-bold mb-1">৳ <?= $total_paid ?></p>
+                                    <h5 class="card-title text-white">Total Paid</h5>
+                                    <h4 class="card-text text-white fw-bold mb-1"><small>৳</small> <?= $total_paid ?></h4>
                                     <small>Collected</small>
                                 </div>
                             </div>
                             <div class="card bg-danger text-white border-0">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Total Due</h5>
-                                    <p class="card-text display-6 fw-bold mb-1">৳ <?= $total_due ?></p>
+                                    <h5 class="card-title text-white">Total Due</h5>
+                                    <h4 class="card-text text-white fw-bold mb-1"><small>৳</small> <?= $total_due ?></h4>
                                     <small>Outstanding</small>
                                 </div>
                             </div>
