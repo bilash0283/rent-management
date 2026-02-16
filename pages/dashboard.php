@@ -66,6 +66,48 @@ $count_row = mysqli_fetch_assoc($count_result);
 $total_invoices = $count_row['total_invoices'] ?? 0;
 
 ?>
+<?php
+// === CURRENT YEAR এর জন্য 12 মাস প্রি-ফিল করো ===
+$year = date('Y'); // 2026
+
+$monthly_totals = [];
+for ($m = 1; $m <= 12; $m++) {
+    $key = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT); // 2026-01, 2026-02, ...
+    $monthly_totals[$key] = [
+        'total_amount' => 0,
+        'paid_amount'  => 0,
+        'due_amount'   => 0
+    ];
+}
+
+// === ডাটাবেজ থেকে ডাটা নাও ===
+$invoice = mysqli_query($db, "SELECT * FROM invoices ORDER BY billing_month ASC");
+
+while ($row = mysqli_fetch_assoc($invoice)) {
+    $month_key = $row['billing_month'];   // আশা করি এটা "2026-02" ফরম্যাটে আছে
+
+    if (isset($monthly_totals[$month_key])) {
+        $monthly_totals[$month_key]['total_amount'] += (float)$row['total_amount'];
+        $monthly_totals[$month_key]['paid_amount']  += (float)$row['paid_amount'];
+        $monthly_totals[$month_key]['due_amount']   += (float)$row['due_amount'];
+    }
+}
+
+// === Chart.js এর জন্য arrays তৈরি করো ===
+$chart_labels = [];
+$chart_bills  = [];
+$chart_paids  = [];
+$chart_dues   = [];
+
+foreach ($monthly_totals as $month => $data) {
+    $display_month = date('M Y', strtotime($month . '-01')); // Feb 2026
+    $chart_labels[] = $display_month;
+    $chart_bills[]  = $data['total_amount'] / 1000;
+    $chart_paids[]  = $data['paid_amount']  / 1000;
+    $chart_dues[]   = $data['due_amount']   / 1000;
+}
+?>
+
 
 <div class="nxl-content">
     <!-- [ Main Content ] start -->
@@ -151,40 +193,37 @@ $total_invoices = $count_row['total_invoices'] ?? 0;
             </div>
             <!-- Dashboard Cards -->
 
-            <!-- [Payment Records] end -->
             <div class="col-xxl-8">
                 <div class="card stretch stretch-full">
                     <div class="card-header">
-                        <h5 class="card-title">Monthly Payment Record</h5>
+                        <h5 class="card-title"> Payment Record (Last 12 Months)</h5>
                     </div>
-                    <div class="card-body custom-card-action p-0">
-                        <div id="payment-records-chart"></div>
+                    <div class="card-body custom-card-action p-0" style="height: 420px;">
+                        <canvas id="paymentChartCanvas" style="width:100%; height:100%;"></canvas>
                     </div>
                     <div class="card-footer">
                         <div class="row g-4">
                             <div class="col-lg-4">
                                 <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Total Bills</div>
+                                    <div class="fs-12 text-muted mb-1">Total Bills (this month)</div>
                                     <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_bill ?></h6>
                                     <div class="progress mt-2 ht-3">
-                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 81%">
-                                        </div>
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 81%"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Total Paid</div>
+                                    <div class="fs-12 text-muted mb-1">Total Paid (this month)</div>
                                     <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_paid ?></h6>
                                     <div class="progress mt-2 ht-3">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 82%">
-                                        </div>
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 82%"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Total Due</div>
+                                    <div class="fs-12 text-muted mb-1">Total Due (this month)</div>
                                     <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_due ?></h6>
                                     <div class="progress mt-2 ht-3">
                                         <div class="progress-bar bg-danger" role="progressbar" style="width: 68%"></div>
@@ -195,9 +234,49 @@ $total_invoices = $count_row['total_invoices'] ?? 0;
                     </div>
                 </div>
             </div>
-            <!-- [Payment Records] end -->
-
+            
         </div>
     </div>
-    <!-- [ Main Content ] end -->
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+<script>
+    const monthLabels = <?php echo json_encode($chart_labels); ?>;
+    const billData    = <?php echo json_encode($chart_bills); ?>;
+    const paidData    = <?php echo json_encode($chart_paids); ?>;
+    const dueData     = <?php echo json_encode($chart_dues); ?>;
+
+    console.log("Chart data:", { labels: monthLabels, bills: billData, paids: paidData, dues: dueData });
+
+    const ctx = document.getElementById('paymentChartCanvas').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [
+                { label: 'Total Bill (thousands ৳)', data: billData, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.12)', tension: 0.3, fill: true, pointRadius: 4 },
+                { label: 'Total Paid (thousands ৳)', data: paidData, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.12)', tension: 0.3, fill: true, pointRadius: 4 },
+                { label: 'Total Due (thousands ৳)', data: dueData, borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.12)', tension: 0.3, fill: true, pointRadius: 4 }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let value = context.parsed.y;
+                            return `${context.dataset.label}: ৳ ${(value * 1000).toLocaleString()}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Amount (× 1,000 ৳)' } },
+                x: { title: { display: true, text: 'Month' } }
+            }
+        }
+    });
+</script>
