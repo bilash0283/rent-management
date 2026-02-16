@@ -50,7 +50,7 @@ if (mysqli_num_rows($result) > 0) {
 <div class="nxl-content">
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">Tenant Manage</h5>
+        <h5 class="mb-0">Tenant Information</h5>
 
         <a href="admin.php?page=tenant" class="btn btn-primary">
             Back
