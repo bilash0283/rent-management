@@ -66,7 +66,7 @@ $result = mysqli_query($db, $query);
     </div>
 
     <!-- Main Content -->
-    <div class="main-content mt-4">
+    <div class="main-content">
         <div class="card shadow-sm">
             <div class="card-header">
                 <h6 class="mb-0">Tenant List</h6>
@@ -93,16 +93,16 @@ $result = mysqli_query($db, $query);
                             <?php while ($row = mysqli_fetch_assoc($result)): ?>
 
                                 <?php
-                                $image = !empty($row['tenant_image'])
-                                    ? "public/uploads/tenants/".$row['tenant_image']
-                                    : "assets/images/no-image.png";
+                                    $image = !empty($row['tenant_image'])
+                                    ? "public/uploads/tenants/" . $row['tenant_image']
+                                    : "public/uploads/tenants/no-image.png";
                                 ?>
 
                                 <tr>
                                     <td>
                                         <img src="<?= htmlspecialchars($image) ?>"
-                                             width="60" height="60"
-                                             style="object-fit:cover;border-radius:6px;">
+                                             width="50" height="50"
+                                             style="object-fit:cover;border-radius:6px;border-radius:50%;">
                                     </td>
 
                                     <td><a href="admin.php?page=view_tenant&id=<?= $row['id'] ?>" class="text-secendary fw-bold"><?= htmlspecialchars($row['name']) ?></a></td>

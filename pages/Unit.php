@@ -72,7 +72,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="main-content mt-4">
+    <div class="main-content">
         <div class="card shadow-sm">
             <div class="card-header">
                 <h6 class="mb-0">Unit List</h6>

@@ -26,11 +26,11 @@ if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
         $image = !empty($row['tenant_image'])
             ? "public/uploads/tenants/" . $row['tenant_image']
-            : "assets/images/no-image.png";
+            : "public/uploads/tenants/no-image.png";
 
         $nid = !empty($row['nid_image'])
             ? "public/uploads/nid/" . $row['nid_image']
-            : "assets/images/no-image.png";
+            : "public/uploads/tenants/no-image.png";
 
         $id = $row['id'];
         $phone = $row['phone'];
@@ -67,16 +67,13 @@ if (mysqli_num_rows($result) > 0) {
     <!-- Main Content -->
     <div class="main-content ">
         <div class="bg-light">
-            <div class="container py-5">
+            <div class="container">
                 <div class="row">
                     <!-- Profile Header -->
-                    <div class="col-12 mb-4">
+                    <div class="col-12 ">
                         <div class="profile-header position-relative mb-2">
                             <div class="position-absolute top-0 end-0 p-3">
-                                <a href="admin.php?page=CreateTenant&edit_id=<?= $row['id'] ?>" class="btn btn-light"><i class="fas fa-edit me-2"></i>Edit Profile</a>
-                                <!-- <a href="admin.php?page=CreateTenant&edit_id=<?= $row['id'] ?>" class="btn btn-sm btn-light-primary" title="Edit">
-                                    <i class="fas fa-edit me-2"></i> Edit Profile
-                                </a> -->
+                                <a href="admin.php?page=CreateTenant&edit_id=<?php echo $id; ?>" class="btn btn-light"><i class="fas fa-edit me-2"></i>Edit Profile</a>
                             </div>
                         </div>
 
@@ -84,9 +81,6 @@ if (mysqli_num_rows($result) > 0) {
                             <div class="position-relative d-inline-block">
                                 <img src="<?= $image ?>"
                                     class="rounded-circle profile-pic" alt="Profile Picture">
-                                <!-- <button class="btn btn-primary btn-sm position-absolute bottom-0 end-0 rounded-circle">
-                                    <i class="fas fa-camera"></i>
-                                </button> -->
                             </div>
                             <h3 class="mt-3 mb-1"><?= $name; ?></h3>
                             <p class="text-muted mb-3"><?= $phone ?></p>
