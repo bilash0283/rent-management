@@ -46,6 +46,24 @@ while ($tenant_info = mysqli_fetch_assoc($tenant)) {
     $tenant_id = $tenant_info['id'];
 }
 
+// total bill,paid,due calculation 
+$result = mysqli_query($db, "SELECT 
+SUM(total_amount) AS total_bill,
+SUM(paid_amount)  AS total_paid,
+SUM(due_amount)   AS total_due
+FROM invoices WHERE billing_month = '$this_month' ");
+
+$summary = mysqli_fetch_assoc($result);
+
+// Fallback to 0 if no rows or NULL sums
+$total_bill = number_format($summary['total_bill'] ?? 0, 2);
+$total_paid = number_format($summary['total_paid'] ?? 0, 2);
+$total_due = number_format($summary['total_due'] ?? 0, 2);
+
+// Optional: also get total number of invoices
+$count_result = mysqli_query($db, "SELECT COUNT(*) AS total_invoices FROM invoices WHERE billing_month = '$this_month' ");
+$count_row = mysqli_fetch_assoc($count_result);
+$total_invoices = $count_row['total_invoices'] ?? 0;
 
 ?>
 
@@ -137,87 +155,39 @@ while ($tenant_info = mysqli_fetch_assoc($tenant)) {
             <div class="col-xxl-8">
                 <div class="card stretch stretch-full">
                     <div class="card-header">
-                        <h5 class="card-title">Payment Record</h5>
-                        <div class="card-header-action">
-                            <div class="card-header-btn">
-                                <div data-bs-toggle="tooltip" title="Delete">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-danger"
-                                        data-bs-toggle="remove"> </a>
-                                </div>
-                                <div data-bs-toggle="tooltip" title="Refresh">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-warning"
-                                        data-bs-toggle="refresh"> </a>
-                                </div>
-                                <div data-bs-toggle="tooltip" title="Maximize/Minimize">
-                                    <a href="javascript:void(0);" class="avatar-text avatar-xs bg-success"
-                                        data-bs-toggle="expand"> </a>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <a href="javascript:void(0);" class="avatar-text avatar-sm" data-bs-toggle="dropdown"
-                                    data-bs-offset="25, 25">
-                                    <div data-bs-toggle="tooltip" title="Options">
-                                        <i class="feather-more-vertical"></i>
-                                    </div>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-at-sign"></i>New</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-calendar"></i>Event</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-bell"></i>Snoozed</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-trash-2"></i>Deleted</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-settings"></i>Settings</a>
-                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                            class="feather-life-buoy"></i>Tips & Tricks</a>
-                                </div>
-                            </div>
-                        </div>
+                        <h5 class="card-title">Monthly Payment Record</h5>
                     </div>
                     <div class="card-body custom-card-action p-0">
                         <div id="payment-records-chart"></div>
                     </div>
                     <div class="card-footer">
                         <div class="row g-4">
-                            <div class="col-lg-3">
+                            <div class="col-lg-4">
                                 <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Awaiting</div>
-                                    <h6 class="fw-bold text-dark">$5,486</h6>
+                                    <div class="fs-12 text-muted mb-1">Total Bills</div>
+                                    <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_bill ?></h6>
                                     <div class="progress mt-2 ht-3">
                                         <div class="progress-bar bg-primary" role="progressbar" style="width: 81%">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-4">
                                 <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Completed</div>
-                                    <h6 class="fw-bold text-dark">$9,275</h6>
+                                    <div class="fs-12 text-muted mb-1">Total Paid</div>
+                                    <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_paid ?></h6>
                                     <div class="progress mt-2 ht-3">
                                         <div class="progress-bar bg-success" role="progressbar" style="width: 82%">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-4">
                                 <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Rejected</div>
-                                    <h6 class="fw-bold text-dark">$3,868</h6>
+                                    <div class="fs-12 text-muted mb-1">Total Due</div>
+                                    <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_due ?></h6>
                                     <div class="progress mt-2 ht-3">
                                         <div class="progress-bar bg-danger" role="progressbar" style="width: 68%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="p-3 border border-dashed rounded">
-                                    <div class="fs-12 text-muted mb-1">Revenue</div>
-                                    <h6 class="fw-bold text-dark">$50,668</h6>
-                                    <div class="progress mt-2 ht-3">
-                                        <div class="progress-bar bg-dark" role="progressbar" style="width: 75%"></div>
                                     </div>
                                 </div>
                             </div>
@@ -226,55 +196,6 @@ while ($tenant_info = mysqli_fetch_assoc($tenant)) {
                 </div>
             </div>
             <!-- [Payment Records] end -->
-
-             <!-- test  -->
-                <?php
-                    $result = mysqli_query($db, "SELECT 
-                    SUM(total_amount) AS total_bill,
-                    SUM(paid_amount)  AS total_paid,
-                    SUM(due_amount)   AS total_due
-                    FROM invoices WHERE billing_month = '$this_month' ");
-
-                    $summary = mysqli_fetch_assoc($result);
-
-                    // Fallback to 0 if no rows or NULL sums
-                    $total_bill = number_format($summary['total_bill'] ?? 0, 2);
-                    $total_paid = number_format($summary['total_paid'] ?? 0, 2);
-                    $total_due = number_format($summary['total_due'] ?? 0, 2);
-
-                    // Optional: also get total number of invoices
-                    $count_result = mysqli_query($db, "SELECT COUNT(*) AS total_invoices FROM invoices WHERE billing_month = '$this_month' ");
-                    $count_row = mysqli_fetch_assoc($count_result);
-                    $total_invoices = $count_row['total_invoices'] ?? 0;
-                ?>
-                <div class="container">
-                    <div class="container my-5">
-                        <div class="card-group shadow">
-                            <div class="card bg-primary text-white border-0">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title text-white">Total Bills</h5>
-                                    <h4 class="card-text text-white fw-bold mb-1"><small>৳</small> <?= $total_bill ?></h4>
-                                    <small>All invoices</small>
-                                </div>
-                            </div>
-                            <div class="card bg-success text-white border-0">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title text-white">Total Paid</h5>
-                                    <h4 class="card-text text-white fw-bold mb-1"><small>৳</small> <?= $total_paid ?></h4>
-                                    <small>Collected</small>
-                                </div>
-                            </div>
-                            <div class="card bg-danger text-white border-0">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title text-white">Total Due</h5>
-                                    <h4 class="card-text text-white fw-bold mb-1"><small>৳</small> <?= $total_due ?></h4>
-                                    <small>Outstanding</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <!-- test  -->
 
         </div>
     </div>
