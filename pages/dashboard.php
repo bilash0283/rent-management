@@ -133,67 +133,6 @@ while ($tenant_info = mysqli_fetch_assoc($tenant)) {
             </div>
             <!-- Dashboard Cards -->
 
-            <!-- test  -->
-                <?php
-                // Assuming $db is your connection
-                
-                $result = mysqli_query($db, "SELECT 
-                SUM(total_amount) AS total_bill,
-                SUM(paid_amount)  AS total_paid,
-                SUM(due_amount)   AS total_due
-                FROM invoices");
-
-                $summary = mysqli_fetch_assoc($result);
-
-                // Fallback to 0 if no rows or NULL sums
-                $total_bill = number_format($summary['total_bill'] ?? 0, 2);
-                $total_paid = number_format($summary['total_paid'] ?? 0, 2);
-                $total_due = number_format($summary['total_due'] ?? 0, 2);
-
-                // Optional: also get total number of invoices
-                $count_result = mysqli_query($db, "SELECT COUNT(*) AS total_invoices FROM invoices");
-                $count_row = mysqli_fetch_assoc($count_result);
-                $total_invoices = $count_row['total_invoices'] ?? 0;
-                ?>
-
-                <!-- ===================== -->
-                <!--     ANALYTICS CARDS   -->
-                <!-- ===================== -->
-                <div class="container my-5">
-                    <h2 class="text-center mb-4">Billing Analytics</h2>
-
-                    <div class="container my-5">
-                        <div class="card-group shadow">
-
-                            <div class="card bg-primary text-white border-0">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Total Bills</h5>
-                                    <p class="card-text display-5 fw-bold mb-1"><?= $total_bill ?></p>
-                                    <small>All invoices</small>
-                                </div>
-                            </div>
-
-                            <div class="card bg-success text-white border-0">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Total Paid</h5>
-                                    <p class="card-text display-5 fw-bold mb-1"><?= $total_paid ?></p>
-                                    <small>Collected</small>
-                                </div>
-                            </div>
-
-                            <div class="card bg-danger text-white border-0">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">Total Due</h5>
-                                    <p class="card-text display-5 fw-bold mb-1"><?= $total_due ?></p>
-                                    <small>Outstanding</small>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            <!-- test  -->
-
             <!-- [Payment Records] end -->
             <div class="col-xxl-8">
                 <div class="card stretch stretch-full">
@@ -287,6 +226,55 @@ while ($tenant_info = mysqli_fetch_assoc($tenant)) {
                 </div>
             </div>
             <!-- [Payment Records] end -->
+
+             <!-- test  -->
+                <?php
+                    $result = mysqli_query($db, "SELECT 
+                    SUM(total_amount) AS total_bill,
+                    SUM(paid_amount)  AS total_paid,
+                    SUM(due_amount)   AS total_due
+                    FROM invoices WHERE billing_month = '$this_month' ");
+
+                    $summary = mysqli_fetch_assoc($result);
+
+                    // Fallback to 0 if no rows or NULL sums
+                    $total_bill = number_format($summary['total_bill'] ?? 0, 2);
+                    $total_paid = number_format($summary['total_paid'] ?? 0, 2);
+                    $total_due = number_format($summary['total_due'] ?? 0, 2);
+
+                    // Optional: also get total number of invoices
+                    $count_result = mysqli_query($db, "SELECT COUNT(*) AS total_invoices FROM invoices WHERE billing_month = '$this_month' ");
+                    $count_row = mysqli_fetch_assoc($count_result);
+                    $total_invoices = $count_row['total_invoices'] ?? 0;
+                ?>
+                <div class="container">
+                    <div class="container my-5">
+                        <div class="card-group shadow">
+                            <div class="card bg-primary text-white border-0">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Total Bills</h5>
+                                    <p class="card-text display-6 fw-bold mb-1">৳ <?= $total_bill ?></p>
+                                    <small>All invoices</small>
+                                </div>
+                            </div>
+                            <div class="card bg-success text-white border-0">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Total Paid</h5>
+                                    <p class="card-text display-6 fw-bold mb-1">৳ <?= $total_paid ?></p>
+                                    <small>Collected</small>
+                                </div>
+                            </div>
+                            <div class="card bg-danger text-white border-0">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Total Due</h5>
+                                    <p class="card-text display-6 fw-bold mb-1">৳ <?= $total_due ?></p>
+                                    <small>Outstanding</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!-- test  -->
 
         </div>
     </div>
