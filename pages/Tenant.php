@@ -105,7 +105,7 @@ $result = mysqli_query($db, $query);
                                              style="object-fit:cover;border-radius:6px;">
                                     </td>
 
-                                    <td><?= htmlspecialchars($row['name']) ?></td>
+                                    <td><a href="admin.php?page=view_tenant&id=<?= $row['id'] ?>" class="text-secendary fw-bold"><?= htmlspecialchars($row['name']) ?></a></td>
                                     <td><?= htmlspecialchars($row['phone']) ?></td>
                                     <td><?= htmlspecialchars($row['building_name']) ?></td>
                                     <td><?= htmlspecialchars($row['unit_name']) ?></td>

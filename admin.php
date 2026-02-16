@@ -32,6 +32,10 @@
             include 'pages/CreateTenant.php';
             break;
 
+        case 'view_tenant':
+            include 'pages/view_tenant.php';
+            break;
+
         case 'bill':
             include 'pages/Bill.php';
             break;
