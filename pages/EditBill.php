@@ -261,7 +261,7 @@ if (isset($_POST['save_bill'])) {
                                                             $billing_month = date("M Y", strtotime($due_mon['billing_month']));
                                                             $due_amount = (float) $due_mon['due_amount'];
                                                             $total_due += $due_amount;
-                                                            echo '<span class="fw-bold text-danger">';
+                                                            echo '<span class="fw-bold text-danger " style="font-size: 0.6rem;">';
                                                             echo 'Due - ' . htmlspecialchars($billing_month) . ' = ৳ ' . number_format($due_amount, 2);
                                                             echo '</span><br>';
                                                         }
