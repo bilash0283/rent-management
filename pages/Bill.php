@@ -60,9 +60,10 @@ $result = mysqli_query($db, $query);
                                             $name = $tent_row['name'];
                                             $tent_id = $tent_row['id'];
 
-                                            echo $name;
+                                            
                                         }
                                         ?>
+                                        <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>" class="text-secendary fw-bold"><?= $name;?></a>
                                     </td>
                                     <td>
                                        <?php

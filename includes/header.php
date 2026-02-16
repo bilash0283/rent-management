@@ -52,7 +52,7 @@ $this_month = date("Y-m");
 
         .profile-header {
             background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
-            height: 150px;
+            height: 126px;
             border-radius: 15px;
         }
 

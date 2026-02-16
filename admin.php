@@ -1,10 +1,8 @@
 <!-- header  -->
 <?php include "includes/header.php"; ?>
-
 <!-- main content  -->
  <main class="nxl-container">
     <?php
-
     $page = $_GET['page'] ?? '';
 
     switch ($page) {
