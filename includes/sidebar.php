@@ -10,7 +10,7 @@
         <div class="m-header">
             <a href="admin.php" class="b-brand">
                 <!-- ========   change your logo hear   ============ -->
-                <img src="public/assets/images/logo-full.png" alt="" class="logo logo-lg" />
+                <img src="public/assets/images/logo-full.png" alt="" class="logo logo-lg img-fluid" />
                 <img src="public/assets/images/logo-abbr.png" alt="" class="logo logo-sm" />
             </a>
         </div>

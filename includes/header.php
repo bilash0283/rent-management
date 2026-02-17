@@ -18,7 +18,7 @@ $this_month = date("Y-m");
     <meta name="description" content="" />
     <meta name="keyword" content="" />
     <meta name="author" content="flexilecode" />
-    <title>RENT-MANAGE</title>
+    <title>RENT-MANAGER</title>
     <link rel="shortcut icon" type="image/x-icon" href="public/assets/images/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="public/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="public/assets/vendors/css/vendors.min.css" />
@@ -139,7 +139,7 @@ $this_month = date("Y-m");
                     <!-- full screen  -->
 
                     <!-- notification  -->
-                    <div class="dropdown nxl-h-item">
+                    <!-- <div class="dropdown nxl-h-item">
                         <a class="nxl-head-link me-3" data-bs-toggle="dropdown" href="#" role="button"
                             data-bs-auto-close="outside">
                             <i class="feather-bell"></i>
@@ -221,7 +221,7 @@ $this_month = date("Y-m");
                                 <a href="javascript:void(0);" class="fs-13 fw-semibold text-dark">Alls Notifications</a>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- notification  -->
 
                     <!-- profile  -->
@@ -244,18 +244,18 @@ $this_month = date("Y-m");
                                 </div>
                             </div>
 
-                            <a href="javascript:void(0);" class="dropdown-item">
+                            <!-- <a href="javascript:void(0);" class="dropdown-item">
                                 <i class="feather-user"></i>
                                 <span>Profile Details</span>
-                            </a>
-                            <a href="javascript:void(0);" class="dropdown-item">
+                            </a> -->
+                            <!-- <a href="javascript:void(0);" class="dropdown-item">
                                 <i class="feather-bell"></i>
                                 <span>Notifications</span>
-                            </a>
-                            <a href="javascript:void(0);" class="dropdown-item">
+                            </a> -->
+                            <!-- <a href="javascript:void(0);" class="dropdown-item">
                                 <i class="feather-settings"></i>
-                                <span>Account Settings</span>
-                            </a>
+                                <span>Settings</span>
+                            </a> -->
                             <div class="dropdown-divider"></div>
                             <a href="pages/logout.php" class="dropdown-item">
                                 <i class="feather-log-out"></i>
