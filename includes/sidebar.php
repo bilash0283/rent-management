@@ -89,7 +89,7 @@
                         <span class="nxl-mtext">Settings</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
                     <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=setting">General</a></li>
+                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=profile">Profile</a></li>
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=setting">SEO</a></li>
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=setting">Tags</a></li>
                     </ul>

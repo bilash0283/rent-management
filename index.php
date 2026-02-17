@@ -105,7 +105,7 @@
                             </div>
                             <input type="email" name="email"
                                    class="form-control"
-                                   placeholder="admin@mail.com" required>
+                                   placeholder="Email" required>
                         </div>
                     </div>
 

@@ -3,9 +3,7 @@ if (isset($_GET['id'])) {
     $tenant_id = $_GET['id'];
 }
 
-
 $message = "";
-
 /* ================= FETCH TENANTS ================= */
 $query = "
         SELECT 
@@ -42,17 +40,6 @@ if (mysqli_num_rows($result) > 0) {
     }
 }
 ?>
-<!-- <span class="badge <?= $row['status'] == 'Rented' ? 'bg-danger' : 'bg-success' ?>">
-    <?= $row['status'] ?>
-</span>
-
-<a href="admin.php?page=CreateTenant&edit_id=<?= $row['id'] ?>" class="btn btn-sm btn-light-primary" title="Edit">
-    <i class="feather-edit"></i>
-</a> -->
-
-<style>
-   
-</style>
 
 <div class="nxl-content">
     <!-- Page Header -->

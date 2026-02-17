@@ -6,6 +6,10 @@ if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id
     header('location:index.php');
 }
 $this_month = date("Y-m");
+$user_id = $_SESSION['id'];
+$sql = mysqli_query($db,"SELECT * FROM `users` WHERE id = '$user_id' ");
+$user_row = mysqli_fetch_assoc($sql);
+$old_image= $user_row['image'];
 ?>
 
 <!DOCTYPE html>
@@ -25,80 +29,7 @@ $this_month = date("Y-m");
     <link rel="stylesheet" type="text/css" href="public/assets/vendors/css/daterangepicker.min.css" />
     <link rel="stylesheet" type="text/css" href="public/assets/css/theme.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- tenant view css  -->
-    <style>
-        .profile-sidebar {
-            background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
-        }
-
-        .nav-pills .nav-link {
-            color: #6c757d;
-            border-radius: 10px;
-            padding: 12px 20px;
-            margin: 4px 0;
-            transition: all 0.3s ease;
-        }
-
-        .nav-pills .nav-link:hover {
-            background-color: #f8f9fa;
-        }
-
-        .nav-pills .nav-link.active {
-            background-color: #fff;
-            color: #4158D0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-header {
-            background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
-            height: 126px;
-            border-radius: 15px;
-        }
-
-        .profile-pic {
-            width: 120px;
-            height: 120px;
-            border: 4px solid #fff;
-            margin-top: -60px;
-            background-color: #fff;
-        }
-
-        .settings-card {
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .settings-card:hover {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-switch .form-check-input {
-            width: 3em;
-            height: 1.5em;
-            margin-left: -3.5em;
-        }
-
-        .activity-item {
-            border-left: 2px solid #e9ecef;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .activity-item::before {
-            content: '';
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #4158D0;
-            position: absolute;
-            left: -7px;
-            top: 5px;
-        }
-    </style>
-    <!-- tenant view css  -->
+    <link rel="stylesheet" href="public/assets/css/style.css">
 </head>
 
 <body>
@@ -228,13 +159,13 @@ $this_month = date("Y-m");
                     <div class="dropdown nxl-h-item">
                         <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button"
                             data-bs-auto-close="outside">
-                            <img src="public/assets/images/avatar/1.png" alt="user-image"
+                            <img src="<?php echo $old_image ? 'public/uploads/users/'.$old_image : 'public/uploads/users/no-image.png' ?>" alt="<?= $old_image ?>"
                                 class="img-fluid user-avtar me-0" />
                         </a>
                         <div class="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">
                             <div class="dropdown-header">
                                 <div class="d-flex align-items-center">
-                                    <img src="public/assets/images/avatar/1.png" alt="user-image"
+                                    <img src="<?php echo $old_image ? 'public/uploads/users/'.$old_image : 'public/uploads/users/no-image.png' ?>" alt="user-image"
                                         class="img-fluid user-avtar" />
                                     <div>
                                         <h6 class="text-dark mb-0"><?php echo $_SESSION['name'] ?> <span
@@ -244,10 +175,10 @@ $this_month = date("Y-m");
                                 </div>
                             </div>
 
-                            <!-- <a href="javascript:void(0);" class="dropdown-item">
+                            <a href="admin.php?page=profile" class="dropdown-item">
                                 <i class="feather-user"></i>
                                 <span>Profile Details</span>
-                            </a> -->
+                            </a>
                             <!-- <a href="javascript:void(0);" class="dropdown-item">
                                 <i class="feather-bell"></i>
                                 <span>Notifications</span>

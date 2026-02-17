@@ -54,6 +54,10 @@
             include 'pages/invoice.php';
             break;
 
+        case 'profile':
+            include 'pages/profile.php';
+            break;
+
         default:
             include 'pages/dashboard.php';
             break;
