@@ -209,11 +209,13 @@ if (isset($_POST['btn'])) {
                                 <div class="col-lg-8">
                                     <div class="row">
                                         <div class="col-md-6">
+                                            <label for="rent">Rent</label>
                                             <input type="number" step="0.01" name="rent"
                                            value="<?= htmlspecialchars($unit['rent']) ?>"
                                            class="form-control" placeholder="Rent" required>
                                         </div>
                                         <div class="col-md-6">
+                                            <label for="advance">Advance</label>
                                             <input type="number" step="0.01" name="advance"
                                            value="<?= htmlspecialchars($unit['advance']) ?>"
                                            class="form-control" placeholder="Advance" >
@@ -229,11 +231,13 @@ if (isset($_POST['btn'])) {
                                 <div class="col-lg-8">
                                     <div class="row">
                                         <div class="col-md-6">
+                                            <label for="gas">Gas</label>
                                             <input type="number" step="0.01" name="Gas"
                                            value="<?= htmlspecialchars($unit['Gas']) ?>"
                                            class="form-control" placeholder="Gas" >
                                         </div>
                                         <div class="col-md-6">
+                                            <label for="water">Water</label>
                                             <input type="number" step="0.01" name="Water"
                                            value="<?= htmlspecialchars($unit['Water']) ?>"
                                            class="form-control" placeholder="Water" >
@@ -241,11 +245,13 @@ if (isset($_POST['btn'])) {
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-6">
+                                            <label for="Electricity">Electricity</label>
                                             <input type="number" step="0.01" name="Electricity"
                                            value="<?= htmlspecialchars($unit['Electricity']) ?>"
                                            class="form-control" placeholder="Electricity" >
                                         </div>
                                         <div class="col-md-6">
+                                            <label for="Internet">Internet</label>
                                             <input type="number" step="0.01" name="Internet"
                                            value="<?= htmlspecialchars($unit['Internet']) ?>"
                                            class="form-control" placeholder="Internet" >
@@ -253,11 +259,13 @@ if (isset($_POST['btn'])) {
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-md-6">
+                                            <label for="Maintenance">Maintenance</label>
                                             <input type="number" step="0.01" name="Maintenance"
                                            value="<?= htmlspecialchars($unit['Maintenance']) ?>"
                                            class="form-control" placeholder="Maintenance" >
                                         </div>
                                         <div class="col-md-6">
+                                            <label for="Others">Others</label>
                                             <input type="number" step="0.01" name="Others"
                                            value="<?= htmlspecialchars($unit['Others']) ?>"
                                            class="form-control" placeholder="Others" >

@@ -67,12 +67,11 @@ $total_invoices = $count_row['total_invoices'] ?? 0;
 
 ?>
 <?php
-// === CURRENT YEAR এর জন্য 12 মাস প্রি-ফিল করো ===
-$year = date('Y'); // 2026
+$year = date('Y'); 
 
 $monthly_totals = [];
 for ($m = 1; $m <= 12; $m++) {
-    $key = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT); // 2026-01, 2026-02, ...
+    $key = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT); 
     $monthly_totals[$key] = [
         'total_amount' => 0,
         'paid_amount'  => 0,
@@ -80,11 +79,10 @@ for ($m = 1; $m <= 12; $m++) {
     ];
 }
 
-// === ডাটাবেজ থেকে ডাটা নাও ===
 $invoice = mysqli_query($db, "SELECT * FROM invoices ORDER BY billing_month ASC");
 
 while ($row = mysqli_fetch_assoc($invoice)) {
-    $month_key = $row['billing_month'];   // আশা করি এটা "2026-02" ফরম্যাটে আছে
+    $month_key = $row['billing_month'];   
 
     if (isset($monthly_totals[$month_key])) {
         $monthly_totals[$month_key]['total_amount'] += (float)$row['total_amount'];
@@ -93,14 +91,13 @@ while ($row = mysqli_fetch_assoc($invoice)) {
     }
 }
 
-// === Chart.js এর জন্য arrays তৈরি করো ===
 $chart_labels = [];
 $chart_bills  = [];
 $chart_paids  = [];
 $chart_dues   = [];
 
 foreach ($monthly_totals as $month => $data) {
-    $display_month = date('M Y', strtotime($month . '-01')); // Feb 2026
+    $display_month = date('M Y', strtotime($month . '-01')); 
     $chart_labels[] = $display_month;
     $chart_bills[]  = $data['total_amount'] / 1000;
     $chart_paids[]  = $data['paid_amount']  / 1000;
@@ -134,7 +131,7 @@ foreach ($monthly_totals as $month => $data) {
                                 </div>
 
                                 <h3 class="fw-bold text-primary mb-0">
-                                    <?= $total_building ?>
+                                    <?= $total_building ?? '' ?>
                                 </h3>
 
                             </div>
@@ -143,7 +140,7 @@ foreach ($monthly_totals as $month => $data) {
                 </div>
                 <!-- Unit Card -->
                 <div class="col-lg-4">
-                    <a href="admin.php?page=unit&id=<?= $buill_id ?>" class="text-decoration-none">
+                    <a href="admin.php?page=unit&id=<?= $buill_id ?? '' ?>" class="text-decoration-none">
                         <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
                             <div class="card-body d-flex justify-content-between align-items-center">
 

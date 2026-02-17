@@ -241,7 +241,7 @@ if (isset($_POST['save_bill'])) {
 
                                                 <div>
                                                     <?php
-                                                    // Prepare statement (prevents SQL injection)
+                                                    // Prepare statement
                                                     $stmt = $db->prepare("SELECT billing_month, due_amount 
                                                                         FROM invoices 
                                                                         WHERE tenant_id = ? 
@@ -249,31 +249,36 @@ if (isset($_POST['save_bill'])) {
                                                                         AND due_amount > 0 
                                                                         ORDER BY billing_month");
 
-                                                    $stmt->bind_param("ii", $tent_id, $unit_id); // change "ii" if IDs are not integers
+                                                    $stmt->bind_param("ii", $tent_id, $unit_id);
                                                     $stmt->execute();
-
-                                                    $result = $stmt->get_result();
+                                                    $stmt->bind_result($month, $due);
 
                                                     $total_due = 0;
+                                                    $has_due = false;
 
-                                                    if ($result->num_rows > 0) {
-                                                        while ($due_mon = $result->fetch_assoc()) {
-                                                            $billing_month = date("M Y", strtotime($due_mon['billing_month']));
-                                                            $due_amount = (float) $due_mon['due_amount'];
-                                                            $total_due += $due_amount;
-                                                            echo '<span class="fw-bold text-danger " style="font-size: 0.6rem;">';
-                                                            echo 'Due - ' . htmlspecialchars($billing_month) . ' = ৳ ' . number_format($due_amount, 2);
-                                                            echo '</span><br>';
-                                                        }
-                                                    } else {
+                                                    while ($stmt->fetch()) {
+
+                                                        $has_due = true;
+                                                        $total_due += (float)$due;
+
+                                                        echo '<small class="text-danger fw-bold">';
+                                                        echo date("M Y", strtotime($month)) . ' : ৳ ' . number_format($due, 2);
+                                                        echo '</small><br>';
+                                                    }
+
+                                                    if (!$has_due) {
                                                         echo '<span class="text-success">No Due Found</span><br>';
                                                     }
 
                                                     if ($total_due > 0) {
-                                                        echo '<span class="fw-bold text-danger">Total Due = ৳ ' . number_format($total_due, 2) . '</span>';
-
-                                                        $stmt->close();
+                                                        echo '<hr>';
+                                                        echo '<span class="fw-bold text-danger">';
+                                                        echo 'Total Due = ৳ ' . number_format($total_due, 2);
+                                                        echo '</span>';
                                                     }
+
+                                                    $stmt->close();
+
                                                     ?>
                                                 </div>
                                             </div>
@@ -367,14 +372,14 @@ if (isset($_POST['save_bill'])) {
                                                 <td class="fw-bold text-secondary">
                                                     <?= date("M Y", strtotime($billing_month_db)) ?>
                                                 </td>
-                                                <td class="text-end text-dark">
-                                                    ৳ <?= number_format($total_amount_db, 2) ?>
+                                                <td class="text-end text-primary fw-bold">
+                                                    <small>৳</small> <?= number_format($total_amount_db, 2) ?>
                                                 </td>
-                                                <td class="text-end text-success fw-semibold">
-                                                    ৳ <?= number_format($paid_amount_db, 2) ?>
+                                                <td class="text-end text-success fw-bold">
+                                                    <small>৳</small> <?= number_format($paid_amount_db, 2) ?>
                                                 </td>
                                                 <td class="text-end text-danger fw-bold">
-                                                    ৳ <?= number_format($due_amount_db, 2) ?>
+                                                    <small>৳</small> <?= number_format($due_amount_db, 2) ?>
                                                 </td>
                                                 <td class="text-center">
                                                     <?php if ($status == 'Paid'): ?>
@@ -441,11 +446,11 @@ if (isset($_POST['save_bill'])) {
                                                     <?= date(' M Y', strtotime($bill_his)) ?>
                                                 </td>
                                                 <td class="text-end text-secendary fw-semibold"><?= $pay_method_his ?></td>
-                                                <td class="text-end text-success fw-semibold"><?= $paid_amount_his ?></td>
+                                                <td class="text-end text-success fw-semibold"><small>৳</small> <?= $paid_amount_his ?></td>
                                                 <td class="text-end fw-semibold">
-                                                    <span class="text-primary">৳ <?= $total_his ?></span> <br>
-                                                    <span class="text-success">৳ <?= $paid_his ?></span> <br>
-                                                    <span class="text-danger">৳ <?= $due_his ?></span>
+                                                    <span class="text-primary"><small>৳</small> <?= $total_his ?></span> <br>
+                                                    <span class="text-success"><small>৳</small> <?= $paid_his ?></span> <br>
+                                                    <span class="text-danger"><small>৳</small> <?= $due_his ?></span>
                                                 </td>
                                                 <td class="text-center pe-4">
                                                     <small class="text-secendary"><?= $note_his ?></small>

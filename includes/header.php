@@ -9,6 +9,8 @@ $this_month = date("Y-m");
 $user_id = $_SESSION['id'];
 $sql = mysqli_query($db,"SELECT * FROM `users` WHERE id = '$user_id' ");
 $user_row = mysqli_fetch_assoc($sql);
+$user_name     = $user_row['name'];
+$user_email = $user_row['email'];
 $old_image= $user_row['image'];
 ?>
 
@@ -168,9 +170,9 @@ $old_image= $user_row['image'];
                                     <img src="<?php echo $old_image ? 'public/uploads/users/'.$old_image : 'public/uploads/users/no-image.png' ?>" alt="user-image"
                                         class="img-fluid user-avtar" />
                                     <div>
-                                        <h6 class="text-dark mb-0"><?php echo $_SESSION['name'] ?> <span
+                                        <h6 class="text-dark mb-0"><?php echo $user_name ?? '' ?> <span
                                                 class="badge bg-soft-success text-success ms-1">PRO</span></h6>
-                                        <span class="fs-12 fw-medium text-muted"><?php echo $_SESSION['email'] ?></span>
+                                        <span class="fs-12 fw-medium text-muted"><?php echo $user_email ?? '' ?></span>
                                     </div>
                                 </div>
                             </div>

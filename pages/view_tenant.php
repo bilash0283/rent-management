@@ -94,7 +94,7 @@ if (mysqli_num_rows($result) > 0) {
                                         <div class="p-4">
                                             <div class="nav flex-column nav-pills">
                                                 <label for="">NID</label>
-                                                <img src="<?= $image ?>" alt="" class="img-fluid">
+                                                <img src="<?= $nid ?>" alt="" class="img-fluid">
                                             </div>
                                         </div>
                                     </div>
