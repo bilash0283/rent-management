@@ -107,11 +107,14 @@
                                 <tr>
                                     <td>
                                         <img src="<?= htmlspecialchars($image) ?>"
-                                             width="60" height="60"
+                                             width="40" height="40"
                                              style="object-fit:cover;border-radius:6px;">
                                     </td>
 
-                                    <td><?= htmlspecialchars($row['unit_name']) ?></td>
+                                    <td>
+                                        <?= htmlspecialchars($row['unit_name']) ?><br>
+                                        <span>(<?= $row['size'] ?>)</span>
+                                    </td>
                                     
                                     <td><?= htmlspecialchars($row['floor'] ?? '-') ?></td>
                                     <td>

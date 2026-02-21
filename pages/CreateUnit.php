@@ -192,12 +192,12 @@ if (isset($_POST['btn'])) {
                             <!-- Size -->
                             <div class="row mb-4 align-items-center">
                                 <div class="col-lg-4">
-                                    <label class="fw-semibold">Size</label>
+                                    <label class="fw-semibold">Electricity Meter No</label>
                                 </div>
                                 <div class="col-lg-8">
                                     <input type="text" name="size"
                                            value="<?= htmlspecialchars($unit['size']) ?>"
-                                           class="form-control">
+                                           class="form-control" >
                                 </div>
                             </div>
 
