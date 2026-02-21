@@ -245,17 +245,18 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                         </div>
 
                                         <div class="table-responsive">
-                                            <table class="table table-sm table-borderless align-middle mb-0"
+                                            <table class="table table-sm table-striped table-borderless align-middle mb-0"
                                                 style="font-size: 0.85rem;">
-                                                <thead class="border-bottom">
+                                                <!-- <thead class="border-bottom">
                                                     <tr>
                                                         <th class="py-2 text-muted">Description</th>
                                                         <th class="py-2 text-end text-muted">Amount</th>
                                                     </tr>
-                                                </thead>
-                                                <tbody>
+                                                </thead> -->
+                                                <tbody >
                                                     <tr>
                                                         <td class="py-1">House Rent</td>
+                                                        <td class="py-1 text-center"><?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?></td>
                                                         <td class="py-1 text-end">৳
                                                             <?php echo number_format($rent, 2); ?>
                                                         </td>
@@ -263,6 +264,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     <?php if (!empty($Gas)): ?>
                                                         <tr>
                                                             <td class="py-1">Gas Bill</td>
+                                                            <td class="py-1 text-center"><?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?></td>
                                                             <td class="py-1 text-end">৳
                                                                 <?php echo number_format($Gas, 2); ?>
                                                             </td>
@@ -271,6 +273,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     <?php if (!empty($Water)): ?>
                                                         <tr>
                                                             <td class="py-1">Water Bill</td>
+                                                            <td></td>
                                                             <td class="py-1 text-end">৳
                                                                 <?php echo number_format($Water, 2); ?>
                                                             </td>
@@ -279,6 +282,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     <?php if (!empty($Electricity)): ?>
                                                         <tr>
                                                             <td class="py-1">Electricity Bill</td>
+                                                            <td></td>
                                                             <td class="py-1 text-end">৳
                                                                 <?php echo number_format($Electricity, 2); ?>
                                                             </td>
@@ -287,6 +291,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     <?php if (!empty($Internet)): ?>
                                                         <tr>
                                                             <td class="py-1">Internet Bill</td>
+                                                            <td></td>
                                                             <td class="py-1 text-end">৳
                                                                 <?php echo number_format($Internet, 2); ?>
                                                             </td>
@@ -295,6 +300,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     <?php if (!empty($Others)): ?>
                                                         <tr>
                                                             <td class="py-1">Others Bill</td>
+                                                            <td></td>
                                                             <td class="py-1 text-end">৳
                                                                 <?php echo number_format($Others, 2); ?>
                                                             </td>
@@ -305,6 +311,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     <?php $total_bill = $rent + $Gas + $Water + $Electricity + $Internet + $Others; ?>
                                                     <tr class="table-light">
                                                         <td class="fw-bold py-2">Current Month Total = </td>
+                                                        <td></td>
                                                         <td class="fw-bold py-2 text-end text-primary">৳
                                                             <?= number_format($total_bill, 2) ?>
                                                         </td>
