@@ -88,7 +88,7 @@
                                 <th>Unit Name</th>
                                 <th>Description</th>
                                 <th>Rent</th>
-                                <th>Bills</th>
+                                <th>Electricity Meter No.</th>
                                 <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -112,8 +112,7 @@
                                     </td>
 
                                     <td>
-                                        <?= htmlspecialchars($row['unit_name']) ?><br>
-                                        <span>(<?= $row['size'] ?>)</span>
+                                        <?= htmlspecialchars($row['unit_name']) ?>                                        
                                     </td>
                                     
                                     <td><?= htmlspecialchars($row['floor'] ?? '-') ?></td>
@@ -121,31 +120,9 @@
                                         Advance : ৳ <?= number_format($row['advance'], 2) ?><br>
                                         Rent    : ৳ <?= number_format($row['rent'], 2) ?>
                                     </td>
+                                    
                                     <td>
-                                        <?php if (!empty($row['Gas'])) { ?>
-                                            Gas : ৳ <?= number_format($row['Gas'], 2) ?><br>
-                                        <?php } ?>
-
-                                        <?php if (!empty($row['Water'])) { ?>
-                                            Water : ৳ <?= number_format($row['Water'], 2) ?><br>
-                                        <?php } ?>
-
-                                        <?php if (!empty($row['Electricity'])) { ?>
-                                            Electricity : ৳ <?= number_format($row['Electricity'], 2) ?><br>
-                                        <?php } ?>
-
-                                        <?php if (!empty($row['Internet'])) { ?>
-                                            Internet : ৳ <?= number_format($row['Internet'], 2) ?><br>
-                                        <?php } ?>
-
-                                        <?php if (!empty($row['Maintenance'])) { ?>
-                                            Maintenance : ৳ <?= number_format($row['Maintenance'], 2) ?><br>
-                                        <?php } ?>
-
-                                        <?php if (!empty($row['Others'])) { ?>
-                                            Others : ৳ <?= number_format($row['Others'], 2) ?><br>
-                                        <?php } ?>
-
+                                        <span><?= $row['size'] ?></span>
                                     </td>
 
                                     <td>

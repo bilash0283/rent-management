@@ -52,12 +52,6 @@ if (isset($_POST['btn'])) {
     // NUMERIC FIELDS (EMPTY → 0)
     $rent        = (float) ($_POST['rent'] ?? 0);
     $advance     = (float) ($_POST['advance'] ?? 0);
-    $Gas         = (float) ($_POST['Gas'] ?? 0);
-    $Water       = (float) ($_POST['Water'] ?? 0);
-    $Electricity = (float) ($_POST['Electricity'] ?? 0);
-    $Internet    = (float) ($_POST['Internet'] ?? 0);
-    $Maintenance = (float) ($_POST['Maintenance'] ?? 0);
-    $Others      = (float) ($_POST['Others'] ?? 0);
 
     $status = 'Available';
 
@@ -94,13 +88,7 @@ if (isset($_POST['btn'])) {
             size='$size',
             rent=$rent,
             advance=$advance,
-            unit_image='$image_name',
-            Gas=$Gas,
-            Water=$Water,
-            Electricity=$Electricity,
-            Internet=$Internet,
-            Maintenance=$Maintenance,
-            Others=$Others
+            unit_image='$image_name'
             WHERE id=$edit_id";
 
         $message = mysqli_query($db, $sql)
@@ -113,10 +101,9 @@ if (isset($_POST['btn'])) {
         // INSERT
         // ======================
         $sql = "INSERT INTO unit
-        (unit_name, building_name, floor, unit_type, size, rent, advance, unit_image, status, Gas, Water, Electricity, Internet, Maintenance, Others)
+        (unit_name, building_name, floor, unit_type, size, rent, advance, unit_image, status)
         VALUES
-        ('$unit_name', $building_id, '$floor', '$unit_type', '$size', $rent, $advance, '$image_name', '$status',
-         $Gas, $Water, $Electricity, $Internet, $Maintenance, $Others)";
+        ('$unit_name', $building_id, '$floor', '$unit_type', '$size', $rent, $advance, '$image_name', '$status')";
 
         $message = mysqli_query($db, $sql)
             ? "<div class='alert alert-success'>Unit created successfully</div>"
@@ -219,56 +206,6 @@ if (isset($_POST['btn'])) {
                                             <input type="number" step="0.01" name="advance"
                                            value="<?= htmlspecialchars($unit['advance']) ?>"
                                            class="form-control" placeholder="Advance" >
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mb-4 align-items-center">
-                                <div class="col-lg-4">
-                                    <label class="fw-semibold">Bills</label>
-                                </div>
-                                <div class="col-lg-8">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="gas">Gas</label>
-                                            <input type="number" step="0.01" name="Gas"
-                                           value="<?= htmlspecialchars($unit['Gas']) ?>"
-                                           class="form-control" placeholder="Gas" >
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="water">Water</label>
-                                            <input type="number" step="0.01" name="Water"
-                                           value="<?= htmlspecialchars($unit['Water']) ?>"
-                                           class="form-control" placeholder="Water" >
-                                        </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col-md-6">
-                                            <label for="Electricity">Electricity</label>
-                                            <input type="number" step="0.01" name="Electricity"
-                                           value="<?= htmlspecialchars($unit['Electricity']) ?>"
-                                           class="form-control" placeholder="Electricity" >
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="Internet">Internet</label>
-                                            <input type="number" step="0.01" name="Internet"
-                                           value="<?= htmlspecialchars($unit['Internet']) ?>"
-                                           class="form-control" placeholder="Internet" >
-                                        </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col-md-6">
-                                            <label for="Maintenance">Maintenance</label>
-                                            <input type="number" step="0.01" name="Maintenance"
-                                           value="<?= htmlspecialchars($unit['Maintenance']) ?>"
-                                           class="form-control" placeholder="Maintenance" >
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="Others">Others</label>
-                                            <input type="number" step="0.01" name="Others"
-                                           value="<?= htmlspecialchars($unit['Others']) ?>"
-                                           class="form-control" placeholder="Others" >
                                         </div>
                                     </div>
                                 </div>

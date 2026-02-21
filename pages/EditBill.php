@@ -18,6 +18,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $Others = $row['Others'];
     $building_name = $row['building_name'];
     $unit_type = $row['unit_type'];
+    $Electricity_meter_no = $row['size'];
 }
 
 $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
@@ -261,6 +262,17 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                             <?php echo number_format($rent, 2); ?>
                                                         </td>
                                                     </tr>
+
+                                                    <?php if (!empty($Electricity)): ?>
+                                                        <tr>
+                                                            <td class="py-1">Electricity Bill(<small><?= $Electricity_meter_no ?? '' ?></small>)</td>
+                                                            <td></td>
+                                                            <td class="py-1 text-end">৳
+                                                                <?php echo number_format($Electricity, 2); ?>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endif; ?>
+
                                                     <?php if (!empty($Gas)): ?>
                                                         <tr>
                                                             <td class="py-1">Gas Bill</td>
@@ -279,15 +291,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                             </td>
                                                         </tr>
                                                     <?php endif; ?>
-                                                    <?php if (!empty($Electricity)): ?>
-                                                        <tr>
-                                                            <td class="py-1">Electricity Bill</td>
-                                                            <td></td>
-                                                            <td class="py-1 text-end">৳
-                                                                <?php echo number_format($Electricity, 2); ?>
-                                                            </td>
-                                                        </tr>
-                                                    <?php endif; ?>
+                                                    
                                                     <?php if (!empty($Internet)): ?>
                                                         <tr>
                                                             <td class="py-1">Internet Bill</td>
@@ -346,7 +350,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
 
                                             <?php if ($total_due > 0): ?>
                                                 <div class="d-flex justify-content-between border-top mt-1 pt-1">
-                                                    <span class="small fw-bold">Total Previous Due = </span>
+                                                    <span class="small fw-bold text-black">Total Previous Due = </span>
                                                     <span class="small fw-bold text-primary">৳
                                                         <?= number_format($total_due, 2) ?>
                                                     </span>
