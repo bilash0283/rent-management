@@ -184,6 +184,7 @@ if (isset($_POST['btn'])) {
                                         <option value="2" <?php echo $existing['building_type'] == 2 ? 'selected' : ''; ?>>Commercial</option>
                                         <option value="3" <?php echo $existing['building_type'] == 3 ? 'selected' : ''; ?>>Industrial</option>
                                         <option value="4" <?php echo $existing['building_type'] == 4 ? 'selected' : ''; ?>>Institutional</option>
+                                        <option value="5" <?php echo $existing['building_type'] == 5 ? 'selected' : ''; ?>>Residential & Commercial</option>
                                     </select>
                                 </div>
                             </div>

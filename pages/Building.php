@@ -168,6 +168,9 @@ $result = mysqli_query($db, $sql) or die("Query failed: " . mysqli_error($db));
                                                         case 4:
                                                             echo 'Institutional';
                                                             break;
+                                                            case 5:
+                                                            echo 'Residential & Commercial';
+                                                            break;
                                                         default:
                                                             echo '—';
                                                             break;

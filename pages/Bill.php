@@ -135,14 +135,13 @@ $result = mysqli_query($db, $query);
                                     </td>
                                     
                                     <td>
-                                        
-                                        <div class="btn-group text-end">
+                                        <div class="btn-group align-items-center">
                                             <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button> -->
-                                            <!-- <button class="btn btn-sm btn-outline-success" title="view">
+                                            <!-- <a class="btn btn-sm btn-outline-success" title="Invoice">
                                                 <i class="bi bi-eye"></i>
-                                            </button> -->
+                                            </a> -->
                                             <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>" class="text-end btn btn-sm btn-outline-success" title="Add Payment">Add Payment</a>
                                         </div>
                                     </td>
