@@ -10,12 +10,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $unit_name = $row['unit_name'];
     $advance = $row['advance'];
     $rent = $row['rent'];
-    $Gas = $row['Gas'];
-    $Water = $row['Water'];
-    $Electricity = $row['Electricity'];
-    $Internet = $row['Internet'];
-    $Maintenance = $row['Maintenance'];
-    $Others = $row['Others'];
     $building_name = $row['building_name'];
     $unit_type = $row['unit_type'];
     $Electricity_meter_no = $row['size'];
@@ -64,6 +58,12 @@ if (isset($_POST['save_bill'])) {
         $id_db = $ex_month_row['id'];
         $old_total = intval($ex_month_row['total_amount']);
         $old_paid = intval($ex_month_row['paid_amount']);
+
+        $Gas = $row['Gas'];
+        $Water = $row['Water'];
+        $Electricity = $row['Electricity'];
+        $Internet = $row['Internet'];
+        $Others = $row['Others'];
     }
     $update_paid_amount = $old_paid + $paid_amount;
     $update_due_amount = $old_total - $update_paid_amount;
@@ -312,7 +312,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     <?php endif; ?>
                                                 </tbody>
                                                 <tfoot class="border-top">
-                                                    <?php $total_bill = $rent + $Gas + $Water + $Electricity + $Internet + $Others; ?>
+                                                    <?php $total_bill = $rent; ?>
                                                     <tr class="table-light">
                                                         <td class="fw-bold py-2">Current Month Total = </td>
                                                         <td></td>

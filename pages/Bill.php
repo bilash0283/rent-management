@@ -41,15 +41,10 @@ $result = mysqli_query($db, $query);
                                 $unit_id = $row['id'];
                                 $advance = $row['advance'];
                                 $rent = $row['rent'];
-                                $Gas = $row['Gas'];
-                                $Water = $row['Water'];
-                                $Electricity = $row['Electricity'];
-                                $Internet = $row['Internet'];
-                                $Maintenance = $row['Maintenance'];
-                                $Others = $row['Others'];
+                                
                                 $building_name = $row['building_name'];
 
-                                $total_bill = $rent + $Gas + $Water + $Electricity + $Internet + $Others;
+                                $total_bill = $rent;
 
                                 ?>
                                 <tr>
