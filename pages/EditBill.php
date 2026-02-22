@@ -59,11 +59,7 @@ if (isset($_POST['save_bill'])) {
         $old_total = intval($ex_month_row['total_amount']);
         $old_paid = intval($ex_month_row['paid_amount']);
 
-        $Gas = $row['Gas'];
-        $Water = $row['Water'];
-        $Electricity = $row['Electricity'];
-        $Internet = $row['Internet'];
-        $Others = $row['Others'];
+
     }
     $update_paid_amount = $old_paid + $paid_amount;
     $update_due_amount = $old_total - $update_paid_amount;

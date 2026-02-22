@@ -12,14 +12,6 @@ $total_unit = mysqli_num_rows($unit);
 while ($unit_info = mysqli_fetch_assoc($unit)) {
     $unit_id = $unit_info['id'];
     $rent = intval($unit_info['rent']);
-    $Gas = intval($unit_info['Gas']);
-    $Water = intval($unit_info['Water']);
-    $Electricity = intval($unit_info['Electricity']);
-    $Internet = intval($unit_info['Internet']);
-    $Maintenance = intval($unit_info['Maintenance']);
-    $Others = intval($unit_info['Others']);
-
-    $total_bill = $rent + $Gas + $Water + $Electricity + $Maintenance + $Others;
 
     $advance = intval($unit_info['advance']);
 }
@@ -36,6 +28,14 @@ while ($invoice_info = mysqli_fetch_assoc($invoice)) {
     $paid_amount = $invoice_info['paid_amount'];
     $due_amount = $invoice_info['due_amount'];
     $status = $invoice_info['status'];
+
+    $Gas = intval($invoice_info['Gas']);
+    $Water = intval($invoice_info['Water']);
+    $Electricity = intval($invoice_info['Electricity']);
+    $Internet = intval($invoice_info['Internet']);
+    $Others = intval($invoice_info['Others']);
+
+    $total_bill = $rent + $Gas + $Water + $Electricity + $Others;
 }
 
 // tenant 
