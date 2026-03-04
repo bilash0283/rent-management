@@ -112,8 +112,11 @@ while ($advance_his = mysqli_fetch_assoc($advance_sql)) {
     $total_paid = $advance_his['paid_amount'];
 }
 
-// Remaining Payable Amount
-$payable = max($advance - $total_paid, 0); // avoid negative
+if(!empty($total_paid)){
+    $payable = max($advance - $total_paid, 0);
+}else{
+    $payable = $advance;
+}
 ?>
 
 <div class="nxl-content">

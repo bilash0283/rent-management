@@ -692,7 +692,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
                                                             <i class="bi bi-pencil-square"></i>
                                                         </button> -->
-                                                    <a href="admin.php?page=invoice&id=<?php echo $tent_id; ?>"
+                                                    <a href="admin.php?page=invoice&unit_id=<?php echo $unit_id; ?>"
                                                         class="btn btn-sm btn-outline-success" title="view">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
