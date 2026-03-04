@@ -197,8 +197,6 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
     $Water_month_db = $pay_info_sh['Water_month'];
     $Electricity_month_db = $pay_info_sh['Electricity_month'];
     $Others_month_db = $pay_info_sh['Others_month'];
-
-
 }
 
 ?>

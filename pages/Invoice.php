@@ -15,12 +15,9 @@ while ($row = mysqli_fetch_assoc($result)) {
     $unit_name = $row['unit_name'];
     $advance = $row['advance'];
     $rent = $row['rent'];
-    $Gas = $row['Gas'];
-    $Water = $row['Water'];
-    $Electricity = $row['Electricity'];
-    $Internet = $row['Internet'];
-    $Maintenance = $row['Maintenance'];
-    $Others = $row['Others'];
+    $size = $row['size'];
+    // $Gas = $row['Gas'];
+    // $Water = $row['Water'];
     $building_name = $row['building_name'];
     $unit_type = $row['unit_type'];
 }
@@ -93,11 +90,26 @@ if (isset($_POST['save_bill'])) {
 
 // monthly payment sql 
 $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
-$total_paid = 0;
+while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
+    $billing_month_db = $pay_info_sh['billing_month'];
+    $total_amount_db = $pay_info_sh['total_amount'];
+    $paid_amount_db = $pay_info_sh['paid_amount'];
+    $due_amount_db = $pay_info_sh['due_amount'];
+    $status = $pay_info_sh['status'];
+    $Gas_db = $pay_info_sh['Gas'];
+    $Water_db = $pay_info_sh['Water'];
+    $Electricity_db = $pay_info_sh['Electricity'];
+    $Others_db = $pay_info_sh['Others'];
+
+    $Gas_month_db = $pay_info_sh['Gas_month'];
+    $Water_month_db = $pay_info_sh['Water_month'];
+    $Electricity_month_db = $pay_info_sh['Electricity_month'];
+    $Others_month_db = $pay_info_sh['Others_month'];
+}
 
 $advance_sql = mysqli_query($db, "SELECT * FROM `advance` WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
 while ($advance_his = mysqli_fetch_assoc($advance_sql)) {
-    $total_paid += $advance_his['paid_amount'];
+    $total_paid = $advance_his['paid_amount'];
 }
 
 // Remaining Payable Amount
@@ -120,7 +132,7 @@ $payable = max($advance - $total_paid, 0); // avoid negative
     </div>
 
     <div class="mb-4">
-        <div id="pdf-content" class="agreement-paper p-5 bg-white border" >
+        <div id="pdf-content" class="agreement-paper p-5 bg-white border">
             <div class="border-bottom-0 pt-4 d-flex justify-content-between align-items-start border-bottom">
                 <div>
                     <h3 class="fw-bold mb-1 text-uppercase">
@@ -139,11 +151,11 @@ $payable = max($advance - $total_paid, 0); // avoid negative
 
             <div class="row mb-3">
                 <div class="col-7">
-                    <small class="text-muted d-block text-uppercase fw-semibold" >
+                    <small class="text-muted d-block text-uppercase fw-semibold">
                         Tenant Name : <span class="fw-bold"><?php echo $tent_name ?? 'N/A' ?></span>
                     </small>
                     <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 0.7rem;">
-                        <?php echo $unit_type.' : '. $unit_name ?? 'N/A' ?>
+                        <?php echo $unit_type . ' : ' . $unit_name ?? 'N/A' ?>
                     </small>
                 </div>
                 <div class="col-5 text-end">
@@ -158,64 +170,83 @@ $payable = max($advance - $total_paid, 0); // avoid negative
 
             <div class="table-responsive">
                 <table class="table table-sm table-borderless align-middle mb-0" style="font-size: 0.85rem;">
-                    <thead class="border-bottom">
-                        <tr>
-                            <th class="py-2 text-muted">Description</th>
-                            <th class="py-2 text-end text-muted">Amount</th>
-                        </tr>
-                    </thead>
+
                     <tbody>
                         <tr>
                             <td class="py-1">House Rent</td>
+                            <td class="py-1 text-center">
+                                <?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?>
+                            </td>
                             <td class="py-1 text-end">৳
-                                <?php echo number_format($rent, 2); ?>
+                                <?php echo number_format($rent, 2);
+                                $total_bill = 0;
+                                $total_bill += $rent;
+                                ?>
                             </td>
                         </tr>
-                        <?php if (!empty($Gas)): ?>
+
+                        <?php if (!empty($Gas_db)) { ?>
                             <tr>
                                 <td class="py-1">Gas Bill</td>
+                                <td class="py-1 text-center">
+                                    <?= !empty($Gas_month_db) ? date("M Y", strtotime($Gas_month_db)) : '' ?>
+                                    <?php $total_bill += $Gas_db; ?>
+                                </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Gas, 2); ?>
+                                    <?php echo number_format($Gas_db, 2); ?>
                                 </td>
                             </tr>
-                        <?php endif; ?>
-                        <?php if (!empty($Water)): ?>
+                        <?php } ?>
+
+                        <?php if (!empty($Water_db)) { ?>
                             <tr>
                                 <td class="py-1">Water Bill</td>
+                                <td class="py-1 text-center">
+                                    <?= $Water_month_db ?? '';
+                                    $total_bill += $Water_db;
+                                    ?>
+                                </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Water, 2); ?>
+                                    <?php echo number_format($Water_db, 2); ?>
                                 </td>
                             </tr>
-                        <?php endif; ?>
-                        <?php if (!empty($Electricity)): ?>
+                        <?php } ?>
+
+                        <?php if (!empty($Electricity_db)) { ?>
                             <tr>
-                                <td class="py-1">Electricity Bill</td>
+                                <td class="py-1">Electricity Bill <span class="text-warning"
+                                        style="font-size:10px;">(<?= $size ?>)</span></td>
+                                <td class="py-1 text-center">
+                                    <?= $Electricity_month_db ?? '';
+                                    $total_bill += $Electricity_db;
+                                    ?>
+                                </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Electricity, 2); ?>
+                                    <?php echo number_format($Electricity_db, 2); ?>
                                 </td>
                             </tr>
-                        <?php endif; ?>
-                        <?php if (!empty($Internet)): ?>
-                            <tr>
-                                <td class="py-1">Internet Bill</td>
-                                <td class="py-1 text-end">৳
-                                    <?php echo number_format($Internet, 2); ?>
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                        <?php if (!empty($Others)): ?>
+                        <?php } ?>
+
+                        <?php if (!empty($Others_db)) { ?>
                             <tr>
                                 <td class="py-1">Others Bill</td>
+                                <td class="py-1 text-center">
+                                    <?= $Others_month_db ?? '';
+                                    $total_bill += $Others_db;
+                                    ?>
+                                </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Others, 2); ?>
+                                    <?php echo number_format($Others_db, 2); ?>
                                 </td>
                             </tr>
-                        <?php endif; ?>
+                        <?php } ?>
+
                     </tbody>
+
                     <tfoot class="border-top">
-                        <?php $total_bill = $rent + $Gas + $Water + $Electricity + $Internet + $Others; ?>
                         <tr class="table-light">
                             <td class="fw-bold py-2">Current Month Total = </td>
+                            <td></td>
                             <td class="fw-bold py-2 text-end text-primary">৳
                                 <?= number_format($total_bill, 2) ?>
                             </td>
@@ -262,7 +293,7 @@ $payable = max($advance - $total_paid, 0); // avoid negative
                 class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
                 <span class="h6 mb-0 text-white">Total Payable = </span>
                 <span class="h5 mb-0 fw-bold text-white">৳
-                    <?= number_format($total_bill + $total_due, 2) ?>
+                    <?= number_format($total_due, 2) ?>
                 </span>
             </div>
 
