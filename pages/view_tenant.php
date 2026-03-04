@@ -167,11 +167,12 @@ if (mysqli_num_rows($result) > 0) {
                                                         $paid_amount_db = $pay_info_row['paid_amount'];
                                                         $due_amount_db = $pay_info_row['due_amount'];
                                                         $status = $pay_info_row['status'];
+                                                        $total_amount = $pay_info_row['total_amount'];
                                                     
                                                 ?>
                                                     <div class="activity-item mb-3">
                                                         <h6 class="mb-1"><?= date(' M Y', strtotime($billing_month_db)) ?></h6>
-                                                        <span class="text-muted small mb-0">🟢 <small>৳ </small><?= $paid_amount_db ?></span> <span class="text-muted small mb-0">🔴 <small>৳ </small> <?= $due_amount_db ?></span>
+                                                        <span class="text-muted small mb-0">🟡 <small>৳ </small><?= $total_amount ?></span> 🟢 <small>৳ </small><?= $paid_amount_db ?></span> <span class="text-muted small mb-0">🔴 <small>৳ </small> <?= $due_amount_db ?></span>
                                                     </div>
                                                 <?php } ?>
                                             </div>
