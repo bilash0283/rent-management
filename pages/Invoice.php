@@ -132,7 +132,7 @@ $payable = max($advance - $total_paid, 0); // avoid negative
     </div>
 
     <div class="mb-4">
-        <div id="pdf-content" class="agreement-paper p-5 bg-white border">
+        <div id="pdf-content" class="agreement-paper bg-white border" style="padding:90px;">
             <div class="border-bottom-0 pt-4 d-flex justify-content-between align-items-start border-bottom">
                 <div>
                     <h3 class="fw-bold mb-1 text-uppercase">
@@ -328,7 +328,7 @@ $payable = max($advance - $total_paid, 0); // avoid negative
 
         const options = {
             margin: [15, 10, 15, 10],   // top, right, bottom, left
-            filename: 'Tenant_Agreement_<?= addslashes($tenant['name'] ?? 'Unknown') ?>.pdf',
+            filename: 'Invoice_<?= addslashes(date('d M Y').'_' ?? '_') ?><?= addslashes($tent_name ?? 'Unknown') ?>.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true, logging: false },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
