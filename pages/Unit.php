@@ -118,7 +118,14 @@
                                     <td><?= htmlspecialchars($row['floor'] ?? '-') ?></td>
                                     <td>
                                         Advance : ৳ <?= number_format($row['advance'], 2) ?><br>
-                                        Rent    : ৳ <?= number_format($row['rent'], 2) ?>
+                                        Rent    : ৳ <?= number_format($row['rent'], 2) ?><br>
+                                        <?php if (!empty($row['water'])) { ?>
+                                            Water : ৳ <?= number_format($row['water'], 2) ?><br>
+                                        <?php } ?>
+
+                                        <?php if (!empty($row['gas'])) { ?>
+                                            Gas : ৳ <?= number_format($row['gas'], 2) ?>
+                                        <?php } ?>
                                     </td>
                                     
                                     <td>

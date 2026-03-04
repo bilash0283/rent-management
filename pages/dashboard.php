@@ -12,6 +12,9 @@ $total_unit = mysqli_num_rows($unit);
 while ($unit_info = mysqli_fetch_assoc($unit)) {
     $unit_id = $unit_info['id'];
     $rent = intval($unit_info['rent']);
+    
+
+    $total_bill = $rent;
 
     $advance = intval($unit_info['advance']);
 }
@@ -28,14 +31,6 @@ while ($invoice_info = mysqli_fetch_assoc($invoice)) {
     $paid_amount = $invoice_info['paid_amount'];
     $due_amount = $invoice_info['due_amount'];
     $status = $invoice_info['status'];
-
-    $Gas = intval($invoice_info['Gas']);
-    $Water = intval($invoice_info['Water']);
-    $Electricity = intval($invoice_info['Electricity']);
-    $Internet = intval($invoice_info['Internet']);
-    $Others = intval($invoice_info['Others']);
-
-    $total_bill = $rent + $Gas + $Water + $Electricity + $Others;
 }
 
 // tenant 
@@ -189,8 +184,7 @@ foreach ($monthly_totals as $month => $data) {
                 </div>
             </div>
             <!-- Dashboard Cards -->
-
-            <div class="col-xxl-8">
+            <div class="col-xxl-12">
                 <div class="card stretch stretch-full">
                     <div class="card-header">
                         <h5 class="card-title"> Payment Record (Last 12 Months)</h5>

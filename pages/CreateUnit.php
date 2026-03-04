@@ -52,6 +52,8 @@ if (isset($_POST['btn'])) {
     // NUMERIC FIELDS (EMPTY → 0)
     $rent        = (float) ($_POST['rent'] ?? 0);
     $advance     = (float) ($_POST['advance'] ?? 0);
+    $water     = (float) ($_POST['water'] ?? 0);
+    $gas     = (float) ($_POST['gas'] ?? 0);
 
     $status = 'Available';
 
@@ -88,7 +90,9 @@ if (isset($_POST['btn'])) {
             size='$size',
             rent=$rent,
             advance=$advance,
-            unit_image='$image_name'
+            unit_image='$image_name',
+            water='$water',
+            gas='$gas'
             WHERE id=$edit_id";
 
         $message = mysqli_query($db, $sql)
@@ -101,9 +105,9 @@ if (isset($_POST['btn'])) {
         // INSERT
         // ======================
         $sql = "INSERT INTO unit
-        (unit_name, building_name, floor, unit_type, size, rent, advance, unit_image, status)
+        (unit_name, building_name, floor, unit_type, size, rent, advance, unit_image, status,water,gas)
         VALUES
-        ('$unit_name', $building_id, '$floor', '$unit_type', '$size', $rent, $advance, '$image_name', '$status')";
+        ('$unit_name', $building_id, '$floor', '$unit_type', '$size', $rent, $advance, '$image_name', '$status','$water','$gas')";
 
         $message = mysqli_query($db, $sql)
             ? "<div class='alert alert-success'>Unit created successfully</div>"
@@ -205,6 +209,29 @@ if (isset($_POST['btn'])) {
                                             <label for="advance">Advance</label>
                                             <input type="number" step="0.01" name="advance"
                                            value="<?= htmlspecialchars($unit['advance']) ?>"
+                                           class="form-control" placeholder="Advance" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                             <!-- Bills -->
+                            <div class="row mb-4 align-items-center">
+                                <div class="col-lg-4">
+                                    <label class="fw-semibold">Bills</label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="water">Water</label>
+                                            <input type="number" step="0.01" name="water"
+                                           value="<?= htmlspecialchars($unit['water']) ?>"
+                                           class="form-control" placeholder="Rent" >
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="gas">Gas</label>
+                                            <input type="number" step="0.01" name="gas"
+                                           value="<?= htmlspecialchars($unit['gas']) ?>"
                                            class="form-control" placeholder="Advance" >
                                         </div>
                                     </div>
