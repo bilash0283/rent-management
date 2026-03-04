@@ -9,6 +9,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $unit_id = $row['id'];
     $unit_name = $row['unit_name'];
     $advance = $row['advance'];
+    $size = $row['size'];
     $rent = $row['rent'];
     $water = $row['water'];
     $gas = $row['gas'];
@@ -43,7 +44,48 @@ if (isset($_POST['advance_save'])) {
     }
 }
 
-// save_Invoice
+// Create Invoice
+if (isset($_POST['create_invoice'])) {
+
+    $billing_month = $this_month;
+    $status = 'Unpaid';
+    $Gas = $_POST['Gas'];
+    $Water = $_POST['Water'];
+    $Electricity = $_POST['Electricity'];
+    $Others = $_POST['Others'];
+    $Gas_month = $_POST['Gas_month'];
+    $Water_month = $_POST['Water_month'];
+    $Electricity_month = $_POST['Electricity_month'];
+    $Others_month = $_POST['Others_month'];
+
+
+    $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
+    while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
+        $id_db = $ex_month_row['id'];
+        $old_total = intval($ex_month_row['total_amount']);
+        $old_paid = intval($ex_month_row['paid_amount']);
+    }
+
+    if (mysqli_num_rows($month_sql) > 0) {
+        $bill_sql = mysqli_query($db, "UPDATE invoices SET paid_amount= '$update_paid_amount', due_amount = '$update_due_amount', status='$status',note ='$note' WHERE id = '$id_db' AND tenant_id = '$tent_id' ");
+
+        $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$paid_amount','$update_due_amount','$note','$payment_date')");
+    } else {
+        $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
+            (`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `status`, `created_at`) 
+            VALUES 
+            ('$tent_id','$unit_id','$billing_month','$total_amount','$paid_amount','$due_amount','$status',now())");
+
+        $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$paid_amount','$due_amount','$note','$payment_date')");
+    }
+
+    if ($bill_sql) {
+        header("Location: admin.php?page=editbill&unit_id=$unit_id");
+        exit();
+    }
+}
+
+// confirm payment
 if (isset($_POST['save_bill'])) {
 
     $billing_month = $_POST['billing_month'];
@@ -253,13 +295,14 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                     </tr>
                                                 </thead> -->
                                                 <tbody >
+
                                                     <tr>
                                                         <td class="py-1">House Rent</td>
                                                         <td class="py-1 text-center"><?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?></td>
                                                         <td class="py-1 text-end">৳
                                                             <?php echo number_format($rent, 2); ?>
                                                         </td>
-                                                    </tr>                                                    
+                                                    </tr>                                                   
 
                                                     <?php if (!empty($Electricity)): ?>
                                                         <tr>
@@ -280,6 +323,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                             </td>
                                                         </tr>
                                                     <?php endif; ?>
+
                                                     <?php if (!empty($Water)): ?>
                                                         <tr>
                                                             <td class="py-1">Water Bill</td>
@@ -299,6 +343,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                             </td>
                                                         </tr>
                                                     <?php endif; ?>
+
                                                     <?php if (!empty($Others)): ?>
                                                         <tr>
                                                             <td class="py-1">Others Bill</td>
@@ -308,6 +353,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                             </td>
                                                         </tr>
                                                     <?php endif; ?>
+
                                                 </tbody>
                                                 <tfoot class="border-top">
                                                     <?php $total_bill = $rent; ?>
@@ -388,7 +434,69 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                             </div>
 
                             <div class="col-lg-5">
+                                <!-- create Invoice  -->
                                 <div class="card p-3">
+                                    <h6>Create Invoice : </h6>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold">Gas Bill Month <small
+                                                    class="text-warning">(Invoice)</small></small>
+                                            <input type="month" name="Gas_month" value="<?php echo $this_month; ?>"
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold" for="status">Gas Bill Amount</small>
+                                            <input type="number" name="Gas" value="<?= $gas ?? '' ?>" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold">Water Bill </small>
+                                            <input type="text" name="Water_month"placeholder="Note"
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold" for="status">Water Bill Amount</small>
+                                            <input type="number" name="Water" value="<?= $water ?? '' ?>" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold">Electricity Bill  <span
+                                                    class="text-warning" style="font-size:10px;">(<?= $size ?>)</span></small>
+                                            <input type="text" name="Electricity_month"placeholder="Note"
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold" for="status">Electricity Bill Amount</small>
+                                            <input type="number" name="Electricity" value="" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold">Others Bill </small>
+                                            <input type="text" name="Others_month"placeholder="Note"
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold" for="status">Others Bill Amount</small>
+                                            <input type="number" name="Others" value="" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" name="create_invoice" class="btn btn-success btn-sm mt-3">
+                                        Create Invoice
+                                    </button>
+                                </div>
+
+                                <!-- confirm payment  -->
+                                <div class="card p-3">
+                                    <h6>Confirm Payment : </h6>
+
                                     <input type="number" hidden name="total_amount" value="<?php echo $total_bill; ?>">
                                     <div>
                                         <label class="fw-semibold">Amount *</label>
@@ -440,6 +548,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                     </button>
                                 </div>
                             </div>
+
                         </div>
                     </form>
                 </div>
