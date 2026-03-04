@@ -10,6 +10,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     $unit_name = $row['unit_name'];
     $advance = $row['advance'];
     $rent = $row['rent'];
+    $water = $row['water'];
+    $gas = $row['gas'];
     $building_name = $row['building_name'];
     $unit_type = $row['unit_type'];
     $Electricity_meter_no = $row['size'];
@@ -257,7 +259,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                         <td class="py-1 text-end">৳
                                                             <?php echo number_format($rent, 2); ?>
                                                         </td>
-                                                    </tr>
+                                                    </tr>                                                    
 
                                                     <?php if (!empty($Electricity)): ?>
                                                         <tr>
