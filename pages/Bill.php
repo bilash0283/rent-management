@@ -45,7 +45,6 @@ $result = mysqli_query($db, $query);
                                 $gas = $row['gas'];
                                 
                                 $building_name = $row['building_name'];
-
                                 $total_bill = $rent+$water+$gas;
 
                                 ?>
@@ -56,17 +55,15 @@ $result = mysqli_query($db, $query);
                                         while ($tent_row = mysqli_fetch_assoc($sql_tenant)) {
                                             $name = $tent_row['name'];
                                             $tent_id = $tent_row['id'];
-
-                                            
                                         }
                                         ?>
                                         <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>" class="text-secendary fw-bold"><?= $name;?></a>
                                     </td>
+                                    
                                     <td>
                                        <?php
                                             // Total Advance Paid
                                             $total_paid = 0;
-
                                             $advance_sql = mysqli_query($db, "SELECT * FROM `advance` WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
                                             while ($advance_his = mysqli_fetch_assoc($advance_sql)) {
                                                 $total_paid += $advance_his['paid_amount'];
@@ -87,9 +84,7 @@ $result = mysqli_query($db, $query);
                                     </td>
 
                                     <td>
-                                        <span class="fw-semibold text-primary">
-                                            Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
-                                        </span><br>
+                                        
                                         <?php
                                             $pay_info = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
                                             if(!mysqli_num_rows($pay_info) > 0){
@@ -104,7 +99,16 @@ $result = mysqli_query($db, $query);
                                                 $due_amount_db = $pay_info_sh['due_amount'];
                                                 $created_at = $pay_info_sh['created_at'];
                                                 $status = $pay_info_sh['status'];
+
+                                                $Gas_db = $pay_info_sh['Gas'];
+                                                $Water_db = $pay_info_sh['Water'];
+                                                $Electricity_db = $pay_info_sh['Electricity'];
+                                                $Others_db = $pay_info_sh['Others'];
                                         ?>
+
+                                        <span class="fw-semibold text-primary">
+                                            Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
+                                        </span><br>
 
                                         <?php if (!empty($paid_amount_db)) { ?>
                                             <span class="fw-semibold text-success">
@@ -119,6 +123,7 @@ $result = mysqli_query($db, $query);
                                         <?php } } }?>
 
                                     </td>
+
                                     <td>
                                         <?php 
                                         if(!mysqli_num_rows($pay_info) > 0){

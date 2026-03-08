@@ -12,10 +12,7 @@ $total_unit = mysqli_num_rows($unit);
 while ($unit_info = mysqli_fetch_assoc($unit)) {
     $unit_id = $unit_info['id'];
     $rent = intval($unit_info['rent']);
-    
-
     $total_bill = $rent;
-
     $advance = intval($unit_info['advance']);
 }
 
@@ -36,7 +33,6 @@ while ($invoice_info = mysqli_fetch_assoc($invoice)) {
 // tenant 
 $tenant = mysqli_query($db, "SELECT * FROM tenants ");
 $total_tenant = mysqli_num_rows($tenant);
-
 while ($tenant_info = mysqli_fetch_assoc($tenant)) {
     $tenant_id = $tenant_info['id'];
 }
@@ -78,7 +74,6 @@ $invoice = mysqli_query($db, "SELECT * FROM invoices ORDER BY billing_month ASC"
 
 while ($row = mysqli_fetch_assoc($invoice)) {
     $month_key = $row['billing_month'];   
-
     if (isset($monthly_totals[$month_key])) {
         $monthly_totals[$month_key]['total_amount'] += (float)$row['total_amount'];
         $monthly_totals[$month_key]['paid_amount']  += (float)$row['paid_amount'];
@@ -90,7 +85,6 @@ $chart_labels = [];
 $chart_bills  = [];
 $chart_paids  = [];
 $chart_dues   = [];
-
 foreach ($monthly_totals as $month => $data) {
     $display_month = date('M Y', strtotime($month . '-01')); 
     $chart_labels[] = $display_month;
@@ -100,12 +94,10 @@ foreach ($monthly_totals as $month => $data) {
 }
 ?>
 
-
 <div class="nxl-content">
     <!-- [ Main Content ] start -->
     <div class="main-content">
         <div class="row">
-
             <!-- Dashboard Cards -->
             <div class="row">
                 <!-- Building Card -->
@@ -225,7 +217,6 @@ foreach ($monthly_totals as $month => $data) {
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 </div>

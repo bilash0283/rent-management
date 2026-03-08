@@ -1,5 +1,6 @@
 <?php
     include "database/db.php";
+    session_name("rant_manager");
     session_start();
     if (!empty($_SESSION["role"]) || !empty($_SESSION['email']) || !empty($_SESSION['id'])) {
         header('location:admin.php');
@@ -16,7 +17,6 @@
         $count_user = mysqli_num_rows($user_sql);
 
         if ($count_user < 1) {
-            // echo "<div class='alert alert-danger mt-2 text-center'>No Email Found!</div>";
             $error = "No Email Found!";
         } else {
             $_SESSION = [];
@@ -24,7 +24,6 @@
                 $email                   = $row['email'];
                 $password                = $row['password'];
                 $role                    = $row['role'];
-
 
                 if($input_password == $password && $role == 1 && $input_email = $email){
                     $_SESSION['id']          = $row['id'];
@@ -35,7 +34,6 @@
 
                     header('location:admin.php');
                 }else{
-                    // echo "<div class='alert alert-danger mt-2 text-center'>Only Admin Allowed!</div>";
                     $error = "Invalid Email or Password";
                 }
 
