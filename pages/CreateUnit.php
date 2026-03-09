@@ -6,34 +6,30 @@ $message = "";
 // ==========================
 // GET IDs SAFELY
 // ==========================
-$building_id = isset($_GET['buliding_id']) ? (int)$_GET['buliding_id'] : 0;
-$edit_id     = isset($_GET['edit_id']) ? (int)$_GET['edit_id'] : null;
+$building_id = isset($_GET['building_id']) ? (int)$_GET['building_id'] : 0;
+$edit_id     = isset($_GET['edit_id'])     ? (int)$_GET['edit_id']     : 0;
 
 // ==========================
 // DEFAULT UNIT DATA
 // ==========================
 $unit = [
-    'unit_name' => '',
-    'floor' => '',
-    'unit_type' => 'Flat',
-    'size' => '',
-    'rent' => 0,
-    'advance' => 0,
-    'unit_image' => '',
-    'Gas' => 0,
-    'Water' => 0,
-    'Electricity' => 0,
-    'Internet' => 0,
-    'Maintenance' => 0,
-    'Others' => 0
+    'unit_name'     => '',
+    'floor'         => '',
+    'unit_type'     => 'Flat',
+    'size'          => '',
+    'rent'          => 0,
+    'advance'       => 0,
+    'unit_image'    => '',
+    'water'         => 0,
+    'gas'           => 0,
 ];
 
 // ==========================
 // EDIT MODE FETCH
 // ==========================
-if ($edit_id) {
-    $get = mysqli_query($db, "SELECT * FROM unit WHERE id=$edit_id");
-    if ($get && mysqli_num_rows($get)) {
+if ($edit_id > 0) {
+    $get = mysqli_query($db, "SELECT * FROM unit WHERE id = $edit_id");
+    if ($get && mysqli_num_rows($get) > 0) {
         $unit = mysqli_fetch_assoc($get);
     }
 }
@@ -44,78 +40,81 @@ if ($edit_id) {
 if (isset($_POST['btn'])) {
 
     // TEXT FIELDS
-    $unit_name = mysqli_real_escape_string($db, $_POST['unit_name']);
-    $floor     = mysqli_real_escape_string($db, $_POST['floor']);
-    $unit_type = mysqli_real_escape_string($db, $_POST['unit_type']);
-    $size      = mysqli_real_escape_string($db, $_POST['size']);
+    $unit_name = mysqli_real_escape_string($db, trim($_POST['unit_name'] ?? ''));
+    $floor     = mysqli_real_escape_string($db, trim($_POST['floor'] ?? ''));
+    $unit_type = mysqli_real_escape_string($db, $_POST['unit_type'] ?? 'Flat');
+    $size      = mysqli_real_escape_string($db, trim($_POST['size'] ?? ''));
 
-    // NUMERIC FIELDS (EMPTY → 0)
-    $rent        = (float) ($_POST['rent'] ?? 0);
-    $advance     = (float) ($_POST['advance'] ?? 0);
-    $water     = (float) ($_POST['water'] ?? 0);
-    $gas     = (float) ($_POST['gas'] ?? 0);
+    // NUMERIC FIELDS
+    $rent        = (float) ($_POST['rent']        ?? 0);
+    $advance     = (float) ($_POST['advance']     ?? 0);
+    $water       = (float) ($_POST['water']       ?? 0);
+    $gas         = (float) ($_POST['gas']         ?? 0);
 
     $status = 'Available';
 
     // ======================
     // IMAGE HANDLE
     // ======================
-    $image_name = $unit['unit_image'];
+    $image_name = $unit['unit_image'] ?? '';
 
     if (!empty($_FILES['unit_image']['name'])) {
-
+        // Delete old image if exists
         if (!empty($unit['unit_image'])) {
-            $old = "public/uploads/units/" . $unit['unit_image'];
-            if (file_exists($old)) unlink($old);
+            $old_path = "public/uploads/units/" . $unit['unit_image'];
+            if (file_exists($old_path)) {
+                @unlink($old_path);
+            }
         }
 
-        $ext = pathinfo($_FILES['unit_image']['name'], PATHINFO_EXTENSION);
-        $image_name = time() . '_' . rand(1000, 9999) . '.' . $ext;
+        $ext = strtolower(pathinfo($_FILES['unit_image']['name'], PATHINFO_EXTENSION));
+        $image_name = time() . '_' . mt_rand(10000, 99999) . '.' . $ext;
 
-        move_uploaded_file(
-            $_FILES['unit_image']['tmp_name'],
-            "public/uploads/units/" . $image_name
-        );
+        $upload_path = "public/uploads/units/" . $image_name;
+        if (!move_uploaded_file($_FILES['unit_image']['tmp_name'], $upload_path)) {
+            $message = "<div class='alert alert-danger'>Image upload failed</div>";
+        }
     }
 
-    // ======================
-    // UPDATE
-    // ======================
-    if ($edit_id) {
+    if (empty($message)) {   // only proceed if no upload error
 
-        $sql = "UPDATE unit SET
-            unit_name='$unit_name',
-            floor='$floor',
-            unit_type='$unit_type',
-            size='$size',
-            rent=$rent,
-            advance=$advance,
-            unit_image='$image_name',
-            water='$water',
-            gas='$gas'
-            WHERE id=$edit_id";
+        if ($edit_id > 0) {
+            // ======================
+            // UPDATE
+            // ======================
+            $sql = "UPDATE unit SET
+                unit_name    = '$unit_name',
+                floor        = '$floor',
+                unit_type    = '$unit_type',
+                size         = '$size',
+                rent         = $rent,
+                advance      = $advance,
+                unit_image   = '$image_name',
+                water        = $water,
+                gas          = $gas
+                WHERE id = $edit_id";
 
-        $message = mysqli_query($db, $sql)
-            ? "<div class='alert alert-success'>Unit updated successfully</div>"
-            : "<div class='alert alert-danger'>Update failed</div>";
+            $message = mysqli_query($db, $sql)
+                ? "<div class='alert alert-success'>Unit updated successfully</div>"
+                : "<div class='alert alert-danger'>Update failed: " . mysqli_error($db) . "</div>";
+        } else {
+            // ======================
+            // INSERT
+            // ======================
+            $sql = "INSERT INTO unit
+                (building_name, unit_name, floor, unit_type, size, rent, advance, unit_image, status,
+                 water, gas)
+                VALUES
+                ($building_id, '$unit_name', '$floor', '$unit_type', '$size', $rent, $advance, '$image_name', '$status',
+                 $water, $gas)";
 
-    } else {
-
-        // ======================
-        // INSERT
-        // ======================
-        $sql = "INSERT INTO unit
-        (unit_name, building_name, floor, unit_type, size, rent, advance, unit_image, status,water,gas)
-        VALUES
-        ('$unit_name', $building_id, '$floor', '$unit_type', '$size', $rent, $advance, '$image_name', '$status','$water','$gas')";
-
-        $message = mysqli_query($db, $sql)
-            ? "<div class='alert alert-success'>Unit created successfully</div>"
-            : "<div class='alert alert-danger'>Create failed</div>";
+            $message = mysqli_query($db, $sql)
+                ? "<div class='alert alert-success'>Unit created successfully</div>"
+                : "<div class='alert alert-danger'>Create failed: " . mysqli_error($db) . "</div>";
+        }
     }
 }
 ?>
-
 
 <div class="nxl-content">
 
@@ -123,7 +122,7 @@ if (isset($_POST['btn'])) {
     <div class="page-header">
         <div class="page-header-left">
             <h5 class="m-b-10">
-                <?= $edit_id ? 'Edit Unit' : 'Create Unit' ?>
+                <?= $edit_id > 0 ? 'Edit Unit' : 'Create Unit' ?>
             </h5>
         </div>
         <div class="page-header-right">
@@ -148,16 +147,16 @@ if (isset($_POST['btn'])) {
                                     <label class="fw-semibold">Unit Name</label>
                                 </div>
                                 <div class="col-lg-8">
-                                    <input type="text" name="unit_name"
+                                    <input type="text" name="unit_name" required
                                            value="<?= htmlspecialchars($unit['unit_name']) ?>"
-                                           class="form-control" required>
+                                           class="form-control">
                                 </div>
                             </div>
 
                             <!-- Floor -->
                             <div class="row mb-4 align-items-center">
                                 <div class="col-lg-4">
-                                    <label class="fw-semibold">Description</label>
+                                    <label class="fw-semibold">Floor</label>
                                 </div>
                                 <div class="col-lg-8">
                                     <input type="text" name="floor"
@@ -173,14 +172,14 @@ if (isset($_POST['btn'])) {
                                 </div>
                                 <div class="col-lg-8">
                                     <select name="unit_type" class="form-control">
-                                        <option value="Flat" <?= $unit['unit_type']=='Flat'?'selected':'' ?>>Flat</option>
-                                        <option value="Room" <?= $unit['unit_type']=='Room'?'selected':'' ?>>Room</option>
-                                        <option value="Shop" <?= $unit['unit_type']=='Shop'?'selected':'' ?>>Shop</option>
+                                        <option value="Flat" <?= $unit['unit_type'] === 'Flat' ? 'selected' : '' ?>>Flat</option>
+                                        <option value="Room" <?= $unit['unit_type'] === 'Room' ? 'selected' : '' ?>>Room</option>
+                                        <option value="Shop" <?= $unit['unit_type'] === 'Shop' ? 'selected' : '' ?>>Shop</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <!-- Size -->
+                            <!-- Size / Meter No -->
                             <div class="row mb-4 align-items-center">
                                 <div class="col-lg-4">
                                     <label class="fw-semibold">Electricity Meter No</label>
@@ -188,51 +187,51 @@ if (isset($_POST['btn'])) {
                                 <div class="col-lg-8">
                                     <input type="text" name="size"
                                            value="<?= htmlspecialchars($unit['size']) ?>"
-                                           class="form-control" >
+                                           class="form-control">
                                 </div>
                             </div>
 
-                            <!-- Rent -->
+                            <!-- Rent & Advance -->
                             <div class="row mb-4 align-items-center">
                                 <div class="col-lg-4">
-                                    <label class="fw-semibold">Rent</label>
+                                    <label class="fw-semibold">Rent & Advance</label>
                                 </div>
                                 <div class="col-lg-8">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <label for="rent">Rent</label>
-                                            <input type="number" step="0.01" name="rent"
-                                           value="<?= htmlspecialchars($unit['rent']) ?>"
-                                           class="form-control" placeholder="Rent" required>
+                                            <label>Rent (৳)</label>
+                                            <input type="number" step="0.01" name="rent" required
+                                                   value="<?= htmlspecialchars($unit['rent']) ?>"
+                                                   class="form-control" placeholder="Monthly Rent">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="advance">Advance</label>
+                                            <label>Advance (৳)</label>
                                             <input type="number" step="0.01" name="advance"
-                                           value="<?= htmlspecialchars($unit['advance']) ?>"
-                                           class="form-control" placeholder="Advance" >
+                                                   value="<?= htmlspecialchars($unit['advance']) ?>"
+                                                   class="form-control" placeholder="Advance / Security">
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                             <!-- Bills -->
+                            <!-- Utility Bills -->
                             <div class="row mb-4 align-items-center">
                                 <div class="col-lg-4">
-                                    <label class="fw-semibold">Bills</label>
+                                    <label class="fw-semibold">Fixed Utility Bills</label>
                                 </div>
                                 <div class="col-lg-8">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <label for="water">Water</label>
+                                            <label>Water (৳)</label>
                                             <input type="number" step="0.01" name="water"
-                                           value="<?= htmlspecialchars($unit['water']) ?>"
-                                           class="form-control" placeholder="Rent" >
+                                                   value="<?= htmlspecialchars($unit['water']) ?>"
+                                                   class="form-control" placeholder="Water bill">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="gas">Gas</label>
+                                            <label>Gas (৳)</label>
                                             <input type="number" step="0.01" name="gas"
-                                           value="<?= htmlspecialchars($unit['gas']) ?>"
-                                           class="form-control" placeholder="Advance" >
+                                                   value="<?= htmlspecialchars($unit['gas']) ?>"
+                                                   class="form-control" placeholder="Gas bill">
                                         </div>
                                     </div>
                                 </div>
@@ -244,11 +243,12 @@ if (isset($_POST['btn'])) {
                                     <label class="fw-semibold">Unit Image</label>
                                 </div>
                                 <div class="col-lg-8">
-                                    <input type="file" name="unit_image" class="form-control">
+                                    <input type="file" name="unit_image" accept="image/*" class="form-control">
                                     <?php if (!empty($unit['unit_image'])): ?>
-                                        <img src="public/uploads/units/<?= $unit['unit_image'] ?>"
-                                             class="mt-2 rounded"
-                                             width="80">
+                                        <div class="mt-2">
+                                            <img src="public/uploads/units/<?= htmlspecialchars($unit['unit_image']) ?>"
+                                                 class="rounded" width="120" alt="Unit Image">
+                                        </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -257,8 +257,8 @@ if (isset($_POST['btn'])) {
                             <div class="row">
                                 <div class="col-lg-4"></div>
                                 <div class="col-lg-8">
-                                    <button type="submit" name="btn" class="btn btn-success">
-                                        <?= $edit_id ? 'Update Unit' : 'Save Unit' ?>
+                                    <button type="submit" name="btn" class="btn btn-success px-5">
+                                        <?= $edit_id > 0 ? 'Update Unit' : 'Save Unit' ?>
                                     </button>
                                 </div>
                             </div>
