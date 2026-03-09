@@ -1,5 +1,9 @@
 <?php
-$query = "SELECT * FROM unit wHERE status = 'Rented' ORDER BY id DESC";
+if(isset($_GET['building_id'])){
+    $building_id_get = $_GET['building_id'];
+}
+
+$query = "SELECT * FROM unit wHERE status = 'Rented' AND building_name = '$building_id_get' ORDER BY id DESC";
 $result = mysqli_query($db, $query);
 
 ?>
