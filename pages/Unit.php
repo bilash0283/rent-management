@@ -66,7 +66,7 @@
             ?>
         </h5>
 
-        <a href="admin.php?page=CreateUnit&buliding_id=<?php echo $building_id; ?>" class="btn btn-primary">
+        <a href="admin.php?page=CreateUnit&building_id=<?php echo $building_id; ?>" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create Unit
         </a>
     </div>
@@ -152,16 +152,17 @@
                                             </a>
                                         </div>
                                     </td>
+                                    
                                 </tr>
 
                             <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
-                                    No units found
-                                </td>
-                            </tr>
-                        <?php endif; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        No units found
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
 
                     </table>
