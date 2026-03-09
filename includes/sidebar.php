@@ -1,7 +1,14 @@
 <?php 
-    $sql = "SELECT * FROM building ORDER BY id DESC";
-    $result = mysqli_query($db, $sql) or die("Query failed: " . mysqli_error($db));
-    
+// Run query only ONE time
+$sql = "SELECT * FROM building ORDER BY id DESC";
+$result = mysqli_query($db, $sql) or die("Query failed: " . mysqli_error($db));
+
+// Store all buildings in array
+$buildings = [];
+while($row = mysqli_fetch_assoc($result)) {
+    $buildings[] = $row;
+}
+// Now $buildings can be used multiple times
 ?>
 
 <nav class="nxl-navigation">
@@ -13,78 +20,94 @@
                 <img src="public/assets/images/logo-abbr.png" alt="" class="logo logo-sm" />
             </a>
         </div>
+        
         <div class="navbar-content">
             <ul class="nxl-navbar">
                 <li class="nxl-item nxl-caption">
                     <label>Navigation</label>
                 </li>
+                
                 <li class="">
                     <a href="admin.php" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-airplay"></i></span>
-                        <span class="nxl-mtext">Dashboards</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-mtext">Dashboards</span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
-                    <!-- <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="index.html">CRM</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="analytics.html">Analytics</a></li>
-                    </ul> -->
                 </li>
 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="admin.php?page=building" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-briefcase"></i></span>
-                        <span class="nxl-mtext">Building</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-mtext">Building</span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
-                    <!-- <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="projects.html">Projects</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="projects-view.html">Projects View</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="projects-create.html">Projects Create</a></li>
-                    </ul> -->
                 </li>
 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-cast"></i></span>
-                        <span class="nxl-mtext">Unit</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-mtext">Unit</span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
                     <ul class="nxl-submenu">
-                        <?php 
-                            while($row = mysqli_fetch_assoc($result)){
-                                $id   = $row['id'];
-                                $name = $row['name'];
+                        <?php foreach($buildings as $row): 
+                            $id   = $row['id'];
+                            $name = $row['name'] ?? 'Unnamed';
                         ?>
-                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=unit&id=<?php echo $id; ?>"><?php echo $name; ?></a></li>
-                        <?php } ?>
+                            <li class="nxl-item">
+                                <a class="nxl-link" href="admin.php?page=unit&id=<?= htmlspecialchars($id) ?>">
+                                    <?= htmlspecialchars($name) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </li>
 
                 <li class="nxl-item nxl-hasmenu">
-                    <a href="admin.php?page=tenant" class="nxl-link">
+                    <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-users"></i></span>
-                        <span class="nxl-mtext">Tenant</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-mtext">Tenant</span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
-                    <!-- <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="customers.html">Customers</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="customers-view.html">Customers View</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="customers-create.html">Customers Create</a></li>
-                    </ul> -->
+                    <ul class="nxl-submenu">
+                        <?php foreach($buildings as $row): 
+                            $id   = $row['id'];
+                            $name = $row['name'] ?? 'Unnamed';
+                        ?>
+                            <li class="nxl-item">
+                                <a class="nxl-link" href="admin.php?page=tenant&id=<?= htmlspecialchars($id) ?>">
+                                    <?= htmlspecialchars($name) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </li>
 
                 <li class="nxl-item nxl-hasmenu">
-                    <a href="admin.php?page=bill" class="nxl-link">
+                    <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-dollar-sign"></i></span>
-                        <span class="nxl-mtext">Bills </span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-mtext">Bills</span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
-                    <!-- <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="payment.html">Payment</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="invoice-view.html">Invoice View</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="invoice-create.html">Invoice Create</a></li>
-                    </ul> -->
+                    <ul class="nxl-submenu">
+                        <?php foreach($buildings as $row): 
+                            $id   = $row['id'];
+                            $name = $row['name'] ?? 'Unnamed';
+                        ?>
+                            <li class="nxl-item">
+                                <a class="nxl-link" href="admin.php?page=bill&id=<?= htmlspecialchars($id) ?>">
+                                    <?= htmlspecialchars($name) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                 </li>
                 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-settings"></i></span>
-                        <span class="nxl-mtext">Settings</span><span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-mtext">Settings</span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
                     <ul class="nxl-submenu">
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=profile">Profile</a></li>

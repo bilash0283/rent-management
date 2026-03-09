@@ -1,4 +1,15 @@
 <?php
+   if(isset($_GET['id'])){
+        $building_id_get = $_GET['id'];
+          // Fetch all units
+        $query_sql  = "SELECT * FROM unit wHERE building_name = '$building_id_get' ORDER BY id DESC";
+        $result_bul = mysqli_query($db, $query_sql);
+
+        if (!$result_bul) {
+            die("Query Failed: " . mysqli_error($db));
+        }
+
+    }
 $message = "";
 
 /* ================= DELETE TENANT ================= */
@@ -48,7 +59,7 @@ $query = "
         u.status
     FROM tenants t
     JOIN building b ON t.building_id = b.id
-    JOIN unit u ON t.unit_id = u.id
+    JOIN unit u ON t.unit_id = u.id WHERE t.building_id = '$building_id_get'
     ORDER BY t.id DESC
 ";
 $result = mysqli_query($db, $query);
@@ -58,7 +69,17 @@ $result = mysqli_query($db, $query);
 
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">Tenant Manage</h5>
+        <h5 class="mb-0">
+            <?php 
+                $sql_building = "SELECT * FROM building WHERE id = $building_id_get ";
+                $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
+                while($buil = mysqli_fetch_assoc($result_building)){
+                $buil_id   = $buil['id'];
+                $buil_name = $buil['name'];
+                echo $buil_name.' / Tenant Manage';
+                }
+            ?>
+        </h5>
 
         <a href="admin.php?page=CreateTenant" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create Tenant
