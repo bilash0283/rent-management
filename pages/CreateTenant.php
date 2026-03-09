@@ -2,6 +2,10 @@
 $message = '';
 $editData = null;
 
+if(isset($_GET['building_id'])){
+    $building_id_get = $_GET['building_id'];
+}
+
 /* ================= AJAX : LOAD UNIT ================= */
 if (isset($_POST['ajax']) && $_POST['ajax'] === 'get_units') {
 

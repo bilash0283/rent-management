@@ -1,6 +1,6 @@
 <?php
-   if(isset($_GET['id'])){
-        $building_id_get = $_GET['id'];
+   if(isset($_GET['building_id'])){
+        $building_id_get = $_GET['building_id'];
           // Fetch all units
         $query_sql  = "SELECT * FROM unit wHERE building_name = '$building_id_get' ORDER BY id DESC";
         $result_bul = mysqli_query($db, $query_sql);
@@ -81,7 +81,7 @@ $result = mysqli_query($db, $query);
             ?>
         </h5>
 
-        <a href="admin.php?page=CreateTenant" class="btn btn-primary">
+        <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create Tenant
         </a>
     </div>
