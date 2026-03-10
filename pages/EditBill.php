@@ -208,11 +208,11 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
     <div class="page-header d-flex justify-content-between align-items-center">
         <div class="page-header-left">
             <h5 class="m-b-10">
-                Bills Manage / <?php echo $building_name_db . '/' . $unit_name . '/' . $tent_name ?? '' ?>
+                <?php echo $building_name_db . '/' . $unit_name . '/' . $tent_name ?? '' ?>
             </h5>
         </div>
         <div class="page-header-right">
-            <a href="admin.php?page=bill&building_id=<?= $building_name ?>" class="btn btn-primary">Back</a>
+            <a href="admin.php?page=bill&id=<?php echo $building_name ?>" class="btn btn-primary">Back</a>
         </div>
     </div>
 

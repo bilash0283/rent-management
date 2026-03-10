@@ -21,7 +21,7 @@
     <div class="page-header d-flex align-items-center justify-content-between">
        
         <h5 class="mb-0">
-            <?= $building_name_db; ?> / Bill Month (<?php echo date('M - Y') ?>)
+            <?= $building_name_db ?? ''; ?> / Bill Month (<?php echo date('M - Y') ?>)
         </h5>
        
         <!-- <a href="admin.php?page=CreateTenant" class="btn btn-primary">

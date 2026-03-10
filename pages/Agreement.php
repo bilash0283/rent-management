@@ -29,7 +29,7 @@ $tenant = mysqli_fetch_assoc($result);
                 <i class="feather-icon icon-download me-2"></i> Download PDF
             </button>
         </div>
-        <a href="admin.php?page=tenant" class="btn btn-primary">
+        <a href="admin.php?page=tenant&building_id=<?= $tenant['building_id'] ?>" class="btn btn-primary">
             <i class="feather-icon icon-arrow-left me-1"></i>Back
         </a>
     </div>
