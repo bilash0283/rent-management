@@ -140,7 +140,7 @@
 
                                     <td>
                                         <div class="btn-group">
-                                            <a href="admin.php?page=CreateUnit&edit_id=<?= $row['id'] ?>"
+                                            <a href="admin.php?page=CreateUnit&edit_id=<?= $row['id'] ?>&building_id=<?php echo $building_id; ?>"
                                             class="btn btn-sm btn-light-primary">
                                                 <i class="feather-edit"></i>
                                             </a>

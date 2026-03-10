@@ -151,7 +151,7 @@ $result = mysqli_query($db, $query);
                                                 <i class="feather-edit"></i>
                                             </a>
 
-                                            <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>"
+                                            <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>&building_id=<?= $building_id_get ?>"
                                             class="btn btn-sm btn-light-danger"
                                             onclick="return confirm('Are you sure?');"
                                             title="Delete">

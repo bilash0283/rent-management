@@ -35,7 +35,7 @@ if ($edit_id > 0) {
     if ($get && mysqli_num_rows($get) === 1) {
         $unit = mysqli_fetch_assoc($get);
         // Make sure we keep the correct building_id
-        $building_id = (int)$unit['building_id'];
+        // $building_id = (int)$unit['building_id'];
     } else {
         $message = "<div class='alert alert-danger'>Unit not found</div>";
     }
