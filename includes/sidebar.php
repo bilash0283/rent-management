@@ -95,7 +95,7 @@ while($row = mysqli_fetch_assoc($result)) {
                             $name = $row['name'] ?? 'Unnamed';
                         ?>
                             <li class="nxl-item">
-                                <a class="nxl-link" href="admin.php?page=bill&building_id=<?= htmlspecialchars($id) ?>">
+                                <a class="nxl-link" href="admin.php?page=bill&id=<?= htmlspecialchars($id) ?>">
                                     <?= htmlspecialchars($name) ?>
                                 </a>
                             </li>
