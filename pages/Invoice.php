@@ -129,9 +129,9 @@ if(!empty($total_paid)){
                 <i class="feather-icon icon-download me-2"></i> Download PDF
             </button>
         </div>
-        <a href="admin.php?page=tenant" class="btn btn-primary">
+        <!-- <a href="admin.php?page=tenant" class="btn btn-primary">
             <i class="feather-icon icon-arrow-left me-1"></i>Back
-        </a>
+        </a> -->
     </div>
 
     <div class="mb-4">

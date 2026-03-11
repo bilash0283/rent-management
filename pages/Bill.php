@@ -100,6 +100,27 @@
 
                                     <td>
 
+                                        <?php 
+                                            if(!empty($rent)){ ?>
+                                                <span class="fw-semibold text-primary">
+                                            Rent = ৳ <?= number_format($rent, 2) ?? '' ?>
+                                            </span><br>
+                                        <?php } ?> 
+
+                                        <?php 
+                                            if(!empty($water)){ ?>
+                                                <span class="fw-semibold text-primary">
+                                            Water = ৳ <?= number_format($water, 2) ?? '' ?>
+                                            </span><br>
+                                        <?php } ?> 
+
+                                        <?php 
+                                            if(!empty($gas)){ ?>
+                                                <span class="fw-semibold text-primary">
+                                            Gas = ৳ <?= number_format($gas, 2) ?? '' ?>
+                                            </span><br>
+                                        <?php } ?> 
+
                                         <?php
                                         $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
                                         if (!mysqli_num_rows($pay_info) > 0) {
@@ -119,7 +140,7 @@
                                                 $Water_db = $pay_info_sh['Water'];
                                                 $Electricity_db = $pay_info_sh['Electricity'];
                                                 $Others_db = $pay_info_sh['Others'];
-                                                ?>
+                                                ?>                                        
 
                                                 <span class="fw-semibold text-primary">
                                                     Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
