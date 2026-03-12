@@ -37,6 +37,7 @@ if (mysqli_num_rows($result) > 0) {
         $name = $row['name'];
         $email = $row['email'];
         $unit_id = $row['unit_id'];
+        $building_id = $row['building_id'];
     }
 }
 ?>
@@ -46,7 +47,7 @@ if (mysqli_num_rows($result) > 0) {
     <div class="page-header d-flex align-items-center justify-content-between">
         <h5 class="mb-0">Tenant Information</h5>
 
-        <a href="admin.php?page=tenant&building_id=<?= $building_name ?>" class="btn btn-primary">
+        <a href="admin.php?page=tenant&building_id=<?= $building_id ?>" class="btn btn-primary">
             Back
         </a>
     </div>
