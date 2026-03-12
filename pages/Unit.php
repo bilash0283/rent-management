@@ -101,7 +101,7 @@
                                 <?php
                                     $image = !empty($row['unit_image'])
                                         ? "public/uploads/units/" . $row['unit_image']
-                                        : "assets/images/no-image.png";
+                                        : "public/assets/images/no-image.png";
                                 ?>
 
                                 <tr>
