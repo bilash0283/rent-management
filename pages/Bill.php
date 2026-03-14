@@ -69,10 +69,20 @@
                                         while ($tent_row = mysqli_fetch_assoc($sql_tenant)) {
                                             $name = $tent_row['name'];
                                             $tent_id = $tent_row['id'];
+                                            $image = !empty($tent_row['tenant_image'])
+                                            ? "public/uploads/tenants/" . $tent_row['tenant_image']
+                                            : "public/uploads/tenants/no-image.png";
                                         }
                                         ?>
-                                        <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>"
-                                            class="text-secendary fw-bold"><?= $name; ?></a>
+                                        <div class="d-flex align-items-center col-span">
+                                            <img src="<?= htmlspecialchars($image) ?>"
+                                             width="50" height="50"
+                                             style="object-fit:cover;border-radius:6px;border-radius:50%;" class="mx-auto">
+                                             
+                                            <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>" class="text-secendary fw-bold">
+                                                <?= $name; ?>
+                                            </a>
+                                        </div>                                        
                                     </td>
 
                                     <td>

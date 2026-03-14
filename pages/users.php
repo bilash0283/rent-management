@@ -44,8 +44,8 @@
                                 ?>
                                 <tr>
                                     <td>
-                                        <a href="admin.php?page=view_tenant&id="
-                                            class="text-secendary fw-bold"><?= $name; ?>
+                                        <a href="admin.php?page=view_tenant&id=" class="text-secendary fw-bold">
+                                            <?= $name; ?>
                                         </a>
                                     </td>
 
