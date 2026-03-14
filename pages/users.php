@@ -7,7 +7,7 @@
             Users
         </h5>
        
-        <a href="admin.php?page=CreateTenant" class="btn btn-primary">
+        <a href="" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create User
         </a>
     </div>
@@ -35,18 +35,18 @@
                         <tbody>
                             <?php
                             $user_sql = mysqli_query($db,"SELECT * FROM `users` ORDER BY id DESC ");
-                            while ($row = mysqli_fetch_assoc($user_sql)) {
+                             while ($row = mysqli_fetch_assoc($user_sql)) {
                                 $unit_id = $row['id'];
                                 $name = $row['name'];
                                 $email = $row['email'];
                                 $phone = $row['phone'];
                                 $role = $row['role'];
-
                                 ?>
                                 <tr>
                                     <td>
                                         <a href="admin.php?page=view_tenant&id="
-                                            class="text-secendary fw-bold"><?= $name; ?></a>
+                                            class="text-secendary fw-bold"><?= $name; ?>
+                                        </a>
                                     </td>
 
                                     <td><?= $email; ?></td>
@@ -65,16 +65,12 @@
 
                                     <td>
                                         <div class="btn-group align-items-center">
-                                            <button class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <a class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
-                                            </button>
+                                            </a>
                                             <a class="btn btn-sm btn-outline-success" title="Invoice">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <!-- <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
-                                                class="text-end btn btn-sm btn-outline-success" title="Add Payment">
-                                                Add Payment
-                                            </a> -->
                                         </div>
                                     </td>
                                 </tr>
