@@ -58,6 +58,10 @@
             include 'pages/profile.php';
             break;
 
+        case 'users':
+            include 'pages/users.php';
+            break;
+
         default:
             include 'pages/dashboard.php';
             break;

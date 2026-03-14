@@ -111,7 +111,7 @@ while($row = mysqli_fetch_assoc($result)) {
                     </a>
                     <ul class="nxl-submenu">
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=profile">Profile</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=setting">SEO</a></li>
+                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=users">Users</a></li>
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=setting">Tags</a></li>
                     </ul>
                 </li>
