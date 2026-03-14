@@ -190,8 +190,9 @@
                                                 <i class="bi bi-eye"></i>
                                             </a> -->
                                             <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
-                                                class="text-end btn btn-sm btn-outline-success" title="Add Payment">Add
-                                                Payment</a>
+                                                class="text-end btn btn-sm btn-outline-success" title="Add Payment">
+                                                Add Payment
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
