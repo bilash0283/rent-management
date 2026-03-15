@@ -4,6 +4,7 @@
           // Fetch all units
         $query  = "SELECT * FROM unit WHERE building_name = '$building_id' AND status = 'Rented' ORDER BY id DESC";
         $result = mysqli_query($db, $query);
+        $totla_unit = mysqli_num_rows($result);
         if (!$result) {
             die("Query Failed: " . mysqli_error($db));
         }
@@ -21,7 +22,7 @@
     <div class="page-header d-flex align-items-center justify-content-between">
        
         <h5 class="mb-0">
-            <?= $building_name_db ?? ''; ?> / Bill Month (<?php echo date('M - Y') ?>)
+            <?= $building_name_db ?? ''; ?> <span style="background:#28a745;color:#fff;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:500;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.15);"><?= $totla_unit; ?></span> / Bill Month (<?php echo date('M - Y') ?>)
         </h5>
        
         <!-- <a href="admin.php?page=CreateTenant" class="btn btn-primary">
@@ -42,6 +43,7 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
+                                <th>SL</th>
                                 <th>Tenant</th>
                                 <th>Advance</th>
                                 <th>Amount</th>
@@ -51,7 +53,9 @@
                         </thead>
                         <tbody>
                             <?php
+                            $i = '';
                             while ($row = mysqli_fetch_assoc($result)) {
+                                $i++;
                                 $unit_id = $row['id'];
                                 $advance = $row['advance'];
                                 $rent = $row['rent'];
@@ -63,6 +67,7 @@
 
                                 ?>
                                 <tr>
+                                    <td><?= $i; ?></td>
                                     <td>
                                         <?php
                                         $sql_tenant = mysqli_query($db, "SELECT * FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' ");
@@ -74,12 +79,14 @@
                                             : "public/uploads/tenants/no-image.png";
                                         }
                                         ?>
-                                        <div class="d-flex align-items-center col-span">
+                                        <div class="d-flex flex-column align-items-center text-center col-span">
                                             <img src="<?= htmlspecialchars($image) ?>"
-                                             width="50" height="50"
-                                             style="object-fit:cover;border-radius:6px;border-radius:50%;" class="mx-auto">
-                                             
-                                            <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>" class="text-secendary fw-bold">
+                                                width="50" height="50"
+                                                style="object-fit:cover;border-radius:50%;"
+                                                class="mb-2">
+
+                                            <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>" 
+                                            class="text-secondary fw-bold">
                                                 <?= $name; ?>
                                             </a>
                                         </div>                                        
