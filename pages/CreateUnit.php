@@ -9,16 +9,13 @@ if ($building_id <= 0 && $edit_id <= 0) {
     die("<div class='alert alert-danger'>Invalid request - building ID missing</div>");
 }
 
-// ==========================
-// DEFAULT UNIT DATA
-// ==========================
 $unit = [
     'id'            => 0,
-    'building_id'   => $building_id,   // ← important for new records
+    'building_id'   => $building_id,
     'unit_name'     => '',
     'floor'         => '',
     'unit_type'     => 'Flat',
-    'size'          => '',             // electricity meter no
+    'size'          => '',
     'rent'          => 0,
     'advance'       => 0,
     'unit_image'    => '',
@@ -27,108 +24,109 @@ $unit = [
     'status'        => 'Available',
 ];
 
-// ==========================
-// EDIT MODE - FETCH EXISTING UNIT
-// ==========================
 if ($edit_id > 0) {
+
     $get = mysqli_query($db, "SELECT * FROM unit WHERE id = $edit_id LIMIT 1");
+
     if ($get && mysqli_num_rows($get) === 1) {
+
         $unit = mysqli_fetch_assoc($get);
-        // Make sure we keep the correct building_id
-        // $building_id = (int)$unit['building_id'];
+        $building_id = (int)$unit['building_name'];
+
     } else {
         $message = "<div class='alert alert-danger'>Unit not found</div>";
     }
 }
 
-// ==========================
-// FORM SUBMITTED
-// ==========================
 if (isset($_POST['btn']) && empty($message)) {
 
-    // TEXT FIELDS
     $unit_name = mysqli_real_escape_string($db, trim($_POST['unit_name'] ?? ''));
     $floor     = mysqli_real_escape_string($db, trim($_POST['floor'] ?? ''));
     $unit_type = mysqli_real_escape_string($db, $_POST['unit_type'] ?? 'Flat');
-    $size      = mysqli_real_escape_string($db, trim($_POST['size'] ?? '')); // meter no
+    $size      = mysqli_real_escape_string($db, trim($_POST['size'] ?? ''));
 
-    // NUMERIC FIELDS
-    $rent    = (float)($_POST['rent']    ?? 0);
+    $rent    = (float)($_POST['rent'] ?? 0);
     $advance = (float)($_POST['advance'] ?? 0);
-    $water   = (float)($_POST['water']   ?? 0);
-    $gas     = (float)($_POST['gas']     ?? 0);
+    $water   = (float)($_POST['water'] ?? 0);
+    $gas     = (float)($_POST['gas'] ?? 0);
 
-    $status = 'Available';
+    // IMPORTANT FIX
+    if ($edit_id > 0) {
+        $status = $unit['status']; // keep previous status
+    } else {
+        $status = 'Available'; // new unit
+    }
 
-    // ======================
-    // IMAGE HANDLING
-    // ======================
     $image_name = $unit['unit_image'] ?? '';
 
     if (!empty($_FILES['unit_image']['name']) && $_FILES['unit_image']['error'] === UPLOAD_ERR_OK) {
-        // Delete old image if exists and we're updating
+
         if (!empty($unit['unit_image'])) {
+
             $old_path = "public/uploads/units/" . $unit['unit_image'];
+
             if (file_exists($old_path)) {
                 @unlink($old_path);
             }
         }
 
         $ext = strtolower(pathinfo($_FILES['unit_image']['name'], PATHINFO_EXTENSION));
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-        
-        if (!in_array($ext, $allowed)) {
-            $message = "<div class='alert alert-danger'>Only jpg, jpeg, png, webp allowed</div>";
-        } else {
-            $image_name = time() . '_' . mt_rand(10000, 99999) . '.' . $ext;
-            $upload_path = "public/uploads/units/" . $image_name;
+        $allowed = ['jpg','jpeg','png','webp'];
 
-            if (!move_uploaded_file($_FILES['unit_image']['tmp_name'], $upload_path)) {
+        if (!in_array($ext,$allowed)) {
+
+            $message = "<div class='alert alert-danger'>Only jpg, jpeg, png, webp allowed</div>";
+
+        } else {
+
+            $image_name = time().'_'.mt_rand(10000,99999).'.'.$ext;
+            $upload_path = "public/uploads/units/".$image_name;
+
+            if (!move_uploaded_file($_FILES['unit_image']['tmp_name'],$upload_path)) {
                 $message = "<div class='alert alert-danger'>Image upload failed</div>";
             }
         }
     }
 
-    // Proceed only if no error so far
     if (empty($message)) {
 
         if ($edit_id > 0) {
-            // ======================
-            // UPDATE
-            // ======================
+
             $sql = "UPDATE unit SET
-                unit_name    = '$unit_name',
-                floor        = '$floor',
-                unit_type    = '$unit_type',
-                size         = '$size',
-                rent         = $rent,
-                advance      = $advance,
-                unit_image   = '$image_name',
-                water        = $water,
-                gas          = $gas,
-                status       = '$status'
-                WHERE id = $edit_id";
+                unit_name='$unit_name',
+                floor='$floor',
+                unit_type='$unit_type',
+                size='$size',
+                rent=$rent,
+                advance=$advance,
+                unit_image='$image_name',
+                water=$water,
+                gas=$gas
+                WHERE id=$edit_id";
 
-            if (mysqli_query($db, $sql)) {
+            if (mysqli_query($db,$sql)) {
+
                 $message = "<div class='alert alert-success'>Unit updated successfully</div>";
-            } else {
-                $message = "<div class='alert alert-danger'>Update failed: " . mysqli_error($db) . "</div>";
-            }
-        } else {
-            // ======================
-            // INSERT - NEW UNIT
-            // ======================
-            $sql = "INSERT INTO unit 
-                (building_name, unit_name, floor, unit_type, size, rent, advance, unit_image, status, water, gas)
-                VALUES 
-                ($building_id, '$unit_name', '$floor', '$unit_type', '$size', $rent, $advance, '$image_name', '$status', $water, $gas)";
 
-            if (mysqli_query($db, $sql)) {
-                $message = "<div class='alert alert-success'>Unit created successfully</div>";
-                // Optional: reset form after success
-                // header("Location: admin.php?page=unit&id=$building_id"); exit;
             } else {
-                $message = "<div class='alert alert-danger'>Create failed: " . mysqli_error($db) . "</div>";
+
+                $message = "<div class='alert alert-danger'>Update failed: ".mysqli_error($db)."</div>";
+            }
+
+        } else {
+
+            $sql = "INSERT INTO unit
+            (building_name,unit_name,floor,unit_type,size,rent,advance,unit_image,status,water,gas)
+            VALUES
+            ($building_id,'$unit_name','$floor','$unit_type','$size',$rent,$advance,'$image_name','$status',$water,$gas)";
+
+            if (mysqli_query($db,$sql)) {
+
+                $message = "<div class='alert alert-success'>Unit created successfully</div>";
+
+            } else {
+
+                $message = "<div class='alert alert-danger'>Create failed: ".mysqli_error($db)."</div>";
             }
         }
     }
