@@ -48,6 +48,7 @@
                                 <th>Advance</th>
                                 <th>Amount</th>
                                 <th>Status</th>
+                                <th>Method</th>
                                 <th class="text-end">Action</th>
                             </tr>
                         </thead>
@@ -199,6 +200,12 @@
                                     </td>
 
                                     <td>
+                                        <small class="text-warning fw-bold">Manager</small> <br>
+                                        <small class="text-warning fw-bold">Manager (Self) - 3000 </small><br>
+                                        <small class="text-warning fw-bold">Expense  - 3000 </small>
+                                    </td>
+
+                                    <td>
                                         <div class="btn-group align-items-center">
                                             <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
@@ -207,8 +214,8 @@
                                                 <i class="bi bi-eye"></i>
                                             </a> -->
                                             <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
-                                                class="text-end btn btn-sm btn-outline-success" title="Add Payment">
-                                                Add Payment
+                                                class="text-end btn btn-sm btn-info" title="Add Payment">
+                                                Payment
                                             </a>
                                         </div>
                                     </td>
