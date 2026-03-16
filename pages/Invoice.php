@@ -326,34 +326,63 @@ if(!empty($total_paid)){
 <!-- pdf generate  -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-    document.getElementById('generatePdfBtn').addEventListener('click', function () {
-        const element = document.getElementById('pdf-content');
+document.getElementById('generatePdfBtn').addEventListener('click', function () {
 
-        const options = {
-            margin: [15, 10, 15, 10],   // top, right, bottom, left
-            filename: 'Invoice_<?= addslashes(date('d M Y').'_' ?? '_') ?><?= addslashes($tent_name ?? 'Unknown') ?>.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+    const element = document.getElementById('pdf-content');
 
-        html2pdf()
-            .from(element)
-            .set(options)
-            .save();
-    });
+    const options = {
+        margin: 10,
+
+        filename: 'Invoice_<?= addslashes($tent_name ?? "Tenant") ?>.pdf',
+
+        image: { 
+            type: 'jpeg', 
+            quality: 1
+        },
+
+        html2canvas: { 
+            scale: 3,          // 🔥 resolution increase
+            dpi: 300,          // 🔥 print quality
+            letterRendering: true,
+            useCORS: true
+        },
+
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait'
+        },
+
+        pagebreak: { 
+            mode: ['avoid-all']
+        }
+
+    };
+
+    html2pdf().set(options).from(element).save();
+
+});
 </script>
+
 <style>
+
+    #pdf-content{
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
     .agreement-paper {
         width: 210mm;
-        min-height: 297mm;
+        min-height: auto;
         margin: 0 auto;
-        background: white;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-        font-family: 'Arial', sans-serif;
+        background: #fff;
+        font-family: Arial, sans-serif;
         font-size: 12pt;
-        line-height: 1.5;
+        line-height: 1.4;
+        padding: 60px;
+        box-shadow: none;
     }
+
 
     .section-title {
         border-bottom: 2px solid #444;
@@ -367,8 +396,12 @@ if(!empty($total_paid)){
         margin-bottom: 25px;
     }
 
-    .terms-list li {
-        margin-bottom: 10px;
+    .card{
+        box-shadow: none !important;
+    }
+
+    .rounded{
+        border-radius: 0 !important;
     }
 
     @media print {
