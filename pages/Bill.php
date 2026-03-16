@@ -60,11 +60,8 @@
                                 $unit_id = $row['id'];
                                 $advance = $row['advance'];
                                 $rent = $row['rent'];
-                                $water = $row['water'];
-                                $gas = $row['gas'];
 
                                 $building_name = $row['building_name'];
-                                $total_bill = $rent + $water + $gas;
 
                                 ?>
                                 <tr>
@@ -117,7 +114,6 @@
                                     </td>
 
                                     <td>
-
                                         <?php 
                                             if(!empty($rent)){ ?>
                                                 <span class="fw-semibold text-primary">
@@ -125,25 +121,11 @@
                                             </span><br>
                                         <?php } ?> 
 
-                                        <?php 
-                                            if(!empty($water)){ ?>
-                                                <span class="fw-semibold text-primary">
-                                            Water = ৳ <?= number_format($water, 2) ?? '' ?>
-                                            </span><br>
-                                        <?php } ?> 
-
-                                        <?php 
-                                            if(!empty($gas)){ ?>
-                                                <span class="fw-semibold text-primary">
-                                            Gas = ৳ <?= number_format($gas, 2) ?? '' ?>
-                                            </span><br>
-                                        <?php } ?> 
-
                                         <?php
                                         $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
                                         if (!mysqli_num_rows($pay_info) > 0) {
                                             echo '<span class="fw-bold text-danger">';
-                                            echo 'Due = ৳ ' . number_format($total_bill, 2);
+                                            echo 'Due = ৳ ' . number_format($rent, 2);
                                             echo '</span>';
                                         } else {
                                             mysqli_data_seek($pay_info, 0); // rewind result to loop again
@@ -154,11 +136,41 @@
                                                 $created_at = $pay_info_sh['created_at'];
                                                 $status = $pay_info_sh['status'];
 
-                                                $Gas_db = $pay_info_sh['Gas'];
-                                                $Water_db = $pay_info_sh['Water'];
-                                                $Electricity_db = $pay_info_sh['Electricity'];
-                                                $Others_db = $pay_info_sh['Others'];
-                                                ?>                                        
+                                                $Gas = $pay_info_sh['Gas'];
+                                                $Water = $pay_info_sh['Water'];
+                                                $Electricity = $pay_info_sh['Electricity'];
+                                                $Others = $pay_info_sh['Others'];
+
+                                                $total_bill = $rent+$Gas+$Water+$Electricity+$Others;
+                                                ?>     
+                                                
+                                                <?php 
+                                                    if(!empty($Water)){ ?>
+                                                        <span class="fw-semibold text-primary">
+                                                    Water = ৳ <?= number_format($Water, 2) ?? '' ?>
+                                                    </span><br>
+                                                <?php } ?> 
+
+                                                <?php 
+                                                    if(!empty($Gas)){ ?>
+                                                        <span class="fw-semibold text-primary">
+                                                    Gas = ৳ <?= number_format($Gas, 2) ?? '' ?>
+                                                    </span><br>
+                                                <?php } ?> 
+
+                                                <?php 
+                                                    if(!empty($Electricity)){ ?>
+                                                        <span class="fw-semibold text-primary">
+                                                    Electricity = ৳ <?= number_format($Electricity, 2) ?? '' ?>
+                                                    </span><br>
+                                                <?php } ?>
+
+                                                <?php 
+                                                    if(!empty($Others)){ ?>
+                                                        <span class="fw-semibold text-primary">
+                                                    Others = ৳ <?= number_format($Others, 2) ?? '' ?>
+                                                    </span><br>
+                                                <?php } ?>
 
                                                 <span class="fw-semibold text-primary">
                                                     Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
@@ -200,9 +212,33 @@
                                     </td>
 
                                     <td>
-                                        <small class="text-warning fw-bold">Manager</small> <br>
-                                        <small class="text-warning fw-bold">Manager (Self) - 3000 </small><br>
-                                        <small class="text-warning fw-bold">Expense  - 3000 </small>
+                                        <?php
+                                            $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' ");
+                                            if (!mysqli_num_rows($history_sql) > 0) {
+                                                echo '<span class="fw-bold text-warning">';
+                                                echo 'Not Found';
+                                                echo '</span>';
+                                            } else {
+                                                while ($pay_history = mysqli_fetch_assoc($history_sql)) {
+                                                    $bill_his = $pay_history['bill_month'];
+                                                    $pay_method_his = $pay_history['payment_method'];
+                                                    $total_his = $pay_history['total'];
+                                                    $paid_his = $pay_history['paid'];
+                                                    $due_his = $pay_history['due'];
+                                                    $note_his = $pay_history['note'];
+                                                    $pay_date_his = $pay_history['payment_date'];
+                                                    $paid_amount_his = $pay_history['paid_amount'];
+                                                    $manager_self = $pay_history['manager_self'];
+                                                    $expense = $pay_history['expense'];
+                                                    $expense_note = $pay_history['expense'];
+
+                                                    echo "<small class='text-warning fw-bold'>$pay_date_his</small> <br>";
+                                                    echo "<small class='text-warning fw-bold'>Manager (Self) - $pay_date_his</small> <br>";
+                                                    echo "<small class='text-warning fw-bold'>Expense - $pay_date_his</small> <br>";
+
+                                                }
+                                            }
+                                        ?> 
                                     </td>
 
                                     <td>

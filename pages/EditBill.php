@@ -721,6 +721,8 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                         <th scope="col" class="text-end">Payment Method</th>
                                         <th scope="col" class="text-end">Payment Amount</th>
                                         <th scope="col" class="text-end">Bill Summary</th>
+                                        <th scope="col" class="text-end">Manager Self</th>
+                                        <th scope="col" class="text-end">Expense</th>
                                         <th scope="col" class="text-center">Note</th>
                                     </tr>
                                 </thead>
@@ -737,6 +739,9 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                         $note_his = $pay_history['note'];
                                         $pay_date_his = $pay_history['payment_date'];
                                         $paid_amount_his = $pay_history['paid_amount'];
+                                        $manager_self = $pay_history['manager_self'];
+                                        $expense = $pay_history['expense'];
+                                        $expense_note = $pay_history['expense'];
                                         ?>
                                         <tr>
                                             <td class="ps-4 fw-medium"><?= date('d M Y', strtotime($pay_date_his)) ?>
@@ -751,6 +756,13 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                 <span class="text-primary"><small>৳</small> <?= $total_his ?></span> <br>
                                                 <span class="text-success"><small>৳</small> <?= $paid_his ?></span> <br>
                                                 <span class="text-danger"><small>৳</small> <?= $due_his ?></span>
+                                            </td>
+                                            <td>
+                                                <span class="text-danger"><small>৳</small> <?= $manager_self ?></span>
+                                            </td>
+                                            <td>
+                                                <span class="text-danger"><small>৳</small> <?= $expense ?></span><br>
+                                                <small>(<?=$expense_note ?>)</small>
                                             </td>
                                             <td class="text-center pe-4">
                                                 <small class="text-secendary"><?= $note_his ?></small>
