@@ -523,8 +523,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Gas Bill Month <small
                                                     class="text-warning">(Invoice)</small></small>
-                                            <input type="month" name="Gas_month" value="<?php echo $this_month; ?>"
-                                                class="form-control">
+                                            <input type="month" name="Gas_month" value="<?php echo date('Y-m', strtotime('first day of last month')); ?>" class="form-control">
                                         </div>
                                         <div class="col-md-6">
                                             <small class="fw-semibold" for="status">Gas Bill Amount</small>
@@ -536,8 +535,9 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Water Bill </small>
-                                            <input type="text" name="Water_month" placeholder="Note"
-                                                class="form-control">
+                                            <input type="text" name="Water_month"
+                                            value="<?php echo date('M Y', strtotime('-1 month')); ?>"
+                                            class="form-control">
                                         </div>
                                         <div class="col-md-6">
                                             <small class="fw-semibold" for="status">Water Bill Amount</small>
