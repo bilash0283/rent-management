@@ -139,43 +139,90 @@ if (isset($_POST['create_invoice'])) {
 
 // confirm payment
 if (isset($_POST['save_bill'])) {
+    $billing_month   = trim($_POST['billing_month'] ?? '');
+    $total_amount    = (int)($_POST['total_amount'] ?? 0);
+    $paid_amount     = (int)($_POST['paid_amount'] ?? 0);
+    $status          = trim($_POST['status'] ?? '');
+    $note            = trim($_POST['note'] ?? '');
+    $payment_date    = trim($_POST['payment_date'] ?? date('Y-m-d'));
+    $payment_method  = trim($_POST['payment_method'] ?? '');
+    $manager_self    = trim($_POST['manager_self'] ?? '');
+    $expense         = trim($_POST['expense'] ?? '');
+    $expense_note    = trim($_POST['expense_note'] ?? '');
 
-    $billing_month = $_POST['billing_month'];
-    $total_amount = intval($_POST['total_amount']);
-    $paid_amount = intval($_POST['paid_amount']);
-    $status = $_POST['status'];
-    $note = $_POST['note'];
     $due_amount = $total_amount - $paid_amount;
-    $payment_date = !empty($_POST['payment_date']) ? $_POST['payment_date'] : date('Y-m-d');
-    $payment_method = $_POST['payment_method'];
+    $errors = [];
 
-    $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
-    while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
-        $id_db = $ex_month_row['id'];
-        $old_total = intval($ex_month_row['total_amount']);
-        $old_paid = intval($ex_month_row['paid_amount']);
-
-
+    if (empty($payment_method)) {
+        $errors[] = "Please Select Payment Method";
     }
-    $update_paid_amount = $old_paid + $paid_amount;
-    $update_due_amount = $old_total - $update_paid_amount;
+
+    if (empty($status)) {
+        $errors[] = "Please Select Status";
+    }
+
+    if (!empty($errors)) {
+        echo "<script>alert('" . implode("\\n", $errors) . "'); window.history.back();</script>";
+        exit;
+    }
+    
+    $month_sql = mysqli_query($db, "SELECT * FROM invoices 
+                                    WHERE billing_month = '$billing_month' 
+                                    AND tenant_id = '$tent_id' 
+                                    LIMIT 1");
 
     if (mysqli_num_rows($month_sql) > 0) {
-        $bill_sql = mysqli_query($db, "UPDATE invoices SET paid_amount= '$update_paid_amount', due_amount = '$update_due_amount', status='$status',note ='$note' WHERE id = '$id_db' AND tenant_id = '$tent_id' ");
 
-        $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$paid_amount','$update_due_amount','$note','$payment_date')");
-    } else {
-        $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
-            (`tenant_id`, `unit_id`, `billing_month`, `total_amount`, `paid_amount`, `due_amount`, `status`, `created_at`) 
+        $row = mysqli_fetch_assoc($month_sql);
+
+        $invoice_id     = $row['id'];
+        $old_total      = (int)$row['total_amount'];
+        $old_paid       = (int)$row['paid_amount'];
+
+        $new_paid       = $old_paid + $paid_amount;
+        $new_due        = $old_total - $new_paid;
+
+        if ($new_due <= 0) {
+            $status = 'Paid';
+        }
+
+        $update_invoice = mysqli_query($db, "UPDATE invoices SET 
+            paid_amount = '$new_paid',
+            due_amount  = '$new_due',
+            status      = '$status',
+            note        = '$note'
+            WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
+
+        if (!$update_invoice) {
+            die("Invoice আপডেটে সমস্যা: " . mysqli_error($db));
+        }
+
+        $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+            (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note)
             VALUES 
-            ('$tent_id','$unit_id','$billing_month','$total_amount','$paid_amount','$due_amount','$status',now())");
+            ('$tent_id', '$billing_month', '$payment_method', '$old_total', '$new_paid', '$paid_amount', '$new_due', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note')");
 
-        $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$paid_amount','$due_amount','$note','$payment_date')");
+    } else {
+        $insert_invoice = mysqli_query($db, "INSERT INTO invoices 
+            (tenant_id, unit_id, billing_month, total_amount, paid_amount, due_amount, status, created_at, note)
+            VALUES 
+            ('$tent_id', '$unit_id', '$billing_month', '$total_amount', '$paid_amount', '$due_amount', '$status', NOW(), '$note')");
+
+        if (!$insert_invoice) {
+            die("নতুন বিল সেভে সমস্যা: " . mysqli_error($db));
+        }
+
+        $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+            (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note)
+            VALUES 
+            ('$tent_id', '$billing_month', '$payment_method', '$total_amount', '$paid_amount', '$paid_amount', '$due_amount', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note')");
     }
 
-    if ($bill_sql) {
+    if (isset($insert_history) && $insert_history) {
         header("Location: admin.php?page=editbill&unit_id=$unit_id");
         exit();
+    } else {
+        echo "History Error: " . mysqli_error($db);
     }
 }
 
@@ -585,7 +632,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                     <input type="number" hidden name="total_amount" value="<?php echo $total_bill; ?>">
                                     <div>
                                         <label class="fw-semibold">Amount *</label>
-                                        <input type="number" name="paid_amount" class="form-control" required>
+                                        <input type="number" name="paid_amount" value="<?= $due ?>" class="form-control" required>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
@@ -599,7 +646,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                             <select name="status" id="status" class="form-control form-select" required>
                                                 <option selected disabled>Select One</option>
                                                 <option value="Paid">Paid</option>
-                                                <option value="Unpaid">Unpaid</option>
+                                                <!-- <option value="Unpaid">Unpaid</option> -->
                                                 <option value="Partial">Partial</option>
                                             </select>
                                         </div>
@@ -623,6 +670,21 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                 <option value="Manager">Manager</option>
                                             </select>
                                         </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="manager_self">Manager Self </label>
+                                            <input type="number" class="form-control" name="manager_self">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="expense">Expense</label>
+                                            <input type="number" class="form-control" name="expense">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="fw-semibold">Expense Note</label>
+                                        <input type="text" name="expense_note" class="form-control">
                                     </div>
                                     <div>
                                         <label class="fw-semibold">Note</label>
@@ -741,7 +803,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                         $paid_amount_his = $pay_history['paid_amount'];
                                         $manager_self = $pay_history['manager_self'];
                                         $expense = $pay_history['expense'];
-                                        $expense_note = $pay_history['expense'];
+                                        $expense_note = $pay_history['expense_note'];
                                         ?>
                                         <tr>
                                             <td class="ps-4 fw-medium"><?= date('d M Y', strtotime($pay_date_his)) ?>

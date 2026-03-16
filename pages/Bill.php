@@ -219,24 +219,40 @@
                                                 echo 'Not Found';
                                                 echo '</span>';
                                             } else {
+                                                $manager_self_total = 0;
+                                                $expense_total = 0;
+
+                                                // প্রথমে লুপ চালিয়ে সব টোটাল বের করে নিবো
                                                 while ($pay_history = mysqli_fetch_assoc($history_sql)) {
-                                                    $bill_his = $pay_history['bill_month'];
-                                                    $pay_method_his = $pay_history['payment_method'];
-                                                    $total_his = $pay_history['total'];
-                                                    $paid_his = $pay_history['paid'];
-                                                    $due_his = $pay_history['due'];
-                                                    $note_his = $pay_history['note'];
-                                                    $pay_date_his = $pay_history['payment_date'];
+                                                    $bill_his        = $pay_history['bill_month'];
+                                                    $pay_method_his  = $pay_history['payment_method'];
+                                                    $total_his       = $pay_history['total'];
+                                                    $paid_his        = $pay_history['paid'];
+                                                    $due_his         = $pay_history['due'];
+                                                    $note_his        = $pay_history['note'];
+                                                    $pay_date_his    = $pay_history['payment_date'];
                                                     $paid_amount_his = $pay_history['paid_amount'];
-                                                    $manager_self = $pay_history['manager_self'];
-                                                    $expense = $pay_history['expense'];
-                                                    $expense_note = $pay_history['expense'];
+                                                    $manager_self    = $pay_history['manager_self'];
+                                                    $expense         = $pay_history['expense'];
+                                                    $expense_note    = $pay_history['expense_note'];
 
-                                                    echo "<small class='text-warning fw-bold'>$pay_date_his</small> <br>";
-                                                    echo "<small class='text-warning fw-bold'>Manager (Self) - $pay_date_his</small> <br>";
-                                                    echo "<small class='text-warning fw-bold'>Expense - $pay_date_his</small> <br>";
-
+                                                    $manager_self_total += (float)$manager_self;  
+                                                    $expense_total      += (float)$expense;
+                                                    
+                                                   
                                                 }
+
+                                                echo "<small class='text-success fw-bold'>$pay_method_his</small><br>";
+
+                                                if ($manager_self_total > 0) {
+                                                    echo "<small class='text-warning fw-bold'>Manager (Self) Total: " . number_format($manager_self_total, 2) . "</small><br>";
+                                                }
+
+                                                if ($expense_total > 0) {
+                                                    echo "<small class='text-warning fw-bold'>Expense Total: " . number_format($expense_total, 2) . "</small><br>";
+                                                }
+
+                                                echo "</div>";
                                             }
                                         ?> 
                                     </td>
