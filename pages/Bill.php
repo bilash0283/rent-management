@@ -213,7 +213,7 @@
 
                                     <td>
                                         <?php
-                                            $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' ");
+                                            $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' AND bill_month = '$$this_month' ");
                                             if (!mysqli_num_rows($history_sql) > 0) {
                                                 echo '<span class="fw-bold text-warning">';
                                                 echo 'Not Found';
