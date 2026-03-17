@@ -100,10 +100,10 @@ $result = mysqli_query($db, $query);
                         <thead class="table-light">
                             <tr>
                                 <th>Image</th>
+                                <th>Unit</th>
                                 <th>Name</th>
                                 <th>Phone</th>
                                 <th>Building</th>
-                                <th>Unit</th>
                                 <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -126,10 +126,10 @@ $result = mysqli_query($db, $query);
                                              style="object-fit:cover;border-radius:6px;border-radius:50%;">
                                     </td>
 
+                                    <td><?= htmlspecialchars($row['unit_name']) ?></td>
                                     <td><a href="admin.php?page=view_tenant&id=<?= $row['id'] ?>" class="text-secendary fw-bold"><?= htmlspecialchars($row['name']) ?></a></td>
                                     <td><?= htmlspecialchars($row['phone']) ?></td>
                                     <td><?= htmlspecialchars($row['building_name']) ?></td>
-                                    <td><?= htmlspecialchars($row['unit_name']) ?></td>
 
                                     <td>
                                         <span class="badge <?= $row['status']=='Rented' ? 'bg-danger' : 'bg-success' ?>">

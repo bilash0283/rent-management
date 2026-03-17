@@ -44,6 +44,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>SL</th>
+                                <th>Unit</th>
                                 <th>Tenant</th>
                                 <th>Advance</th>
                                 <th>Amount</th>
@@ -60,12 +61,14 @@
                                 $unit_id = $row['id'];
                                 $advance = $row['advance'];
                                 $rent = $row['rent'];
+                                $unit_name = $row['unit_name'];
 
                                 $building_name = $row['building_name'];
 
                                 ?>
                                 <tr>
                                     <td><?= $i; ?></td>
+                                    <td><?= $unit_name; ?></td>
                                     <td>
                                         <?php
                                         $sql_tenant = mysqli_query($db, "SELECT * FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' ");
