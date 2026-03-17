@@ -143,7 +143,7 @@ $result = mysqli_query($db, $sql) or die("Query failed: " . mysqli_error($db));
                                                     <?php
                                                     $img_path = !empty($row['image'])
                                                         ? "public/uploads/buildings/" . htmlspecialchars($row['image'])
-                                                        : "public/assets/images/no-image.png";
+                                                        : "public/uploads/users/no-image.png";
                                                     ?>
                                                     <img src="<?= $img_path ?>" alt="Building Image" class="rounded"
                                                         style="width: 60px; height: 60px; object-fit: cover;">
