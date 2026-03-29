@@ -738,7 +738,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                 <small>৳</small> <?= number_format($paid_amount_db, 2) ?>
                                             </td>
                                             <td class="text-end text-danger fw-bold">
-                                                <small>৳</small> <?= number_format($due_amount_db, 2) ?>
+                                                <?php echo $due_amount_db ? '<small>৳</small>'. number_format($due_amount_db, 2) : ''; ?>
                                             </td>
                                             <td class="text-center">
                                                 <?php if ($status == 'Paid'): ?>
