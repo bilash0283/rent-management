@@ -46,8 +46,7 @@
                                 <th>SL</th>
                                 <th>Unit</th>
                                 <th>Tenant</th>
-                                <th>Advance</th>
-                                <th>Amount</th>
+                                <th>Bill Amount</th>
                                 <th>Status</th>
                                 <th>Method</th>
                                 <th class="text-end">Action</th>
@@ -62,9 +61,7 @@
                                 $advance = $row['advance'];
                                 $rent = $row['rent'];
                                 $unit_name = $row['unit_name'];
-
                                 $building_name = $row['building_name'];
-
                                 ?>
                                 <tr>
                                     <td><?= $i; ?></td>
@@ -94,6 +91,7 @@
                                     </td>
 
                                     <td>
+
                                         <?php
                                         // Total Advance Paid
                                         $total_paid = 0;
@@ -106,17 +104,15 @@
                                         $payable = max($advance - $total_paid, 0); // avoid negative
                                     
                                         // Show Advance and Paid
-                                        echo '<span style="color: #0d6efd; font-weight: 600;">Advance = ৳ ' . $advance . '</span><br>';  // Blue
-                                        echo '<span style="color: #198754; font-weight: 600;">Paid    = ৳ ' . $total_paid . '</span><br>'; // Green
+                                        // echo '<span style="color: #0d6efd; font-weight: 600;">Advance = ৳ ' . $advance . '</span><br>';  // Blue
+                                        // echo '<span style="color: #198754; font-weight: 600;">Paid    = ৳ ' . $total_paid . '</span><br>'; // Green
                                     
                                         // Show Due only if payable > 0
                                         if ($payable > 0) {
-                                            echo '<span style="color: #dc3545; font-weight: 600;">Due     = ৳ ' . $payable . '</span><br>'; // Red
+                                            echo '<span style="color: #dc3545; font-weight: 600;">Advance     = <small> ৳ </small>' . $payable . '</span><br>'; // Red
                                         }
                                         ?>
-                                    </td>
 
-                                    <td>
                                         <?php 
                                             if(!empty($rent)){ ?>
                                                 <span class="fw-semibold text-primary">
@@ -150,44 +146,44 @@
                                                 <?php 
                                                     if(!empty($Water)){ ?>
                                                         <span class="fw-semibold text-primary">
-                                                    Water = ৳ <?= number_format($Water, 2) ?? '' ?>
+                                                    Water = <small>৳ </small> <?= number_format($Water, 2) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?> 
 
                                                 <?php 
                                                     if(!empty($Gas)){ ?>
                                                         <span class="fw-semibold text-primary">
-                                                    Gas = ৳ <?= number_format($Gas, 2) ?? '' ?>
+                                                    Gas = <small>৳ </small> <?= number_format($Gas, 2) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?> 
 
                                                 <?php 
                                                     if(!empty($Electricity)){ ?>
                                                         <span class="fw-semibold text-primary">
-                                                    Electricity = ৳ <?= number_format($Electricity, 2) ?? '' ?>
+                                                    Electricity = <small>৳ </small> <?= number_format($Electricity, 2) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?>
 
                                                 <?php 
                                                     if(!empty($Others)){ ?>
                                                         <span class="fw-semibold text-primary">
-                                                    Others = ৳ <?= number_format($Others, 2) ?? '' ?>
+                                                    Others = <small>৳ </small> <?= number_format($Others, 2) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?>
 
                                                 <span class="fw-semibold text-primary">
-                                                    Total = ৳ <?= number_format($total_bill, 2) ?? '' ?>
+                                                    Total = <small>৳ </small> <?= number_format($total_bill, 2) ?? '' ?>
                                                 </span><br>
 
                                                 <?php if (!empty($paid_amount_db)) { ?>
                                                     <span class="fw-semibold text-success">
-                                                        Paid = ৳ <?= number_format($paid_amount_db, 2) ?? '' ?>
+                                                        Paid = <small>৳ </small> <?= number_format($paid_amount_db, 2) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?>
 
                                                 <?php if (!empty($due_amount_db)) { ?>
                                                     <span class="fw-semibold text-danger">
-                                                        Due = ৳ <?= number_format($due_amount_db, 2) ?? '' ?>
+                                                        Due = <small>৳ </small> <?= number_format($due_amount_db, 2) ?? '' ?>
                                                     </span><br>
                                                 <?php }
                                             }
