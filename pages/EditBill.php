@@ -812,22 +812,21 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                                 <?= date(' M Y', strtotime($bill_his)) ?>
                                             </td>
                                             <td class="text-end text-secendary fw-semibold"><?= $pay_method_his ?></td>
-                                            <td class="text-end text-success fw-semibold"><small>৳</small>
-                                                <?= $paid_amount_his ?></td>
+                                            <td class="text-end text-success fw-semibold"><?php echo $paid_amount_his ? '<small>৳ </small>'.$paid_amount_his : ''; ?></td>
                                             <td class="text-end fw-semibold">
-                                                <span class="text-primary"><small>৳</small> <?= $total_his ?></span> <br>
-                                                <span class="text-success"><small>৳</small> <?= $paid_his ?></span> <br>
-                                                <span class="text-danger"><small>৳</small> <?= $due_his ?></span>
+                                                <span class="text-primary"><?php echo $total_his ? '<small>৳ </small>'.$total_his : ''; ?></span><br>
+                                                <span class="text-success"><?php echo $paid_his ? '<small>৳ </small>'.$paid_his : ''; ?></span><br>
+                                                <span class="text-danger"><?php echo $due_his ? '<small>৳ </small>'.$due_his : ''; ?></span>
                                             </td>
                                             <td>
-                                                <span class="text-danger"><small>৳</small> <?= $manager_self ?></span>
+                                                <span class="text-danger"><?php echo $manager_self ? '<small>৳ </small>'.$manager_self : '' ;?></span>
                                             </td>
                                             <td>
-                                                <span class="text-danger"><small>৳</small> <?= $expense ?></span><br>
-                                                <small>(<?=$expense_note ?>)</small>
+                                                <span class="text-danger"><?php echo $expense ? '<small>৳ </small>'.$expense : ''; ?></span><br>
+                                                <small><?php echo $expense_note ? '('.$expense_note.')' : ''; ?></small>
                                             </td>
                                             <td class="text-center pe-4">
-                                                <small class="text-secendary"><?= $note_his ?></small>
+                                                <small class="text-secendary"><?= $note_his ?? '' ?></small>
                                             </td>
                                         </tr>
                                     <?php } ?>
