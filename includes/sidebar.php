@@ -8,7 +8,6 @@ $buildings = [];
 while($row = mysqli_fetch_assoc($result)) {
     $buildings[] = $row;
 }
-// Now $buildings can be used multiple times
 ?>
 
 <nav class="nxl-navigation">
@@ -23,15 +22,14 @@ while($row = mysqli_fetch_assoc($result)) {
         
         <div class="navbar-content">
             <ul class="nxl-navbar">
-                <li class="nxl-item nxl-caption">
+                <!-- <li class="nxl-item nxl-caption">
                     <label>Navigation</label>
-                </li>
+                </li> -->
                 
-                <li class="">
+                <li class="nxl-item nxl-hasmenu">
                     <a href="admin.php" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-airplay"></i></span>
                         <span class="nxl-mtext">Dashboards</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
                 </li>
 
@@ -39,7 +37,6 @@ while($row = mysqli_fetch_assoc($result)) {
                     <a href="admin.php?page=building" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-briefcase"></i></span>
                         <span class="nxl-mtext">Building</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
                 </li>
 

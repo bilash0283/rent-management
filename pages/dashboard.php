@@ -95,10 +95,8 @@ foreach ($monthly_totals as $month => $data) {
 ?>
 
 <div class="nxl-content">
-    <!-- [ Main Content ] start -->
     <div class="main-content">
         <div class="row">
-            <!-- Dashboard Cards -->
             <div class="row">
                 <!-- Building Card -->
                 <div class="col-lg-4">
@@ -175,7 +173,6 @@ foreach ($monthly_totals as $month => $data) {
                     </a>
                 </div>
             </div>
-            <!-- Dashboard Cards -->
             <div class="col-xxl-12">
                 <div class="card stretch stretch-full">
                     <div class="card-header">
