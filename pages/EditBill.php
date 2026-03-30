@@ -250,7 +250,6 @@
 
 
 <div class="nxl-content">
-
     <!-- Page Header -->
     <div class="page-header d-flex justify-content-between align-items-center">
         <div class="page-header-left">
@@ -568,8 +567,7 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <small class="fw-semibold">Gas Bill Month <small
-                                                    class="text-warning">(Invoice)</small></small>
+                                            <small class="fw-semibold">Gas Bill Month </small>
                                             <input type="month" name="Gas_month" value="<?php echo date('Y-m', strtotime('first day of last month')); ?>" class="form-control">
                                         </div>
                                         <div class="col-md-6">
@@ -582,14 +580,11 @@
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Water Bill </small>
-                                            <input type="text" name="Water_month"
-                                            value="<?php echo date('M Y', strtotime('-1 month')); ?>"
-                                            class="form-control">
+                                            <input type="text" name="Water_month" value="<?php echo $pev_month = date('M Y', strtotime('first day of last month')); ?>" class="form-control">
                                         </div>
                                         <div class="col-md-6">
                                             <small class="fw-semibold" for="status">Water Bill Amount</small>
-                                            <input type="number" name="Water" value="<?= $water ?? '' ?>"
-                                                class="form-control">
+                                            <input type="number" name="Water" value="<?= $water ?? '' ?>" class="form-control">
                                         </div>
                                     </div>
 
