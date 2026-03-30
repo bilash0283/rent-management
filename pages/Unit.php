@@ -152,14 +152,13 @@
                                             </a>
                                         </div>
                                     </td>
-                                    
                                 </tr>
 
                             <?php endwhile; ?>
                             <?php else: ?>
                                 <tr>
                                     <td colspan="7" class="text-center py-4 text-muted">
-                                        No units found
+                                        No Unit Found !
                                     </td>
                                 </tr>
                             <?php endif; ?>

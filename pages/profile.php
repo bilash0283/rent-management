@@ -107,8 +107,7 @@ if(isset($_POST['btn'])){
                                 <div class="col-md-6"></div>
                             </div>
                             <div class="mt-5 text-right">
-                                <button class="btn btn-primary profile-button" type="submit" name="btn">Save
-                                    Profile</button>
+                                <button class="btn btn-primary profile-button" type="submit" name="btn">Save</button>
                             </div>
                         </form>
                     </div>
