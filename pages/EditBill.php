@@ -1,250 +1,250 @@
 <?php
-if (isset($_GET['unit_id'])) {
-    $unit_id = $_GET['unit_id'];
-}
+    if (isset($_GET['unit_id'])) {
+        $unit_id = $_GET['unit_id'];
+    }
 
-$query = "SELECT * FROM unit wHERE id = '$unit_id'";
-$result = mysqli_query($db, $query);
-while ($row = mysqli_fetch_assoc($result)) {
-    $unit_id = $row['id'];
-    $unit_name = $row['unit_name'];
-    $advance = $row['advance'];
-    $size = $row['size'];
-    $rent = $row['rent'];
-    $water = $row['water'];
-    $gas = $row['gas'];
-    $building_name = $row['building_name'];
-    $unit_type = $row['unit_type'];
-    $Electricity_meter_no = $row['size'];
-}
+    $query = "SELECT * FROM unit wHERE id = '$unit_id'";
+    $result = mysqli_query($db, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $unit_id = $row['id'];
+        $unit_name = $row['unit_name'];
+        $advance = $row['advance'];
+        $size = $row['size'];
+        $rent = $row['rent'];
+        $water = $row['water'];
+        $gas = $row['gas'];
+        $building_name = $row['building_name'];
+        $unit_type = $row['unit_type'];
+        $Electricity_meter_no = $row['size'];
+    }
 
-$building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
-$building_row = mysqli_fetch_assoc($building);
-$building_name_db = $building_row['name'];
+    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
+    $building_row = mysqli_fetch_assoc($building);
+    $building_name_db = $building_row['name'];
 
-$tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
-while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
-    $tent_name = $tent_row['name'];
-    $tent_id = $tent_row['id'];
-}
+    $tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
+    while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
+        $tent_name = $tent_row['name'];
+        $tent_id = $tent_row['id'];
+    }
 
-// Advace Save SQL 
-if (isset($_POST['advance_save'])) {
-    $advance_pay_amount = $_POST['advance_amount'];
+    // Advace Save SQL 
+    if (isset($_POST['advance_save'])) {
+        $advance_pay_amount = $_POST['advance_amount'];
 
-    $advance_add_sql = mysqli_query($db, "
-                INSERT INTO `advance`
-                (`tenant_id`, `unit_id`, `paid_amount`, `date`)
-                VALUES ('$tent_id', '$unit_id', '$advance_pay_amount', NOW())
+        $advance_add_sql = mysqli_query($db, "
+                    INSERT INTO `advance`
+                    (`tenant_id`, `unit_id`, `paid_amount`, `date`)
+                    VALUES ('$tent_id', '$unit_id', '$advance_pay_amount', NOW())
+                ");
+
+        if ($advance_add_sql) {
+            header("Location: admin.php?page=editbill&unit_id=$unit_id");
+            exit();
+        }
+    }
+
+    // Create Invoice
+    if (isset($_POST['create_invoice'])) {
+
+        $billing_month = $this_month;
+        $status = 'Unpaid';
+        $Gas = intval($_POST['Gas']);
+        $Water = intval($_POST['Water']);
+        $Electricity = intval($_POST['Electricity']);
+        $Others = intval($_POST['Others']);
+        $Gas_month = $_POST['Gas_month'];
+        $Water_month = $_POST['Water_month'];
+        $Electricity_month = $_POST['Electricity_month'];
+        $Others_month = $_POST['Others_month'];
+
+        $total_amount = $rent+$Gas + $Water + $Electricity + $Others;
+
+
+        $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
+        while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
+            $id_db = $ex_month_row['id'];
+            $old_total = intval($ex_month_row['total_amount']);
+            $old_paid = intval($ex_month_row['paid_amount']);
+        }
+
+        if (mysqli_num_rows($month_sql) > 0) 
+        {
+                $bill_sql = mysqli_query($db, "UPDATE `invoices` SET 
+                `tenant_id` = '$tent_id',
+                `unit_id` = '$unit_id',
+                `billing_month` = '$billing_month',
+                `gas` = '$Gas',
+                `gas_month` = '$Gas_month',
+                `water` = '$Water',
+                `water_month` = '$Water_month',
+                `electricity` = '$Electricity',
+                `electricity_month` = '$Electricity_month',
+                `others` = '$Others',
+                `others_month` = '$Others_month',
+                `total_amount` = '$total_amount',
+                `due_amount` = '$total_amount',
+                `status` = '$status'
+            WHERE `id` = '$id_db' 
+            AND `tenant_id` = '$tent_id'
             ");
 
-    if ($advance_add_sql) {
-        header("Location: admin.php?page=editbill&unit_id=$unit_id");
-        exit();
-    }
-}
+            // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$paid_amount','$update_due_amount','$note','$payment_date')");
+        } else {
+            $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
+            (
+                `tenant_id`,
+                `unit_id`,
+                `billing_month`,
+                `gas`,
+                `gas_month`,
+                `water`,
+                `water_month`,
+                `electricity`,
+                `electricity_month`,
+                `others`,
+                `others_month`,
+                `total_amount`,
+                `due_amount`,
+                `status`,
+                `created_at`
+            ) 
+            VALUES 
+            (
+                '$tent_id',
+                '$unit_id',
+                '$billing_month',
+                '$Gas',
+                '$Gas_month',
+                '$Water',
+                '$Water_month',
+                '$Electricity',
+                '$Electricity_month',
+                '$Others',
+                '$Others_month',
+                '$total_amount',
+                '$total_amount',
+                '$status',
+                now()
+            )");
 
-// Create Invoice
-if (isset($_POST['create_invoice'])) {
-
-    $billing_month = $this_month;
-    $status = 'Unpaid';
-    $Gas = intval($_POST['Gas']);
-    $Water = intval($_POST['Water']);
-    $Electricity = intval($_POST['Electricity']);
-    $Others = intval($_POST['Others']);
-    $Gas_month = $_POST['Gas_month'];
-    $Water_month = $_POST['Water_month'];
-    $Electricity_month = $_POST['Electricity_month'];
-    $Others_month = $_POST['Others_month'];
-
-    $total_amount = $rent+$Gas + $Water + $Electricity + $Others;
-
-
-    $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
-    while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
-        $id_db = $ex_month_row['id'];
-        $old_total = intval($ex_month_row['total_amount']);
-        $old_paid = intval($ex_month_row['paid_amount']);
-    }
-
-    if (mysqli_num_rows($month_sql) > 0) 
-    {
-            $bill_sql = mysqli_query($db, "UPDATE `invoices` SET 
-            `tenant_id` = '$tent_id',
-            `unit_id` = '$unit_id',
-            `billing_month` = '$billing_month',
-            `gas` = '$Gas',
-            `gas_month` = '$Gas_month',
-            `water` = '$Water',
-            `water_month` = '$Water_month',
-            `electricity` = '$Electricity',
-            `electricity_month` = '$Electricity_month',
-            `others` = '$Others',
-            `others_month` = '$Others_month',
-            `total_amount` = '$total_amount',
-            `due_amount` = '$total_amount',
-            `status` = '$status'
-        WHERE `id` = '$id_db' 
-        AND `tenant_id` = '$tent_id'
-        ");
-
-        // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$paid_amount','$update_due_amount','$note','$payment_date')");
-    } else {
-        $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
-        (
-            `tenant_id`,
-            `unit_id`,
-            `billing_month`,
-            `gas`,
-            `gas_month`,
-            `water`,
-            `water_month`,
-            `electricity`,
-            `electricity_month`,
-            `others`,
-            `others_month`,
-            `total_amount`,
-            `due_amount`,
-            `status`,
-            `created_at`
-        ) 
-        VALUES 
-        (
-            '$tent_id',
-            '$unit_id',
-            '$billing_month',
-            '$Gas',
-            '$Gas_month',
-            '$Water',
-            '$Water_month',
-            '$Electricity',
-            '$Electricity_month',
-            '$Others',
-            '$Others_month',
-            '$total_amount',
-            '$total_amount',
-            '$status',
-            now()
-        )");
-
-        // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$paid_amount','$due_amount','$note','$payment_date')");
-    }
-
-    if ($bill_sql) {
-        header("Location: admin.php?page=editbill&unit_id=$unit_id");
-        exit();
-    }
-}
-
-// confirm payment
-if (isset($_POST['save_bill'])) {
-    $billing_month   = trim($_POST['billing_month'] ?? '');
-    $total_amount    = (int)($_POST['total_amount'] ?? 0);
-    $paid_amount     = (int)($_POST['paid_amount'] ?? 0);
-    $status          = trim($_POST['status'] ?? '');
-    $note            = trim($_POST['note'] ?? '');
-    $payment_date    = trim($_POST['payment_date'] ?? date('Y-m-d'));
-    $payment_method  = trim($_POST['payment_method'] ?? '');
-    $manager_self    = trim($_POST['manager_self'] ?? '');
-    $expense         = trim($_POST['expense'] ?? '');
-    $expense_note    = trim($_POST['expense_note'] ?? '');
-
-    $due_amount = $total_amount - $paid_amount;
-    $errors = [];
-
-    if (empty($payment_method)) {
-        $errors[] = "Please Select Payment Method";
-    }
-
-    if (empty($status)) {
-        $errors[] = "Please Select Status";
-    }
-
-    if (!empty($errors)) {
-        echo "<script>alert('" . implode("\\n", $errors) . "'); window.history.back();</script>";
-        exit;
-    }
-    
-    $month_sql = mysqli_query($db, "SELECT * FROM invoices 
-                                    WHERE billing_month = '$billing_month' 
-                                    AND tenant_id = '$tent_id' 
-                                    LIMIT 1");
-
-    if (mysqli_num_rows($month_sql) > 0) {
-
-        $row = mysqli_fetch_assoc($month_sql);
-
-        $invoice_id     = $row['id'];
-        $old_total      = (int)$row['total_amount'];
-        $old_paid       = (int)$row['paid_amount'];
-
-        $new_paid       = $old_paid + $paid_amount;
-        $new_due        = $old_total - $new_paid;
-
-        if ($new_due <= 0) {
-            $status = 'Paid';
+            // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$paid_amount','$due_amount','$note','$payment_date')");
         }
 
-        $update_invoice = mysqli_query($db, "UPDATE invoices SET 
-            paid_amount = '$new_paid',
-            due_amount  = '$new_due',
-            status      = '$status',
-            note        = '$note'
-            WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
-
-        if (!$update_invoice) {
-            die("Invoice আপডেটে সমস্যা: " . mysqli_error($db));
+        if ($bill_sql) {
+            header("Location: admin.php?page=editbill&unit_id=$unit_id");
+            exit();
         }
-
-        $insert_history = mysqli_query($db, "INSERT INTO payment_history 
-            (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note)
-            VALUES 
-            ('$tent_id', '$billing_month', '$payment_method', '$old_total', '$new_paid', '$paid_amount', '$new_due', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note')");
-
-    } else {
-        $insert_invoice = mysqli_query($db, "INSERT INTO invoices 
-            (tenant_id, unit_id, billing_month, total_amount, paid_amount, due_amount, status, created_at, note)
-            VALUES 
-            ('$tent_id', '$unit_id', '$billing_month', '$total_amount', '$paid_amount', '$due_amount', '$status', NOW(), '$note')");
-
-        if (!$insert_invoice) {
-            die("নতুন বিল সেভে সমস্যা: " . mysqli_error($db));
-        }
-
-        $insert_history = mysqli_query($db, "INSERT INTO payment_history 
-            (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note)
-            VALUES 
-            ('$tent_id', '$billing_month', '$payment_method', '$total_amount', '$paid_amount', '$paid_amount', '$due_amount', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note')");
     }
 
-    if (isset($insert_history) && $insert_history) {
-        header("Location: admin.php?page=editbill&unit_id=$unit_id");
-        exit();
-    } else {
-        echo "History Error: " . mysqli_error($db);
+    // confirm payment
+    if (isset($_POST['save_bill'])) {
+        $billing_month   = trim($_POST['billing_month'] ?? '');
+        $total_amount    = (int)($_POST['total_amount'] ?? 0);
+        $paid_amount     = (int)($_POST['paid_amount'] ?? 0);
+        $status          = trim($_POST['status'] ?? '');
+        $note            = trim($_POST['note'] ?? '');
+        $payment_date    = trim($_POST['payment_date'] ?? date('Y-m-d'));
+        $payment_method  = trim($_POST['payment_method'] ?? '');
+        $manager_self    = trim($_POST['manager_self'] ?? '');
+        $expense         = trim($_POST['expense'] ?? '');
+        $expense_note    = trim($_POST['expense_note'] ?? '');
+
+        $due_amount = $total_amount - $paid_amount;
+        $errors = [];
+
+        if (empty($payment_method)) {
+            $errors[] = "Please Select Payment Method";
+        }
+
+        if (empty($status)) {
+            $errors[] = "Please Select Status";
+        }
+
+        if (!empty($errors)) {
+            echo "<script>alert('" . implode("\\n", $errors) . "'); window.history.back();</script>";
+            exit;
+        }
+        
+        $month_sql = mysqli_query($db, "SELECT * FROM invoices 
+                                        WHERE billing_month = '$billing_month' 
+                                        AND tenant_id = '$tent_id' 
+                                        LIMIT 1");
+
+        if (mysqli_num_rows($month_sql) > 0) {
+
+            $row = mysqli_fetch_assoc($month_sql);
+
+            $invoice_id     = $row['id'];
+            $old_total      = (int)$row['total_amount'];
+            $old_paid       = (int)$row['paid_amount'];
+
+            $new_paid       = $old_paid + $paid_amount;
+            $new_due        = $old_total - $new_paid;
+
+            if ($new_due <= 0) {
+                $status = 'Paid';
+            }
+
+            $update_invoice = mysqli_query($db, "UPDATE invoices SET 
+                paid_amount = '$new_paid',
+                due_amount  = '$new_due',
+                status      = '$status',
+                note        = '$note'
+                WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
+
+            if (!$update_invoice) {
+                die("Invoice আপডেটে সমস্যা: " . mysqli_error($db));
+            }
+
+            $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+                (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note)
+                VALUES 
+                ('$tent_id', '$billing_month', '$payment_method', '$old_total', '$new_paid', '$paid_amount', '$new_due', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note')");
+
+        } else {
+            $insert_invoice = mysqli_query($db, "INSERT INTO invoices 
+                (tenant_id, unit_id, billing_month, total_amount, paid_amount, due_amount, status, created_at, note)
+                VALUES 
+                ('$tent_id', '$unit_id', '$billing_month', '$total_amount', '$paid_amount', '$due_amount', '$status', NOW(), '$note')");
+
+            if (!$insert_invoice) {
+                die("নতুন বিল সেভে সমস্যা: " . mysqli_error($db));
+            }
+
+            $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+                (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note)
+                VALUES 
+                ('$tent_id', '$billing_month', '$payment_method', '$total_amount', '$paid_amount', '$paid_amount', '$due_amount', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note')");
+        }
+
+        if (isset($insert_history) && $insert_history) {
+            header("Location: admin.php?page=editbill&unit_id=$unit_id");
+            exit();
+        } else {
+            echo "History Error: " . mysqli_error($db);
+        }
     }
-}
 
-// monthly payment sql 
-$pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
- while ($pay_info_sh = mysqli_fetch_assoc($pay_info))
-{
-    $billing_month_db = $pay_info_sh['billing_month'];
-    $total_amount_db = $pay_info_sh['total_amount'];
-    $paid_amount_db = $pay_info_sh['paid_amount'];
-    $due_amount_db = $pay_info_sh['due_amount'];
-    $status = $pay_info_sh['status'];
-    $Gas_db = $pay_info_sh['Gas'];
-    $Water_db = $pay_info_sh['Water'];
-    $Electricity_db = $pay_info_sh['Electricity'];
-    $Others_db = $pay_info_sh['Others'];
+    // monthly payment sql 
+    $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
+    while ($pay_info_sh = mysqli_fetch_assoc($pay_info))
+        {
+            $billing_month_db = $pay_info_sh['billing_month'];
+            $total_amount_db = $pay_info_sh['total_amount'];
+            $paid_amount_db = $pay_info_sh['paid_amount'];
+            $due_amount_db = $pay_info_sh['due_amount'];
+            $status = $pay_info_sh['status'];
+            $Gas_db = $pay_info_sh['Gas'];
+            $Water_db = $pay_info_sh['Water'];
+            $Electricity_db = $pay_info_sh['Electricity'];
+            $Others_db = $pay_info_sh['Others'];
 
-    $Gas_month_db = $pay_info_sh['Gas_month'];
-    $Water_month_db = $pay_info_sh['Water_month'];
-    $Electricity_month_db = $pay_info_sh['Electricity_month'];
-    $Others_month_db = $pay_info_sh['Others_month'];
-}
+            $Gas_month_db = $pay_info_sh['Gas_month'];
+            $Water_month_db = $pay_info_sh['Water_month'];
+            $Electricity_month_db = $pay_info_sh['Electricity_month'];
+            $Others_month_db = $pay_info_sh['Others_month'];
+    }
 
 ?>
 
