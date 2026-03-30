@@ -343,7 +343,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                         </div>
 
                                         <button type="submit" name="advance_save" class="btn btn-success btn-sm">
-                                            Payment Advance
+                                            Advance Payment 
                                         </button>
                                     </div>
                                 </div>
