@@ -84,7 +84,7 @@
                                                 class="mb-2">
 
                                             <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>" 
-                                            class="text-secondary fw-bold">
+                                            class="text-secondary fw-bold" style="font-size:12px;" >
                                                 <?= $name; ?>
                                             </a>
                                         </div>                                        
@@ -238,7 +238,6 @@
                                                     $manager_self_total += (float)$manager_self;  
                                                     $expense_total      += (float)$expense;
                                                     
-                                                   
                                                 }
 
                                                 echo "<small class='text-success fw-bold'>$pay_method_his</small><br>";
