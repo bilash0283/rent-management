@@ -1,6 +1,6 @@
 <?php
 if (!isset($_GET['unit_id']) || !is_numeric($_GET['unit_id'])) {
-    echo "<div class='alert alert-danger'>Invalid tenant ID</div>";
+    echo "<div class='alert alert-danger'>Invalid Unit ID</div>";
     exit;
 }
 
@@ -248,7 +248,7 @@ if(!empty($total_paid)){
 
                     <tfoot class="border-top">
                         <tr class="table-light">
-                            <td class="fw-bold py-2">Current Month Total = </td>
+                            <td class="fw-bold py-2 text-primary">Current Month Total = </td>
                             <td></td>
                             <td class="fw-bold py-2 text-end text-primary">৳
                                 <?= number_format($total_bill, 2) ?>
@@ -284,7 +284,7 @@ if(!empty($total_paid)){
 
                 <?php if ($total_due > 0): ?>
                     <div class="d-flex justify-content-between border-top mt-1 pt-1">
-                        <span class="small fw-bold">Total Previous Due = </span>
+                        <span class="small fw-bold text-primary">Total Amount = </span>
                         <span class="small fw-bold text-primary">৳
                             <?= number_format($total_due, 2) ?>
                         </span>
@@ -294,7 +294,7 @@ if(!empty($total_paid)){
 
             <div
                 class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
-                <span class="h6 mb-0 text-white">Total Payable = </span>
+                <span class="h6 mb-0 text-white">Total Payable Amount = </span>
                 <span class="h5 mb-0 fw-bold text-white">৳
                     <?= number_format($total_due, 2) ?>
                 </span>

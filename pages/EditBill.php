@@ -485,7 +485,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                             </tbody>
                                             <tfoot class="border-top">
                                                 <tr class="table-light">
-                                                    <td class="fw-bold py-2">Current Month Total = </td>
+                                                    <td class="fw-bold py-2 text-primary">Current Month Total = </td>
                                                     <td></td>
                                                     <td class="fw-bold py-2 text-end text-primary">৳
                                                         <?= number_format($total_bill, 2) ?>
@@ -521,7 +521,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
 
                                         <?php if ($total_due > 0): ?>
                                             <div class="d-flex justify-content-between border-top mt-1 pt-1">
-                                                <span class="small fw-bold text-black">Total Previous Due = </span>
+                                                <span class="small fw-bold text-primary">Total Amount = </span>
                                                 <span class="small fw-bold text-primary">৳
                                                     <?= number_format($total_due, 2) ?>
                                                 </span>
@@ -531,7 +531,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
 
                                     <div
                                         class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
-                                        <span class="h6 mb-0 text-white">Total Payable = </span>
+                                        <span class="h6 mb-0 text-white">Total Payable Amount = </span>
                                         <span class="h5 mb-0 fw-bold text-white">৳
                                             <?= number_format($total_due, 2) ?>
                                         </span>
@@ -691,7 +691,7 @@ $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_i
                                         <input type="text" name="note" class="form-control">
                                     </div>
                                     <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3">
-                                        Save Payment
+                                        Confirm Payment
                                     </button>
                                 </div>
                             </form>
