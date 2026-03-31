@@ -127,7 +127,11 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                     <td class="text-end pe-3 fw-bold text-dark"><?php echo number_format($total_his ?? '0', 2); ?> ৳</td>
                 </tr>
                 <tr>
-                    <td class="ps-3 fw-semibold text-success">Paid Amount  = </td>
+                    <td class="ps-3 fw-semibold text-success">Paid Amount  =   <small class="tex-secendary" style="font-size: 10px;"><?php echo !empty($pay_date_his) ? '('.date("d M Y", strtotime($pay_date_his)).')' : ''; ?></small></td>
+                    <td class="text-end pe-3 fw-bold text-success "><?php echo number_format($paid_amount_his ?? '0', 2); ?> ৳</td>
+                </tr>
+                <tr>
+                    <td class="ps-3 fw-semibold text-success">Total Paid Amount  = </td>
                     <td class="text-end pe-3 fw-bold text-success "><?php echo number_format($paid_his ?? '0', 2); ?> ৳</td>
                 </tr>
                 <tr class="table-light">
