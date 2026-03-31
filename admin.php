@@ -62,6 +62,10 @@
             include 'pages/users.php';
             break;
 
+        case 'viewInvoice':
+            include 'pages/view_incoice.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;

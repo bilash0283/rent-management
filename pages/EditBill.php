@@ -726,6 +726,7 @@
                                     <?php
                                     mysqli_data_seek($pay_info, 0); // rewind result
                                     while ($pay_info_sh = mysqli_fetch_assoc($pay_info)):
+                                        $invoice_id_db = $pay_info_sh['id'];
                                         $billing_month_db = $pay_info_sh['billing_month'];
                                         $total_amount_db = $pay_info_sh['total_amount'];
                                         $paid_amount_db = $pay_info_sh['paid_amount'];
@@ -759,7 +760,7 @@
                                                     <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
                                                             <i class="bi bi-pencil-square"></i>
                                                         </button> -->
-                                                    <a href="admin.php?page=invoice&unit_id=<?php echo $unit_id; ?>"
+                                                    <a href="admin.php?page=viewInvoice&unit_id=<?php echo $unit_id; ?>&invoice_id=<?php echo $invoice_id_db; ?>"
                                                         class="btn btn-sm btn-outline-success" title="view">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
