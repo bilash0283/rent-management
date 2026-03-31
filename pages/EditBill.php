@@ -586,7 +586,7 @@
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Water Bill </small>
-                                            <input type="text" name="Water_month" value="<?php echo $pev_month = date('M Y', strtotime('first day of last month')); ?>" class="form-control">
+                                            <input type="text" name="Water_month" value="<?php echo date('M Y', strtotime('first day of this month -4 months')); ?>" class="form-control">
                                         </div>
                                         <div class="col-md-6">
                                             <small class="fw-semibold" for="status">Water Bill Amount</small>
@@ -598,7 +598,7 @@
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Electricity Bill <span class="text-warning"
                                                     style="font-size:10px;">(<?= $size ?>)</span></small>
-                                            <input type="text" name="Electricity_month" placeholder="Note"
+                                            <input type="text" name="Electricity_month" value="<?php echo date('M Y', strtotime('first day of this month -2 months')); ?>" placeholder="Note"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-6">
@@ -792,6 +792,7 @@
                                         <th scope="col" class="text-end">Manager Self</th>
                                         <th scope="col" class="text-end">Expense</th>
                                         <th scope="col" class="text-center">Note</th>
+                                        <th scope="col" class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -799,6 +800,7 @@
                                     $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' ");
 
                                     while ($pay_history = mysqli_fetch_assoc($history_sql)) {
+                                        $pay_slip_id = $pay_history['id'];
                                         $bill_his = $pay_history['bill_month'];
                                         $pay_method_his = $pay_history['payment_method'];
                                         $total_his = $pay_history['total'];
@@ -837,6 +839,12 @@
                                             </td>
                                             <td class="text-center pe-4">
                                                 <small class="text-secendary"><?= $note_his ?? '' ?></small>
+                                            </td>
+                                            <td>
+                                                <a href="admin.php?page=payslip&unit_id=<?php echo $unit_id; ?>&id=<?php echo $pay_slip_id; ?>"
+                                                    class="btn btn-sm btn-outline-success " title="view">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     <?php } ?>

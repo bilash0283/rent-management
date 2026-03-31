@@ -66,6 +66,10 @@
             include 'pages/view_incoice.php';
         break;
 
+        case 'payslip':
+            include 'pages/payslip.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;
