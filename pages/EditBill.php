@@ -821,11 +821,11 @@
                                                 <?= $pay_method_his ?><br>
                                                 <small style="font-size: 8px; " class="text-secendary"><?php echo $transaction_id_db ? '( Trx ID : ' . $transaction_id_db .' )' : ''; ?></small>
                                             </td>
-                                            <td class="text-end text-success fw-semibold"><?php echo $paid_amount_his ? '<small>৳ </small>'.$paid_amount_his : ''; ?></td>
+                                            <td class="text-end text-success fw-semibold"><?php echo $paid_amount_his ? '<small>৳ </small>'.number_format($paid_amount_his, 2) : ''; ?></td>
                                             <td class="text-end fw-semibold">
-                                                <span class="text-primary"><?php echo $total_his ? '<small>৳ </small>'.$total_his : ''; ?></span><br>
-                                                <span class="text-success"><?php echo $paid_his ? '<small>৳ </small>'.$paid_his : ''; ?></span><br>
-                                                <span class="text-danger"><?php echo $due_his ? '<small>৳ </small>'.$due_his : ''; ?></span>
+                                                <span class="text-primary"><?php echo $total_his ? '<small>৳ </small>'.number_format($total_his, 2) : ''; ?></span><br>
+                                                <span class="text-success"><?php echo $paid_his ? '<small>৳ </small>'.number_format($paid_his, 2) : ''; ?></span><br>
+                                                <span class="text-danger"><?php echo $due_his ? '<small>৳ </small>'.number_format($due_his, 2) : ''; ?></span>
                                             </td>
                                             <td>
                                                 <span class="text-danger"><?php echo $manager_self ? '<small>৳ </small>'.$manager_self : '' ;?></span>

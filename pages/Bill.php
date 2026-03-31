@@ -265,7 +265,7 @@
                                             </a> -->
                                             <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
                                                 class="text-end btn btn-sm btn-info" title="Add Payment">
-                                                Payment
+                                                Details
                                             </a>
                                         </div>
                                     </td>
