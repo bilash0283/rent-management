@@ -124,15 +124,15 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
             <tbody>
                 <tr>
                     <td class="ps-3 fw-semibold">Total Bill Amount  = </td>
-                    <td class="text-end pe-3 fw-bold text-dark"><?php echo $total_his ?? '0'; ?> ৳</td>
+                    <td class="text-end pe-3 fw-bold text-dark"><?php echo number_format($total_his ?? '0', 2); ?> ৳</td>
                 </tr>
                 <tr>
                     <td class="ps-3 fw-semibold text-success">Paid Amount  = </td>
-                    <td class="text-end pe-3 fw-bold text-success "><?php echo $paid_his ?? '0'; ?> ৳</td>
+                    <td class="text-end pe-3 fw-bold text-success "><?php echo number_format($paid_his ?? '0', 2); ?> ৳</td>
                 </tr>
                 <tr class="table-light">
                     <td class="ps-3 fw-bold text-danger">Due Amount  = </td>
-                    <td class="text-end pe-3 fw-bold text-danger"><?php echo $due_his ?? '0'; ?> ৳</td>
+                    <td class="text-end pe-3 fw-bold text-danger"><?php echo number_format($due_his ?? '0', 2); ?> ৳</td>
                 </tr>
                 
             </tbody>
