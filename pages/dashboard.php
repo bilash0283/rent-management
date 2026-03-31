@@ -150,7 +150,7 @@ foreach ($monthly_totals as $month => $data) {
                 </div>
                 <!-- Tenant Card -->
                 <div class="col-lg-4">
-                    <a href="admin.php?page=tenant" class="text-decoration-none">
+                    <a href="admin.php?page=tenant&building_id=<?= $buill_id; ?>" class="text-decoration-none">
                         <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
                             <div class="card-body d-flex justify-content-between align-items-center">
 
