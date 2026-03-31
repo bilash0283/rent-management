@@ -87,7 +87,7 @@
         <h5 class="mb-0">Monthly Invoice</h5>
         <div class="text-end mb-3">
             <button id="generatePdfBtn" class="btn btn-success btn-sm pl-5">
-                <i class="feather-icon icon-download me-2"></i> Download PDF
+                <i class="feather-icon icon-download me-2"></i> Download
             </button>
         </div>
         <!-- <a href="admin.php?page=tenant" class="btn btn-primary">
@@ -265,7 +265,7 @@
 </div><!-- nxl-content -->
 
 <!-- pdf generate  -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 document.getElementById('generatePdfBtn').addEventListener('click', function () {
 
@@ -301,6 +301,29 @@ document.getElementById('generatePdfBtn').addEventListener('click', function () 
     };
 
     html2pdf().set(options).from(element).save();
+
+});
+</script> -->
+
+<!-- Image Generate  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.getElementById('generatePdfBtn').addEventListener('click', function () {
+
+    const element = document.getElementById('pdf-content');
+
+    html2canvas(element, {
+        scale: 3,          // high resolution
+        useCORS: true
+    }).then(canvas => {
+
+        // 👉 PNG download
+        let link = document.createElement('a');
+        link.download = 'Invoice <?= addslashes($tent_name ?? "Tenant") ?>.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+    });
 
 });
 </script>

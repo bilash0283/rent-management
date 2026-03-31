@@ -68,7 +68,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
         <h5 class="mb-0">Pay Slip</h5>
         <div class="text-end mb-3">
             <button id="generatePdfBtn" class="btn btn-success btn-sm pl-5">
-                <i class="feather-icon icon-download me-2"></i> Download PDF
+                <i class="feather-icon icon-download me-2"></i> Download
             </button>
         </div>
         <!-- <a href="admin.php?page=tenant" class="btn btn-primary">
@@ -96,16 +96,16 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
     </div>
 
     <div class="row mb-4">
-        <div class="col-6">
-            <div class="bg-light p-3 rounded h-100">
-                <h6 class="text-muted text-uppercase fw-bold small border-bottom pb-2 mb-2">Tenant Information</h6>
+        <div class="col-8">
+            <div class=" p-3 ">
+                <h6 class="text-muted text-uppercase fw-bold small pb-2 mb-2">Tenant Information</h6>
                 <div class="mb-1">Name: <span class="fw-bold text-dark text-uppercase"><?php echo $tent_name ?? 'N/A' ?></span></div>
                 <div class="small text-muted">Unit: <span class="fw-semibold text-dark"><?php echo $unit_type . ' - ' . $unit_name ?? 'N/A' ?></span></div>
             </div>
         </div>
-        <div class="col-6 text-end">
-            <div class="bg-light p-3 rounded h-100">
-                <h6 class="text-muted text-uppercase fw-bold small border-bottom pb-2 mb-2 text-end">Payment Summary</h6>
+        <div class="col-4 text-end">
+            <div class=" p-3 ">
+                <h6 class="text-muted text-uppercase fw-bold small pb-2 mb-2 text-end">Payment Summary</h6>
                 <div class="small mb-1">Method: <span class="fw-bold text-dark"><?php echo $pay_method_his ?? 'N/A'; ?></span></div>
                 <div class="small mb-1">TXN ID: <span class="fw-bold text-dark text-break"><?php echo $transaction_id_db ?? 'N/A'; ?></span></div>
                 <div class="small">Date: <span class="fw-bold text-dark"><?php echo !empty($pay_date_his) ? date("d M Y", strtotime($pay_date_his)) : 'N/A'; ?></span></div>
@@ -117,21 +117,21 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
         <table class="table table-hover border border-light align-middle">
             <thead class="table-dark">
                 <tr>
-                    <th class="ps-3 py-2">Description</th>
-                    <th class="text-end pe-3 py-2">Amount (BDT)</th>
+                    <th class="ps-3 py-2 text-white">Description</th>
+                    <th class="text-end pe-3 py-2 text-white">Amount (BDT)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="ps-3 fw-semibold">Total Bill Amount</td>
+                    <td class="ps-3 fw-semibold">Total Bill Amount  = </td>
                     <td class="text-end pe-3 fw-bold text-dark"><?php echo $total_his ?? '0'; ?> ৳</td>
                 </tr>
                 <tr>
-                    <td class="ps-3 fw-semibold">Paid Amount</td>
-                    <td class="text-end pe-3 fw-bold text-success text-decoration-underline"><?php echo $paid_his ?? '0'; ?> ৳</td>
+                    <td class="ps-3 fw-semibold text-success">Paid Amount  = </td>
+                    <td class="text-end pe-3 fw-bold text-success "><?php echo $paid_his ?? '0'; ?> ৳</td>
                 </tr>
                 <tr class="table-light">
-                    <td class="ps-3 fw-bold text-danger">Due Balance</td>
+                    <td class="ps-3 fw-bold text-danger">Due Amount  = </td>
                     <td class="text-end pe-3 fw-bold text-danger"><?php echo $due_his ?? '0'; ?> ৳</td>
                 </tr>
                 
@@ -139,23 +139,18 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
         </table>
     </div>
 
-    <div class="row mt-4 pt-3 border-top g-4">
-        <div class="col-7">
-            <div class="p-3 border rounded shadow-sm">
-                <p class="small text-muted mb-2 border-bottom pb-1">BANK TRANSFER DETAILS</p>
-                <h6 class="mb-1 fw-bold text-uppercase text-dark">MD MUSTAFIZUR RAHMAN</h6>
-                <div class="text-primary fw-bold mb-1" style="letter-spacing: 0.5px;">A/C: 1503101624157001</div>
-                <small class="text-muted d-block">BRACK BANK LTD | Moghbazar Branch</small>
-            </div>
-        </div>
-        <div class="col-5">
-            <div class="alert alert-secondary p-2 small border-0 h-100">
-                <p class="mb-1 fw-bold text-dark">Instructions:</p>
-                <ul class="list-unstyled mb-0 text-muted" style="line-height: 1.4;">
-                    <li>• Pay by 7th of <strong><?php echo date("M Y", strtotime($bill_his)); ?></strong>.</li>
-                    <li>• Send deposit slip to: <span class="fw-bold text-dark">01715482363</span> (WhatsApp).</li>
-                </ul>
-            </div>
+    <div class="mt-4 border-top">
+        <p class="text-muted mt-3" style="font-size: 0.85rem;">
+            Please pay within <strong>7th
+                <?php echo date("M Y", strtotime($this_month)); ?></strong> to
+            following account &
+            WhatsApp your deposit slip to <strong>01715482363</strong>.
+        </p>
+        <div class="card  border-0 p-3">
+            <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
+            <div class="text-primary fw-bold" style="letter-spacing: 1px;">A/C:
+                1503101624157001</div>
+            <small class="text-muted">BRACK BANK LTD | Moghbazar Branch</small>
         </div>
     </div>
 
@@ -166,7 +161,6 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                 সিড়িতে ও দরজার সামনে জুতা অথবা ময়লা রাখা সম্পূর্ণ নিষিদ্ধ।
             </small>
         </div>
-        <p class="text-muted mt-3 mb-0" style="font-size: 0.7rem;">This is a computer-generated document and requires no signature.</p>
     </div>
 </div>
 
@@ -174,7 +168,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
 </div><!-- nxl-content -->
 
 <!-- pdf generate  -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
     document.getElementById('generatePdfBtn').addEventListener('click', function () {
 
@@ -183,7 +177,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
         const options = {
             margin: 10,
 
-            filename: 'Invoice_<?= addslashes($tent_name ?? "Tenant") ?>.pdf',
+            filename: 'Pay Slip <?= addslashes($tent_name ?? "Tenant") ?>.jpeg',
 
             image: {
                 type: 'jpeg',
@@ -212,6 +206,29 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
         html2pdf().set(options).from(element).save();
 
     });
+</script> -->
+
+<!-- Image Generate  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+document.getElementById('generatePdfBtn').addEventListener('click', function () {
+
+    const element = document.getElementById('pdf-content');
+
+    html2canvas(element, {
+        scale: 3,          // high resolution
+        useCORS: true
+    }).then(canvas => {
+
+        // 👉 PNG download
+        let link = document.createElement('a');
+        link.download = 'Pay Slip <?= addslashes($tent_name ?? "Tenant") ?>.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+
+    });
+
+});
 </script>
 
 <style>
