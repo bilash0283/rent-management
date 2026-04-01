@@ -62,6 +62,7 @@
                                 $rent = $row['rent'];
                                 $unit_name = $row['unit_name'];
                                 $building_name = $row['building_name'];
+                                $size = $row['size'];
                                 ?>
                                 <tr>
                                     <td><?= $i; ?></td>
@@ -87,6 +88,9 @@
                                             class="text-secondary fw-bold" style="font-size:12px;" >
                                                 <?= $name; ?>
                                             </a>
+                                            <?php if (!empty($size)): ?>
+                                                <small class="text-muted">Ele.M.N : <?= $size; ?></small>
+                                            <?php endif; ?>
                                         </div>                                        
                                     </td>
 
