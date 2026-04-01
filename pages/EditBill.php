@@ -642,8 +642,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <label class="fw-semibold">For Month *<small
-                                                    class="text-warning">(Invoice)</small></label>
+                                            <label class="fw-semibold">Pay For Month* <small
+                                                    class="text-warning" style="font-size: 10px;">(Invoice)</small></label>
                                             <input type="month" name="billing_month" value="<?php echo $this_month; ?>"
                                                 class="form-control" required>
                                         </div>
