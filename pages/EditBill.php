@@ -150,6 +150,7 @@
         $expense         = trim($_POST['expense'] ?? '');
         $expense_note    = trim($_POST['expense_note'] ?? '');
         $transaction_id  = trim($_POST['transaction_id'] ?? '');
+        $transaction_id  = $transaction_id === '' ? NULL : $transaction_id;
 
         $due_amount = $total_amount - $paid_amount;
         $errors = [];
@@ -171,59 +172,63 @@
                                         WHERE billing_month = '$billing_month' 
                                         AND tenant_id = '$tent_id' 
                                         LIMIT 1");
-        $transaction_id_check = mysqli_query($db, "SELECT * FROM payment_history WHERE transaction_id = '$transaction_id' AND tenant_id = '$tent_id' LIMIT 1");
+        
+        if (!empty($transaction_id)) {
+            $check_query = mysqli_query($db, "SELECT id FROM payment_history WHERE transaction_id = '$transaction_id' LIMIT 1");
 
-        if(mysqli_num_rows($transaction_id_check) > 0) {
-            echo "<script>alert('This Transaction ID already exists. Please use a unique Transaction ID.'); window.history.back();</script>";
-            exit;
-        }else {
-            if (mysqli_num_rows($month_sql) > 0) {
-
-                $row = mysqli_fetch_assoc($month_sql);
-
-                $invoice_id     = $row['id'];
-                $old_total      = (int)$row['total_amount'];
-                $old_paid       = (int)$row['paid_amount'];
-
-                $new_paid       = $old_paid + $paid_amount;
-                $new_due        = $old_total - $new_paid;
-
-                if ($new_due <= 0) {
-                    $status = 'Paid';
-                }
-
-                $update_invoice = mysqli_query($db, "UPDATE invoices SET 
-                    paid_amount = '$new_paid',
-                    due_amount  = '$new_due',
-                    status      = '$status',
-                    note        = '$note'
-                    WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
-
-                if (!$update_invoice) {
-                    die("Invoice Update Error: " . mysqli_error($db));
-                }
-
-                $insert_history = mysqli_query($db, "INSERT INTO payment_history 
-                    (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note ,transaction_id)
-                    VALUES 
-                    ('$tent_id', '$billing_month', '$payment_method', '$old_total', '$new_paid', '$paid_amount', '$new_due', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
-
-            } else {
-                $insert_invoice = mysqli_query($db, "INSERT INTO invoices 
-                    (tenant_id, unit_id, billing_month, total_amount, paid_amount, due_amount, status, created_at, note)
-                    VALUES 
-                    ('$tent_id', '$unit_id', '$billing_month', '$total_amount', '$paid_amount', '$due_amount', '$status', NOW(), '$note')");
-
-                if (!$insert_invoice) {
-                    die("New Bill Creation Error: " . mysqli_error($db));
-                }
-
-                $insert_history = mysqli_query($db, "INSERT INTO payment_history 
-                    (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note ,transaction_id)
-                    VALUES 
-                    ('$tent_id', '$billing_month', '$payment_method', '$total_amount', '$paid_amount', '$paid_amount', '$due_amount', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
+            if (mysqli_num_rows($check_query) > 0) {
+                echo "<script>alert('This Transaction ID already exists. Please use a unique Transaction ID.'); window.history.back();</script>";
+                exit;
             }
         }
+        
+        if (mysqli_num_rows($month_sql) > 0) {
+
+            $row = mysqli_fetch_assoc($month_sql);
+
+            $invoice_id     = $row['id'];
+            $old_total      = (int)$row['total_amount'];
+            $old_paid       = (int)$row['paid_amount'];
+
+            $new_paid       = $old_paid + $paid_amount;
+            $new_due        = $old_total - $new_paid;
+
+            if ($new_due <= 0) {
+                $status = 'Paid';
+            }
+
+            $update_invoice = mysqli_query($db, "UPDATE invoices SET 
+                paid_amount = '$new_paid',
+                due_amount  = '$new_due',
+                status      = '$status',
+                note        = '$note'
+                WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
+
+            if (!$update_invoice) {
+                die("Invoice Update Error: " . mysqli_error($db));
+            }
+
+            $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+                (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note ,transaction_id)
+                VALUES 
+                ('$tent_id', '$billing_month', '$payment_method', '$old_total', '$new_paid', '$paid_amount', '$new_due', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
+
+        } else {
+            $insert_invoice = mysqli_query($db, "INSERT INTO invoices 
+                (tenant_id, unit_id, billing_month, total_amount, paid_amount, due_amount, status, created_at, note)
+                VALUES 
+                ('$tent_id', '$unit_id', '$billing_month', '$total_amount', '$paid_amount', '$due_amount', '$status', NOW(), '$note')");
+
+            if (!$insert_invoice) {
+                die("New Bill Creation Error: " . mysqli_error($db));
+            }
+
+            $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+                (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note ,transaction_id)
+                VALUES 
+                ('$tent_id', '$billing_month', '$payment_method', '$total_amount', '$paid_amount', '$paid_amount', '$due_amount', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
+        }
+
         if (isset($insert_history) && $insert_history) {
             header("Location: admin.php?page=editbill&unit_id=$unit_id");
             exit();
