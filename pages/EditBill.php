@@ -214,19 +214,24 @@
                 ('$tent_id', '$billing_month', '$payment_method', '$old_total', '$new_paid', '$paid_amount', '$new_due', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
 
         } else {
-            $insert_invoice = mysqli_query($db, "INSERT INTO invoices 
-                (tenant_id, unit_id, billing_month, total_amount, paid_amount, due_amount, status, created_at, note)
-                VALUES 
-                ('$tent_id', '$unit_id', '$billing_month', '$total_amount', '$paid_amount', '$due_amount', '$status', NOW(), '$note')");
 
-            if (!$insert_invoice) {
-                die("New Bill Creation Error: " . mysqli_error($db));
-            }
+            echo "<script>alert('No invoice found for the selected month. Please create an invoice first.'); window.history.back();</script>";
+            exit;
 
-            $insert_history = mysqli_query($db, "INSERT INTO payment_history 
-                (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note ,transaction_id)
-                VALUES 
-                ('$tent_id', '$billing_month', '$payment_method', '$total_amount', '$paid_amount', '$paid_amount', '$due_amount', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
+            // $insert_invoice = mysqli_query($db, "INSERT INTO invoices 
+            //     (tenant_id, unit_id, billing_month, total_amount, paid_amount, due_amount, status, created_at, note)
+            //     VALUES 
+            //     ('$tent_id', '$unit_id', '$billing_month', '$total_amount', '$paid_amount', '$due_amount', '$status', NOW(), '$note')");
+
+            // if (!$insert_invoice) {
+            //     die("New Bill Creation Error: " . mysqli_error($db));
+            // }
+
+            // $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+            //     (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note ,transaction_id)
+            //     VALUES 
+            //     ('$tent_id', '$billing_month', '$payment_method', '$total_amount', '$paid_amount', '$paid_amount', '$due_amount', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
+        
         }
 
         if (isset($insert_history) && $insert_history) {
