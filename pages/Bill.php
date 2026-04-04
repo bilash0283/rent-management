@@ -192,7 +192,6 @@
                                                 <?php }
                                             }
                                         } ?>
-
                                     </td>
 
                                     <td>
@@ -268,7 +267,7 @@
                                                 class="text-end btn btn-sm btn-info" title="Invoice Create & Payment">
                                                 Details
                                             </a>
-                                            <a href="admin.php?page=bill&mess_id=<?= $unit_id ?>&id=<?= $building_name ?>" onclick="sendWhatsApp()" class="btn btn-sm btn-success" title="Message Send with Copy">
+                                            <a href="admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>" onclick="sendWhatsApp()" class="btn btn-sm btn-success" title="Message Send with Copy">
                                                 <i class="bi bi-send"></i>
                                             </a>
                                         </div>
@@ -285,8 +284,8 @@
 
 <!-- whatsapp message send code  -->
 <?php
-if(isset($_GET['mess_id'])) {
-    $unit_id = $_GET['mess_id'];
+if(isset($_GET['unit_id'])) {
+    $unit_id = $_GET['unit_id'];
 
     $query = "SELECT * FROM unit wHERE id = '$unit_id'";
     $result = mysqli_query($db, $query);
@@ -295,7 +294,7 @@ if(isset($_GET['mess_id'])) {
         $unit_name = $row['unit_name'];
         $advance = $row['advance'];
         $size = $row['size'];
-        $rent = $row['rent'];
+        $rent_mess = $row['rent'];
         $water = $row['water'];
         $gas = $row['gas'];
         $building_name = $row['building_name'];
@@ -314,34 +313,88 @@ if(isset($_GET['mess_id'])) {
         $tent_phone = $tent_row['phone'];
     }
 
-$message = "$tent_name          INVOICE
-Flat No: $unit_type     
-$building_name_db
+    $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
 
-Rent (Mar.26)      =200/-
-Gash(Feb.26)       =50/-
-Current(Jan.26)    =100/-
-Washa (Nov.25)     =30/-
-TOTAL              =380/-";
+    while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
+        $billing_month_db = $pay_info_sh['billing_month'];
+        $paid_amount_db = $pay_info_sh['paid_amount'];
+        $due_amount_db = $pay_info_sh['due_amount'];
+        $created_at = $pay_info_sh['created_at'];
+        $status = $pay_info_sh['status'];
+
+        $Gas_mess = $pay_info_sh['Gas'];
+        $Water_mess = $pay_info_sh['Water'];
+        $Electricity_mess = $pay_info_sh['Electricity'];
+        $Others_mess = $pay_info_sh['Others'];
+
+        $Gas_month_db_mess = $pay_info_sh['Gas_month'];
+        $Water_month_db_mess = $pay_info_sh['Water_month'];
+        $Electricity_month_db_mess = $pay_info_sh['Electricity_month'];
+        $Others_month_db_mess = $pay_info_sh['Others_month'];
+
+        $total_bill_mess = $rent_mess+$Gas_mess+$Water_mess+$Electricity_mess+$Others_mess;
+    }
+
+function formatMonth($date){
+    return date("M-y", strtotime($date));
+}
+
+$message = "$tent_name          INVOICE\n";
+$message .= "Flat No : $unit_name\n";
+$message .= "$building_name_db\n\n";
+
+// Rent
+if (!empty($rent_mess)) {
+    $message .= "Rent (" . formatMonth($billing_month_db) . ")          ={$rent_mess}/-\n";
+}
+
+// Gas
+if (!empty($Gas_mess)) {
+    $message .= "Gash (" . formatMonth($Gas_month_db_mess) . ")        ={$Gas_mess}/-\n";
+}
+
+// Electricity
+if (!empty($Electricity_mess)) {
+    $message .= "Current (" . formatMonth($Electricity_month_db_mess) . ")    ={$Electricity_mess}/-\n";
+}
+
+// Water
+if (!empty($Water_mess)) {
+    $message .= "Washa (" . formatMonth($Water_month_db_mess) . ")     ={$Water_mess}/-\n";
+}
+
+// Others
+if (!empty($Others_mess)) {
+    $message .= "Others (" . formatMonth($Others_month_db_mess) . ")    ={$Others_mess}/-\n";
+}
+
+// Total
+$total_display = !empty($total_bill_mess) ? $total_bill_mess : $rent_mess;
+$message .= "TOTAL                   =" . $total_display . "/-";
+
+
 }
 ?>
 <script>
 function sendWhatsApp() 
 {
-    // ✅ PHP থেকে JS এ data আনা
     let message = <?php echo json_encode($message); ?>;
     let phone = <?php echo json_encode($tent_phone); ?>;
+    let redirectUrl = "admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>";
 
-    // 1. Copy to clipboard
+    // Copy
     navigator.clipboard.writeText(message);
 
-    // 2. Encode message
+    // Encode
     let encodedMessage = encodeURIComponent(message);
 
-    // 3. WhatsApp URL
+    // WhatsApp open
     let url = `https://wa.me/${phone}?text=${encodedMessage}`;
-
-    // 4. Open WhatsApp
     window.open(url, '_blank');
+
+    // ⏳ 1 second পরে redirect (important)
+    setTimeout(function() {
+        window.location.href = redirectUrl;
+    }, 10);
 }
 </script>
