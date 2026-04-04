@@ -22,7 +22,7 @@
     <div class="page-header d-flex align-items-center justify-content-between">
        
         <h5 class="mb-0">
-            <?= $building_name_db ?? ''; ?> <span style="background:#28a745;color:#fff;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:500;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.15);"><?= $totla_unit; ?></span> / Bill Month (<?php echo date('M - Y') ?>)
+            <?= $building_name_db ?? ''; ?> <span style="background:#28a745;color:#fff;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:500;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.15);"><?= $totla_unit ?? ''; ?></span> / Bill Month (<?php echo date('M - Y') ?>)
         </h5>
        
         <!-- <a href="admin.php?page=CreateTenant" class="btn btn-primary">
@@ -264,12 +264,12 @@
                                             <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button> -->
-                                            <!-- <a class="btn btn-sm btn-outline-success" title="Invoice">
-                                                <i class="bi bi-eye"></i>
-                                            </a> -->
                                             <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
-                                                class="text-end btn btn-sm btn-info" title="Add Payment">
+                                                class="text-end btn btn-sm btn-info" title="Invoice Create & Payment">
                                                 Details
+                                            </a>
+                                            <a href="admin.php?page=bill&mess_id=<?= $unit_id ?>&id=<?= $building_name ?>" onclick="sendWhatsApp()" class="btn btn-sm btn-success" title="Message Send with Copy">
+                                                <i class="bi bi-send"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -282,3 +282,66 @@
         </div>
     </div>
 </div>
+
+<!-- whatsapp message send code  -->
+<?php
+if(isset($_GET['mess_id'])) {
+    $unit_id = $_GET['mess_id'];
+
+    $query = "SELECT * FROM unit wHERE id = '$unit_id'";
+    $result = mysqli_query($db, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $unit_id = $row['id'];
+        $unit_name = $row['unit_name'];
+        $advance = $row['advance'];
+        $size = $row['size'];
+        $rent = $row['rent'];
+        $water = $row['water'];
+        $gas = $row['gas'];
+        $building_name = $row['building_name'];
+        $unit_type = $row['unit_type'];
+        $Electricity_meter_no = $row['size'];
+    }
+
+    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
+    $building_row = mysqli_fetch_assoc($building);
+    $building_name_db = $building_row['name'];
+
+    $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
+    while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
+        $tent_name = $tent_row['name'];
+        $tent_id = $tent_row['id'];
+        $tent_phone = $tent_row['phone'];
+    }
+
+$message = "$tent_name          INVOICE
+Flat No: $unit_type     
+$building_name_db
+
+Rent (Mar.26)      =200/-
+Gash(Feb.26)       =50/-
+Current(Jan.26)    =100/-
+Washa (Nov.25)     =30/-
+TOTAL              =380/-";
+}
+?>
+<script>
+function sendWhatsApp() 
+{
+    // ✅ PHP থেকে JS এ data আনা
+    let message = <?php echo json_encode($message); ?>;
+    let phone = <?php echo json_encode($tent_phone); ?>;
+
+    // 1. Copy to clipboard
+    navigator.clipboard.writeText(message);
+
+    // 2. Encode message
+    let encodedMessage = encodeURIComponent(message);
+
+    // 3. WhatsApp URL
+    let url = `https://wa.me/${phone}?text=${encodedMessage}`;
+
+    // 4. Open WhatsApp
+    window.open(url, '_blank');
+}
+</script>
