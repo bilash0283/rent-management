@@ -270,6 +270,7 @@
                                             <a href="admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>" onclick="sendWhatsApp()" class="btn btn-sm btn-success" title="Message Send with Copy">
                                                 <i class="bi bi-send"></i>
                                             </a>
+
                                         </div>
                                     </td>
                                 </tr>
