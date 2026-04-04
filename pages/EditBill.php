@@ -261,9 +261,7 @@
             $Electricity_month_db = $pay_info_sh['Electricity_month'];
             $Others_month_db = $pay_info_sh['Others_month'];
     }
-
 ?>
-
 
 <div class="nxl-content">
     <!-- Page Header -->
