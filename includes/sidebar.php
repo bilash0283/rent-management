@@ -35,8 +35,8 @@ while($row = mysqli_fetch_assoc($result)) {
 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-cast"></i></span>
-                        <span class="nxl-mtext">Unit</span>
+                        <span class="nxl-micon"><i class="feather-home"></i></span>
+                        <span class="nxl-mtext">Building</span>
                         <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
                     <ul class="nxl-submenu">
@@ -75,7 +75,7 @@ while($row = mysqli_fetch_assoc($result)) {
 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-book"></i></span>
+                        <span class="nxl-micon"><i class="feather-pie-chart"></i></span>
                         <span class="nxl-mtext">Report</span>
                         <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
@@ -83,6 +83,13 @@ while($row = mysqli_fetch_assoc($result)) {
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=profile">Monthly</a></li>
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=users">Dailly</a></li>
                     </ul>
+                </li>
+
+                <li class="nxl-item nxl-hasmenu">
+                    <a href="javascript:void(0);" class="nxl-link">
+                        <span class="nxl-micon"><i class="feather-user-check"></i></span>
+                        <span class="nxl-mtext">Manager Accounts</span>
+                    </a>
                 </li>
                 
                 <li class="nxl-item nxl-hasmenu">
@@ -93,19 +100,29 @@ while($row = mysqli_fetch_assoc($result)) {
                     </a>
 
                     <ul class="nxl-submenu">
-                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=profile">Profile</a></li>
-                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=users">Users</a></li>
+                        <li class="nxl-item">
+                            <a class="nxl-link" href="admin.php?page=profile">
+                                 <span class="nxl-micon"> <i class="feather-user"></i></span>
+                                <span class="nxl-mtext">Profile</span>
+                            </a>
+                        </li>
+                        <li class="nxl-item">
+                            <a class="nxl-link" href="admin.php?page=users">
+                                <span class="nxl-micon"> <i class="feather-users"></i></span>
+                                <span class="nxl-mtext">Users</span>
+                            </a>
+                        </li>
 
                         <li class="nxl-item">
                             <a href="admin.php?page=building" class="nxl-link">
-                                <span class="nxl-micon"><i class="feather-briefcase"></i></span>
+                                <span class="nxl-micon"><i class="feather-home"></i></span>
                                 <span class="nxl-mtext">Building</span>
                             </a>
                         </li>
 
                         <li class="nxl-item nxl-hasmenu">
                             <a href="javascript:void(0);" class="nxl-link">
-                                <span class="nxl-micon"><i class="feather-cast"></i></span>
+                                <span class="nxl-micon"><i class="feather-layout"></i>  </span>
                                 <span class="nxl-mtext">Unit</span>
                                 <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                             </a>
