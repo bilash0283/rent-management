@@ -8,18 +8,14 @@
         if (!$result) {
             die("Query Failed: " . mysqli_error($db));
         }
-
     }
 
     $message = "";
 
     if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete_id'])) {
-
         $id = (int) $_GET['delete_id'];
-
         $sql = "SELECT unit_image FROM unit WHERE id = $id";
         $result = mysqli_query($db, $sql);
-
         if ($result && $row = mysqli_fetch_assoc($result)) {
 
             if (!empty($row['unit_image'])) {
@@ -29,11 +25,8 @@
                 }
             }
         }
-
         $delete_query = "DELETE FROM unit WHERE id = $id";
-
         if (mysqli_query($db, $delete_query)) {
-            
             $message = '
             <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
                 <strong>Success!</strong> Unit Delete Successfull 
@@ -47,11 +40,9 @@
             </div>';
         }
     }
-
 ?>
 
 <div class="nxl-content">
-
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
         <h5 class="mb-0">
@@ -169,6 +160,5 @@
             </div>
         </div>
     </div>
-
 </div>
 
