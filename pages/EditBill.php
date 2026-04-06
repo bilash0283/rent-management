@@ -664,11 +664,11 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <label class="fw-semibold">Amount *</label>
+                                            <label class="">Amount *</label>
                                             <input type="number" name="paid_amount" class="form-control" required>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="fw-semibold">Pay For Month* <small class="text-warning"
+                                            <label class="">Pay For Month* <small class="text-warning"
                                                     style="font-size: 10px;">(Invoice)</small></label>
                                             <input type="month" name="billing_month" value="<?php echo $this_month; ?>"
                                                 class="form-control" required>
@@ -692,7 +692,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <option value="Nagad">Nagad</option>
                                                 <option value="Bank Transfer">Bank Transfer</option>
                                                 <option value="Card">Card</option>
-                                                <option value="Rocket">Rocket</option> <!-- যদি Rocket থাকে -->
+                                                <option value="Rocket">Rocket</option> 
                                                 <option value="Manager">Manager</option>
                                             </select>
                                         </div>
@@ -715,14 +715,14 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         </div>
 
                                         <div id="expense_note_div">
-                                            <label class="fw-semibold">Expense Note</label>
+                                            <label class="">Expense Note</label>
                                             <input type="text" name="expense_note" id="expense_note"
                                                 class="form-control">
                                         </div>
 
                                         <!-- Transaction ID (Digital + Manager এর জন্য) -->
                                         <div id="transaction_id_div">
-                                            <label class="fw-semibold">Transaction ID</label>
+                                            <label class="">Transaction ID</label>
                                             <input type="text" name="transaction_id" id="transaction_id"
                                                 class="form-control">
                                         </div>
@@ -730,7 +730,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     </div>
 
                                     <div>
-                                        <label class="fw-semibold">Note</label>
+                                        <label class="">Note</label>
                                         <input type="text" name="note" class="form-control">
                                     </div>
 
