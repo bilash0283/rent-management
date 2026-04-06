@@ -63,6 +63,7 @@ if (isset($_POST['save_tenant'])) {
     $family   = $_POST['family'];
     $building = $_POST['building'];
     $unit     = $_POST['unit'];
+    $start_tanent = $_POST['start_tanent'];
 
     $tenant_img = $_POST['old_tenant_image'];
     if (!empty($_FILES['tenant_image']['name'])) {
@@ -88,6 +89,7 @@ if (isset($_POST['save_tenant'])) {
                 name='$name',
                 phone='$phone',
                 email='$email',
+                start_tanent='$start_tanent',
                 permanent_address='$address',
                 family_member='$family',
                 tenant_image='$tenant_img',
@@ -102,9 +104,9 @@ if (isset($_POST['save_tenant'])) {
         // ADD TENANT
         mysqli_query($db, "
             INSERT INTO tenants
-            (name, phone, email, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id)
+            (name, phone, email, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id, start_tanent)
             VALUES
-            ('$name','$phone','$email','$address','$family','$tenant_img','$nid_img','$building','$unit')
+            ('$name','$phone','$email','$address','$family','$tenant_img','$nid_img','$building','$unit','$start_tanent')
         ");
 
         mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");
@@ -139,8 +141,12 @@ if (isset($_POST['save_tenant'])) {
             <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>" placeholder="Family Member">
         </div>
 
-        <div class="col-12">
+        <div class="col-6">
             <textarea name="address" class="form-control" placeholder="Permanent Address"><?= $editData['permanent_address'] ?? '' ?></textarea>
+        </div>
+        <div class="col-md-6">
+            <label for="start_tanent">Tenant Start Date</label>
+            <input type="date" name="start_tanent" class="form-control" value="<?php echo $editData['start_tanent'] ?>" placeholder="Start Tenant" required>
         </div>
 
         <div class="col-md-6">

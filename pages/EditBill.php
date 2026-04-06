@@ -687,8 +687,8 @@
                                             <input type="number" class="form-control" name="manager_self">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="expense">Expense</label>
-                                            <input type="number" class="form-control" name="expense">
+                                            <label for="expense">Expense Amount</label>
+                                            <input type="text" class="form-control" name="expense">
                                         </div>
                                     </div>
                                     <div>

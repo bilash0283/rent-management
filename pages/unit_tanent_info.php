@@ -77,7 +77,7 @@
                 while($buil = mysqli_fetch_assoc($result_building)){
                 $buil_id   = $buil['id'];
                 $buil_name = $buil['name'];
-                echo $buil_name.' - '.$count_row.' / Tenant Manage';
+                echo $buil_name.' - '.$count_row;
                 }
             ?>
         </h5>
@@ -90,10 +90,6 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="card shadow-sm">
-            <div class="card-header">
-                <h6 class="mb-0">Tenant List</h6>
-                <?= $message ?>
-            </div>
 
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -121,13 +117,51 @@
                                 ?>
 
                                 <tr>
-                                    <td>
-                                        <img src="<?= htmlspecialchars($image) ?>"
-                                             width="50" height="50"
-                                             style="object-fit:cover;border-radius:6px;border-radius:50%;">
+                                    <td style="text-align:center;">
+                                        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                                            <img src="<?= htmlspecialchars($image) ?>"
+                                                style="width:50px; height:50px; object-fit:cover; border-radius:50%; border:2px solid #ddd;">
+
+                                            <small style="
+                                                font-size:8px;
+                                                background:#17a2b8;
+                                                color:#fff;
+                                                padding:2px 8px;
+                                                border-radius:12px;
+                                                display:inline-block;
+                                            ">
+                                                <?= (!empty($row['start_tanent']) && $row['start_tanent'] != '0000-00-00') 
+                                                    ? date('d-M-y', strtotime($row['start_tanent'])) 
+                                                    : 'N/A'; ?>
+                                            </small>
+                                        </div>
                                     </td>
 
-                                    <td><?= htmlspecialchars($row['unit_name']) ?></td>
+                                    <td style="text-align:center;">
+                                        <div style="display:flex; flex-direction:column; align-items:center; line-height:1.2;">
+                                            
+                                            <strong style="
+                                                font-size:8px;
+                                                background:#17a2b8;
+                                                color:#fff;
+                                                padding:3px 8px;
+                                                border-radius:12px;
+                                                display:inline-block;
+                                            ">
+                                                <?= htmlspecialchars($row['unit_name']) ?>
+                                            </strong>
+
+                                            <small style="
+                                                font-size:11px;
+                                                color:#777;
+                                                margin-top:2px;
+                                            ">
+                                                <?= htmlspecialchars($row['building_name']) ?>
+                                            </small>
+
+                                        </div>
+                                    </td>
+
                                     <td><a href="admin.php?page=view_tenant&id=<?= $row['id'] ?>" class="text-secendary fw-bold"><?= htmlspecialchars($row['name']) ?></a></td>
                                     <td><?= htmlspecialchars($row['phone']) ?></td>
                                     <td><?= htmlspecialchars($row['building_name']) ?></td>
