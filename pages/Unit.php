@@ -2,12 +2,14 @@
     if(isset($_GET['id'])){
         $building_id = $_GET['id'];
           // Fetch all units
-        $query  = "SELECT * FROM unit wHERE building_name = '$building_id' ORDER BY id DESC";
+        $query  = "SELECT * FROM unit wHERE building_name = '$building_id' ORDER BY unit_name ASC";
         $result = mysqli_query($db, $query);
 
         if (!$result) {
             die("Query Failed: " . mysqli_error($db));
         }
+
+        $count_row = mysqli_num_rows($result);
     }
 
     $message = "";
@@ -52,7 +54,7 @@
                 while($buil = mysqli_fetch_assoc($result_building)){
                 $buil_id   = $buil['id'];
                 $buil_name = $buil['name'];
-                echo $buil_name;
+                echo $buil_name.' - '.$count_row.' / Unit Manage';
                 }
             ?>
         </h5>

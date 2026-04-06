@@ -10,60 +10,61 @@
         }
 
     }
-    
+
     $message = "";
 
-/* ================= DELETE TENANT ================= */
-if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete_id'])) {
+    /* ================= DELETE TENANT ================= */
+    if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete_id'])) {
 
-    $id = (int) $_GET['delete_id'];
-    $sql = "SELECT tenant_image, nid_image, unit_id FROM tenants WHERE id = $id";
-    $result = mysqli_query($db, $sql);
-    if ($result && $row = mysqli_fetch_assoc($result)) {
+        $id = (int) $_GET['delete_id'];
+        $sql = "SELECT tenant_image, nid_image, unit_id FROM tenants WHERE id = $id";
+        $result = mysqli_query($db, $sql);
+        if ($result && $row = mysqli_fetch_assoc($result)) {
 
-        if (!empty($row['tenant_image'])) {
-            $file = "public/uploads/tenants/" . $row['tenant_image'];
-            if (file_exists($file)) unlink($file);
+            if (!empty($row['tenant_image'])) {
+                $file = "public/uploads/tenants/" . $row['tenant_image'];
+                if (file_exists($file)) unlink($file);
+            }
+
+            if (!empty($row['nid_image'])) {
+                $file = "public/uploads/nid/" . $row['nid_image'];
+                if (file_exists($file)) unlink($file);
+            }
+
+            // Unit back to Available
+            mysqli_query($db, "UPDATE unit SET status='Available' WHERE id=".$row['unit_id']);
         }
 
-        if (!empty($row['nid_image'])) {
-            $file = "public/uploads/nid/" . $row['nid_image'];
-            if (file_exists($file)) unlink($file);
+        if (mysqli_query($db, "DELETE FROM tenants WHERE id=$id")) {
+            $delete_advace = mysqli_query($db,"DELETE FROM `advance` WHERE tenant_id = $id ");
+            $message = '
+            <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0">
+                <strong>Success!</strong> Tenant Delete Successfully
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>';
+        } else {
+            $message = '
+            <div class="alert alert-danger alert-dismissible fade show mx-5 mt-2 mb-0">
+                <strong>Error!</strong> '.mysqli_error($db).'
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>';
         }
-
-        // Unit back to Available
-        mysqli_query($db, "UPDATE unit SET status='Available' WHERE id=".$row['unit_id']);
     }
 
-    if (mysqli_query($db, "DELETE FROM tenants WHERE id=$id")) {
-        $delete_advace = mysqli_query($db,"DELETE FROM `advance` WHERE tenant_id = $id ");
-        $message = '
-        <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0">
-            <strong>Success!</strong> Tenant Delete Successfully
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>';
-    } else {
-        $message = '
-        <div class="alert alert-danger alert-dismissible fade show mx-5 mt-2 mb-0">
-            <strong>Error!</strong> '.mysqli_error($db).'
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>';
-    }
-}
-
-/* ================= FETCH TENANTS ================= */
-$query = "
-    SELECT 
-        t.*, 
-        b.name AS building_name,
-        u.unit_name,
-        u.status
-    FROM tenants t
-    JOIN building b ON t.building_id = b.id
-    JOIN unit u ON t.unit_id = u.id WHERE t.building_id = '$building_id_get'
-    ORDER BY t.id DESC
-";
-$result = mysqli_query($db, $query);
+    /* ================= FETCH TENANTS ================= */
+    $query = "
+       SELECT 
+    u.*, 
+    t.*, 
+    b.name AS building_name
+    FROM unit u
+    JOIN building b ON u.building_name = b.id
+    LEFT JOIN tenants t ON t.unit_id = u.id
+    WHERE u.building_name = '$building_id_get'
+    ORDER BY u.unit_name ASC;
+    ";
+    $result = mysqli_query($db, $query);
+    $count_row = mysqli_num_rows($result);
 ?>
 
 <div class="nxl-content">
@@ -76,7 +77,7 @@ $result = mysqli_query($db, $query);
                 while($buil = mysqli_fetch_assoc($result_building)){
                 $buil_id   = $buil['id'];
                 $buil_name = $buil['name'];
-                echo $buil_name.' / Tenant Manage';
+                echo $buil_name.' - '.$count_row.' / Tenant Manage';
                 }
             ?>
         </h5>

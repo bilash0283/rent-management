@@ -336,49 +336,48 @@ if(isset($_GET['unit_id'])) {
         $total_bill_mess = $rent_mess+$Gas_mess+$Water_mess+$Electricity_mess+$Others_mess;
     }
 
-function formatMonth($date){
-    return date("M-y", strtotime($date));
-}
-
-$message = "$tent_name          INVOICE\n";
-$message .= "Flat No : $unit_name\n";
-$message .= "$building_name_db\n\n";
-
-// Rent
-if (!empty($rent_mess)) {
-    $message .= "Rent (" . formatMonth($billing_month_db) . ")          ={$rent_mess}/-\n";
-}
-
-// Gas
-if (!empty($Gas_mess)) {
-    $message .= "Gash (" . formatMonth($Gas_month_db_mess) . ")        ={$Gas_mess}/-\n";
-}
-
-// Electricity
-if (!empty($Electricity_mess)) {
-    $message .= "Current (" . formatMonth($Electricity_month_db_mess) . ")    ={$Electricity_mess}/-\n";
-}
-
-// Water
-if (!empty($Water_mess)) {
-    $message .= "Washa (" . formatMonth($Water_month_db_mess) . ")     ={$Water_mess}/-\n";
-}
-
-// Others
-if (!empty($Others_mess)) {
-    $message .= "Others (" . formatMonth($Others_month_db_mess) . ")    ={$Others_mess}/-\n";
-}
-
-// Total
-$total_display = !empty($total_bill_mess) ? $total_bill_mess : $rent_mess;
-$message .= "TOTAL                   =" . $total_display . "/-";
-
-
+    function formatMonth($date){
+        return date("M-y", strtotime($date));
+    }
 }
 ?>
 <script>
 function sendWhatsApp() 
 {
+    <?php 
+        $message = "$tent_name          INVOICE\n";
+        $message .= "Flat No : $unit_name\n";
+        $message .= "$building_name_db\n\n";
+
+        // Rent
+        if (!empty($rent_mess)) {
+            $message .= "Rent (" . formatMonth($billing_month_db) . ")          ={$rent_mess}/-\n";
+        }
+
+        // Gas
+        if (!empty($Gas_mess)) {
+            $message .= "Gash (" . formatMonth($Gas_month_db_mess) . ")        ={$Gas_mess}/-\n";
+        }
+
+        // Electricity
+        if (!empty($Electricity_mess)) {
+            $message .= "Current (" . formatMonth($Electricity_month_db_mess) . ")    ={$Electricity_mess}/-\n";
+        }
+
+        // Water
+        if (!empty($Water_mess)) {
+            $message .= "Washa (" . formatMonth($Water_month_db_mess) . ")     ={$Water_mess}/-\n";
+        }
+
+        // Others
+        if (!empty($Others_mess)) {
+            $message .= "Others (" . formatMonth($Others_month_db_mess) . ")    ={$Others_mess}/-\n";
+        }
+
+        // Total
+        $total_display = !empty($total_bill_mess) ? $total_bill_mess : $rent_mess;
+        $message .= "TOTAL                   =" . $total_display . "/-";
+    ?>
     let message = <?php echo json_encode($message); ?>;
     let phone = <?php echo json_encode($tent_phone); ?>;
     let redirectUrl = "admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>";
