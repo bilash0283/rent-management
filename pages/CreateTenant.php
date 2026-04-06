@@ -64,6 +64,7 @@ if (isset($_POST['save_tenant'])) {
     $building = $_POST['building'];
     $unit     = $_POST['unit'];
     $start_tanent = $_POST['start_tanent'];
+    $nid_no   = $_POST['nid_no'];
 
     $tenant_img = $_POST['old_tenant_image'];
     if (!empty($_FILES['tenant_image']['name'])) {
@@ -90,6 +91,7 @@ if (isset($_POST['save_tenant'])) {
                 phone='$phone',
                 email='$email',
                 start_tanent='$start_tanent',
+                nid_no='$nid_no',
                 permanent_address='$address',
                 family_member='$family',
                 tenant_image='$tenant_img',
@@ -104,9 +106,9 @@ if (isset($_POST['save_tenant'])) {
         // ADD TENANT
         mysqli_query($db, "
             INSERT INTO tenants
-            (name, phone, email, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id, start_tanent)
+            (name, phone, email, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id, start_tanent, nid_no)
             VALUES
-            ('$name','$phone','$email','$address','$family','$tenant_img','$nid_img','$building','$unit','$start_tanent')
+            ('$name','$phone','$email','$address','$family','$tenant_img','$nid_img','$building','$unit','$start_tanent','$nid_no')
         ");
 
         mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");
@@ -141,12 +143,16 @@ if (isset($_POST['save_tenant'])) {
             <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>" placeholder="Family Member">
         </div>
 
-        <div class="col-6">
+        <div class="col-12">
             <textarea name="address" class="form-control" placeholder="Permanent Address"><?= $editData['permanent_address'] ?? '' ?></textarea>
         </div>
         <div class="col-md-6">
             <label for="start_tanent">Tenant Start Date</label>
             <input type="date" name="start_tanent" class="form-control" value="<?php echo $editData['start_tanent'] ?>" placeholder="Start Tenant" required>
+        </div>
+        <div class="col-md-6">
+            <label for="nid_no">NID Number</label>
+            <input type="text" name="nid_no" class="form-control" value="<?php echo $editData['nid_no'] ?? '' ?>" placeholder="NID Number" required>
         </div>
 
         <div class="col-md-6">

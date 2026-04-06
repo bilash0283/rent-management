@@ -99,8 +99,8 @@
                                 <th>Image</th>
                                 <th>Unit</th>
                                 <th>Name</th>
-                                <th>Phone</th>
-                                <th>Building</th>
+                                <th>Personal Info</th>
+                                <th>Files</th>
                                 <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -162,9 +162,24 @@
                                         </div>
                                     </td>
 
-                                    <td><a href="admin.php?page=view_tenant&id=<?= $row['id'] ?>" class="text-secendary fw-bold"><?= htmlspecialchars($row['name']) ?></a></td>
-                                    <td><?= htmlspecialchars($row['phone']) ?></td>
-                                    <td><?= htmlspecialchars($row['building_name']) ?></td>
+                                    <td>
+                                        <a href="admin.php?page=view_tenant&id=<?= $row['id'] ?>" class="text-secendary fw-bold"><?= htmlspecialchars($row['name']) ?>
+                                        </a><br>
+                                        <?= htmlspecialchars($row['phone']) ?>
+                                    </td>
+
+                                    <td>
+                                        Nid - <?= htmlspecialchars($row['nid_no']); ?> <br>
+                                        Address - <?= htmlspecialchars($row['permanent_address']); ?>
+                                    </td>
+
+                                    <td>
+                                        <a href="admin.php?page=Agreement&id=<?= $row['id'] ?>"
+                                            class="btn btn-sm btn-info "
+                                            title="Agreement Download">
+                                                <i class="feather-download"></i>
+                                        </a>
+                                    </td>
 
                                     <td>
                                         <span class="badge <?= $row['status']=='Rented' ? 'bg-danger' : 'bg-success' ?>">
@@ -174,20 +189,14 @@
 
                                     <td>
                                         <div class="btn-group ">
-                                            <a href="admin.php?page=Agreement&id=<?= $row['id'] ?>"
-                                            class="btn btn-sm btn-light-info "
-                                            title="View">
-                                                <i class="feather-download"></i>
-                                            </a>
-
                                             <a href="admin.php?page=CreateTenant&edit_id=<?= $row['id'] ?>"
-                                            class="btn btn-sm btn-light-primary"
+                                            class="btn btn-sm btn-primary"
                                             title="Edit">
                                                 <i class="feather-edit"></i>
                                             </a>
 
                                             <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>&building_id=<?= $building_id_get ?>"
-                                            class="btn btn-sm btn-light-danger"
+                                            class="btn btn-sm btn-danger"
                                             onclick="return confirm('Are you sure?');"
                                             title="Delete">
                                                 <i class="feather-trash-2"></i>
