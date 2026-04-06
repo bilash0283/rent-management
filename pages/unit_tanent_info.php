@@ -77,9 +77,13 @@
                 while($buil = mysqli_fetch_assoc($result_building)){
                 $buil_id   = $buil['id'];
                 $buil_name = $buil['name'];
-                echo $buil_name.' - '.$count_row;
+                $building_image = !empty($buil['image'])
+                ? "public/uploads/buildings/" . $buil['image']
+                : "public/uploads/tenants/no-image.png";
                 }
             ?>
+                <img src="<?= htmlspecialchars($building_image) ?>" style="width:50px; height:50px; object-fit:cover; border-radius:50%; border:2px solid #ddd;">
+                <?= htmlspecialchars($buil_name) ?> - (<?= $count_row ?>)
         </h5>
 
         <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="btn btn-primary">

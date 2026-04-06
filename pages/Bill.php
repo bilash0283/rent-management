@@ -48,7 +48,7 @@
                                 <th>Tenant</th>
                                 <th>Bill Amount</th>
                                 <th>Status</th>
-                                <th>Method</th>
+                                <th>Payment Method</th>
                                 <th class="text-end">Action</th>
                             </tr>
                         </thead>

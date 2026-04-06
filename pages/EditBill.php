@@ -674,7 +674,7 @@
                                                 <option value="Cash">Cash</option>
                                                 <option value="Bkash">Bkash</option>
                                                 <option value="Nagad">Nagad</option>
-                                                <option value="Back Transfer">Back Transfer</option>
+                                                <option value="Bank Transfer">Bank Transfer</option>
                                                 <option value="Card">Card</option>
                                                 <option value="Manager">Manager</option>
                                             </select>
