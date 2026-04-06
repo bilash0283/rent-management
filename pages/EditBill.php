@@ -140,9 +140,9 @@
     // confirm payment
     if (isset($_POST['save_bill'])) {
         $billing_month   = trim($_POST['billing_month'] ?? '');
-        $total_amount    = (int)($_POST['total_amount'] ?? 0);
+        $total_amount    = (int)($_POST['total_amount'] ?? 0);      // form থেকে আসা total (reference)
         $paid_amount     = (int)($_POST['paid_amount'] ?? 0);
-        $status          = trim($_POST['status'] ?? '');
+        $status          = trim($_POST['status'] ?? '');            // form থেকে আসা status (যদি দেয়)
         $note            = trim($_POST['note'] ?? '');
         $payment_date    = trim($_POST['payment_date'] ?? date('Y-m-d'));
         $payment_method  = trim($_POST['payment_method'] ?? '');
@@ -150,95 +150,114 @@
         $expense         = trim($_POST['expense'] ?? '');
         $expense_note    = trim($_POST['expense_note'] ?? '');
         $transaction_id  = trim($_POST['transaction_id'] ?? '');
-        $transaction_id  = $transaction_id === '' ? NULL : $transaction_id;
+        $transaction_id  = ($transaction_id === '') ? NULL : $transaction_id;
 
-        $due_amount = $total_amount - $paid_amount;
         $errors = [];
 
         if (empty($payment_method)) {
             $errors[] = "Please Select Payment Method";
         }
 
-        if (empty($status)) {
-            $errors[] = "Please Select Status";
+        if ($paid_amount <= 0) {
+            $errors[] = "Paid amount must be greater than 0";
         }
 
         if (!empty($errors)) {
             echo "<script>alert('" . implode("\\n", $errors) . "'); window.history.back();</script>";
             exit;
         }
-        
+
+        // Fetch current invoice
         $month_sql = mysqli_query($db, "SELECT * FROM invoices 
                                         WHERE billing_month = '$billing_month' 
                                         AND tenant_id = '$tent_id' 
                                         LIMIT 1");
-        
+
+        if (mysqli_num_rows($month_sql) == 0) {
+            echo "<script>alert('No invoice found for the selected month. Please create an invoice first.'); window.history.back();</script>";
+            exit;
+        }
+
+        $row = mysqli_fetch_assoc($month_sql);
+
+        $invoice_id     = $row['id'];
+        $old_total      = (int)$row['total_amount'];
+        $old_paid       = (int)$row['paid_amount'];
+        $old_due        = (int)$row['due_amount'];
+        $old_status     = $row['status'];
+
+        // 1. যদি আগেই Fully Paid হয়
+        if ($old_status === 'Paid' || $old_due <= 0) {
+            echo "<script>alert('This month bill is already fully paid. No more payment is allowed.'); window.history.back();</script>";
+            exit;
+        }
+
+        // 2. Overpayment চেক
+        if ($paid_amount > $old_due) {
+            echo "<script>alert('You cannot pay more than the due amount. Due amount is: " . $old_due . "'); window.history.back();</script>";
+            exit;
+        }
+
+        // Transaction ID duplicate check
         if (!empty($transaction_id)) {
-            $check_query = mysqli_query($db, "SELECT id FROM payment_history WHERE transaction_id = '$transaction_id' LIMIT 1");
+            $check_query = mysqli_query($db, "SELECT id FROM payment_history 
+                                            WHERE transaction_id = '$transaction_id' 
+                                            LIMIT 1");
 
             if (mysqli_num_rows($check_query) > 0) {
                 echo "<script>alert('This Transaction ID already exists. Please use a unique Transaction ID.'); window.history.back();</script>";
                 exit;
             }
         }
-        
-        if (mysqli_num_rows($month_sql) > 0) {
 
-            $row = mysqli_fetch_assoc($month_sql);
+        // নতুন হিসাব
+        $new_paid = $old_paid + $paid_amount;
+        $new_due  = $old_total - $new_paid;
 
-            $invoice_id     = $row['id'];
-            $old_total      = (int)$row['total_amount'];
-            $old_paid       = (int)$row['paid_amount'];
-
-            $new_paid       = $old_paid + $paid_amount;
-            $new_due        = $old_total - $new_paid;
-
-            if ($new_due <= 0) {
-                $status = 'Paid';
-            }
-
-            $update_invoice = mysqli_query($db, "UPDATE invoices SET 
-                paid_amount = '$new_paid',
-                due_amount  = '$new_due',
-                status      = '$status',
-                note        = '$note'
-                WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
-
-            if (!$update_invoice) {
-                die("Invoice Update Error: " . mysqli_error($db));
-            }
-
-            $insert_history = mysqli_query($db, "INSERT INTO payment_history 
-                (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note ,transaction_id)
-                VALUES 
-                ('$tent_id', '$billing_month', '$payment_method', '$old_total', '$new_paid', '$paid_amount', '$new_due', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
-
+        // Auto status update
+        if ($new_due <= 0) {
+            $new_status = 'Paid';
+        } elseif ($new_paid > 0) {
+            $new_status = 'Partial';
         } else {
-
-            echo "<script>alert('No invoice found for the selected month. Please create an invoice first.'); window.history.back();</script>";
-            exit;
-
-            // $insert_invoice = mysqli_query($db, "INSERT INTO invoices 
-            //     (tenant_id, unit_id, billing_month, total_amount, paid_amount, due_amount, status, created_at, note)
-            //     VALUES 
-            //     ('$tent_id', '$unit_id', '$billing_month', '$total_amount', '$paid_amount', '$due_amount', '$status', NOW(), '$note')");
-
-            // if (!$insert_invoice) {
-            //     die("New Bill Creation Error: " . mysqli_error($db));
-            // }
-
-            // $insert_history = mysqli_query($db, "INSERT INTO payment_history 
-            //     (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note ,transaction_id)
-            //     VALUES 
-            //     ('$tent_id', '$billing_month', '$payment_method', '$total_amount', '$paid_amount', '$paid_amount', '$due_amount', '$note', '$payment_date', '$manager_self', '$expense', '$expense_note', '$transaction_id')");
-        
+            $new_status = $old_status; // fallback
         }
 
-        if (isset($insert_history) && $insert_history) {
+        // Update Invoice
+        $update_invoice = mysqli_query($db, "UPDATE invoices SET 
+            paid_amount = '$new_paid',
+            due_amount  = '$new_due',
+            status      = '$new_status',
+            note        = '" . mysqli_real_escape_string($db, $note) . "'
+            WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
+
+        if (!$update_invoice) {
+            die("Invoice Update Error: " . mysqli_error($db));
+        }
+
+        // Insert Payment History
+        $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+            (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note, transaction_id)
+            VALUES 
+            ('$tent_id', 
+            '$billing_month', 
+            '" . mysqli_real_escape_string($db, $payment_method) . "', 
+            '$old_total', 
+            '$new_paid', 
+            '$paid_amount', 
+            '$new_due', 
+            '" . mysqli_real_escape_string($db, $note) . "', 
+            '$payment_date', 
+            '" . mysqli_real_escape_string($db, $manager_self) . "', 
+            '" . mysqli_real_escape_string($db, $expense) . "', 
+            '" . mysqli_real_escape_string($db, $expense_note) . "', 
+            " . ($transaction_id === NULL ? "NULL" : "'$transaction_id'") . ")");
+
+        if ($insert_history) {
             header("Location: admin.php?page=editbill&unit_id=$unit_id");
             exit();
         } else {
-            echo "History Error: " . mysqli_error($db);
+            echo "History Insert Error: " . mysqli_error($db);
         }
     }
 
@@ -639,25 +658,17 @@
                                     <h6>Confirm Payment : </h6>
 
                                     <input type="number" hidden name="total_amount" value="<?php echo $total_bill; ?>">
-                                    <div>
-                                        <label class="fw-semibold">Amount *</label>
-                                        <input type="number" name="paid_amount" class="form-control" required>
-                                    </div>
+                                    
                                     <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold">Amount *</label>
+                                            <input type="number" name="paid_amount" class="form-control" required>
+                                        </div>
                                         <div class="col-md-6">
                                             <label class="fw-semibold">Pay For Month* <small
                                                     class="text-warning" style="font-size: 10px;">(Invoice)</small></label>
                                             <input type="month" name="billing_month" value="<?php echo $this_month; ?>"
                                                 class="form-control" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="fw-semibold" for="status">Status *</label>
-                                            <select name="status" id="status" class="form-control form-select" required>
-                                                <option selected disabled>Select One</option>
-                                                <option value="Paid">Paid</option>
-                                                <!-- <option value="Unpaid">Unpaid</option> -->
-                                                <option value="Partial">Partial</option>
-                                            </select>
                                         </div>
                                     </div>
                                     <div class="row">

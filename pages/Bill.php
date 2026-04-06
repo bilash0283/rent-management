@@ -33,10 +33,6 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="card shadow-sm">
-            <div class="card-header">
-                <h6 class="mb-0">Bill List</h6>
-                <?= $message ?? '' ?>
-            </div>
 
             <div class="card-body p-0">
                 <div class="table-responsive">
