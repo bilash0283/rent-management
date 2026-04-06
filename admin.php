@@ -70,6 +70,10 @@
             include 'pages/payslip.php';
         break;
 
+        case 'unitinfo':
+            include 'pages/unit_tanent_info.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;
