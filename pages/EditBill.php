@@ -1,76 +1,75 @@
 <?php
-    if (isset($_GET['unit_id'])) {
-        $unit_id = $_GET['unit_id'];
-    }
+if (isset($_GET['unit_id'])) {
+    $unit_id = $_GET['unit_id'];
+}
 
-    $query = "SELECT * FROM unit wHERE id = '$unit_id'";
-    $result = mysqli_query($db, $query);
-    while ($row = mysqli_fetch_assoc($result)) {
-        $unit_id = $row['id'];
-        $unit_name = $row['unit_name'];
-        $advance = $row['advance'];
-        $size = $row['size'];
-        $rent = $row['rent'];
-        $water = $row['water'];
-        $gas = $row['gas'];
-        $building_name = $row['building_name'];
-        $unit_type = $row['unit_type'];
-        $Electricity_meter_no = $row['size'];
-    }
+$query = "SELECT * FROM unit wHERE id = '$unit_id'";
+$result = mysqli_query($db, $query);
+while ($row = mysqli_fetch_assoc($result)) {
+    $unit_id = $row['id'];
+    $unit_name = $row['unit_name'];
+    $advance = $row['advance'];
+    $size = $row['size'];
+    $rent = $row['rent'];
+    $water = $row['water'];
+    $gas = $row['gas'];
+    $building_name = $row['building_name'];
+    $unit_type = $row['unit_type'];
+    $Electricity_meter_no = $row['size'];
+}
 
-    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
-    $building_row = mysqli_fetch_assoc($building);
-    $building_name_db = $building_row['name'];
+$building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
+$building_row = mysqli_fetch_assoc($building);
+$building_name_db = $building_row['name'];
 
-    $tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
-    while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
-        $tent_name = $tent_row['name'];
-        $tent_id = $tent_row['id'];
-    }
+$tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
+while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
+    $tent_name = $tent_row['name'];
+    $tent_id = $tent_row['id'];
+}
 
-    // Advace Save SQL 
-    if (isset($_POST['advance_save'])) {
-        $advance_pay_amount = $_POST['advance_amount'];
+// Advace Save SQL 
+if (isset($_POST['advance_save'])) {
+    $advance_pay_amount = $_POST['advance_amount'];
 
-        $advance_add_sql = mysqli_query($db, "
+    $advance_add_sql = mysqli_query($db, "
                     INSERT INTO `advance`
                     (`tenant_id`, `unit_id`, `paid_amount`, `date`)
                     VALUES ('$tent_id', '$unit_id', '$advance_pay_amount', NOW())
                 ");
 
-        if ($advance_add_sql) {
-            header("Location: admin.php?page=editbill&unit_id=$unit_id");
-            exit();
-        }
+    if ($advance_add_sql) {
+        header("Location: admin.php?page=editbill&unit_id=$unit_id");
+        exit();
+    }
+}
+
+// Create Invoice
+if (isset($_POST['create_invoice'])) {
+
+    $billing_month = $this_month;
+    $status = 'Unpaid';
+    $Gas = intval($_POST['Gas']);
+    $Water = intval($_POST['Water']);
+    $Electricity = intval($_POST['Electricity']);
+    $Others = intval($_POST['Others']);
+    $Gas_month = $_POST['Gas_month'];
+    $Water_month = $_POST['Water_month'];
+    $Electricity_month = $_POST['Electricity_month'];
+    $Others_month = $_POST['Others_month'];
+
+    $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
+
+
+    $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
+    while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
+        $id_db = $ex_month_row['id'];
+        $old_total = intval($ex_month_row['total_amount']);
+        $old_paid = intval($ex_month_row['paid_amount']);
     }
 
-    // Create Invoice
-    if (isset($_POST['create_invoice'])) {
-
-        $billing_month = $this_month;
-        $status = 'Unpaid';
-        $Gas = intval($_POST['Gas']);
-        $Water = intval($_POST['Water']);
-        $Electricity = intval($_POST['Electricity']);
-        $Others = intval($_POST['Others']);
-        $Gas_month = $_POST['Gas_month'];
-        $Water_month = $_POST['Water_month'];
-        $Electricity_month = $_POST['Electricity_month'];
-        $Others_month = $_POST['Others_month'];
-
-        $total_amount = $rent+$Gas + $Water + $Electricity + $Others;
-
-
-        $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
-        while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
-            $id_db = $ex_month_row['id'];
-            $old_total = intval($ex_month_row['total_amount']);
-            $old_paid = intval($ex_month_row['paid_amount']);
-        }
-
-        if (mysqli_num_rows($month_sql) > 0) 
-        {
-                $bill_sql = mysqli_query($db, "UPDATE `invoices` SET 
+    if (mysqli_num_rows($month_sql) > 0) {
+        $bill_sql = mysqli_query($db, "UPDATE `invoices` SET 
                 `tenant_id` = '$tent_id',
                 `unit_id` = '$unit_id',
                 `billing_month` = '$billing_month',
@@ -89,9 +88,9 @@
             AND `tenant_id` = '$tent_id'
             ");
 
-            // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$paid_amount','$update_due_amount','$note','$payment_date')");
-        } else {
-            $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
+        // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$paid_amount','$update_due_amount','$note','$payment_date')");
+    } else {
+        $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
             (
                 `tenant_id`,
                 `unit_id`,
@@ -128,115 +127,114 @@
                 now()
             )");
 
-            // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$paid_amount','$due_amount','$note','$payment_date')");
-        }
-
-        if ($bill_sql) {
-            header("Location: admin.php?page=editbill&unit_id=$unit_id");
-            exit();
-        }
+        // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$total_amount','$paid_amount','$paid_amount','$due_amount','$note','$payment_date')");
     }
 
-    // confirm payment
-    if (isset($_POST['save_bill'])) {
-        $billing_month   = trim($_POST['billing_month'] ?? '');
-        $total_amount    = (int)($_POST['total_amount'] ?? 0);      // form থেকে আসা total (reference)
-        $paid_amount     = (int)($_POST['paid_amount'] ?? 0);
-        $status          = trim($_POST['status'] ?? '');            // form থেকে আসা status (যদি দেয়)
-        $note            = trim($_POST['note'] ?? '');
-        $payment_date    = trim($_POST['payment_date'] ?? date('Y-m-d'));
-        $payment_method  = trim($_POST['payment_method'] ?? '');
-        $manager_self    = trim($_POST['manager_self'] ?? '');
-        $expense         = trim($_POST['expense'] ?? '');
-        $expense_note    = trim($_POST['expense_note'] ?? '');
-        $transaction_id  = trim($_POST['transaction_id'] ?? '');
-        $transaction_id  = ($transaction_id === '') ? NULL : $transaction_id;
+    if ($bill_sql) {
+        header("Location: admin.php?page=editbill&unit_id=$unit_id");
+        exit();
+    }
+}
 
-        $errors = [];
+// confirm payment
+if (isset($_POST['save_bill'])) {
+    $billing_month = trim($_POST['billing_month'] ?? '');
+    $total_amount = (int) ($_POST['total_amount'] ?? 0);      // form থেকে আসা total (reference)
+    $paid_amount = (int) ($_POST['paid_amount'] ?? 0);
+    $note = trim($_POST['note'] ?? '');
+    $payment_date = trim($_POST['payment_date'] ?? date('Y-m-d'));
+    $payment_method = trim($_POST['payment_method'] ?? '');
+    $manager_self = trim($_POST['manager_self'] ?? '');
+    $expense = trim($_POST['expense'] ?? '');
+    $expense_note = trim($_POST['expense_note'] ?? '');
+    $transaction_id = trim($_POST['transaction_id'] ?? '');
+    $transaction_id = ($transaction_id === '') ? NULL : $transaction_id;
 
-        if (empty($payment_method)) {
-            $errors[] = "Please Select Payment Method";
-        }
+    $errors = [];
 
-        if ($paid_amount <= 0) {
-            $errors[] = "Paid amount must be greater than 0";
-        }
+    if (empty($payment_method)) {
+        $errors[] = "Please Select Payment Method";
+    }
 
-        if (!empty($errors)) {
-            echo "<script>alert('" . implode("\\n", $errors) . "'); window.history.back();</script>";
-            exit;
-        }
+    if ($paid_amount <= 0) {
+        $errors[] = "Paid amount must be greater than 0";
+    }
 
-        // Fetch current invoice
-        $month_sql = mysqli_query($db, "SELECT * FROM invoices 
+    if (!empty($errors)) {
+        echo "<script>alert('" . implode("\\n", $errors) . "'); window.history.back();</script>";
+        exit;
+    }
+
+    // Fetch current invoice
+    $month_sql = mysqli_query($db, "SELECT * FROM invoices 
                                         WHERE billing_month = '$billing_month' 
                                         AND tenant_id = '$tent_id' 
                                         LIMIT 1");
 
-        if (mysqli_num_rows($month_sql) == 0) {
-            echo "<script>alert('No invoice found for the selected month. Please create an invoice first.'); window.history.back();</script>";
-            exit;
-        }
+    if (mysqli_num_rows($month_sql) == 0) {
+        echo "<script>alert('No invoice found for the selected month. Please create an invoice first.'); window.history.back();</script>";
+        exit;
+    }
 
-        $row = mysqli_fetch_assoc($month_sql);
+    $row = mysqli_fetch_assoc($month_sql);
 
-        $invoice_id     = $row['id'];
-        $old_total      = (int)$row['total_amount'];
-        $old_paid       = (int)$row['paid_amount'];
-        $old_due        = (int)$row['due_amount'];
-        $old_status     = $row['status'];
+    $invoice_id = $row['id'];
+    $old_total = (int) $row['total_amount'];
+    $old_paid = (int) $row['paid_amount'];
+    $old_due = (int) $row['due_amount'];
+    $old_status = $row['status'];
 
-        // 1. যদি আগেই Fully Paid হয়
-        if ($old_status === 'Paid' || $old_due <= 0) {
-            echo "<script>alert('This month bill is already fully paid. No more payment is allowed.'); window.history.back();</script>";
-            exit;
-        }
+    // 1. যদি আগেই Fully Paid হয়
+    if ($old_status === 'Paid' || $old_due <= 0) {
+        echo "<script>alert('This month bill is already fully paid. No more payment is allowed for this Month.'); window.history.back();</script>";
+        exit;
+    }
 
-        // 2. Overpayment চেক
-        if ($paid_amount > $old_due) {
-            echo "<script>alert('You cannot pay more than the due amount. Due amount is: " . $old_due . "'); window.history.back();</script>";
-            exit;
-        }
+    // 2. Overpayment চেক
+    if ($paid_amount > $old_due) {
+        echo "<script>alert('You cannot pay more than the due amount. Due amount is: " . $old_due . "'); window.history.back();</script>";
+        exit;
+    }
 
-        // Transaction ID duplicate check
-        if (!empty($transaction_id)) {
-            $check_query = mysqli_query($db, "SELECT id FROM payment_history 
+    // Transaction ID duplicate check
+    if (!empty($transaction_id)) {
+        $check_query = mysqli_query($db, "SELECT id FROM payment_history 
                                             WHERE transaction_id = '$transaction_id' 
                                             LIMIT 1");
 
-            if (mysqli_num_rows($check_query) > 0) {
-                echo "<script>alert('This Transaction ID already exists. Please use a unique Transaction ID.'); window.history.back();</script>";
-                exit;
-            }
+        if (mysqli_num_rows($check_query) > 0) {
+            echo "<script>alert('This Transaction ID already exists. Please use a unique Transaction ID.'); window.history.back();</script>";
+            exit;
         }
+    }
 
-        // নতুন হিসাব
-        $new_paid = $old_paid + $paid_amount;
-        $new_due  = $old_total - $new_paid;
+    // নতুন হিসাব
+    $new_paid = $old_paid + $paid_amount;
+    $new_due = $old_total - $new_paid;
 
-        // Auto status update
-        if ($new_due <= 0) {
-            $new_status = 'Paid';
-        } elseif ($new_paid > 0) {
-            $new_status = 'Partial';
-        } else {
-            $new_status = $old_status; // fallback
-        }
+    // Auto status update
+    if ($new_due <= 0) {
+        $new_status = 'Paid';
+    } elseif ($new_paid > 0) {
+        $new_status = 'Partial';
+    } else {
+        $new_status = $old_status; // fallback
+    }
 
-        // Update Invoice
-        $update_invoice = mysqli_query($db, "UPDATE invoices SET 
+    // Update Invoice
+    $update_invoice = mysqli_query($db, "UPDATE invoices SET 
             paid_amount = '$new_paid',
             due_amount  = '$new_due',
             status      = '$new_status',
             note        = '" . mysqli_real_escape_string($db, $note) . "'
             WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
 
-        if (!$update_invoice) {
-            die("Invoice Update Error: " . mysqli_error($db));
-        }
+    if (!$update_invoice) {
+        die("Invoice Update Error: " . mysqli_error($db));
+    }
 
-        // Insert Payment History
-        $insert_history = mysqli_query($db, "INSERT INTO payment_history 
+    // Insert Payment History
+    $insert_history = mysqli_query($db, "INSERT INTO payment_history 
             (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, expense_note, transaction_id)
             VALUES 
             ('$tent_id', 
@@ -253,33 +251,32 @@
             '" . mysqli_real_escape_string($db, $expense_note) . "', 
             " . ($transaction_id === NULL ? "NULL" : "'$transaction_id'") . ")");
 
-        if ($insert_history) {
-            header("Location: admin.php?page=editbill&unit_id=$unit_id");
-            exit();
-        } else {
-            echo "History Insert Error: " . mysqli_error($db);
-        }
+    if ($insert_history) {
+        header("Location: admin.php?page=editbill&unit_id=$unit_id");
+        exit();
+    } else {
+        echo "History Insert Error: " . mysqli_error($db);
     }
+}
 
-    // monthly payment sql 
-    $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
-    while ($pay_info_sh = mysqli_fetch_assoc($pay_info))
-        {
-            $billing_month_db = $pay_info_sh['billing_month'];
-            $total_amount_db = $pay_info_sh['total_amount'];
-            $paid_amount_db = $pay_info_sh['paid_amount'];
-            $due_amount_db = $pay_info_sh['due_amount'];
-            $status = $pay_info_sh['status'];
-            $Gas_db = $pay_info_sh['Gas'];
-            $Water_db = $pay_info_sh['Water'];
-            $Electricity_db = $pay_info_sh['Electricity'];
-            $Others_db = $pay_info_sh['Others'];
+// monthly payment sql 
+$pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
+while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
+    $billing_month_db = $pay_info_sh['billing_month'];
+    $total_amount_db = $pay_info_sh['total_amount'];
+    $paid_amount_db = $pay_info_sh['paid_amount'];
+    $due_amount_db = $pay_info_sh['due_amount'];
+    $status = $pay_info_sh['status'];
+    $Gas_db = $pay_info_sh['Gas'];
+    $Water_db = $pay_info_sh['Water'];
+    $Electricity_db = $pay_info_sh['Electricity'];
+    $Others_db = $pay_info_sh['Others'];
 
-            $Gas_month_db = $pay_info_sh['Gas_month'];
-            $Water_month_db = $pay_info_sh['Water_month'];
-            $Electricity_month_db = $pay_info_sh['Electricity_month'];
-            $Others_month_db = $pay_info_sh['Others_month'];
-    }
+    $Gas_month_db = $pay_info_sh['Gas_month'];
+    $Water_month_db = $pay_info_sh['Water_month'];
+    $Electricity_month_db = $pay_info_sh['Electricity_month'];
+    $Others_month_db = $pay_info_sh['Others_month'];
+}
 ?>
 
 <div class="nxl-content">
@@ -375,7 +372,7 @@
                                         </div>
 
                                         <button type="submit" name="advance_save" class="btn btn-success btn-sm">
-                                            Advance Payment 
+                                            Advance Payment
                                         </button>
                                     </div>
                                 </div>
@@ -458,60 +455,60 @@
                                                     </td>
                                                 </tr>
 
-                                                <?php if(!empty($Gas_db)){ ?>
-                                                <tr>
-                                                    <td class="py-1">Gas Bill</td>
-                                                    <td class="py-1 text-center">
-                                                        <?= !empty($Gas_month_db) ? date("M Y", strtotime($Gas_month_db)) : '' ?>
-                                                        <?php $total_bill += $Gas_db; ?>
-                                                    </td>
-                                                    <td class="py-1 text-end">৳
-                                                        <?php echo number_format($Gas_db, 2); ?>
-                                                    </td>
-                                                </tr>
+                                                <?php if (!empty($Gas_db)) { ?>
+                                                    <tr>
+                                                        <td class="py-1">Gas Bill</td>
+                                                        <td class="py-1 text-center">
+                                                            <?= !empty($Gas_month_db) ? date("M Y", strtotime($Gas_month_db)) : '' ?>
+                                                            <?php $total_bill += $Gas_db; ?>
+                                                        </td>
+                                                        <td class="py-1 text-end">৳
+                                                            <?php echo number_format($Gas_db, 2); ?>
+                                                        </td>
+                                                    </tr>
                                                 <?php } ?>
 
-                                                <?php if(!empty($Water_db)){ ?>
-                                                <tr>
-                                                    <td class="py-1">Water Bill</td>
-                                                    <td class="py-1 text-center">
-                                                        <?= $Water_month_db ?? '';
-                                                        $total_bill += $Water_db;
-                                                        ?>
-                                                    </td>
-                                                    <td class="py-1 text-end">৳
-                                                        <?php echo number_format($Water_db, 2); ?>
-                                                    </td>
-                                                </tr>
+                                                <?php if (!empty($Water_db)) { ?>
+                                                    <tr>
+                                                        <td class="py-1">Water Bill</td>
+                                                        <td class="py-1 text-center">
+                                                            <?= $Water_month_db ?? '';
+                                                            $total_bill += $Water_db;
+                                                            ?>
+                                                        </td>
+                                                        <td class="py-1 text-end">৳
+                                                            <?php echo number_format($Water_db, 2); ?>
+                                                        </td>
+                                                    </tr>
                                                 <?php } ?>
 
-                                                <?php if(!empty($Electricity_db)){ ?>
-                                                <tr>
-                                                    <td class="py-1">Electricity Bill <span class="text-warning"
-                                                    style="font-size:10px;">(<?= $size ?>)</span></td>
-                                                    <td class="py-1 text-center">
-                                                        <?= $Electricity_month_db ?? '';
-                                                        $total_bill += $Electricity_db;
-                                                        ?>
-                                                    </td>
-                                                    <td class="py-1 text-end">৳
-                                                        <?php echo number_format($Electricity_db, 2); ?>
-                                                    </td>
-                                                </tr>
+                                                <?php if (!empty($Electricity_db)) { ?>
+                                                    <tr>
+                                                        <td class="py-1">Electricity Bill <span class="text-warning"
+                                                                style="font-size:10px;">(<?= $size ?>)</span></td>
+                                                        <td class="py-1 text-center">
+                                                            <?= $Electricity_month_db ?? '';
+                                                            $total_bill += $Electricity_db;
+                                                            ?>
+                                                        </td>
+                                                        <td class="py-1 text-end">৳
+                                                            <?php echo number_format($Electricity_db, 2); ?>
+                                                        </td>
+                                                    </tr>
                                                 <?php } ?>
 
-                                                <?php if(!empty($Others_db)){ ?>
-                                                <tr>
-                                                    <td class="py-1">Others Bill</td>
-                                                    <td class="py-1 text-center">
-                                                        <?= $Others_month_db ?? '' ;
-                                                        $total_bill += $Others_db;
-                                                        ?>
-                                                    </td>
-                                                    <td class="py-1 text-end">৳
-                                                        <?php echo number_format($Others_db, 2); ?>
-                                                    </td>
-                                                </tr>
+                                                <?php if (!empty($Others_db)) { ?>
+                                                    <tr>
+                                                        <td class="py-1">Others Bill</td>
+                                                        <td class="py-1 text-center">
+                                                            <?= $Others_month_db ?? '';
+                                                            $total_bill += $Others_db;
+                                                            ?>
+                                                        </td>
+                                                        <td class="py-1 text-end">৳
+                                                            <?php echo number_format($Others_db, 2); ?>
+                                                        </td>
+                                                    </tr>
                                                 <?php } ?>
 
                                             </tbody>
@@ -601,7 +598,9 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Gas Bill Month </small>
-                                            <input type="month" name="Gas_month" value="<?php echo date('Y-m', strtotime('first day of last month')); ?>" class="form-control">
+                                            <input type="month" name="Gas_month"
+                                                value="<?php echo date('Y-m', strtotime('first day of last month')); ?>"
+                                                class="form-control">
                                         </div>
                                         <div class="col-md-6">
                                             <small class="fw-semibold" for="status">Gas Bill Amount</small>
@@ -613,11 +612,14 @@
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Water Bill </small>
-                                            <input type="text" name="Water_month" value="<?php echo date('M Y', strtotime('first day of this month -4 months')); ?>" class="form-control">
+                                            <input type="text" name="Water_month"
+                                                value="<?php echo date('M Y', strtotime('first day of this month -4 months')); ?>"
+                                                class="form-control">
                                         </div>
                                         <div class="col-md-6">
                                             <small class="fw-semibold" for="status">Water Bill Amount</small>
-                                            <input type="number" name="Water" value="<?= $water ?? '' ?>" class="form-control">
+                                            <input type="number" name="Water" value="<?= $water ?? '' ?>"
+                                                class="form-control">
                                         </div>
                                     </div>
 
@@ -625,8 +627,9 @@
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Electricity Bill <span class="text-warning"
                                                     style="font-size:10px;">(<?= $size ?>)</span></small>
-                                            <input type="text" name="Electricity_month" value="<?php echo date('M Y', strtotime('first day of this month -2 months')); ?>" placeholder="Note"
-                                                class="form-control">
+                                            <input type="text" name="Electricity_month"
+                                                value="<?php echo date('M Y', strtotime('first day of this month -2 months')); ?>"
+                                                placeholder="Note" class="form-control">
                                         </div>
                                         <div class="col-md-6">
                                             <small class="fw-semibold" for="status">Electricity Bill Amount</small>
@@ -655,22 +658,23 @@
                             <!-- confirm payment  -->
                             <form method="POST" enctype="multipart/form-data">
                                 <div class="card p-3">
-                                    <h6>Confirm Payment : </h6>
+                                    <h6>Confirm Payment :</h6>
 
-                                    <input type="number" hidden name="total_amount" value="<?php echo $total_bill; ?>">
-                                    
+                                    <input type="hidden" name="total_amount" value="<?php echo $total_bill; ?>">
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="fw-semibold">Amount *</label>
                                             <input type="number" name="paid_amount" class="form-control" required>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="fw-semibold">Pay For Month* <small
-                                                    class="text-warning" style="font-size: 10px;">(Invoice)</small></label>
+                                            <label class="fw-semibold">Pay For Month* <small class="text-warning"
+                                                    style="font-size: 10px;">(Invoice)</small></label>
                                             <input type="month" name="billing_month" value="<?php echo $this_month; ?>"
                                                 class="form-control" required>
                                         </div>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="payment_date">Payment date *</label>
@@ -679,41 +683,57 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="payment_method">Payment Method *</label>
-                                            <select name="payment_method" id="" class="form-control form-select"
-                                                required>
-                                                <option selected disabled>Select One</option>
+                                            <select name="payment_method" id="payment_method"
+                                                class="form-control form-select" required
+                                                onchange="togglePaymentFields()">
+                                                <option value="" selected disabled>Select One</option>
                                                 <option value="Cash">Cash</option>
                                                 <option value="Bkash">Bkash</option>
                                                 <option value="Nagad">Nagad</option>
                                                 <option value="Bank Transfer">Bank Transfer</option>
                                                 <option value="Card">Card</option>
+                                                <option value="Rocket">Rocket</option> <!-- যদি Rocket থাকে -->
                                                 <option value="Manager">Manager</option>
                                             </select>
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="manager_self">Manager Self </label>
-                                            <input type="number" class="form-control" name="manager_self">
+                                    <!-- Dynamic Fields -->
+                                    <div id="payment_fields" style="display: none;">
+
+                                        <!-- Manager Self + Expense (শুধু Manager এর জন্য) -->
+                                        <div class="row" id="manager_expense_row">
+                                            <div class="col-md-6">
+                                                <label for="manager_self">Manager Self</label>
+                                                <input type="text" class="form-control" name="manager_self"
+                                                    id="manager_self">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="expense">Expense Amount</label>
+                                                <input type="text" class="form-control" name="expense" id="expense">
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <label for="expense">Expense Amount</label>
-                                            <input type="text" class="form-control" name="expense">
+
+                                        <div id="expense_note_div">
+                                            <label class="fw-semibold">Expense Note</label>
+                                            <input type="text" name="expense_note" id="expense_note"
+                                                class="form-control">
                                         </div>
+
+                                        <!-- Transaction ID (Digital + Manager এর জন্য) -->
+                                        <div id="transaction_id_div">
+                                            <label class="fw-semibold">Transaction ID</label>
+                                            <input type="text" name="transaction_id" id="transaction_id"
+                                                class="form-control">
+                                        </div>
+
                                     </div>
-                                    <div>
-                                        <label class="fw-semibold">Expense Note</label>
-                                        <input type="text" name="expense_note" class="form-control">
-                                    </div>
-                                    <div>
-                                        <label class="fw-semibold">Transaction ID</label>
-                                        <input type="text" name="transaction_id" class="form-control">
-                                    </div>
+
                                     <div>
                                         <label class="fw-semibold">Note</label>
                                         <input type="text" name="note" class="form-control">
                                     </div>
+
                                     <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3">
                                         Confirm Payment
                                     </button>
@@ -763,7 +783,7 @@
                                                 <small>৳</small> <?= number_format($paid_amount_db, 2) ?>
                                             </td>
                                             <td class="text-end text-danger fw-bold">
-                                                <?php echo $due_amount_db ? '<small>৳</small>'. number_format($due_amount_db, 2) : ''; ?>
+                                                <?php echo $due_amount_db ? '<small>৳</small>' . number_format($due_amount_db, 2) : ''; ?>
                                             </td>
                                             <td class="text-center">
                                                 <?php if ($status == 'Paid'): ?>
@@ -841,20 +861,28 @@
                                             </td>
                                             <td class="text-end text-secendary fw-semibold">
                                                 <?= $pay_method_his ?><br>
-                                                <small style="font-size: 8px; " class="text-secendary"><?php echo $transaction_id_db ? '( Trx ID : ' . $transaction_id_db .' )' : ''; ?></small>
+                                                <small style="font-size: 8px; "
+                                                    class="text-secendary"><?php echo $transaction_id_db ? '( Trx ID : ' . $transaction_id_db . ' )' : ''; ?></small>
                                             </td>
-                                            <td class="text-end text-success fw-semibold"><?php echo $paid_amount_his ? '<small>৳ </small>'.number_format($paid_amount_his, 2) : ''; ?></td>
+                                            <td class="text-end text-success fw-semibold">
+                                                <?php echo $paid_amount_his ? '<small>৳ </small>' . number_format($paid_amount_his, 2) : ''; ?>
+                                            </td>
                                             <td class="text-end fw-semibold">
-                                                <span class="text-primary"><?php echo $total_his ? '<small>৳ </small>'.number_format($total_his, 2) : ''; ?></span><br>
-                                                <span class="text-success"><?php echo $paid_his ? '<small>৳ </small>'.number_format($paid_his, 2) : ''; ?></span><br>
-                                                <span class="text-danger"><?php echo $due_his ? '<small>৳ </small>'.number_format($due_his, 2) : ''; ?></span>
+                                                <span
+                                                    class="text-primary"><?php echo $total_his ? '<small>৳ </small>' . number_format($total_his, 2) : ''; ?></span><br>
+                                                <span
+                                                    class="text-success"><?php echo $paid_his ? '<small>৳ </small>' . number_format($paid_his, 2) : ''; ?></span><br>
+                                                <span
+                                                    class="text-danger"><?php echo $due_his ? '<small>৳ </small>' . number_format($due_his, 2) : ''; ?></span>
                                             </td>
                                             <td>
-                                                <span class="text-danger"><?php echo $manager_self ? '<small>৳ </small>'.$manager_self : '' ;?></span>
+                                                <span
+                                                    class="text-danger"><?php echo $manager_self ? '<small>৳ </small>' . $manager_self : ''; ?></span>
                                             </td>
                                             <td>
-                                                <span class="text-danger"><?php echo $expense ? '<small>৳ </small>'.$expense : ''; ?></span><br>
-                                                <small><?php echo $expense_note ? '('.$expense_note.')' : ''; ?></small>
+                                                <span
+                                                    class="text-danger"><?php echo $expense ? '<small>৳ </small>' . $expense : ''; ?></span><br>
+                                                <small><?php echo $expense_note ? '(' . $expense_note . ')' : ''; ?></small>
                                             </td>
                                             <td class="text-center pe-4">
                                                 <small class="text-secendary"><?= $note_his ?? '' ?></small>
@@ -877,3 +905,48 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript for input file dynamic change -->
+<script>
+    function togglePaymentFields() {
+        const method = document.getElementById('payment_method').value;
+        const paymentFields = document.getElementById('payment_fields');
+
+        const managerExpenseRow = document.getElementById('manager_expense_row');
+        const expenseNoteDiv = document.getElementById('expense_note_div');
+        const transactionIdDiv = document.getElementById('transaction_id_div');
+
+        // Default: সব hide
+        paymentFields.style.display = 'none';
+        managerExpenseRow.style.display = 'none';
+        expenseNoteDiv.style.display = 'none';
+        transactionIdDiv.style.display = 'none';
+
+        if (method === "") {
+            return; // কিছু সিলেক্ট না করলে কিছু দেখাবে না
+        }
+
+        paymentFields.style.display = 'block';
+
+        if (method === "Manager") {
+            // Manager হলে সব দেখাবে
+            managerExpenseRow.style.display = 'flex';
+            expenseNoteDiv.style.display = 'block';
+            transactionIdDiv.style.display = 'none';
+        }
+        else if (method === "Cash") {
+            // Cash হলে কিছু দেখাবে না (শুধু Note থাকবে)
+            paymentFields.style.display = 'none';
+        }
+        else {
+            // Bkash, Nagad, Bank Transfer, Card, Rocket ইত্যাদি Digital Payment
+            // শুধু Transaction ID দেখাবে
+            transactionIdDiv.style.display = 'block';
+        }
+    }
+
+    // Page load এ যদি কোনো value থাকে (edit এর ক্ষেত্রে)
+    window.onload = function () {
+        togglePaymentFields();
+    };
+</script>
