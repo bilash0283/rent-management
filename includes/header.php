@@ -3,6 +3,7 @@ ob_start();
 session_name("rant_manager");
 session_start();
 include "database/db.php";
+date_default_timezone_set('Asia/Dhaka');
 if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id'])) {
     header('location:index.php');
 }

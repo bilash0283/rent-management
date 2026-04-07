@@ -234,6 +234,12 @@
                                                     $expense         = $pay_history['expense'];
                                                     $expense_note    = $pay_history['expense_note'];
 
+                                                    $transaction_id_db = $pay_history['transaction_id'];
+                                                    $manager_payment_method = $pay_history['manager_payment_method'];
+                                                    $manager_transaction_id = $pay_history['manager_transaction_id'];
+                                                    $transaction_date = $pay_history['transaction_date'];
+                                                    $transaction_number = $pay_history['transaction_number'];
+
                                                     $manager_self_total += (float)$manager_self;  
                                                     $expense_total      += (float)$expense;
                                                     
@@ -247,6 +253,24 @@
 
                                                 if ($expense_total > 0) {
                                                     echo "<small class='text-warning fw-bold'>Expense Total: " . number_format($expense_total, 2) . "</small><br>";
+                                                }
+
+                                                $data = [
+                                                    ['Txn ID', $transaction_id_db],
+                                                    ['Txn ID', $manager_transaction_id],
+                                                    ['Pay Method', $manager_payment_method],
+                                                    ['Txn Date', $transaction_date],
+                                                    ['Txn Number', $transaction_number]
+                                                ];
+
+                                                foreach ($data as $item) {
+                                                    list($label, $value) = $item;
+
+                                                    if (!empty($value)) {
+                                                        echo '<small style="font-size:8px;" class="text-secondary">
+                                                                ( ' . $label . ' : ' . $value . ' )
+                                                            </small><br>';
+                                                    }
                                                 }
 
                                                 echo "</div>";
