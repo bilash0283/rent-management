@@ -74,6 +74,10 @@
             include 'pages/unit_tanent_info.php';
         break;
 
+        case 'manager_account':
+            include 'pages/manager_account.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;
