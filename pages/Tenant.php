@@ -34,6 +34,8 @@
         }
 
         if (mysqli_query($db, "DELETE FROM tenants WHERE id=$id")) {
+            mysqli_query($db, "DELETE FROM payment_history WHERE tenant_id=$id");
+            mysqli_query($db, "DELETE FROM invoices WHERE tenant_id=$id");
             $delete_advace = mysqli_query($db,"DELETE FROM `advance` WHERE tenant_id = $id ");
             $message = '
             <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0">

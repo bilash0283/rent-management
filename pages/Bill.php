@@ -310,6 +310,7 @@ if(isset($_GET['unit_id'])) {
 
     $query = "SELECT * FROM unit wHERE id = '$unit_id'";
     $result = mysqli_query($db, $query);
+    $building_name = $building_name_db ?? 0;
     while ($row = mysqli_fetch_assoc($result)) {
         $unit_id = $row['id'];
         $unit_name = $row['unit_name'];
@@ -325,7 +326,7 @@ if(isset($_GET['unit_id'])) {
 
     $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
     $building_row = mysqli_fetch_assoc($building);
-    $building_name_db = $building_row['name'];
+    $building_name_db = $building_row['name'] ?? '';
 
     $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
     while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
@@ -334,6 +335,7 @@ if(isset($_GET['unit_id'])) {
         $tent_phone = $tent_row['phone'];
     }
 
+    $tent_id = $tent_id ?? 0; // default to 0 if not set
     $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
 
     while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
