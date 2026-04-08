@@ -177,6 +177,7 @@ $total_unit = mysqli_num_rows($result);
 
                             if (mysqli_num_rows($history_sql) > 0) {
                                 while ($his = mysqli_fetch_assoc($history_sql)) {
+                                    $pay_his_id = $his['id'];
                                     $manager_self += (float)($his['manager_self'] ?? 0);
                                     $expense      += (float)($his['expense'] ?? 0);
                                     $received     += (float)($his['paid_amount'] ?? 0);
@@ -246,8 +247,10 @@ $total_unit = mysqli_num_rows($result);
 
                             <!-- Action -->
                             <td class="text-end">
-                                <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>" 
-                                   class="btn btn-sm btn-info">Edit</a>
+                                <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
+                                    class="text-end btn btn-sm btn-info" title="Invoice Create & Payment">
+                                    Details
+                                </a>
                             </td>
                         </tr>
                         <?php } ?>

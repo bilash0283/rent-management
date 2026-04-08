@@ -78,6 +78,10 @@
             include 'pages/manager_account.php';
         break;
 
+        case 'update_payment':
+            include 'pages/update_payment.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;

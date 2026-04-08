@@ -1005,10 +1005,15 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <small class="text-secendary"><?= $note_his ?? '' ?></small>
                                             </td>
                                             <td>
-                                                <a href="admin.php?page=payslip&unit_id=<?php echo $unit_id; ?>&id=<?php echo $pay_slip_id; ?>"
-                                                    class="btn btn-sm btn-outline-success " title="view">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
+                                                <div class="btn-group">
+                                                    <a href="admin.php?page=payslip&unit_id=<?php echo $unit_id; ?>&id=<?php echo $pay_slip_id; ?>"
+                                                        class="btn btn-sm btn-outline-success " title="view">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>" 
+                                                        class="btn btn-sm btn-info">Edit
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php } ?>
