@@ -82,6 +82,10 @@
             include 'pages/update_payment.php';
         break;
 
+        case 'report':
+            include 'pages/report.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;
