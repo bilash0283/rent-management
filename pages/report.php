@@ -36,14 +36,12 @@ $total_due = number_format($summary['total_due'] ?? 0, 2);
 // ====================== AGGREGATE QUERY ======================
 $agg_query = "
     SELECT 
-        COALESCE(SUM(total), 0) as total_amount,
-        COALESCE(SUM(paid), 0) as total_paid,
-        COALESCE(SUM(due), 0) as total_unpaid,
         COALESCE(SUM(manager_self), 0) as total_manager_self,
         COALESCE(SUM(expense), 0) as total_expense
     FROM `payment_history`
     $where_clause
 ";
+
 $agg_result = mysqli_query($db, $agg_query);
 $agg = mysqli_fetch_assoc($agg_result);
 
@@ -63,6 +61,7 @@ $pm_query = "
     GROUP BY payment_method
     ORDER BY method_total DESC
 ";
+
 $pm_result = mysqli_query($db, $pm_query);
 
 $payment_methods = [];
