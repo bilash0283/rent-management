@@ -98,6 +98,7 @@ $history_sql = mysqli_query($db, "
                         <div class="col-md-3">
                             <label class="form-label fw-bold">Month</label>
                             <select name="month" class="form-select">
+                                <option selected>Select Month</option>
                                 <?php for($m = 1; $m <= 12; $m++): ?>
                                     <option value="<?= $m ?>" <?= $m === $filter_month ? 'selected' : '' ?>>
                                         <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
@@ -110,6 +111,7 @@ $history_sql = mysqli_query($db, "
                     <div class="col-md-3">
                         <label class="form-label fw-bold">Year</label>
                         <select name="year" class="form-select">
+                            <option selected>Select Year</option>
                             <?php 
                             $currentYear = date('Y');
                             for($y = $currentYear - 5; $y <= $currentYear + 2; $y++): 
