@@ -162,8 +162,8 @@ $history_sql = mysqli_query($db, "
                             <div class="card-body">
                                 <div class="d-flex justify-content-between text-white">
                                     <div>
-                                        <h6 class="opacity-75">TOTAL AMOUNT</h6>
-                                        <h2 class="mb-0"><?= number_format($total_bill, 2) ?></h2>
+                                        <h6 class="opacity-75 text-white">TOTAL AMOUNT</h6>
+                                        <h2 class="mb-0 text-white"><?= number_format($total_bill, 2) ?></h2>
                                     </div>
                                     <i class="fas fa-money-bill-wave fa-3x opacity-25"></i>
                                 </div>
@@ -176,8 +176,8 @@ $history_sql = mysqli_query($db, "
                             <div class="card-body">
                                 <div class="d-flex justify-content-between text-white">
                                     <div>
-                                        <h6 class="opacity-75">TOTAL PAID</h6>
-                                        <h2 class="mb-0"><?= number_format($total_paid, 2) ?></h2>
+                                        <h6 class="opacity-75 text-white">TOTAL PAID</h6>
+                                        <h2 class="mb-0 text-white"><?= number_format($total_paid, 2) ?></h2>
                                     </div>
                                     <i class="fas fa-check-circle fa-3x opacity-25"></i>
                                 </div>
@@ -202,7 +202,7 @@ $history_sql = mysqli_query($db, "
                     <div class="col-xl-3 col-md-6">
                         <div class="card border-0 bg-info text-white h-100">
                             <div class="card-body">
-                                <h6 class="opacity-75 mb-3">MANAGER SUMMARY</h6>
+                                <h6 class="opacity-75 mb-3 text-white">MANAGER SUMMARY</h6>
                                 <div class="d-flex justify-content-between mb-2">
                                     <small>Manager Self :</small>
                                     <small><?= number_format($agg['total_manager_self'], 2) ?></small>
