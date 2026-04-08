@@ -2,9 +2,9 @@
 if(!isset($_GET['report_type']) || !in_array($_GET['report_type'], ['monthly', 'yearly'])) {
     header('Location: admin.php?page=report&report_type=monthly');
     exit;
-}   
-
-$report_type = $_GET['report_type'] ?? 'monthly';
+}else{
+    $report_type = $_GET['report_type'] ?? 'monthly';
+}
 
 // ====================== FILTER SETUP ======================
 $filter_month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
@@ -17,9 +17,21 @@ if($report_type === 'monthly') {
     $where_clause = "WHERE bill_month = '$filter_year-$month_padded'";
     $report_title = date('F Y', strtotime("$filter_year-$month_padded-01"));
 } else {
-    $where_clause = "WHERE bill_month LIKE '$filter_year-%'";
+    $where_clause = "WHERE bill_month LIKE '%$filter_year%'";
     $report_title = $filter_year . " Yearly Report";
 }
+
+// invoice thaka total bill, paid, due amount ber korar jonno query 
+$result = mysqli_query($db, "SELECT 
+SUM(total_amount) AS total_bill,
+SUM(paid_amount)  AS total_paid,
+SUM(due_amount)   AS total_due
+FROM invoices WHERE billing_month = '$this_month' ");
+$summary = mysqli_fetch_assoc($result);
+// Fallback to 0 if no rows or NULL sums
+$total_bill = number_format($summary['total_bill'] ?? 0, 2);
+$total_paid = number_format($summary['total_paid'] ?? 0, 2);
+$total_due = number_format($summary['total_due'] ?? 0, 2);
 
 // ====================== AGGREGATE QUERY ======================
 $agg_query = "
@@ -34,6 +46,12 @@ $agg_query = "
 ";
 $agg_result = mysqli_query($db, $agg_query);
 $agg = mysqli_fetch_assoc($agg_result);
+
+$agg_query = mysqli_query($db, "SELECT 
+SUM(total_amount) AS total_amount,
+SUM(paid_amount)  AS total_paid,
+SUM(due_amount)   AS total_unpaid
+FROM invoices WHERE billing_month = '$this_month' ");
 
 // Payment method wise ratio
 $pm_query = "
@@ -111,14 +129,14 @@ $history_sql = mysqli_query($db, "
                 <!-- ==================== HEADER ==================== -->
                 <h3 class="card-title text-primary mb-1"><?= ucfirst($report_type) ?> Payment Report</h3>
                 <h5 class="text-muted"><?= $report_title ?></h5>
-                <p class="text-muted">Generated from <strong>payment_history</strong> table</p>
+                <p class="text-muted"><?= $filter_year.'-'.$month_padded ?> <strong>payment_history</strong> </p>
 
                 <!-- ==================== SUMMARY CARDS ==================== -->
                 <div class="row g-4 mb-5">
                     <div class="col-xl-3 col-md-6">
                         <div class="card border-0 bg-primary text-white h-100">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex justify-content-between text-white">
                                     <div>
                                         <h6 class="opacity-75">TOTAL AMOUNT</h6>
                                         <h2 class="mb-0"><?= number_format($agg['total_amount'], 2) ?></h2>
@@ -132,7 +150,7 @@ $history_sql = mysqli_query($db, "
                     <div class="col-xl-3 col-md-6">
                         <div class="card border-0 bg-success text-white h-100">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between">
+                                <div class="d-flex justify-content-between text-white">
                                     <div>
                                         <h6 class="opacity-75">TOTAL PAID</h6>
                                         <h2 class="mb-0"><?= number_format($agg['total_paid'], 2) ?></h2>
@@ -148,8 +166,8 @@ $history_sql = mysqli_query($db, "
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <h6 class="opacity-75">TOTAL UNPAID</h6>
-                                        <h2 class="mb-0"><?= number_format($agg['total_unpaid'], 2) ?></h2>
+                                        <h6 class="opacity-75 text-white">TOTAL UNPAID</h6>
+                                        <h2 class="mb-0 text-white"><?= number_format($agg['total_unpaid'], 2) ?></h2>
                                     </div>
                                     <i class="fas fa-exclamation-triangle fa-3x opacity-25"></i>
                                 </div>

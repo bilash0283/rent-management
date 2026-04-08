@@ -23,18 +23,17 @@ $total_unit = mysqli_num_rows($result);
 ?>
 
 <div class="nxl-content">
-        <!-- Page Header -->
-        <div class="page-header d-flex align-items-center justify-content-between mb-3">
-            <h5 class="mb-0">
-                <?= htmlspecialchars($building_name_db) ?> 
-                <span class="badge bg-success px-3 py-2 rounded-pill"><?= $total_unit ?></span> 
-                / Bill Month (<?= date('M - Y') ?>) <Main>Manager Accounts</Main>
-            </h5>
-        </div>
+    <!-- Page Header -->
+    <div class="page-header d-flex align-items-center justify-content-between mb-3">
+        <h5 class="mb-0">
+            <?= htmlspecialchars($building_name_db) ?> 
+            <span class="badge bg-success px-3 py-2 rounded-pill"><?= $total_unit ?></span> 
+            / Bill Month (<?= date('M - Y') ?>) <Main>Manager Accounts</Main>
+        </h5>
+    </div>
     <div class="main-content">
         <?php
         // ==================== OVERALL MANAGER PAYMENT SUMMARY ====================
-        // Fixed: Join with tenants table to get building-wise data
         $manager_summary = mysqli_query($db, "
             SELECT 
                 SUM(ph.paid_amount) as total_received,
