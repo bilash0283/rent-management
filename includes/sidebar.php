@@ -87,23 +87,10 @@ while($row = mysqli_fetch_assoc($result)) {
                 </li>
 
                 <li class="nxl-item nxl-hasmenu">
-                    <a href="javascript:void(0);" class="nxl-link">
+                    <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-dollar-sign"></i></span>
                         <span class="nxl-mtext">Manager Accounts</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
                     </a>
-                    <ul class="nxl-submenu">
-                        <?php foreach($buildings as $row): 
-                            $id   = $row['id'];
-                            $name = $row['name'] ?? 'Unnamed';
-                        ?>
-                            <li class="nxl-item">
-                                <a class="nxl-link" href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>">
-                                    <?= htmlspecialchars($name) ?>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
                 </li>
                 
                 <li class="nxl-item nxl-hasmenu">

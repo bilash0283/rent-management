@@ -1,18 +1,36 @@
 <?php
 // ==================== INITIAL SETUP ====================
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    echo '<div class="alert alert-danger">Invalid Building ID</div>';
-    exit;
+
+// Default values
+$building_id = '';
+$this_month = date('Y-m');   // Current month in YYYY-MM format
+
+// Handle POST Filter
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['month']) && !empty($_POST['month'])) {
+        $this_month = mysqli_real_escape_string($db, $_POST['month']);
+    }
+    
+    if (isset($_POST['building']) && !empty($_POST['building'])) {
+        $building_id = mysqli_real_escape_string($db, $_POST['building']);
+    }
 }
 
-$building_id = mysqli_real_escape_string($db, $_GET['id']);
-$this_month = date('Y-m');   // Make sure this matches your billing_month format
+// If no POST, get building_id from URL
+if (empty($building_id)) {
+    if (!isset($_GET['id']) || empty($_GET['id'])) {
+        echo '<div class="alert alert-danger">Invalid Building ID</div>';
+        exit;
+    }
+    $building_id = mysqli_real_escape_string($db, $_GET['id']);
+}
 
 // Fetch Building Name
 $buil_sql = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_id'");
-$building_name_db = mysqli_fetch_assoc($buil_sql)['name'] ?? 'Unknown Building';
+$building_row = mysqli_fetch_assoc($buil_sql);
+$building_name_db = $building_row['name'] ?? 'Unknown Building';
 
-// Fetch all rented units
+// Fetch all rented units for this building
 $query = "SELECT * FROM unit 
           WHERE building_name = '$building_id' 
             AND status = 'Rented' 
@@ -24,8 +42,7 @@ $total_unit = mysqli_num_rows($result);
 
 <div class="nxl-content">
     <!-- Page Header -->
-    <div
-        class="page-header d-flex flex-wrap align-items-center justify-content-between p-4 mb-4 bg-white shadow-sm rounded-3">
+    <div class="page-header d-flex flex-wrap align-items-center justify-content-between p-4 mb-4 bg-white shadow-sm rounded-3">
 
         <div class="d-flex align-items-center mb-2 mb-lg-0">
             <div class="icon-box bg-primary-soft text-primary me-3 p-3 rounded-circle"
@@ -37,35 +54,40 @@ $total_unit = mysqli_num_rows($result);
                     <?= htmlspecialchars($building_name_db) ?>
                 </h4>
                 <div class="d-flex align-items-center gap-2">
-                    <span
-                        class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">
                         <i class="fas fa-door-open me-1"></i> Total Units: <?= $total_unit ?>
                     </span>
                     <span class="text-muted small">
-                        <i class="far fa-calendar-alt me-1"></i> <?= date('M - Y') ?>
+                        <i class="far fa-calendar-alt me-1"></i> <?= date('M Y', strtotime($this_month . '-01')) ?>
                     </span>
                     <span class="badge bg-light text-dark border ms-2">Manager Accounts</span>
                 </div>
             </div>
         </div>
 
-        <form method="GET" class="d-flex flex-wrap gap-2 align-items-center">
-            <div class="input-group input-group-sm shadow-sm" style="width: 160px;">
+        <!-- Filter Form -->
+        <form method="POST" class="d-flex flex-wrap gap-2 align-items-center">
+            <div class="input-group input-group-sm shadow-sm" style="width: 180px;">
                 <span class="input-group-text bg-white border-end-0"><i class="far fa-calendar-check text-muted"></i></span>
                 <select name="month" class="form-select border-start-0 ps-0 fw-medium">
-                    <option value="">Select Month</option>
-                    <?php for ($m = 1; $m <= 12; $m++): ?>
-                        <option value="<?= $m ?>" <?= $m == $this_month ? 'selected' : '' ?>>
-                            <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
+                    <?php 
+                    $currentYear = date('Y');
+                    $selectedMonth = (int)substr($this_month, 5, 2); // Get month from $this_month
+                    
+                    for ($m = 1; $m <= 12; $m++): 
+                        $monthValue = $currentYear . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
+                        $displayText = date('F Y', mktime(0, 0, 0, $m, 1, $currentYear));
+                    ?>
+                        <option value="<?= $monthValue ?>" <?= $m == $selectedMonth ? 'selected' : '' ?>>
+                            <?= $displayText ?>
                         </option>
                     <?php endfor; ?>
                 </select>
             </div>
 
-            <div class="input-group input-group-sm shadow-sm" style="width: 200px;">
+            <div class="input-group input-group-sm shadow-sm" style="width: 220px;">
                 <span class="input-group-text bg-white border-end-0"><i class="fas fa-building text-muted"></i></span>
-                <select name="building" id="building" class="form-select border-start-0 ps-0 fw-medium">
-                    <option value="">Select Building</option>
+                <select name="building" class="form-select border-start-0 ps-0 fw-medium">
                     <?php
                     $buildings_sql = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
                     while ($buil = mysqli_fetch_assoc($buildings_sql)) {
@@ -279,7 +301,7 @@ $total_unit = mysqli_num_rows($result);
                                 <!-- Status -->
                                 <td>
                                     <button
-                                        class="btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : 'danger') ?>">
+                                        class="btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : 'primary') ?>">
                                         <?= htmlspecialchars($status) ?>
                                     </button>
                                 </td>
