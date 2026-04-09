@@ -1,0 +1,249 @@
+<?php 
+    if(!isset($_GET['building_id'])) {
+        header('Location: admin.php?page=dashboard');
+        exit;
+    }else{
+        $building_id = $_GET['building_id'];
+    }
+
+
+
+
+// Pad month with zero (01, 02, ..., 12)
+$month_padded = str_pad($filter_month, 2, '0', STR_PAD_LEFT);
+
+// Where clause for payment_history table (column: bill_month)
+if ($report_type === 'monthly') {
+    $where_clause = "WHERE bill_month = '$filter_year-$month_padded'";
+    $report_title = date('F Y', strtotime("$filter_year-$month_padded-01"));
+} else {
+    $where_clause = "WHERE bill_month LIKE '$filter_year-%'";
+    $report_title = $filter_year . " Yearly Report";
+}
+
+// Where clause for invoices table (column: billing_month) - same filter logic
+if ($report_type === 'monthly') {
+    $invoice_where = "WHERE billing_month = '$filter_year-$month_padded'";
+} else {
+    $invoice_where = "WHERE billing_month LIKE '$filter_year-%'";
+}
+
+// ====================== INVOICES SUMMARY (Total Bill, Paid, Due) ======================
+// invoice thaka total bill, paid, due amount ber korar jonno query 
+$result = mysqli_query($db, "SELECT 
+    SUM(total_amount) AS total_bill,
+    SUM(paid_amount)  AS total_paid,
+    SUM(due_amount)   AS total_due
+FROM invoices 
+$invoice_where");
+
+$summary = mysqli_fetch_assoc($result);
+
+// Raw values (no number_format here - we will format only in HTML)
+$total_bill = $summary['total_bill'] ?? 0;
+$total_paid = $summary['total_paid'] ?? 0;
+$total_due  = $summary['total_due'] ?? 0;
+
+// ====================== AGGREGATE QUERY FROM payment_history ======================
+$agg_query = "
+    SELECT 
+        COALESCE(SUM(manager_self), 0) as total_manager_self,
+        COALESCE(SUM(expense), 0)     as total_expense,
+        COALESCE(SUM(paid), 0)        as total_paid
+    FROM `payment_history`
+    $where_clause
+";
+
+$agg_result = mysqli_query($db, $agg_query);
+$agg = mysqli_fetch_assoc($agg_result);
+
+// Payment method wise ratio
+$pm_query = "
+    SELECT 
+        payment_method,
+        COALESCE(SUM(paid), 0) as method_total
+    FROM `payment_history`
+    $where_clause
+    GROUP BY payment_method
+    ORDER BY method_total DESC
+";
+
+$pm_result = mysqli_query($db, $pm_query);
+
+$payment_methods = [];
+$total_paid_ratio = $agg['total_paid'] > 0 ? $agg['total_paid'] : 1;
+
+while ($pm = mysqli_fetch_assoc($pm_result)) {
+    $perc = round(($pm['method_total'] / $total_paid_ratio) * 100, 2);
+    $payment_methods[] = [
+        'method'      => $pm['payment_method'] ?: 'Unknown',
+        'amount'      => $pm['method_total'],
+        'percentage'  => $perc
+    ];
+}
+
+// payment_method = Manager total payment amount
+$manager_paid_sql = mysqli_query($db, "
+    SELECT COALESCE(SUM(paid), 0) as manager_paid 
+    FROM `payment_history` 
+    $where_clause AND payment_method = 'Manager'
+");
+$manager_paid_result = mysqli_fetch_assoc($manager_paid_sql);
+$manager_payment_handel = $manager_paid_result['manager_paid'] ?? 0;
+
+// Detailed history (kept as it was - you can use it later if needed)
+$history_sql = mysqli_query($db, "
+    SELECT * FROM `payment_history` 
+    $where_clause 
+    ORDER BY bill_month DESC, payment_date DESC
+");
+?>
+
+<div class="nxl-content">
+    <div class="main-content">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <!-- ==================== TOP FILTER FORM ==================== -->
+                <form method="GET" class="row g-3 align-items-end mb-4 border-bottom pb-3">
+                    <?php
+                        $query = "SELECT * FROM building ORDER BY id DESC";
+                        $result = mysqli_query($db, $query);
+                    ?>
+
+                    <div class="col-md-6">
+                        <label for="building_name">Building</label>
+                        <select name="building_id" class="form-select">
+                            <option value="">Select Building</option>
+                            
+                            <?php while($row = mysqli_fetch_assoc($result)) { ?>
+                                <option value="<?= $row['id']; ?>">
+                                    <?= $row['name']; ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter"></i> Show Report
+                        </button>
+                    </div>
+                </form>
+
+                <!-- ==================== HEADER ==================== -->
+                <h3 class="card-title text-primary mb-1"><?= ucfirst($report_type) ?> Payment Report</h3>
+                <h5 class="text-muted"><?= $report_title ?></h5>
+
+                <!-- ==================== SUMMARY CARDS ==================== -->
+                <div class="row g-4 mb-5">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 bg-primary text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between text-white">
+                                    <div>
+                                        <h6 class="opacity-75 text-white">TOTAL AMOUNT</h6>
+                                        <h2 class="mb-0 text-white"><?= number_format($total_bill, 2) ?></h2>
+                                    </div>
+                                    <i class="fas fa-money-bill-wave fa-3x opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 bg-success text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between text-white">
+                                    <div>
+                                        <h6 class="opacity-75 text-white">TOTAL PAID</h6>
+                                        <h2 class="mb-0 text-white"><?= number_format($total_paid, 2) ?></h2>
+                                    </div>
+                                    <i class="fas fa-check-circle fa-3x opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 bg-danger text-white h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="opacity-75 text-white">TOTAL UNPAID</h6>
+                                        <h2 class="mb-0 text-white"><?= number_format($total_due, 2) ?></h2>
+                                    </div>
+                                    <i class="fas fa-exclamation-triangle fa-3x opacity-25"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card border-0 bg-info text-white h-100">
+                            <div class="card-body">
+                                <h6 class="opacity-75 mb-3 text-white">MANAGER SUMMARY</h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Manager Self :</small>
+                                    <small><?= number_format($agg['total_manager_self'], 2) ?></small>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Expense :</small>
+                                    <small><?= number_format($agg['total_expense'], 2) ?></small>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Manager Paid : </small>
+                                    <small>
+                                        <?php
+                                            $manager_paid = $manager_payment_handel - ($agg['total_manager_self'] + $agg['total_expense']   );
+                                            echo number_format($manager_paid, 2)
+                                         ?>
+                                    </small>
+                                </div>
+                                <hr class="border-light">
+                                <div class="d-flex justify-content-between">
+                                    <small class="fw-bold">Total Payment Handled:</small>
+                                    <small><?= number_format($manager_payment_handel, 2) ?></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== PAYMENT METHOD RATIO ==================== -->
+                <h5 class="mb-3">Payment Method Wise Ratio</h5>
+                <div class="table-responsive mb-5">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Payment Method</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-end">Percentage</th>
+                                <th>Ratio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($payment_methods)): ?>
+                                <tr><td colspan="4" class="text-center text-muted py-4">No payment data found for this period.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($payment_methods as $pm): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($pm['method']) ?></td>
+                                    <td class="text-end fw-bold"><?= number_format($pm['amount'], 2) ?></td>
+                                    <td class="text-end"><?= $pm['percentage'] ?>%</td>
+                                    <td style="width: 40%;">
+                                        <div class="progress" style="height: 18px;">
+                                            <div class="progress-bar bg-success" style="width: <?= $pm['percentage'] ?>%;">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -86,6 +86,10 @@
             include 'pages/report.php';
         break;
 
+        case 'building_report':
+            include 'pages/building_wise_report.php';    
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;

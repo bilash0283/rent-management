@@ -82,6 +82,7 @@ while($row = mysqli_fetch_assoc($result)) {
                     <ul class="nxl-submenu">
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=report&report_type=monthly">Monthly</a></li>
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=report&report_type=yearly">Yearly</a></li>
+                        <li class="nxl-item"><a class="nxl-link" href="admin.php?page=building_report&building_id=<?= htmlspecialchars($id) ?>">Building Wise</a></li>
                     </ul>
                 </li>
 
