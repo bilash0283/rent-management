@@ -5,11 +5,8 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
     exit;
 }
 
-// $building_id = mysqli_real_escape_string($db, $_GET['id']);
-// $this_month = date('Y-m');   // Make sure this matches your billing_month format
-
-$this_month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
-$building_id  = isset($_GET['id'])  ? (int)$_GET['id']  : 0;
+$building_id = mysqli_real_escape_string($db, $_GET['id']);
+$this_month = date('Y-m');   // Make sure this matches your billing_month format
 
 // Fetch Building Name
 $buil_sql = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_id'");
@@ -53,9 +50,6 @@ $total_unit = mysqli_num_rows($result);
         </div>
 
         <form method="GET" class="d-flex flex-wrap gap-2 align-items-center">
-            <input type="hidden" name="page" value="manager_account" hidden>
-            <input type="hidden" name="id" value="<?= htmlspecialchars($building_id) ?>" hidden>
-
             <div class="input-group input-group-sm shadow-sm" style="width: 160px;">
                 <span class="input-group-text bg-white border-end-0"><i class="far fa-calendar-check text-muted"></i></span>
                 <select name="month" class="form-select border-start-0 ps-0 fw-medium">
