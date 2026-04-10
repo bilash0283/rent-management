@@ -307,7 +307,7 @@ $total_unit = mysqli_num_rows($result);
                                 <!-- Manager Payment Info -->
                                 <td>
                                     <?php if (mysqli_num_rows($history_sql) == 0): ?>
-                                        <small class="text-muted">No Manager Payment</small>
+                                        <small class="text-danger">No Manager Payment !</small>
                                     <?php else: ?>
                                         <small class="text-success fw-bold"><?= htmlspecialchars($pay_method) ?></small><br>
 
