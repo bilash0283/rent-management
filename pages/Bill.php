@@ -116,7 +116,7 @@
                                         <?php 
                                             if(!empty($rent)){ ?>
                                                 <span class="fw-semibold text-primary">
-                                            Rent = ৳ <?= number_format($rent, 2) ?? '' ?>
+                                            Rent = ৳ <?= number_format($rent, 0) ?? '' ?>
                                             </span><br>
                                         <?php } ?> 
 
@@ -146,44 +146,44 @@
                                                 <?php 
                                                     if(!empty($Water)){ ?>
                                                         <span class="fw-semibold text-primary">
-                                                    Water = <small>৳ </small> <?= number_format($Water, 2) ?? '' ?>
+                                                    Water = <small>৳ </small> <?= number_format($Water, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?> 
 
                                                 <?php 
                                                     if(!empty($Gas)){ ?>
                                                         <span class="fw-semibold text-primary">
-                                                    Gas = <small>৳ </small> <?= number_format($Gas, 2) ?? '' ?>
+                                                    Gas = <small>৳ </small> <?= number_format($Gas, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?> 
 
                                                 <?php 
                                                     if(!empty($Electricity)){ ?>
                                                         <span class="fw-semibold text-primary">
-                                                    Electricity = <small>৳ </small> <?= number_format($Electricity, 2) ?? '' ?>
+                                                    Electricity = <small>৳ </small> <?= number_format($Electricity, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?>
 
                                                 <?php 
                                                     if(!empty($Others)){ ?>
                                                         <span class="fw-semibold text-primary">
-                                                    Others = <small>৳ </small> <?= number_format($Others, 2) ?? '' ?>
+                                                    Others = <small>৳ </small> <?= number_format($Others, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?>
 
                                                 <span class="fw-semibold text-primary">
-                                                    Total = <small>৳ </small> <?= number_format($total_bill, 2) ?? '' ?>
+                                                    Total = <small>৳ </small> <?= number_format($total_bill, 0) ?? '' ?>
                                                 </span><br>
 
                                                 <?php if (!empty($paid_amount_db)) { ?>
                                                     <span class="fw-semibold text-success">
-                                                        Paid = <small>৳ </small> <?= number_format($paid_amount_db, 2) ?? '' ?>
+                                                        Paid = <small>৳ </small> <?= number_format($paid_amount_db, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?>
 
                                                 <?php if (!empty($due_amount_db)) { ?>
                                                     <span class="fw-semibold text-danger">
-                                                        Due = <small>৳ </small> <?= number_format($due_amount_db, 2) ?? '' ?>
+                                                        Due = <small>৳ </small> <?= number_format($due_amount_db, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php }
                                             }
@@ -248,11 +248,11 @@
                                                 echo "<small class='text-success fw-bold'>$pay_method_his</small><br>";
 
                                                 if ($manager_self_total > 0) {
-                                                    echo "<small class='text-warning fw-bold'>Manager (Self) Total: " . number_format($manager_self_total, 2) . "</small><br>";
+                                                    echo "<small class='text-warning fw-bold'>Manager (Self) Total: " . number_format($manager_self_total, 0) . "</small><br>";
                                                 }
 
                                                 if ($expense_total > 0) {
-                                                    echo "<small class='text-warning fw-bold'>Expense Total: " . number_format($expense_total, 2) . "</small><br>";
+                                                    echo "<small class='text-warning fw-bold'>Expense Total: " . number_format($expense_total, 0) . "</small><br>";
                                                 }
 
                                                 $data = [
