@@ -47,9 +47,9 @@ FROM invoices WHERE billing_month = '$this_month' ");
 $summary = mysqli_fetch_assoc($result);
 
 // Fallback to 0 if no rows or NULL sums
-$total_bill = number_format($summary['total_bill'] ?? 0, 2);
-$total_paid = number_format($summary['total_paid'] ?? 0, 2);
-$total_due = number_format($summary['total_due'] ?? 0, 2);
+$total_bill = number_format($summary['total_bill'] ?? 0, 0);
+$total_paid = number_format($summary['total_paid'] ?? 0, 0);
+$total_due = number_format($summary['total_due'] ?? 0, 0);
 
 // Optional: also get total number of invoices
 $count_result = mysqli_query($db, "SELECT COUNT(*) AS total_invoices FROM invoices WHERE billing_month = '$this_month' ");
