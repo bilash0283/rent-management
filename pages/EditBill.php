@@ -387,19 +387,19 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                             <div class="mb-2">
                                                 <span class="text-muted">Total Advance:</span>
-                                                <span class="fw-semibold">৳ <?= number_format($advance, 2) ?></span>
+                                                <span class="fw-semibold">৳ <?= number_format($advance, 0) ?></span>
                                             </div>
 
                                             <div class="mb-2">
                                                 <span class="text-muted">Total Paid:</span>
                                                 <span class="fw-semibold text-success">৳
-                                                    <?= number_format($total_paid, 2) ?></span>
+                                                    <?= number_format($total_paid, 0) ?></span>
                                             </div>
 
                                             <div class="mb-3">
                                                 <span class="text-muted">Remaining Payable:</span>
                                                 <span class="fw-bold text-danger">৳
-                                                    <?= number_format($payable, 2) ?></span>
+                                                    <?= number_format($payable, 0) ?></span>
                                             </div>
 
                                             <hr>
@@ -415,7 +415,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     <small
                                                         class="text-muted"><?= date("d-M-Y h:i A", strtotime($add_pay_date)) ?></small>
                                                     <span class="text-success fw-semibold">৳
-                                                        <?= number_format($add_paid_amount, 2) ?></span>
+                                                        <?= number_format($add_paid_amount, 0) ?></span>
                                                 </div>
                                             <?php endwhile; ?>
 
@@ -501,7 +501,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                         <?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?>
                                                     </td>
                                                     <td class="py-1 text-end">৳
-                                                        <?php echo number_format($rent, 2);
+                                                        <?php echo number_format($rent, 0);
                                                         $total_bill = 0;
                                                         $total_bill += $rent;
                                                         ?>
@@ -516,7 +516,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                             <?php $total_bill += $Gas_db; ?>
                                                         </td>
                                                         <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Gas_db, 2); ?>
+                                                            <?php echo number_format($Gas_db, 0); ?>
                                                         </td>
                                                     </tr>
                                                 <?php } ?>
@@ -530,7 +530,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                             ?>
                                                         </td>
                                                         <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Water_db, 2); ?>
+                                                            <?php echo number_format($Water_db, 0); ?>
                                                         </td>
                                                     </tr>
                                                 <?php } ?>
@@ -545,7 +545,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                             ?>
                                                         </td>
                                                         <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Electricity_db, 2); ?>
+                                                            <?php echo number_format($Electricity_db, 0); ?>
                                                         </td>
                                                     </tr>
                                                 <?php } ?>
@@ -559,7 +559,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                             ?>
                                                         </td>
                                                         <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Others_db, 2); ?>
+                                                            <?php echo number_format($Others_db, 0); ?>
                                                         </td>
                                                     </tr>
                                                 <?php } ?>
@@ -570,7 +570,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     <td class="fw-bold py-2 text-primary">Current Month Total = </td>
                                                     <td></td>
                                                     <td class="fw-bold py-2 text-end text-primary">৳
-                                                        <?= number_format($total_bill, 2) ?>
+                                                        <?= number_format($total_bill, 0) ?>
                                                     </td>
                                                 </tr>
                                             </tfoot>
@@ -588,14 +588,14 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             $total_due += (float) $due;
                                             echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
                                             echo '<span class="text-danger">Due (' . date("M Y", strtotime($month)) . ')</span>';
-                                            echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 2) . '</span>';
+                                            echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 0) . '</span>';
                                             echo '</div>';
                                         }
                                         if ($payable > 0) {
                                             $total_due += $payable;
                                             echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
                                             echo '<span class="text-danger">Advance Due</span>';
-                                            echo '<span class="text-danger fw-semibold">৳ ' . number_format($payable, 2) . '</span>';
+                                            echo '<span class="text-danger fw-semibold">৳ ' . number_format($payable, 0) . '</span>';
                                             echo '</div>';
                                         }
                                         $stmt->close();
@@ -605,7 +605,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             <div class="d-flex justify-content-between border-top mt-1 pt-1">
                                                 <span class="small fw-bold text-primary">Total Amount = </span>
                                                 <span class="small fw-bold text-primary">৳
-                                                    <?= number_format($total_due, 2) ?>
+                                                    <?= number_format($total_due, 0) ?>
                                                 </span>
                                             </div>
                                         <?php endif; ?>
@@ -615,7 +615,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
                                         <span class="h6 mb-0 text-white">Total Payable Amount = </span>
                                         <span class="h5 mb-0 fw-bold text-white">৳
-                                            <?= number_format($total_due, 2) ?>
+                                            <?= number_format($total_due, 0) ?>
                                         </span>
                                     </div>
 
@@ -860,13 +860,13 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <?= date("M Y", strtotime($billing_month_db)) ?>
                                             </td>
                                             <td class="text-end text-primary fw-bold">
-                                                <small>৳</small> <?= number_format($total_amount_db, 2) ?>
+                                                <small>৳</small> <?= number_format($total_amount_db, 0) ?>
                                             </td>
                                             <td class="text-end text-success fw-bold">
-                                                <small>৳</small> <?= number_format($paid_amount_db, 2) ?>
+                                                <small>৳</small> <?= number_format($paid_amount_db, 0) ?>
                                             </td>
                                             <td class="text-end text-danger fw-bold">
-                                                <?php echo $due_amount_db ? '<small>৳</small>' . number_format($due_amount_db, 2) : ''; ?>
+                                                <?php echo $due_amount_db ? '<small>৳</small>' . number_format($due_amount_db, 0) : ''; ?>
                                             </td>
                                             <td class="text-center">
                                                 <?php if ($status == 'Paid'): ?>
@@ -981,15 +981,15 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <?php endif; ?>
                                             </td>
                                             <td class="text-end text-success fw-semibold">
-                                                <?php echo $paid_amount_his ? '<small>৳ </small>' . number_format($paid_amount_his, 2) : ''; ?>
+                                                <?php echo $paid_amount_his ? '<small>৳ </small>' . number_format($paid_amount_his, 0) : ''; ?>
                                             </td>
                                             <td class="text-end fw-semibold">
                                                 <span
-                                                    class="text-primary"><?php echo $total_his ? '<small>৳ </small>' . number_format($total_his, 2) : ''; ?></span><br>
+                                                    class="text-primary"><?php echo $total_his ? '<small>৳ </small>' . number_format($total_his, 0) : ''; ?></span><br>
                                                 <span
-                                                    class="text-success"><?php echo $paid_his ? '<small>৳ </small>' . number_format($paid_his, 2) : ''; ?></span><br>
+                                                    class="text-success"><?php echo $paid_his ? '<small>৳ </small>' . number_format($paid_his, 0) : ''; ?></span><br>
                                                 <span
-                                                    class="text-danger"><?php echo $due_his ? '<small>৳ </small>' . number_format($due_his, 2) : ''; ?></span>
+                                                    class="text-danger"><?php echo $due_his ? '<small>৳ </small>' . number_format($due_his, 0) : ''; ?></span>
                                             </td>
                                             <td>
                                                 <span
