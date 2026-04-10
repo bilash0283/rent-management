@@ -135,7 +135,7 @@ $total_unit = mysqli_num_rows($result);
             <div class="card shadow-sm border-0 bg-primary text-white">
                 <div class="card-body text-center">
                     <h6 class="mb-1 text-white">Total Paid</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format($total_received, 2) ?></h4>
+                    <h4 class="mb-0 text-white">৳ <?= number_format($total_received, 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -143,7 +143,7 @@ $total_unit = mysqli_num_rows($result);
             <div class="card shadow-sm border-0 bg-danger">
                 <div class="card-body text-center">
                     <h6 class="mb-1 text-white">Manager Self</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format($manager_self_total, 2) ?></h4>
+                    <h4 class="mb-0 text-white">৳ <?= number_format($manager_self_total, 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -151,7 +151,7 @@ $total_unit = mysqli_num_rows($result);
             <div class="card shadow-sm border-0 bg-warning text-white">
                 <div class="card-body text-center ">
                     <h6 class="mb-1 text-white">Manager Expense</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format($expense_total, 2) ?></h4>
+                    <h4 class="mb-0 text-white">৳ <?= number_format($expense_total, 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -159,7 +159,7 @@ $total_unit = mysqli_num_rows($result);
             <div class="card shadow-sm border-0 bg-success text-white">
                 <div class="card-body text-center">
                     <h6 class="mb-1 text-white">Manager Paid</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format(max($manager_net_paid, 0), 2) ?></h4>
+                    <h4 class="mb-0 text-white">৳ <?= number_format(max($manager_net_paid, 0), 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -282,17 +282,17 @@ $total_unit = mysqli_num_rows($result);
                                 <td>
                                     <?php if ($advance_due > 0): ?>
                                         <span class="text-danger fw-bold">Advance Due: ৳
-                                            <?= number_format($advance_due, 2) ?></span><br>
+                                            <?= number_format($advance_due, 0) ?></span><br>
                                     <?php endif; ?>
 
-                                    <strong>Total = ৳ <?= number_format($total_bill, 2) ?></strong><br>
+                                    <strong>Total = ৳ <?= number_format($total_bill, 0) ?></strong><br>
 
                                     <?php if ($paid_amount_db > 0): ?>
                                         <span class="text-success fw-bold">Paid = ৳
-                                            <?= number_format($paid_amount_db, 2) ?></span><br>
+                                            <?= number_format($paid_amount_db, 0) ?></span><br>
                                     <?php endif; ?>
                                     <?php if ($due_amount_db > 0): ?>
-                                        <span class="text-danger fw-bold">Due = ৳ <?= number_format($due_amount_db, 2) ?></span>
+                                        <span class="text-danger fw-bold">Due = ৳ <?= number_format($due_amount_db, 0) ?></span>
                                     <?php endif; ?>
                                 </td>
 
@@ -313,16 +313,16 @@ $total_unit = mysqli_num_rows($result);
 
                                         <?php if ($manager_self > 0): ?>
                                             <small class="text-warning fw-bold">Self: ৳
-                                                <?= number_format($manager_self, 2) ?></small><br>
+                                                <?= number_format($manager_self, 0) ?></small><br>
                                         <?php endif; ?>
 
                                         <?php if ($expense > 0): ?>
                                             <small class="text-danger fw-bold">Expense: ৳
-                                                <?= number_format($expense, 2) ?></small><br>
+                                                <?= number_format($expense, 0) ?></small><br>
                                         <?php endif; ?>
 
                                         <strong class="text-primary">Manager Paid: ৳
-                                            <?= number_format(max($manager_paid ?? 0, 0), 2) ?></strong>
+                                            <?= number_format(max($manager_paid ?? 0, 0), 0) ?></strong>
                                     <?php endif; ?>
                                 </td>
 
