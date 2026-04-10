@@ -231,7 +231,7 @@
                                 <?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?>
                             </td>
                             <td class="py-1 text-end">৳
-                                <?php echo number_format($rent, 2);
+                                <?php echo number_format($rent, 0);
                                 $total_bill = 0;
                                 $total_bill += $rent;
                                 ?>
@@ -246,7 +246,7 @@
                                     <?php $total_bill += $Gas_db; ?>
                                 </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Gas_db, 2); ?>
+                                    <?php echo number_format($Gas_db, 0); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -260,7 +260,7 @@
                                     ?>
                                 </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Water_db, 2); ?>
+                                    <?php echo number_format($Water_db, 0); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -275,7 +275,7 @@
                                     ?>
                                 </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Electricity_db, 2); ?>
+                                    <?php echo number_format($Electricity_db, 0); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -289,7 +289,7 @@
                                     ?>
                                 </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Others_db, 2); ?>
+                                    <?php echo number_format($Others_db, 0); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -301,7 +301,7 @@
                             <td class="fw-bold py-2 text-primary">Current Month Total = </td>
                             <td></td>
                             <td class="fw-bold py-2 text-end text-primary">৳
-                                <?= number_format($total_bill, 2) ?>
+                                <?= number_format($total_bill, 0) ?>
                             </td>
                         </tr>
                     </tfoot>
@@ -319,14 +319,14 @@
                     $total_due += (float) $due;
                     echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
                     echo '<span class="text-danger">Due (' . date("M Y", strtotime($month)) . ')</span>';
-                    echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 2) . '</span>';
+                    echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 0) . '</span>';
                     echo '</div>';
                 }
                 if ($payable > 0) {
                     $total_due += $payable;
                     echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
                     echo '<span class="text-danger">Advance Due</span>';
-                    echo '<span class="text-danger fw-semibold">৳ ' . number_format($payable, 2) . '</span>';
+                    echo '<span class="text-danger fw-semibold">৳ ' . number_format($payable, 0) . '</span>';
                     echo '</div>';
                 }
                 $stmt->close();
@@ -336,7 +336,7 @@
                     <div class="d-flex justify-content-between border-top mt-1 pt-1">
                         <span class="small fw-bold text-primary">Total Amount = </span>
                         <span class="small fw-bold text-primary">৳
-                            <?= number_format($total_due, 2) ?>
+                            <?= number_format($total_due, 0) ?>
                         </span>
                     </div>
                 <?php endif; ?>
@@ -346,7 +346,7 @@
                 class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
                 <span class="h6 mb-0 text-white">Total Payable Amount = </span>
                 <span class="h5 mb-0 fw-bold text-white">৳
-                    <?= number_format($total_due, 2) ?>
+                    <?= number_format($total_due, 0) ?>
                 </span>
             </div>
 
