@@ -140,7 +140,7 @@ $total_unit = mysqli_num_rows($result);
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-warning">
+            <div class="card shadow-sm border-0 bg-danger">
                 <div class="card-body text-center">
                     <h6 class="mb-1 text-white">Manager Self</h6>
                     <h4 class="mb-0 text-white">৳ <?= number_format($manager_self_total, 2) ?></h4>
@@ -148,7 +148,7 @@ $total_unit = mysqli_num_rows($result);
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-danger text-white">
+            <div class="card shadow-sm border-0 bg-warning text-white">
                 <div class="card-body text-center ">
                     <h6 class="mb-1 text-white">Manager Expense</h6>
                     <h4 class="mb-0 text-white">৳ <?= number_format($expense_total, 2) ?></h4>
@@ -158,7 +158,7 @@ $total_unit = mysqli_num_rows($result);
         <div class="col-md-3">
             <div class="card shadow-sm border-0 bg-success text-white">
                 <div class="card-body text-center">
-                    <h6 class="mb-1 text-white">Manager Net Paid</h6>
+                    <h6 class="mb-1 text-white">Manager Paid</h6>
                     <h4 class="mb-0 text-white">৳ <?= number_format(max($manager_net_paid, 0), 2) ?></h4>
                 </div>
             </div>

@@ -232,36 +232,38 @@ $history_sql = mysqli_query($db, "
 
                 <!-- ==================== PAYMENT METHOD RATIO ==================== -->
                 <h5 class="mb-3">Payment Method Wise Ratio</h5>
-                <div class="table-responsive mb-5">
-                    <table class="table table-striped table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Payment Method</th>
-                                <th class="text-end">Amount</th>
-                                <th class="text-end">Percentage</th>
-                                <th>Ratio</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($payment_methods)): ?>
-                                <tr><td colspan="4" class="text-center text-muted py-4">No payment data found for this period.</td></tr>
-                            <?php else: ?>
-                                <?php foreach ($payment_methods as $pm): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($pm['method']) ?></td>
-                                    <td class="text-end fw-bold"><?= number_format($pm['amount'], 2) ?></td>
-                                    <td class="text-end"><?= $pm['percentage'] ?>%</td>
-                                    <td style="width: 40%;">
-                                        <div class="progress" style="height: 18px;">
-                                            <div class="progress-bar bg-success" style="width: <?= $pm['percentage'] ?>%;">
+                <div class="list-group">
+                    <?php if (empty($payment_methods)): ?>
+                        <div class="list-group-item text-center text-muted py-4">
+                            No payment data found for this period.
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($payment_methods as $pm): ?>
+                            <div class="list-group-item list-group-item-action border-0 px-3 py-3 mb-2 bg-white shadow-sm rounded-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <!-- Method Name -->
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-semibold"><?= htmlspecialchars($pm['method']) ?></h6>
+                                        <div class="progress" style="height: 9px; background-color: #f0f0f0;">
+                                            <div class="progress-bar bg-success" 
+                                                style="width: <?= $pm['percentage'] ?>%;">
                                             </div>
                                         </div>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                                    </div>
+                                    
+                                    <!-- Amount & Percentage -->
+                                    <div class="text-end ms-3">
+                                        <div class="fw-bold text-dark mb-1">
+                                            ৳ <?= number_format($pm['amount'], 2) ?>
+                                        </div>
+                                        <span class="badge bg-success rounded-pill px-2 py-1">
+                                            <?= $pm['percentage'] ?>%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
 
             </div>
