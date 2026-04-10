@@ -1,6 +1,4 @@
 <?php
-// ==================== INITIAL SETUP ====================
-
 // Default values
 $building_id = '';
 $this_month = date('Y-m');   // Current month in YYYY-MM format
@@ -72,11 +70,11 @@ $total_unit = mysqli_num_rows($result);
                 <select name="month" class="form-select border-start-0 ps-0 fw-medium">
                     <?php 
                     $currentYear = date('Y');
-                    $selectedMonth = (int)substr($this_month, 5, 2); // Get month from $this_month
+                    $selectedMonth = (int)substr($this_month, 5, 2);
                     
                     for ($m = 1; $m <= 12; $m++): 
                         $monthValue = $currentYear . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
-                        $displayText = date('F Y', mktime(0, 0, 0, $m, 1, $currentYear));
+                        $displayText = date('F', mktime(0, 0, 0, $m, 1, $currentYear)); // শুধু month
                     ?>
                         <option value="<?= $monthValue ?>" <?= $m == $selectedMonth ? 'selected' : '' ?>>
                             <?= $displayText ?>
