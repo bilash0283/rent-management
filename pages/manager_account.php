@@ -299,7 +299,7 @@ $total_unit = mysqli_num_rows($result);
                                 <!-- Status -->
                                 <td>
                                     <button
-                                        class="btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : 'primary') ?>">
+                                        class="btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : ($status == 'Unpaid' ? 'danger' : 'primary')) ?>">
                                         <?= htmlspecialchars($status) ?>
                                     </button>
                                 </td>
