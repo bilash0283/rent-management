@@ -125,7 +125,6 @@ if (isset($_POST['save_bill'])) {
                             </option>
                             <option value="Bank Transfer" <?= ($manager_payment_method == 'Bank Transfer') ? 'selected' : '' ?>>Bank Transfer</option>
                             <option value="Card" <?= ($manager_payment_method == 'Card') ? 'selected' : '' ?>>Card</option>
-
                         </select>
                     </div>
                 </div>
