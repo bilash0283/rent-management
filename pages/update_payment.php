@@ -104,7 +104,7 @@ if (isset($_POST['save_bill'])) {
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label>Manager Payable Amount</label>
-                        <input type="number" name="manager_payment" id="manager_payment" class="form-control"
+                        <input type="text" name="manager_payment" id="manager_payment" class="form-control"
                             step="0.01" value="<?= $manager_self ?? 0 ?>">
                     </div>
                     <div class="col-md-6">
@@ -132,7 +132,7 @@ if (isset($_POST['save_bill'])) {
                 <div class="row g-3 mt-3">
                     <div class="col-md-6">
                         <label>Expense Amount</label>
-                        <input type="number" name="expense" class="form-control" step="0.01" value="<?= $expense ?>">
+                        <input type="text" name="expense" class="form-control"  value="<?= $expense ?>">
                     </div>
                     <div class="col-md-6">
                         <label>Expense Note</label>

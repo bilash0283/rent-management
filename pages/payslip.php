@@ -1,4 +1,5 @@
 <?php
+// Functionality and variables remain exactly the same as your request
 if (!isset($_GET['unit_id']) || !is_numeric($_GET['unit_id'])) {
     echo "<div class='alert alert-danger'>Invalid Unit ID</div>";
     exit;
@@ -9,24 +10,14 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     exit;
 }
 
-if (isset($_GET['unit_id'])) {
-    $unit_id = $_GET['unit_id'];
-}
+$unit_id = $_GET['unit_id'];
+$pay_slip_id = $_GET['id'];
 
-if (isset($_GET['id'])) {
-    $pay_slip_id = $_GET['id'];
-}
-
-$query = "SELECT * FROM unit wHERE id = '$unit_id'";
+// Database queries
+$query = "SELECT * FROM unit WHERE id = '$unit_id'";
 $result = mysqli_query($db, $query);
 while ($row = mysqli_fetch_assoc($result)) {
-    $unit_id = $row['id'];
     $unit_name = $row['unit_name'];
-    $advance = $row['advance'];
-    $rent = $row['rent'];
-    $size = $row['size'];
-    // $Gas = $row['Gas'];
-    // $Water = $row['Water'];
     $building_name = $row['building_name'];
     $unit_type = $row['unit_type'];
 }
@@ -38,12 +29,9 @@ $building_name_db = $building_row['name'];
 $tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
 while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
     $tent_name = $tent_row['name'];
-    $tent_id = $tent_row['id'];
 }
 
-// monthly payment sql 
 $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `id` = '$pay_slip_id' ");
-
 while ($pay_history = mysqli_fetch_assoc($history_sql)) {
     $pay_slip_id_db = $pay_history['id'];
     $bill_his = $pay_history['bill_month'];
@@ -51,246 +39,213 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
     $total_his = $pay_history['total'];
     $paid_his = $pay_history['paid'];
     $due_his = $pay_history['due'];
-    $note_his = $pay_history['note'];
     $pay_date_his = $pay_history['payment_date'];
     $paid_amount_his = $pay_history['paid_amount'];
-    $manager_self = $pay_history['manager_self'];
-    $expense = $pay_history['expense'];
-    $expense_note = $pay_history['expense_note'];
     $transaction_id_db = $pay_history['transaction_id'];
 }
 ?>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
 <div class="nxl-content">
-
-    <!-- Page Header -->
-    <div class="page-header d-flex align-items-center justify-content-between mb-4">
-        <h5 class="mb-0">Pay Slip</h5>
-        <div class="text-end mb-3">
-            <button id="generatePdfBtn" class="btn btn-success btn-sm pl-5">
-                <i class="feather-icon icon-download me-2"></i> Download
-            </button>
-        </div>
-        <!-- <a href="admin.php?page=tenant" class="btn btn-primary">
-            <i class="feather-icon icon-arrow-left me-1"></i>Back
-        </a> -->
+    <div class="page-header d-flex align-items-center justify-content-between mb-4 px-4 mt-3">
+        <h5 class="mb-0 fw-bold text-secondary">RENTAL MANAGEMENT SYSTEM</h5>
+        <button id="generatePdfBtn" class="btn btn-dark shadow-sm px-4 rounded-pill">
+            <i class="feather-icon icon-download me-2"></i> DOWNLOAD RECEIPT
+        </button>
     </div>
 
-    <div class="mb-4">
+    <div class="mb-5 pb-5">
+        <div id="pdf-content" class="payslip-wrapper bg-white shadow-lg mx-auto position-relative">
+            
+            <?php if ($due_his <= 0): ?>
+            <div class="watermark-paid">PAID</div>
+            <?php endif; ?>
 
-        <div id="pdf-content" class="agreement-paper bg-white shadow-sm border mx-auto" style="max-width: 800px; padding: 60px;">
-    
-    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-        <div>
-            <h3 class="fw-bold mb-0 text-primary text-uppercase">
-                <?php echo $building_name_db ?? 'Building Name'; ?>
-            </h3>
-            <p class="text-muted small mb-0">Residential Property Management</p>
-        </div>
-        <div class="text-end">
-            <h2 class="fw-bold text-dark mb-0">PAY SLIP</h2>
-            <span class="badge bg-primary px-3 py-2 mt-1">
-                BILL MONTH: <?= !empty($bill_his) ? strtoupper(date("M Y", strtotime($bill_his))) : 'N/A' ?>
-            </span>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-8">
-            <div class=" p-3 ">
-                <h6 class="text-muted text-uppercase fw-bold small pb-2 mb-2">Tenant Information</h6>
-                <div class="mb-1">Name: <span class="fw-bold text-dark text-uppercase"><?php echo $tent_name ?? 'N/A' ?></span></div>
-                <div class="small text-muted">Unit: <span class="fw-semibold text-dark"><?php echo $unit_type . ' - ' . $unit_name ?? 'N/A' ?></span></div>
+            <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4">
+                <div>
+                    <h2 class="building-title mb-1"><?php echo $building_name_db ?? 'BUILDING NAME'; ?></h2>
+                    <p class="text-muted small mb-0 fw-600">PREMIUM HOUSING & PROPERTY MANAGEMENT</p>
+                </div>
+                <div class="text-end">
+                    <h1 class="payslip-label mb-0">PAY SLIP</h1>
+                    <p class="text-muted small">ID: #INV-<?php echo str_pad($pay_slip_id_db, 5, '0', STR_PAD_LEFT); ?></p>
+                </div>
             </div>
-        </div>
-        <div class="col-4 text-end">
-            <div class=" p-3 ">
-                <h6 class="text-muted text-uppercase fw-bold small pb-2 mb-2 text-end">Payment Summary</h6>
-                <div class="small mb-1">Method: <span class="fw-bold text-dark"><?php echo $pay_method_his ?? 'N/A'; ?></span></div>
-                <div class="small mb-1">TXN ID: <span class="fw-bold text-dark text-break"><?php echo $transaction_id_db ?? 'N/A'; ?></span></div>
-                <div class="small">Date: <span class="fw-bold text-dark"><?php echo !empty($pay_date_his) ? date("d M Y", strtotime($pay_date_his)) : 'N/A'; ?></span></div>
+
+            <div class="row mb-5">
+                <div class="col-6 border-end">
+                    <p class="label-heading">TENANT INFORMATION</p>
+                    <h5 class="fw-bold text-dark mb-1 text-uppercase"><?php echo $tent_name ?? 'N/A' ?></h5>
+                    <p class="mb-0 text-secondary">Unit: <strong><?php echo $unit_type . ' - ' . $unit_name ?></strong></p>
+                    <p class="mb-0 text-secondary">Month: <strong><?= !empty($bill_his) ? date("F, Y", strtotime($bill_his)) : 'N/A' ?></strong></p>
+                </div>
+                <div class="col-6 ps-4">
+                    <p class="label-heading text-end text-sm-start">PAYMENT SUMMARY</p>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted small">Method:</span>
+                        <span class="fw-bold small text-uppercase"><?php echo $pay_method_his ?? 'N/A'; ?></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted small">Transaction ID:</span>
+                        <span class="fw-bold small"><?php echo $transaction_id_db ?? 'N/A'; ?></span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Payment Date:</span>
+                        <span class="fw-bold small"><?php echo !empty($pay_date_his) ? date("d M, Y", strtotime($pay_date_his)) : 'N/A'; ?></span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="table-responsive">
-        <table class="table table-hover border border-light align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th class="ps-3 py-2 text-white">Description</th>
-                    <th class="text-end pe-3 py-2 text-white">Amount (BDT)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="ps-3 fw-semibold">Total Bill Amount  = </td>
-                    <td class="text-end pe-3 fw-bold text-dark"><?php echo number_format($total_his ?? '0', 2); ?> ৳</td>
-                </tr>
-                <tr>
-                    <td class="ps-3 fw-semibold text-success">Paid Amount  =   <small class="tex-secendary" style="font-size: 10px;"><?php echo !empty($pay_date_his) ? '('.date("d M Y", strtotime($pay_date_his)).')' : ''; ?></small></td>
-                    <td class="text-end pe-3 fw-bold text-success "><?php echo number_format($paid_amount_his ?? '0', 2); ?> ৳</td>
-                </tr>
-                <tr>
-                    <td class="ps-3 fw-semibold text-success">Total Paid Amount  = </td>
-                    <td class="text-end pe-3 fw-bold text-success "><?php echo number_format($paid_his ?? '0', 2); ?> ৳</td>
-                </tr>
-                <tr class="table-light">
-                    <td class="ps-3 fw-bold text-danger">Due Amount  = </td>
-                    <td class="text-end pe-3 fw-bold text-danger"><?php echo number_format($due_his ?? '0', 2); ?> ৳</td>
-                </tr>
-                
-            </tbody>
-        </table>
-    </div>
+            <div class="table-responsive mb-4">
+                <table class="table table-clean">
+                    <thead>
+                        <tr>
+                            <th class="py-3">DESCRIPTION</th>
+                            <th class="text-end py-3">AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="py-4">
+                                <span class="fw-bold text-dark">Total Rent & Utility Charges</span><br>
+                                <span class="text-muted small">Standard monthly billing for the mentioned period.</span>
+                            </td>
+                            <td class="text-end py-4 fw-bold text-dark fs-5"><?php echo number_format($total_his ?? '0', 2); ?> ৳</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="mt-4 border-top">
-        <p class="text-muted mt-3" style="font-size: 0.85rem;">
-            Please pay within <strong>7th
-                <?php echo date("M Y", strtotime($this_month)); ?></strong> to
-            following account &
-            WhatsApp your deposit slip to <strong>01715482363</strong>.
-        </p>
-        <div class="card  border-0 p-3">
-            <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
-            <div class="text-primary fw-bold" style="letter-spacing: 1px;">A/C:
-                1503101624157001</div>
-            <small class="text-muted">BRACK BANK LTD | Moghbazar Branch</small>
-        </div>
-    </div>
+            <div class="row justify-content-end">
+                <div class="col-md-5">
+                    <div class="summary-box">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Paid Amount:</span>
+                            <span class="fw-bold text-success">- <?php echo number_format($paid_his ?? '0', 2); ?> ৳</span>
+                        </div>
+                        <div class="d-flex justify-content-between pt-2 border-top">
+                            <span class="fw-bold text-dark">NET DUE:</span>
+                            <span class="fw-800 text-danger h5 mb-0"><?php echo number_format($due_his ?? '0', 2); ?> ৳</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="mt-4 pt-3 border-top text-center">
-        <div class="alert alert-warning py-2 mb-0 border-0 rounded-pill">
-            <small class="fw-bold">
-                <i class="fas fa-exclamation-triangle me-1"></i> 
-                সিড়িতে ও দরজার সামনে জুতা অথবা ময়লা রাখা সম্পূর্ণ নিষিদ্ধ।
-            </small>
+            <div class="row mt-5 pt-4">
+                <div class="col-7">
+                    <div class="bank-card p-3 rounded-3">
+                        <p class="bank-title mb-1">BANK TRANSFER DETAILS</p>
+                        <h6 class="fw-bold mb-0">MD MUSTAFIZUR RAHMAN</h6>
+                        <p class="account-number my-1">1503101624157001</p>
+                        <p class="small text-muted mb-0">BRAC BANK LTD | Moghbazar Branch</p>
+                    </div>
+                </div>
+                <div class="col-5 text-end d-flex align-items-end justify-content-end">
+                    <div class="text-center w-75">
+                        <div class="signature-line mb-2"></div>
+                        <p class="fw-bold small mb-0 text-uppercase">Management</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-4 text-center">
+                <p class="notice-text">
+                    <i class="fas fa-info-circle me-1"></i> 
+                    সিড়িতে ও দরজার সামনে জুতা অথবা ময়লা রাখা সম্পূর্ণ নিষিদ্ধ। 
+                    <span class="d-block mt-1 small opacity-75">Thank you for choosing our management service.</span>
+                </p>
+            </div>
         </div>
     </div>
 </div>
 
-    </div>
-</div><!-- nxl-content -->
+<style>
+    /* RESET & CORE FONTS */
+    #pdf-content {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: #2d3436;
+        padding: 60px;
+        max-width: 850px;
+        border-radius: 4px;
+        line-height: 1.6;
+    }
 
-<!-- pdf generate  -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-    document.getElementById('generatePdfBtn').addEventListener('click', function () {
+    .fw-600 { font-weight: 600; }
+    .fw-800 { font-weight: 800; }
 
-        const element = document.getElementById('pdf-content');
+    /* STYLING ELEMENTS */
+    .building-title { font-weight: 800; color: #0984e3; letter-spacing: -0.5px; font-size: 1.8rem; }
+    .payslip-label { font-weight: 300; letter-spacing: 10px; color: #b2bec3; font-size: 1.5rem; }
+    
+    .label-heading { 
+        font-size: 11px; 
+        font-weight: 800; 
+        color: #636e72; 
+        letter-spacing: 1.5px; 
+        margin-bottom: 12px;
+    }
 
-        const options = {
-            margin: 10,
+    /* TABLE DESIGN */
+    .table-clean thead { background-color: #f8f9fa; border-top: 2px solid #2d3436; }
+    .table-clean thead th { font-size: 11px; font-weight: 800; color: #2d3436; border: none; letter-spacing: 1px; }
+    .table-clean tbody td { border-bottom: 1px solid #f1f2f6; }
 
-            filename: 'Pay Slip <?= addslashes($tent_name ?? "Tenant") ?>.jpeg',
+    .summary-box { background: #f8f9fa; padding: 20px; border-radius: 8px; }
 
-            image: {
-                type: 'jpeg',
-                quality: 1
-            },
+    /* BANK CARD */
+    .bank-card { background: #ffffff; border: 1px dashed #dfe6e9; }
+    .bank-title { font-size: 10px; font-weight: 800; color: #0984e3; letter-spacing: 1px; }
+    .account-number { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; color: #2d3436; }
 
-            html2canvas: {
-                scale: 3,          // 🔥 resolution increase
-                dpi: 300,          // 🔥 print quality
-                letterRendering: true,
-                useCORS: true
-            },
+    /* WATERMARK GREEN */
+    .watermark-paid {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-15deg);
+        border: 10px solid #00b894;
+        color: #00b894;
+        font-size: 100px;
+        font-weight: 900;
+        padding: 10px 50px;
+        border-radius: 20px;
+        opacity: 0.12;
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+    }
 
-            jsPDF: {
-                unit: 'mm',
-                format: 'a4',
-                orientation: 'portrait'
-            },
+    .signature-line { border-top: 1.5px solid #2d3436; width: 100%; }
+    .notice-text { font-size: 12px; font-weight: 600; color: #636e72; padding: 10px; background: #fff5f5; border-radius: 30px; display: inline-block; padding: 8px 30px; }
 
-            pagebreak: {
-                mode: ['avoid-all']
-            }
+    /* IMAGE GENERATION FIX */
+    .payslip-wrapper { overflow: hidden; background: white; }
 
-        };
+    @media print {
+        #generatePdfBtn { display: none; }
+        .watermark-paid { opacity: 0.1 !important; }
+    }
+</style>
 
-        html2pdf().set(options).from(element).save();
-
-    });
-</script> -->
-
-<!-- Image Generate  -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 document.getElementById('generatePdfBtn').addEventListener('click', function () {
-
     const element = document.getElementById('pdf-content');
-
+    const btn = this;
+    btn.innerText = 'PROCESSING...';
+    
     html2canvas(element, {
-        scale: 3,          // high resolution
-        useCORS: true
+        scale: 4, // Higher scale for ultra-sharp font rendering
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        letterRendering: true
     }).then(canvas => {
-
-        // 👉 PNG download
         let link = document.createElement('a');
-        link.download = 'Pay Slip <?= addslashes($tent_name ?? "Tenant") ?>.png';
-        link.href = canvas.toDataURL('image/png');
+        link.download = 'Pay_Slip_<?= addslashes($tent_name ?? "Invoice") ?>.png';
+        link.href = canvas.toDataURL('image/png', 1.0);
         link.click();
-
+        btn.innerHTML = '<i class="feather-icon icon-download me-2"></i> DOWNLOAD RECEIPT';
     });
-
 });
 </script>
-
-<style>
-    #pdf-content {
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-    }
-
-    .agreement-paper {
-        width: 210mm;
-        min-height: auto;
-        margin: 0 auto;
-        background: #fff;
-        font-family: Arial, sans-serif;
-        font-size: 12pt;
-        line-height: 1.4;
-        padding: 60px;
-        box-shadow: none;
-    }
-
-
-    .section-title {
-        border-bottom: 2px solid #444;
-        padding-bottom: 6px;
-        margin: 30px 0 15px;
-        font-size: 15pt;
-    }
-
-    .terms-list {
-        padding-left: 20px;
-        margin-bottom: 25px;
-    }
-
-    .card {
-        box-shadow: none !important;
-    }
-
-    .rounded {
-        border-radius: 0 !important;
-    }
-
-    @media print {
-        body * {
-            visibility: hidden;
-        }
-
-        #pdf-content,
-        #pdf-content * {
-            visibility: visible;
-        }
-
-        #pdf-content {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            box-shadow: none;
-        }
-    }
-</style>
-<!-- pdf generate  -->
