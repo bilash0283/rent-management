@@ -48,17 +48,17 @@
 
                                     <td class="text-end">
                                         <div class="btn-group align-items-center">
-                                            <a href="admin.php?page=edit_expense&id=<?= $row['id']; ?>" 
+                                            <a href="admin.php?page=create_expense&edit_id=<?= $row['id']; ?>" 
                                                class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
 
-                                            <a href="admin.php?page=view_expense&id=<?= $row['id']; ?>" 
+                                            <a href="admin.php?page=view_expense&view_id=<?= $row['id']; ?>" 
                                                class="btn btn-sm btn-outline-success" title="View">
                                                 <i class="bi bi-eye"></i>
                                             </a>
 
-                                            <a href="admin.php?page=delete_expense&id=<?= $row['id']; ?>" 
+                                            <a href="admin.php?page=delete_expense&delete_id=<?= $row['id']; ?>" 
                                                class="btn btn-sm btn-outline-danger"
                                                onclick="return confirm('Are you sure?')"
                                                title="Delete">

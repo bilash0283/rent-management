@@ -98,6 +98,10 @@
             include 'pages/create_expense.php';
         break;
 
+        case 'view_expense':
+            include 'pages/view_expense.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;
