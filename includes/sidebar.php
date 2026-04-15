@@ -91,6 +91,13 @@ while($row = mysqli_fetch_assoc($result)) {
                         <span class="nxl-mtext">Manager Accounts</span>
                     </a>
                 </li>
+
+                <li class="nxl-item">
+                    <a class="nxl-link" href="admin.php?page=Expense">
+                        <span class="nxl-micon"> <i class="feather-pocket"></i></span>
+                        <span class="nxl-mtext">Expense</span>
+                    </a>
+                </li>
                 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
@@ -110,13 +117,6 @@ while($row = mysqli_fetch_assoc($result)) {
                             <a class="nxl-link" href="admin.php?page=users">
                                 <span class="nxl-micon"> <i class="feather-users"></i></span>
                                 <span class="nxl-mtext">Users</span>
-                            </a>
-                        </li>
-
-                        <li class="nxl-item">
-                            <a class="nxl-link" href="admin.php?page=Expense">
-                                <span class="nxl-micon"> <i class="feather-pocket"></i></span>
-                                <span class="nxl-mtext">Expense</span>
                             </a>
                         </li>
 
