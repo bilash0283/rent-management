@@ -94,6 +94,10 @@
             include 'pages/expense.php';
         break;
 
+        case 'create_expense':
+            include 'pages/create_expense.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;
