@@ -114,7 +114,7 @@ while($row = mysqli_fetch_assoc($result)) {
                         </li>
 
                         <li class="nxl-item">
-                            <a class="nxl-link" href="admin.php?page=users">
+                            <a class="nxl-link" href="admin.php?page=Expense">
                                 <span class="nxl-micon"> <i class="feather-pocket"></i></span>
                                 <span class="nxl-mtext">Expense</span>
                             </a>

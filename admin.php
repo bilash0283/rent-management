@@ -90,6 +90,10 @@
             include 'pages/building_wise_report.php';    
         break;
 
+        case 'Expense':
+            include 'pages/expense.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;
