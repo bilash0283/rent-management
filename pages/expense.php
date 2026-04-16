@@ -18,7 +18,6 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
                                 <th>Date</th>
                                 <th>Building</th>
                                 <th>Unit</th>
@@ -35,12 +34,25 @@
                             $expense_sql = mysqli_query($db, "SELECT * FROM `expense` ORDER BY id DESC");
 
                             while ($row = mysqli_fetch_assoc($expense_sql)) {
+                                $building_id = $row['building_id'];
+                                $unit_id = $row['unit_id'];
                                 ?>
                                 <tr>
-                                    <td><?= $row['id']; ?></td>
                                     <td><?= $row['date']; ?></td>
-                                    <td><?= $row['building_id']; ?></td>
-                                    <td><?= $row['unit_id']; ?></td>
+                                    <td>
+                                        <?php
+                                        $building_sql = mysqli_query($db, "SELECT * FROM `building` WHERE id = '$building_id'");
+                                        $building_row = mysqli_fetch_assoc($building_sql);
+                                        echo $building_row['name'];
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $unit_sql = mysqli_query($db, "SELECT * FROM `unit` WHERE id = '$unit_id'");
+                                        $unit_row = mysqli_fetch_assoc($unit_sql);
+                                        echo $unit_row['unit_name'];
+                                        ?>
+                                    </td>
                                     <td><?= $row['expense_for']; ?></td>
                                     <td><?= $row['amount']; ?> ৳</td>
                                     <td><?= $row['expense_method']; ?></td>
