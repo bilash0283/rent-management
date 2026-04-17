@@ -2,6 +2,28 @@
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
         <h5 class="mb-0">Expense</h5>
+        <div class="d-flex justify-between algin-center">
+            <form action="">
+                <div class="input-group">
+                    <select name="building_id" id="building_id" class="form-select">
+                        <option value="">Select Building</option>
+                        <?php
+                        $building_sql = mysqli_query($db, "SELECT * FROM `building`");
+                        while ($building_row = mysqli_fetch_assoc($building_sql)) {
+                            echo "<option value='{$building_row['id']}'>{$building_row['name']}</option>";
+                        }
+                        ?>
+                    </select>
+
+                    <select name="date" id="date" class="form-select">
+                        <option value="">Date</option>
+                        <option value="<?= date('Y-m-d') ?>"><?= date('Y-m-d') ?>Today</option>
+                    </select>
+
+                    <button name="filter" class="btn btn-primary ">Filter</button>
+                </div>
+            </form>
+        </div>
 
         <a href="admin.php?page=create_expense" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create Expense
@@ -12,6 +34,21 @@
     <div class="main-content">
         <div class="card shadow-sm">
             <?= $message ?? '' ?>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card-body">
+                        <h6 class="mb-0">Total Expense</h6>
+                        <h3 class="mb-0">
+                            <?php
+                            $total_expense_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense`");
+                            $total_expense_row = mysqli_fetch_assoc($total_expense_sql);
+                            echo $total_expense_row['total'] ?? 0;
+                            ?> ৳
+                        </h3>
+                    </div>
+                </div>
+            </div>
 
             <div class="card-body p-0">
                 <div class="table-responsive">
