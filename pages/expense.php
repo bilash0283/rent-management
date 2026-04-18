@@ -5,6 +5,7 @@
         <div class="d-flex justify-between algin-center">
             <form action="">
                 <div class="input-group">
+
                     <select name="building_id" id="building_id" class="form-select">
                         <option value="">Select Building</option>
                         <?php
