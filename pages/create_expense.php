@@ -37,7 +37,8 @@ if (isset($_GET['edit_id'])) {
 if (isset($_POST['save_expense'])) {
 
     $id          = $_POST['id'];
-    $date        = $_POST['date'];
+    $date        = date('Y-m-d');
+    $expense_month = date('Y-m', strtotime($_POST['expense_month']));
     $building    = $_POST['building'];
     $unit        = $_POST['unit'];
     $expense_for = mysqli_real_escape_string($db, $_POST['expense_for']);
@@ -51,6 +52,7 @@ if (isset($_POST['save_expense'])) {
         mysqli_query($db, "
             UPDATE expense SET
                 date='$date',
+                expense_month='$expense_month',
                 building_id='$building',
                 unit_id='$unit',
                 expense_for='$expense_for',
@@ -67,9 +69,9 @@ if (isset($_POST['save_expense'])) {
         // INSERT
         mysqli_query($db, "
             INSERT INTO expense
-            (date, building_id, unit_id, expense_for, amount, expense_method, expense_by, description)
+            (date,expense_month, building_id, unit_id, expense_for, amount, expense_method, expense_by, description)
             VALUES
-            ('$date','$building','$unit','$expense_for','$amount','$method','$by','$desc')
+            ('$date','$expense_month','$building','$unit','$expense_for','$amount','$method','$by','$desc')
         ");
 
         $message = "<div class='alert alert-success'>Expense added successfully</div>";
@@ -88,9 +90,9 @@ if (isset($_POST['save_expense'])) {
 
         <!-- Date -->
         <div class="col-md-6">
-            <label>Date</label>
-            <input type="date" name="date" class="form-control"
-                   value="<?= $editData['date'] ?? date('Y-m-d') ?>" required>
+            <label>Expense Month</label>
+            <input type="month" name="expense_month" class="form-control"
+                   value="<?= $editData['expense_month'] ?? date('Y-m') ?>" required>
         </div>
 
         <!-- Building -->
@@ -126,7 +128,7 @@ if (isset($_POST['save_expense'])) {
         <!-- Amount -->
         <div class="col-md-6">
             <label>Amount (৳)</label>
-            <input type="number" step="0.01" name="amount" class="form-control"
+            <input type="text" step="0.01" name="amount" class="form-control"
                    value="<?= $editData['amount'] ?? '' ?>" required>
         </div>
 
@@ -137,6 +139,7 @@ if (isset($_POST['save_expense'])) {
                 <option <?= ($editData['expense_method'] ?? '')=='Cash'?'selected':'' ?>>Cash</option>
                 <option <?= ($editData['expense_method'] ?? '')=='Bank'?'selected':'' ?>>Bank</option>
                 <option <?= ($editData['expense_method'] ?? '')=='Bkash'?'selected':'' ?>>Bkash</option>
+                <option <?= ($editData['expense_method'] ?? '')=='Nagod'?'selected':'' ?>>Nagod</option>
             </select>
         </div>
 
@@ -144,7 +147,7 @@ if (isset($_POST['save_expense'])) {
         <div class="col-md-6">
             <label>Expense By</label>
             <input type="text" name="expense_by" class="form-control"
-                   value="<?= $editData['expense_by'] ?? '' ?>">
+                   value="<?= $editData['expense_by'] ?? '' ?>" placeholder="Manager / Admin">
         </div>
 
         <!-- Description -->

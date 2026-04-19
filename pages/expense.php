@@ -76,7 +76,7 @@
                                 $unit_id = $row['unit_id'];
                                 ?>
                                 <tr>
-                                    <td><?= $row['date']; ?></td>
+                                    <td><?php echo $row['expense_month'] ? date('F Y', strtotime($row['expense_month'])) : date('F Y', strtotime($row['date'])); ?></td>
                                     <td>
                                         <?php
                                         $building_sql = mysqli_query($db, "SELECT * FROM `building` WHERE id = '$building_id'");
