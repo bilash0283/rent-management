@@ -90,8 +90,7 @@
                                         </div>                                        
                                     </td>
 
-                                    <td>
-
+                                    <td style="font-size: 10px; line-height: 1.4;">
                                         <?php
                                         // Total Advance Paid
                                         $total_paid = 0;
@@ -211,70 +210,63 @@
 
                                     <td>
                                         <?php
-                                            $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' AND bill_month = '$this_month' ");
-                                            if (!mysqli_num_rows($history_sql) > 0) {
-                                                echo '<span class="fw-bold text-warning">';
-                                                echo 'Not Found';
-                                                echo '</span>';
-                                            } else {
-                                                $manager_self_total = 0;
-                                                $expense_total = 0;
+                                        $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' AND bill_month = '$this_month' ");
+                                        
+                                        if (mysqli_num_rows($history_sql) == 0) {
+                                            echo '<span class="fw-bold text-warning">Not Found</span>';
+                                        } else {
+                                            $manager_self_total = 0;
+                                            $expense_total = 0;
+                                            
+                                            // তথ্য সংগ্রহের লুপ
+                                            while ($pay_history = mysqli_fetch_assoc($history_sql)) {
+                                                $pay_method_his = $pay_history['payment_method'];
+                                                $expense_note = $pay_history['expense_note'];
+                                                $transaction_id_db = $pay_history['transaction_id'];
+                                                $manager_payment_method = $pay_history['manager_payment_method'];
+                                                $manager_transaction_id = $pay_history['manager_transaction_id'];
+                                                $transaction_date = $pay_history['transaction_date'];
+                                                $transaction_number = $pay_history['transaction_number'];
 
-                                                // প্রথমে লুপ চালিয়ে সব টোটাল বের করে নিবো
-                                                while ($pay_history = mysqli_fetch_assoc($history_sql)) {
-                                                    $bill_his        = $pay_history['bill_month'];
-                                                    $pay_method_his  = $pay_history['payment_method'];
-                                                    $total_his       = $pay_history['total'];
-                                                    $paid_his        = $pay_history['paid'];
-                                                    $due_his         = $pay_history['due'];
-                                                    $note_his        = $pay_history['note'];
-                                                    $pay_date_his    = $pay_history['payment_date'];
-                                                    $paid_amount_his = $pay_history['paid_amount'];
-                                                    $manager_self    = $pay_history['manager_self'];
-                                                    $expense         = $pay_history['expense'];
-                                                    $expense_note    = $pay_history['expense_note'];
+                                                $manager_self_total += (float)$pay_history['manager_self'];  
+                                                $expense_total      += (float)$pay_history['expense'];
+                                            }
 
-                                                    $transaction_id_db = $pay_history['transaction_id'];
-                                                    $manager_payment_method = $pay_history['manager_payment_method'];
-                                                    $manager_transaction_id = $pay_history['manager_transaction_id'];
-                                                    $transaction_date = $pay_history['transaction_date'];
-                                                    $transaction_number = $pay_history['transaction_number'];
+                                            // কন্টেইনার শুরু (গ্যাপ কমানোর জন্য CSS ব্যবহার করা হয়েছে)
+                                            echo '<div style="display: flex; flex-direction: column; line-height: 1.2; gap: 1px;">';
 
-                                                    $manager_self_total += (float)$manager_self;  
-                                                    $expense_total      += (float)$expense;
-                                                    
-                                                }
-
-                                                echo "<small class='text-success fw-bold'>$pay_method_his</small><br>";
+                                                // পেমেন্ট মেথড
+                                                echo "<small class='text-success fw-bold' style='font-size: 11px;'>$pay_method_his</small>";
 
                                                 if ($manager_self_total > 0) {
-                                                    echo "<small class='text-warning fw-bold'>Manager (Self) Total: " . number_format($manager_self_total, 0) . "</small><br>";
+                                                    echo "<small class='text-dark' style='font-size: 9px;'><b>Manager (Self):</b> " . number_format($manager_self_total, 0) . "</small>";
                                                 }
 
                                                 if ($expense_total > 0) {
-                                                    echo "<small class='text-warning fw-bold'>Expense Total: " . number_format($expense_total, 0) . "</small><br>";
+                                                    echo "<small class='text-danger' style='font-size: 9px;'><b>Expense:</b> " . number_format($expense_total, 0) . "</small>";
                                                 }
 
-                                                $data = [
+                                                if (!empty($expense_note)) {
+                                                    echo "<small class='text-muted' style='font-size: 9px; font-style: italic;'>Note: " . htmlspecialchars($expense_note) . "</small>";
+                                                }
+
+                                                // ট্রানজেকশন ডাটা এরে
+                                                $details = [
                                                     ['Txn ID', $transaction_id_db],
-                                                    ['Txn ID', $manager_transaction_id],
-                                                    ['Pay Method', $manager_payment_method],
-                                                    ['Txn Date', $transaction_date],
-                                                    ['Txn Number', $transaction_number]
+                                                    ['M. Txn ID', $manager_transaction_id],
+                                                    ['M. Method', $manager_payment_method],
+                                                    ['Date', $transaction_date],
+                                                    ['Number', $transaction_number]
                                                 ];
 
-                                                foreach ($data as $item) {
-                                                    list($label, $value) = $item;
-
-                                                    if (!empty($value)) {
-                                                        echo '<small style="font-size:8px;" class="text-secondary">
-                                                                ( ' . $label . ' : ' . $value . ' )
-                                                            </small><br>';
+                                                foreach ($details as $detail) {
+                                                    if (!empty($detail[1])) {
+                                                        echo "<small style='font-size: 8.5px; color: #666;'>{$detail[0]}: {$detail[1]}</small>";
                                                     }
                                                 }
 
-                                                echo "</div>";
-                                            }
+                                            echo "</div>"; // কন্টেইনার শেষ
+                                        }
                                         ?> 
                                     </td>
 
