@@ -42,6 +42,14 @@
     $manager_self_total = (float) ($summary['manager_self_total'] ?? 0);
     $manger_expense_total = (float) ($summary['expense_total'] ?? 0);
     $manager_net_paid = $total_received - $manager_self_total - $manger_expense_total;
+
+    // Handle Delete
+    if (isset($_GET['delete_id'])) {
+        $delete_id = (int)$_GET['delete_id'];
+        mysqli_query($db, "DELETE FROM expense WHERE id=$delete_id");
+        header("Location: admin.php?page=Expense&id=" . urlencode($building_id));
+        exit;
+    }
 ?>
     
 
@@ -198,7 +206,7 @@
                                                 <i class="bi bi-eye"></i>
                                             </a> -->
 
-                                            <a href="admin.php?page=delete_expense&delete_id=<?= $row['id']; ?>" 
+                                            <a href="admin.php?page=Expense&id=<?= htmlspecialchars($building_id) ?>&delete_id=<?= $row['id']; ?>" 
                                                class="btn btn-sm btn-outline-danger"
                                                onclick="return confirm('Are you sure?')"
                                                title="Delete">

@@ -217,7 +217,17 @@ $total_unit = mysqli_num_rows($result);
             <div class="card shadow-sm border-0 bg-warning text-white">
                 <div class="card-body text-center">
                     <h6 class="text-white">Total Expense</h6>
-                    <h4 class="text-white">৳ <?= number_format(max($expense_total, 0), 0) ?></h4>
+                    <h4 class="text-white">৳ <?php
+                        // admin payment summary for this building and month
+                        $admin_total_expense_sql = mysqli_query($db, "SELECT SUM(amount) AS total_in_expances FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' ");
+                        $admin_total_expense_row = mysqli_fetch_assoc($admin_total_expense_sql);
+                        $admin_total_expense = $admin_total_expense_row['total_in_expances'] ?? 0;
+
+                        $admin_total_expense = $admin_total_expense_row['total_in_expances'] ?? 0;
+                        $expense_total = $expense_total ?? 0;
+                        $in_total_expanse = $admin_total_expense + $expense_total;
+                        echo number_format(max($in_total_expanse, 0), 0);
+                    ?></h4>
                 </div>
             </div>
         </div>
