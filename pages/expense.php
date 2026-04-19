@@ -57,8 +57,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Date</th>
-                                <th>Building</th>
-                                <th>Unit</th>
+                                <th>Building / Unit</th>
                                 <th>Expense For</th>
                                 <th>Amount</th>
                                 <th>Method</th>
@@ -83,14 +82,16 @@
                                         $building_row = mysqli_fetch_assoc($building_sql);
                                         echo $building_row['name'] ?? 'N/A';
                                         ?>
+                                        <br>
+                                        <small class="text-muted">
+                                            <?php
+                                            $unit_sql = mysqli_query($db, "SELECT * FROM `unit` WHERE id = '$unit_id'");
+                                            $unit_row = mysqli_fetch_assoc($unit_sql);
+                                            echo $unit_row['unit_name'] ?? '';
+                                            ?>
+                                        </small>
                                     </td>
-                                    <td>
-                                        <?php
-                                        $unit_sql = mysqli_query($db, "SELECT * FROM `unit` WHERE id = '$unit_id'");
-                                        $unit_row = mysqli_fetch_assoc($unit_sql);
-                                        echo $unit_row['unit_name'] ?? 'N/A';
-                                        ?>
-                                    </td>
+                                    
                                     <td><?= $row['expense_for'] ?? 'N/A'; ?></td>
                                     <td><?= $row['amount'] ?? 'N/A'; ?> ৳</td>
                                     <td><?= $row['expense_method'] ?? 'N/A'; ?></td>
