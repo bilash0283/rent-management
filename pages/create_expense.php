@@ -111,7 +111,7 @@ if (isset($_POST['save_expense'])) {
         <!-- Unit -->
         <div class="col-md-6">
             <label>Unit</label>
-            <select name="unit" id="unit" class="form-control" required>
+            <select name="unit" id="unit" class="form-control" >
                 <option value="">Select Unit</option>
             </select>
         </div>
