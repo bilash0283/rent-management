@@ -253,8 +253,8 @@
                                                 // ট্রানজেকশন ডাটা এরে
                                                 $details = [
                                                     ['Txn ID', $transaction_id_db],
-                                                    ['M. Txn ID', $manager_transaction_id],
-                                                    ['M. Method', $manager_payment_method],
+                                                    ['Manager. Txn ID', $manager_transaction_id],
+                                                    ['Payment Method', $manager_payment_method],
                                                     ['Date', $transaction_date],
                                                     ['Number', $transaction_number]
                                                 ];
