@@ -61,7 +61,7 @@
     JOIN building b ON u.building_name = b.id
     LEFT JOIN tenants t ON t.unit_id = u.id
     WHERE u.building_name = '$building_id_get'
-    ORDER BY u.unit_name ASC;
+    ;
     ";
     $result = mysqli_query($db, $query);
     $count_row = mysqli_num_rows($result);

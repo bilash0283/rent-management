@@ -2,7 +2,7 @@
     if(isset($_GET['id'])){
         $building_id = $_GET['id'];
           // Fetch all units
-        $query  = "SELECT * FROM unit WHERE building_name = '$building_id' AND status = 'Rented' ORDER BY id DESC";
+        $query  = "SELECT * FROM unit WHERE building_name = '$building_id' AND status = 'Rented' ";
         $result = mysqli_query($db, $query);
         $totla_unit = mysqli_num_rows($result);
         if (!$result) {
