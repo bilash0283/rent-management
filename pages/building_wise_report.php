@@ -32,7 +32,7 @@ $building_name_db = $building_row['name'] ?? 'Unknown Building';
 $query = "SELECT * FROM unit 
           WHERE building_name = '$building_id' 
             AND status = 'Rented' 
-          ORDER BY id DESC";
+         ";
 
 $result = mysqli_query($db, $query);
 $total_unit = mysqli_num_rows($result);
