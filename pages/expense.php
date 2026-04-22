@@ -108,11 +108,10 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Date/Month</th>
-                        <th>Type</th>
-                        <th>Expense For</th>
+                        <th>Date</th>
+                        <th>Particulars of Expense</th>
                         <th>Amount</th>
-                        <th>Method</th>
+                        <th>Payment Method</th>
                         <th>Expense By</th>
                         <th class="text-end">Action</th>
                     </tr>
@@ -124,15 +123,16 @@
                     while ($row = mysqli_fetch_assoc($exp_query)) {
                     ?>
                         <tr>
-                            <td><?= date('F Y', strtotime($row['expense_month'])) ?></td>
-                            <td><span class="badge bg-info">Admin Entry</span></td>
+                            <td><?= date('d M Y', strtotime($row['date'])) ?></td>
                             <td><?= $row['expense_for'] ?></td>
                             <td class="fw-bold"><?= number_format($row['amount'], 0) ?> ৳</td>
                             <td><?= $row['expense_method'] ?></td>
-                            <td><?= $row['expense_by'] ?></td>
+                            <td class="text-success"><?= $row['expense_by'] ?></td>
                             <td class="text-end">
-                                <a href="admin.php?page=create_expense&edit_id=<?= $row['id'] ?>" class="btn btn-sm btn-icon btn-outline-primary"><i class="bi bi-pencil"></i></a>
-                                <a href="admin.php?page=Expense&id=<?= $building_id ?>&delete_id=<?= $row['id'] ?>" class="btn btn-sm btn-icon btn-outline-danger" onclick="return confirm('Delete this record?')"><i class="bi bi-trash"></i></a>
+                                <div class="btn-group ">
+                                    <a href="admin.php?page=create_expense&edit_id=<?= $row['id'] ?>" class="btn btn-sm btn-icon btn-primary"><i class="bi bi-pencil"></i></a>
+                                    <a href="admin.php?page=Expense&id=<?= $building_id ?>&delete_id=<?= $row['id'] ?>" class="btn btn-sm btn-icon btn-danger " onclick="return confirm('Delete this record?')"><i class="bi bi-trash"></i></a>
+                                </div>
                             </td>
                         </tr>
                     <?php } ?>
@@ -150,16 +150,15 @@
                     while ($ph_row = mysqli_fetch_assoc($ph_query)) {
                     ?>
                         <tr class="table-light">
-                            <td><?= date('F Y', strtotime($ph_row['bill_month'])) ?></td>
-                            <td><span class="badge bg-warning text-dark">Manager Deduction</span></td>
+                            <td><?= date('d M Y', strtotime($ph_row['payment_date'])) ?></td>
                             <td>
                                 <?= $ph_row['expense_note'] ?: 'No Note' ?>
                                 <br><small class="text-muted">Tenant: <?= $ph_row['tenant_name'] ?></small>
                             </td>
                             <td class="fw-bold"><?= number_format($ph_row['expense'], 0) ?> ৳</td>
                             <td>Manager</td>
-                            <td>Manager</td>
-                            <td class="text-end text-muted">Fixed</td>
+                            <td class="text-warning">Manager</td>
+                            <td class="text-end text-muted"></td>
                         </tr>
                     <?php } ?>
 
