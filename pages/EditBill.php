@@ -919,18 +919,34 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' ");
+                                    // আপনার ডাটাবেস থেকে পেমেন্ট হিস্ট্রি নিয়ে আসা
+                                    $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' ORDER BY `payment_date` ASC, `id` ASC");
+
+                                    // মাস ভিত্তিক পেইড অ্যামাউন্ট ট্র্যাক করার জন্য একটি অ্যারে
+                                    $monthly_paid_tracker = [];
 
                                     while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                                         $pay_slip_id = $pay_history['id'];
-                                        $bill_his = $pay_history['bill_month'];
+                                        $bill_his = $pay_history['bill_month']; // উদাহরণ: 2026-04
                                         $pay_method_his = $pay_history['payment_method'];
-                                        $total_his = $pay_history['total'];
-                                        $paid_his = $pay_history['paid'];
-                                        $due_his = $pay_history['due'];
+                                        $total_bill_amount = (float)$pay_history['total']; 
+                                        $current_paid_entry = (float)$pay_history['paid_amount'];
+                                        
+                                        // একই মাস এবং একই ইউজারের জন্য আগের পেইড অ্যামাউন্ট হিসাব করা
+                                        if (!isset($monthly_paid_tracker[$bill_his])) {
+                                            $monthly_paid_tracker[$bill_his] = 0;
+                                        }
+                                        
+                                        // রানিং টোটাল আপডেট করা
+                                        $monthly_paid_tracker[$bill_his] += $current_paid_entry;
+                                        
+                                        // বর্তমান সারির জন্য ক্যালকুলেটেড ভ্যালু
+                                        $calculated_total_paid = $monthly_paid_tracker[$bill_his];
+                                        $calculated_due = $total_bill_amount - $calculated_total_paid;
+
+                                        // অন্যান্য ডাটা
                                         $note_his = $pay_history['note'];
                                         $pay_date_his = $pay_history['payment_date'];
-                                        $paid_amount_his = $pay_history['paid_amount'];
                                         $manager_self = $pay_history['manager_self'];
                                         $expense = $pay_history['expense'];
                                         $expense_note = $pay_history['expense_note'];
@@ -939,79 +955,54 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         $manager_transaction_id = $pay_history['manager_transaction_id'];
                                         $transaction_date = $pay_history['transaction_date'];
                                         $transaction_number = $pay_history['transaction_number'];
-
-                                        ?>
+                                    ?>
                                         <tr>
                                             <td class="ps-4 fw-medium">
                                                 <?= date('d M Y', strtotime($pay_date_his)) ?>
                                             </td>
-                                            <td class="text-end fw-semibold f-w-bold text-uppercase text-secendary">
-                                                <?= date(' M Y', strtotime($bill_his)) ?>
+                                            <td class="text-end fw-semibold text-uppercase text-secondary">
+                                                <?= date('M Y', strtotime($bill_his)) ?>
                                             </td>
-                                            <td class="text-end text-secendary fw-semibold">
+                                            <td class="text-end text-secondary fw-semibold">
                                                 <?= $pay_method_his ?><br>
                                                 <?php if (!empty($transaction_id_db)) : ?>
-                                                    <small style="font-size:8px;" class="text-secondary">
-                                                        ( Txn ID : <?= $transaction_id_db ?> )
-                                                    </small><br>
+                                                    <small style="font-size:8px;">( Txn ID : <?= $transaction_id_db ?> )</small><br>
                                                 <?php endif; ?>
-
                                                 <?php if (!empty($manager_transaction_id)) : ?>
-                                                    <small style="font-size:8px;" class="text-secondary">
-                                                        ( Txn ID : <?= $manager_transaction_id ?> )
-                                                    </small><br>
-                                                <?php endif; ?>
-
-                                                <?php if (!empty($manager_payment_method)) : ?>
-                                                    <small style="font-size:8px;" class="text-secondary">
-                                                        ( Pay Method : <?= $manager_payment_method ?> )
-                                                    </small><br>
-                                                <?php endif; ?>
-
-                                                <?php if (!empty($transaction_date)) : ?>
-                                                    <small style="font-size:8px;" class="text-secondary">
-                                                        ( Txn Date : <?= $transaction_date ?> )
-                                                    </small><br>
-                                                <?php endif; ?>
-
-                                                <?php if (!empty($transaction_number)) : ?>
-                                                    <small style="font-size:8px;" class="text-secondary">
-                                                        ( Txn Number : <?= $transaction_number ?> )
-                                                    </small><br>
+                                                    <small style="font-size:8px;">( Mgr Txn : <?= $manager_transaction_id ?> )</small><br>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="text-end text-success fw-semibold">
-                                                <?php echo $paid_amount_his ? '<small>৳ </small>' . number_format($paid_amount_his, 0) : ''; ?>
+                                            <td class="text-end text-success fw-bold">
+                                                <?= $current_paid_entry ? '<small>৳ </small>' . number_format($current_paid_entry, 0) : '0'; ?>
                                             </td>
                                             <td class="text-end fw-semibold">
-                                                <span
-                                                    class="text-primary"><?php echo $total_his ? '<small>৳ </small>' . number_format($total_his, 0) : ''; ?></span><br>
-                                                <span
-                                                    class="text-success"><?php echo $paid_his ? '<small>৳ </small>' . number_format($paid_his, 0) : ''; ?></span><br>
-                                                <span
-                                                    class="text-danger"><?php echo $due_his ? '<small>৳ </small>' . number_format($due_his, 0) : ''; ?></span>
-                                            </td>
-                                            <td>
-                                                <span
-                                                    class="text-danger"><?php echo $manager_self ? '<small> Self : ৳ </small>' . $manager_self : ''; ?>
+                                                <span class="text-primary" title="Total Bill">
+                                                    <small>Total: ৳ </small><?= number_format($total_bill_amount, 0) ?>
+                                                </span><br>
+                                                <span class="text-success" title="Total Paid for this month">
+                                                    <small>Paid: ৳ </small><?= number_format($calculated_total_paid, 0) ?>
+                                                </span><br>
+                                                <span class="text-danger" title="Remaining Due">
+                                                    <small>Due: ৳ </small><?= number_format($calculated_due, 0) ?>
                                                 </span>
                                             </td>
-                                            <td>
-                                                <span
-                                                    class="text-danger"><?php echo $expense ? '<small>৳ </small>' . $expense : ''; ?></span><br>
-                                                <small><?php echo $expense_note ? '(' . $expense_note . ')' : ''; ?></small>
+                                            <td class="text-end">
+                                                <span class="text-danger"><?= $manager_self ? '<small>Self: ৳ </small>' . $manager_self : ''; ?></span>
                                             </td>
-                                            <td class="text-center pe-4">
-                                                <small class="text-secendary"><?= $note_his ?? '' ?></small>
+                                            <td class="text-end">
+                                                <span class="text-danger"><?= $expense ? '<small>৳ </small>' . $expense : ''; ?></span><br>
+                                                <small class="text-muted"><?= $expense_note ? '(' . $expense_note . ')' : ''; ?></small>
                                             </td>
-                                            <td>
+                                            <td class="text-center">
+                                                <small class="text-secondary"><?= $note_his ?? '' ?></small>
+                                            </td>
+                                            <td class="text-center">
                                                 <div class="btn-group">
-                                                    <a href="admin.php?page=payslip&unit_id=<?php echo $unit_id; ?>&id=<?php echo $pay_slip_id; ?>"
-                                                        class="btn btn-sm btn-outline-success " title="view">
+                                                    <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="btn btn-sm btn-outline-success">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>" 
-                                                        class="btn btn-sm btn-info">Edit
+                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>" class="btn btn-sm btn-info">
+                                                        Edit
                                                     </a>
                                                 </div>
                                             </td>
