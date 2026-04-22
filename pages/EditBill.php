@@ -1001,7 +1001,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="btn btn-sm btn-outline-success">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>" class="btn btn-sm btn-info">
+                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="btn btn-sm btn-info">
                                                         Edit
                                                     </a>
                                                 </div>
