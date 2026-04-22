@@ -86,19 +86,19 @@
         <div class="col-md-4">
             <div class="card card-body shadow-sm text-center">
                 <h6 class="text-muted">Admin Expense</h6>
-                <h3 class="mb-0"><?= number_format($admin_total, 2) ?> ৳</h3>
+                <h3 class="mb-0"><?= number_format($admin_total, 0) ?> ৳</h3>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card card-body shadow-sm text-center">
                 <h6 class="text-muted">Manager Expense</h6>
-                <h3 class="mb-0"><?= number_format($manger_expense_total, 2) ?> ৳</h3>
+                <h3 class="mb-0"><?= number_format($manger_expense_total, 0) ?> ৳</h3>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card card-body shadow-sm text-center bg-primary ">
                 <h6 class="text-white">Total Expense</h6>
-                <h3 class="mb-0 text-white"><?= number_format($admin_total + $manger_expense_total, 2) ?> ৳</h3>
+                <h3 class="mb-0 text-white"><?= number_format($admin_total + $manger_expense_total, 0) ?> ৳</h3>
             </div>
         </div>
     </div>
@@ -127,7 +127,7 @@
                             <td><?= date('F Y', strtotime($row['expense_month'])) ?></td>
                             <td><span class="badge bg-info">Admin Entry</span></td>
                             <td><?= $row['expense_for'] ?></td>
-                            <td class="fw-bold"><?= number_format($row['amount'], 2) ?> ৳</td>
+                            <td class="fw-bold"><?= number_format($row['amount'], 0) ?> ৳</td>
                             <td><?= $row['expense_method'] ?></td>
                             <td><?= $row['expense_by'] ?></td>
                             <td class="text-end">
@@ -156,7 +156,7 @@
                                 <?= $ph_row['expense_note'] ?: 'No Note' ?>
                                 <br><small class="text-muted">Tenant: <?= $ph_row['tenant_name'] ?></small>
                             </td>
-                            <td class="fw-bold"><?= number_format($ph_row['expense'], 2) ?> ৳</td>
+                            <td class="fw-bold"><?= number_format($ph_row['expense'], 0) ?> ৳</td>
                             <td>Manager</td>
                             <td>Manager</td>
                             <td class="text-end text-muted">Fixed</td>
