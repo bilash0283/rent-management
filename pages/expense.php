@@ -156,7 +156,7 @@
                                 <br><small class="text-muted">Tenant: <?= $ph_row['tenant_name'] ?></small>
                             </td>
                             <td class="fw-bold"><?= number_format($ph_row['expense'], 0) ?> ৳</td>
-                            <td>Manager</td>
+                            <td>Cash</td>
                             <td class="text-warning">Manager</td>
                             <td class="text-end text-muted"></td>
                         </tr>
