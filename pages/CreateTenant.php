@@ -199,28 +199,28 @@ if (isset($_POST['save_tenant'])) {
 </div>
 
 <script>
-function loadUnits(buildingID, selectedUnit = 0) {
-    $('#unit').html('<option>Loading...</option>');
-    $.post('', {
-        ajax: 'get_units',
-        building_id: buildingID,
-        selected_unit: selectedUnit
-    }, function (data) {
-        $('#unit').html(data);
+    function loadUnits(buildingID, selectedUnit = 0) {
+        $('#unit').html('<option>Loading...</option>');
+        $.post('', {
+            ajax: 'get_units',
+            building_id: buildingID,
+            selected_unit: selectedUnit
+        }, function (data) {
+            $('#unit').html(data);
+        });
+    }
+
+    $('#building').on('change', function () {
+        loadUnits($(this).val());
     });
-}
 
-$('#building').on('change', function () {
-    loadUnits($(this).val());
-});
-
-/* ===== AUTO LOAD UNIT ON EDIT ===== */
-<?php if ($editData): ?>
-$(document).ready(function () {
-    loadUnits(
-        <?= (int)$editData['building_id'] ?>,
-        <?= (int)$editData['unit_id'] ?>
-    );
-});
-<?php endif; ?>
+    /* ===== AUTO LOAD UNIT ON EDIT ===== */
+    <?php if ($editData): ?>
+    $(document).ready(function () {
+        loadUnits(
+            <?= (int)$editData['building_id'] ?>,
+            <?= (int)$editData['unit_id'] ?>
+        );
+    });
+    <?php endif; ?>
 </script>
