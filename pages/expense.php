@@ -124,7 +124,16 @@
                     ?>
                         <tr>
                             <td><?= date('d M Y', strtotime($row['date'])) ?></td>
-                            <td><?= $row['expense_for'] ?></td>
+                            <td>
+                                <?= $row['expense_for'] ?><br>
+                                <?php 
+                                    if(!empty($row['unit_id'])) {
+                                    $unit_info_expense = mysqli_query($db, "SELECT id, unit_name FROM unit WHERE id='{$row['unit_id']}'");
+                                    $unit_row_expanse = mysqli_fetch_assoc($unit_info_expense);
+                                ?>
+                                <small class="text-muted">Unit Name: <?= $unit_row_expanse['unit_name'] ?: ''?></small>
+                                <?php } ?>
+                            </td>
                             <td class="fw-bold"><?= number_format($row['amount'], 0) ?> ৳</td>
                             <td><?= $row['expense_method'] ?></td>
                             <td class="text-success"><?= $row['expense_by'] ?></td>
@@ -140,7 +149,7 @@
                     <?php
                     // 2. Fetch from 'payment_history' table (Manager deductions)
                     $ph_query = mysqli_query($db, "
-                        SELECT ph.*, t.name as tenant_name 
+                        SELECT ph.*, t.unit_id as unit_id 
                         FROM payment_history ph
                         JOIN tenants t ON ph.tenant_id = t.id
                         WHERE t.building_id = '$building_id' 
@@ -152,7 +161,14 @@
                         <tr class="table-light">
                             <td><?= date('d M Y', strtotime($ph_row['payment_date'])) ?></td>
                             <td>
-                                <?= $ph_row['expense_note'] ?: 'No Note' ?>
+                                <?= $ph_row['expense_note'] ?: 'No Note' ?><br>
+                                <?php 
+                                    if(!empty($ph_row['unit_id'])) {
+                                    $unit_info = mysqli_query($db, "SELECT id, unit_name FROM unit WHERE id='{$ph_row['unit_id']}'");
+                                    $unit_row = mysqli_fetch_assoc($unit_info);
+                                ?>
+                                <small class="text-muted">Unit Name: <?= $unit_row['unit_name'] ?: ''?></small>
+                                <?php } ?>
                             </td>
                             <td class="fw-bold"><?= number_format($ph_row['expense'], 0) ?> ৳</td>
                             <td>Cash</td>
