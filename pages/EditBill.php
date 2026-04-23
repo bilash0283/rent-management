@@ -57,9 +57,7 @@ if (isset($_POST['create_invoice'])) {
     $Water_month = $_POST['Water_month'];
     $Electricity_month = $_POST['Electricity_month'];
     $Others_month = $_POST['Others_month'];
-
     $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
-
 
     $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
     while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
@@ -87,8 +85,6 @@ if (isset($_POST['create_invoice'])) {
             WHERE `id` = '$id_db' 
             AND `tenant_id` = '$tent_id'
             ");
-
-        // $bill_history = mysqli_query($db, "INSERT INTO payment_history(`tenant_id`, `bill_month`, `payment_method`, `total`, `paid`, `paid_amount`, `due`, `note`, `payment_date`) VALUES ('$tent_id','$billing_month','$payment_method','$old_total','$update_paid_amount','$paid_amount','$update_due_amount','$note','$payment_date')");
     } else {
         $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
             (
