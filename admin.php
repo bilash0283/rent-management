@@ -102,6 +102,10 @@
             include 'pages/view_expense.php';
         break;
 
+        case 'delete_payment':
+            include 'pages/delete_payment.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;

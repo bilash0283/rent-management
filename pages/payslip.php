@@ -77,8 +77,8 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                 <div class="col-6 border-end">
                     <p class="label-heading">TENANT INFORMATION</p>
                     <h5 class="fw-bold text-dark mb-1 text-uppercase"><?php echo $tent_name ?? 'N/A' ?></h5>
-                    <p class="mb-0 text-secondary">Unit: <strong><?php echo $unit_type . ' - ' . $unit_name ?></strong></p>
-                    <p class="mb-0 text-secondary">Month: <strong><?= !empty($bill_his) ? date("F, Y", strtotime($bill_his)) : 'N/A' ?></strong></p>
+                    <p class="mb-0 text-secondary"><?php echo $unit_type ?? 'Unit ' ?> : <strong><?php echo $unit_name ?? '' ?></strong></p>
+                    <p class="mb-0 text-secondary">Month : <strong><?= !empty($bill_his) ? date("F, Y", strtotime($bill_his)) : 'N/A' ?></strong></p>
                 </div>
                 <div class="col-6 ps-4">
                     <p class="label-heading text-end text-sm-start">PAYMENT SUMMARY</p>
@@ -111,7 +111,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                                 <span class="fw-bold text-dark">Total Rent & Utility Charges</span><br>
                                 <span class="text-muted small">Standard monthly billing for the mentioned period.</span>
                             </td>
-                            <td class="text-end py-4 fw-bold text-dark fs-5"><?php echo number_format($total_his ?? '0', 2); ?> ৳</td>
+                            <td class="text-end py-4 fw-bold text-dark fs-5"><?php echo number_format($total_his ?? '0', 0); ?> ৳</td>
                         </tr>
                     </tbody>
                 </table>
@@ -121,13 +121,15 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                 <div class="col-md-5">
                     <div class="summary-box">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Paid Amount:</span>
-                            <span class="fw-bold text-success">- <?php echo number_format($paid_his ?? '0', 2); ?> ৳</span>
+                            <span class="text-muted">Paid Amount :</span>
+                            <span class="fw-bold text-success"><?php echo number_format($paid_his ?? '0', 0); ?> ৳</span>
                         </div>
-                        <div class="d-flex justify-content-between pt-2 border-top">
-                            <span class="fw-bold text-dark">NET DUE:</span>
-                            <span class="fw-800 text-danger h5 mb-0"><?php echo number_format($due_his ?? '0', 2); ?> ৳</span>
-                        </div>
+                        <?php if ($due_his > 0){ ?>
+                            <div class="d-flex justify-content-between pt-2 border-top">
+                                <span class="fw-800 text-muted">NET DUE :</span>
+                                <span class="fw-800 text-danger mb-0"><?php echo number_format($due_his ?? '0', 0); ?> ৳</span>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
