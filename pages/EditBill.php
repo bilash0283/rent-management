@@ -1000,6 +1000,9 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="btn btn-sm btn-info">
                                                         Edit
                                                     </a>
+                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this payment record?');">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
