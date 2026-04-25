@@ -131,7 +131,7 @@
                                     $unit_info_expense = mysqli_query($db, "SELECT id, unit_name FROM unit WHERE id='{$row['unit_id']}'");
                                     $unit_row_expanse = mysqli_fetch_assoc($unit_info_expense);
                                 ?>
-                                <small class="text-muted">Unit Name: <?= $unit_row_expanse['unit_name'] ?: ''?></small>
+                                <small class="text-muted">Unit : <?= $unit_row_expanse['unit_name'] ?: ''?></small>
                                 <?php } ?>
                             </td>
                             <td class="fw-bold"><?= number_format($row['amount'], 0) ?> ৳</td>
@@ -167,7 +167,7 @@
                                     $unit_info = mysqli_query($db, "SELECT id, unit_name FROM unit WHERE id='{$ph_row['unit_id']}'");
                                     $unit_row = mysqli_fetch_assoc($unit_info);
                                 ?>
-                                <small class="text-muted">Unit Name: <?= $unit_row['unit_name'] ?: ''?></small>
+                                <small class="text-muted">Unit : <?= $unit_row['unit_name'] ?: ''?></small>
                                 <?php } ?>
                             </td>
                             <td class="fw-bold"><?= number_format($ph_row['expense'], 0) ?> ৳</td>
