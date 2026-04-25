@@ -43,6 +43,18 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
     $paid_amount_his = $pay_history['paid_amount'];
     $transaction_id_db = $pay_history['transaction_id'];
 }
+
+// Logic for Watermark Text and Class
+$watermark_text = "";
+$watermark_class = "";
+
+if ($due_his <= 0 && $paid_his > 0) {
+    $watermark_text = "PAID";
+    $watermark_class = "watermark-paid";
+} elseif ($paid_his > 0 && $due_his > 0) {
+    $watermark_text = "PARTIAL";
+    $watermark_class = "watermark-partial";
+}
 ?>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -58,11 +70,13 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
     <div class="mb-5 pb-5">
         <div id="pdf-content" class="payslip-wrapper bg-white shadow-lg mx-auto position-relative">
             
-            <?php if ($due_his <= 0): ?>
-            <div class="watermark-paid">PAID</div>
+            <?php if (!empty($watermark_text)): ?>
+                <div class="watermark-container <?= $watermark_class ?>">
+                    <?= $watermark_text ?>
+                </div>
             <?php endif; ?>
 
-            <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4">
+            <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4" style="position: relative; z-index: 2;">
                 <div>
                     <h2 class="building-title mb-1"><?php echo $building_name_db ?? 'BUILDING NAME'; ?></h2>
                     <p class="text-muted small mb-0 fw-600">PREMIUM HOUSING & PROPERTY MANAGEMENT</p>
@@ -73,7 +87,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                 </div>
             </div>
 
-            <div class="row mb-5">
+            <div class="row mb-5" style="position: relative; z-index: 2;">
                 <div class="col-6 border-end">
                     <p class="label-heading">TENANT INFORMATION</p>
                     <h5 class="fw-bold text-dark mb-1 text-uppercase"><?php echo $tent_name ?? 'N/A' ?></h5>
@@ -97,7 +111,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                 </div>
             </div>
 
-            <div class="table-responsive mb-4">
+            <div class="table-responsive mb-4" style="position: relative; z-index: 2;">
                 <table class="table table-clean">
                     <thead>
                         <tr>
@@ -117,7 +131,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                 </table>
             </div>
 
-            <div class="row justify-content-end">
+            <div class="row justify-content-end" style="position: relative; z-index: 2;">
                 <div class="col-md-5">
                     <div class="summary-box">
                         <div class="d-flex justify-content-between mb-2">
@@ -134,7 +148,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                 </div>
             </div>
 
-            <div class="row mt-5 pt-4">
+            <div class="row mt-5 pt-4" style="position: relative; z-index: 2;">
                 <div class="col-7">
                     <div class="bank-card p-3 rounded-3">
                         <p class="bank-title mb-1">BANK TRANSFER DETAILS</p>
@@ -151,7 +165,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                 </div>
             </div>
 
-            <div class="mt-5 pt-4 text-center">
+            <div class="mt-5 pt-4 text-center" style="position: relative; z-index: 2;">
                 <p class="notice-text">
                     <i class="fas fa-info-circle me-1"></i> 
                     সিড়িতে ও দরজার সামনে জুতা অথবা ময়লা রাখা সম্পূর্ণ নিষিদ্ধ। 
@@ -171,6 +185,7 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
         max-width: 850px;
         border-radius: 4px;
         line-height: 1.6;
+        background: white;
     }
 
     .fw-600 { font-weight: 600; }
@@ -200,33 +215,42 @@ while ($pay_history = mysqli_fetch_assoc($history_sql)) {
     .bank-title { font-size: 10px; font-weight: 800; color: #0984e3; letter-spacing: 1px; }
     .account-number { font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; color: #2d3436; }
 
-    /* WATERMARK GREEN */
-    .watermark-paid {
+    /* CENTERED WATERMARK SYSTEM */
+    .watermark-container {
         position: absolute;
-        top: 20%;
+        top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%) rotate(-15deg);
-        border: 10px solid #00b894;
-        color: #00b894;
-        font-size: 100px;
+        transform: translate(-50%, -50%) rotate(-25deg);
+        font-size: 130px;
         font-weight: 900;
-        padding: 10px 50px;
-        border-radius: 20px;
-        opacity: 0.12;
-        z-index: 0;
+        padding: 20px 60px;
+        border-radius: 25px;
+        opacity: 0.08; /* Low opacity for background feel */
+        z-index: 1;
         pointer-events: none;
         user-select: none;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .watermark-paid {
+        border: 15px solid #00b894;
+        color: #00b894;
+    }
+
+    .watermark-partial {
+        border: 15px solid #fdcb6e;
+        color: #fdcb6e;
+        font-size: 100px; /* Smaller font for longer word */
     }
 
     .signature-line { border-top: 1.5px solid #2d3436; width: 100%; }
     .notice-text { font-size: 12px; font-weight: 600; color: #636e72; padding: 10px; background: #fff5f5; border-radius: 30px; display: inline-block; padding: 8px 30px; }
 
-    /* IMAGE GENERATION FIX */
     .payslip-wrapper { overflow: hidden; background: white; }
 
     @media print {
         #generatePdfBtn { display: none; }
-        .watermark-paid { opacity: 0.1 !important; }
     }
 </style>
 
@@ -238,10 +262,11 @@ document.getElementById('generatePdfBtn').addEventListener('click', function () 
     btn.innerText = 'PROCESSING...';
     
     html2canvas(element, {
-        scale: 4, // Higher scale for ultra-sharp font rendering
+        scale: 4, 
         useCORS: true,
         backgroundColor: "#ffffff",
-        letterRendering: true
+        letterRendering: true,
+        logging: false
     }).then(canvas => {
         let link = document.createElement('a');
         link.download = 'Pay_Slip_<?= addslashes($tent_name ?? "Invoice") ?>.png';
