@@ -206,7 +206,7 @@ $transaction_date_ui = date('Y-m-d\TH:i', strtotime($history['transaction_date']
                         </div>
                         <div class="col-md-8">
                             <label class="fw-bold">Expense Note</label>
-                            <input type="text" name="expense_note" class="form-control" value="<?= htmlspecialchars($history['expense_note']) ?>" placeholder="কি বাবদ খরচ হয়েছে?">
+                            <input type="text" name="expense_note" class="form-control" value="<?= htmlspecialchars($history['expense_note']) ?>" placeholder="Purpose of the expense">
                         </div>
                     </div>
                 </div>
