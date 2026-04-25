@@ -361,7 +361,7 @@
                     <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
                     <div class="text-primary fw-bold" style="letter-spacing: 1px;">A/C:
                         1503101624157001</div>
-                    <small class="text-muted">BRACK BANK LTD | Moghbazar Branch</small>
+                    <small class="text-muted">BRAC BANK LTD | Moghbazar Branch</small>
                 </div>
             </div>
 

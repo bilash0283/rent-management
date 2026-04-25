@@ -232,7 +232,7 @@ if (isset($_POST['save_bill'])) {
 
     // Already fully paid?
     if ($old_status === 'Paid' || $old_due <= 0) {
-        echo "<script>alert('This month bill is already fully paid. No more payment is allowed.'); window.history.back();</script>";
+        echo "<script>alert('This month bill is already fully paid. No more payment is allowed the selected month.'); window.history.back();</script>";
         exit;
     }
 
@@ -626,7 +626,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
                                             <div class="text-primary fw-bold" style="letter-spacing: 1px;">A/C:
                                                 1503101624157001</div>
-                                            <small class="text-muted">BRACK BANK LTD | Moghbazar Branch</small>
+                                            <small class="text-muted">BRAC BANK LTD | Moghbazar Branch</small>
                                         </div>
                                     </div>
 
