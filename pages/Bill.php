@@ -311,16 +311,16 @@ if(isset($_GET['unit_id'])) {
         $rent_mess = $row['rent'];
         $water = $row['water'];
         $gas = $row['gas'];
-        $building_name = $row['building_name'];
+        $building_id_get = $row['building_name'];
         $unit_type = $row['unit_type'];
         $Electricity_meter_no = $row['size'];
     }
 
-    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
+    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_id_get' ");
     $building_row = mysqli_fetch_assoc($building);
     $building_name_db = $building_row['name'] ?? '';
 
-    $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
+    $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_id_get' AND unit_id = '$unit_id'");
     while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
         $tent_name = $tent_row['name'];
         $tent_id = $tent_row['id'];
@@ -394,7 +394,7 @@ function sendWhatsApp()
     ?>
     let message = <?php echo json_encode($message); ?>;
     let phone = <?php echo json_encode($tent_phone); ?>;
-    let redirectUrl = "admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>";
+    let redirectUrl = "admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_id ?>";
 
     // Copy
     navigator.clipboard.writeText(message);
