@@ -311,16 +311,16 @@ if(isset($_GET['unit_id'])) {
         $rent_mess = $row['rent'];
         $water = $row['water'];
         $gas = $row['gas'];
-        $building_id_get = $row['building_name'];
+        $building_name = $row['building_name'];
         $unit_type = $row['unit_type'];
         $Electricity_meter_no = $row['size'];
     }
 
-    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_id_get' ");
+    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_id' ");
     $building_row = mysqli_fetch_assoc($building);
     $building_name_db = $building_row['name'] ?? '';
 
-    $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_id_get' AND unit_id = '$unit_id'");
+    $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_id' AND unit_id = '$unit_id'");
     while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
         $tent_name = $tent_row['name'];
         $tent_id = $tent_row['id'];
