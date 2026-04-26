@@ -409,6 +409,6 @@ function sendWhatsApp()
     // ⏳ 1 second পরে redirect (important)
     setTimeout(function() {
         window.location.href = redirectUrl;
-    }, 10);
+    });
 }
 </script>
