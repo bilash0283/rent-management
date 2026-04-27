@@ -175,7 +175,7 @@ foreach ($monthly_totals as $month => $data) {
         <div class="col-xxl-12">
             <div class="card stretch stretch-full">
                 <div class="card-header">
-                    <h5 class="card-title"> Payment Record (Last 12 Months)</h5>
+                    <h5 class="card-title"> Payment Record (12 Months)</h5>
                 </div>
                 <div class="card-body custom-card-action p-0" style="height: 420px;">
                     <canvas id="paymentChartCanvas" style="width:100%; height:100%;"></canvas>
@@ -185,27 +185,50 @@ foreach ($monthly_totals as $month => $data) {
                         <div class="col-lg-4">
                             <div class="p-3 border border-dashed rounded">
                                 <div class="fs-12 text-muted mb-1">Total Bills (this month)</div>
-                                <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_bill ?></h6>
+                                <h6 class="fw-bold text-dark"><small>৳</small> 
+                                    <?= number_format((float) str_replace(',', '', $total_bill)) ?>
+                                </h6>
                                 <div class="progress mt-2 ht-3">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 81%"></div>
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-lg-4">
                             <div class="p-3 border border-dashed rounded">
                                 <div class="fs-12 text-muted mb-1">Total Paid (this month)</div>
-                                <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_paid ?></h6>
+                                <h6 class="fw-bold text-dark"><small>৳</small> 
+                                    <?= number_format((float) str_replace(',', '', $total_paid)) ?>
+                                </h6>
                                 <div class="progress mt-2 ht-3">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 82%"></div>
+                                    <?php 
+                                        $bill  = (float) str_replace(',', '', $total_bill);
+                                        $paid  = (float) str_replace(',', '', $total_paid);
+                                        $paid_percent = ($bill > 0) ? round(($paid / $bill) * 100, 2) : 0;
+                                    ?>
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                        style="width: <?= $paid_percent ?>%" 
+                                        aria-valuenow="<?= $paid_percent ?>" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-lg-4">
                             <div class="p-3 border border-dashed rounded">
                                 <div class="fs-12 text-muted mb-1">Total Due (this month)</div>
-                                <h6 class="fw-bold text-dark"><small>৳</small> <?= $total_due ?></h6>
+                                <h6 class="fw-bold text-dark"><small>৳</small> 
+                                    <?= number_format((float) str_replace(',', '', $total_due)) ?>
+                                </h6>
                                 <div class="progress mt-2 ht-3">
-                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 68%"></div>
+                                    <?php 
+                                        $due   = (float) str_replace(',', '', $total_due);
+                                        $due_percent = ($bill > 0) ? round(($due / $bill) * 100, 2) : 0;
+                                    ?>
+                                    <div class="progress-bar bg-danger" role="progressbar" 
+                                        style="width: <?= $due_percent ?>%" 
+                                        aria-valuenow="<?= $due_percent ?>" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
                                 </div>
                             </div>
                         </div>
