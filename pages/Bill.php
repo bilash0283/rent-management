@@ -192,7 +192,7 @@
                                     <td>
                                         <?php
                                         if (!mysqli_num_rows($pay_info) > 0) {
-                                            echo "<button class='btn btn-sm btn-primary'>Pending</button>";
+                                            echo "<button class='btn btn-sm btn-secondary'>No Invoice</button>";
                                         } else {
                                             ?>
                                             <button
