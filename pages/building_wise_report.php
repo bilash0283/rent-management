@@ -234,7 +234,7 @@ $total_unit = mysqli_num_rows($result);
 
         <div class="col-md">
             <div class="card shadow-sm border-0 bg-secondary text-white">
-                <div class="card-body text-center py-4">
+                <div class="card-body text-center py-4" style="margin:-14px 0px;">
                     <strong>Paid By Manager</strong><br>
                     <div style="text-align: left; margin: 0px -13px;">
                         <small>Total : ৳ <?= number_format(max($total_received, 0), 0) ?></small><br>
