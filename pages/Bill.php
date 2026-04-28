@@ -276,10 +276,10 @@
                                                 <i class="bi bi-pencil-square"></i>
                                             </button> -->
                                             <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
-                                                class="text-end btn btn-sm btn-info" title="Invoice Create & Payment">
+                                                class="text-end p-1 btn btn-sm btn-info" title="Invoice Create & Payment">
                                                 Details
                                             </a>
-                                            <a href="admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>" onclick="sendWhatsApp()" class="btn btn-sm btn-success" title="Message Send with Copy">
+                                            <a href="admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>" onclick="sendWhatsApp()" class="p-1 btn btn-sm btn-success" title="Message Send with Copy">
                                                 <i class="bi bi-send"></i>
                                             </a>
 

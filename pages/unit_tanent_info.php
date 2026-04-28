@@ -40,13 +40,13 @@
             $message = '
             <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0">
                 <strong>Success!</strong> Tenant Delete Successfully
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="p-1 btn-close" data-bs-dismiss="alert"></button>
             </div>';
         } else {
             $message = '
             <div class="alert alert-danger alert-dismissible fade show mx-5 mt-2 mb-0">
                 <strong>Error!</strong> '.mysqli_error($db).'
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="p-1 btn-close" data-bs-dismiss="alert"></button>
             </div>';
         }
     }
@@ -86,7 +86,7 @@
                 <?= htmlspecialchars($buil_name) ?> - (<?= $count_row ?>)
         </h5>
 
-        <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="btn btn-primary">
+        <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="p-1 btn btn-primary">
             <i class="feather-plus me-1"></i> Create Tenant
         </a>
     </div>
@@ -130,7 +130,7 @@
                                                 font-size:8px;
                                                 background:#17a2b8;
                                                 color:#fff;
-                                                padding:2px 8px;
+                                                padding:1px 5px;
                                                 border-radius:12px;
                                                 display:inline-block;
                                             ">
@@ -179,14 +179,14 @@
 
                                     <td>
                                         <a href="admin.php?page=Agreement&id=<?= $row['id'] ?>"
-                                            class="btn btn-sm btn-info "
+                                            class="p-1 btn btn-sm btn-info "
                                             title="Agreement Download">
                                                 <i class="feather-download"></i>
                                         </a>
                                     </td>
 
                                     <td>
-                                        <span class="badge <?= $row['status']=='Rented' ? 'bg-danger' : 'bg-success' ?>">
+                                        <span class="badge p-1 <?= $row['status']=='Rented' ? 'bg-danger' : 'bg-success' ?>">
                                             <?= $row['status'] ?>
                                         </span>
                                     </td>
@@ -194,13 +194,13 @@
                                     <td>
                                         <div class="btn-group ">
                                             <a href="admin.php?page=CreateTenant&edit_id=<?= $row['id'] ?>"
-                                            class="btn btn-sm btn-primary"
+                                            class="p-1 btn btn-sm btn-primary"
                                             title="Edit">
                                                 <i class="feather-edit"></i>
                                             </a>
 
                                             <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>&building_id=<?= $building_id_get ?>"
-                                            class="btn btn-sm btn-danger"
+                                            class="p-1 btn btn-sm btn-danger"
                                             onclick="return confirm('Are you sure?');"
                                             title="Delete">
                                                 <i class="feather-trash-2"></i>
