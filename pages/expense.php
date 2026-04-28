@@ -139,8 +139,8 @@
                             <td class="text-success"><?= $row['expense_by'] ?></td>
                             <td class="text-end">
                                 <div class="btn-group ">
-                                    <a href="admin.php?page=create_expense&edit_id=<?= $row['id'] ?>" class="btn btn-sm btn-icon btn-primary"><i class="bi bi-pencil"></i></a>
-                                    <a href="admin.php?page=Expense&id=<?= $building_id ?>&delete_id=<?= $row['id'] ?>" class="btn btn-sm btn-icon btn-danger " onclick="return confirm('Delete this record?')"><i class="bi bi-trash"></i></a>
+                                    <a href="admin.php?page=create_expense&edit_id=<?= $row['id'] ?>" class="p-1 btn btn-sm btn-icon btn-primary"><i class="bi bi-pencil"></i></a>
+                                    <a href="admin.php?page=Expense&id=<?= $building_id ?>&delete_id=<?= $row['id'] ?>" class="p-1 btn btn-sm btn-icon btn-danger " onclick="return confirm('Delete this record?')"><i class="bi bi-trash"></i></a>
                                 </div>
                             </td>
                         </tr>
