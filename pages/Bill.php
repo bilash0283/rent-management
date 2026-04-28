@@ -192,11 +192,11 @@
                                     <td>
                                         <?php
                                         if (!mysqli_num_rows($pay_info) > 0) {
-                                            echo "<button class='btn btn-sm btn-secondary'>No Invoice</button>";
+                                            echo "<button class='p-1 btn btn-sm btn-secondary'>No Invoice</button>";
                                         } else {
                                             ?>
                                             <button
-                                                class="btn btn-sm btn-<?php if ($status == 'Paid') {
+                                                class="p-1 btn btn-sm btn-<?php if ($status == 'Paid') {
                                                     echo 'success';
                                                 } else if ($status == 'Unpaid') {
                                                     echo 'danger';
@@ -213,7 +213,7 @@
                                         $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' AND bill_month = '$this_month' ");
                                         
                                         if (mysqli_num_rows($history_sql) == 0) {
-                                            echo '<span class="fw-bold text-warning">Not Found</span>';
+                                            echo '<span class="fw-bold text-warning" style="font-size:10px;">Not Found</span>';
                                         } else {
                                             $manager_self_total = 0;
                                             $expense_total = 0;
