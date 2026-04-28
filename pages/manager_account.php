@@ -98,7 +98,7 @@ $total_unit = mysqli_num_rows($result);
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
+            <button type="submit" class="btn btn-success btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
                 <i class="fas fa-filter"></i>
                 <span>Filter</span>
             </button>
@@ -218,7 +218,7 @@ $total_unit = mysqli_num_rows($result);
                                     AND unit_id = '$unit_id' 
                                     AND billing_month = '$this_month' LIMIT 1");
                             $has_invoice = mysqli_num_rows($inv_query) > 0;
-                            $status = 'Pending';
+                            $status = 'No Invoice';
                             $total_bill = $rent;
                             $paid_amount_db = 0;
                             $due_amount_db = $rent;
@@ -299,7 +299,7 @@ $total_unit = mysqli_num_rows($result);
                                 <!-- Status -->
                                 <td>
                                     <button
-                                        class="btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : ($status == 'Unpaid' ? 'danger' : 'primary')) ?>">
+                                        class="p-1 btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : ($status == 'Unpaid' ? 'danger' : 'secondary')) ?>">
                                         <?= htmlspecialchars($status) ?>
                                     </button>
                                 </td>
@@ -329,7 +329,7 @@ $total_unit = mysqli_num_rows($result);
                                 <!-- Action -->
                                 <td class="text-end">
                                     <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
-                                        class="text-end btn btn-sm btn-info" title="Invoice Create & Payment">
+                                        class="text-end p-1 btn btn-sm btn-info" title="Invoice Create & Payment">
                                         Details
                                     </a>
                                 </td>
