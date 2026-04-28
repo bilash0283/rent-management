@@ -101,7 +101,7 @@ $total_unit = mysqli_num_rows($result);
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
+            <button type="submit" class="btn btn-success btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
                 <i class="fas fa-filter"></i>
                 <span>Filter</span>
             </button>
@@ -522,7 +522,7 @@ $total_unit = mysqli_num_rows($result);
                                 <!-- Status -->
                                 <td>
                                     <button
-                                        class="btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : ($status == 'Unpaid' ? 'danger' : 'secondary')) ?>">
+                                        class="p-1 btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : ($status == 'Unpaid' ? 'danger' : 'secondary')) ?>">
                                         <?= htmlspecialchars($status) ?>
                                     </button>
                                 </td>
@@ -564,7 +564,7 @@ $total_unit = mysqli_num_rows($result);
                                 <!-- Action -->
                                 <td class="text-end">
                                     <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
-                                        class="text-end btn btn-sm btn-info" title="Invoice Create & Payment">
+                                        class="text-end p-1 btn btn-sm btn-info" title="Invoice Create & Payment">
                                         Details
                                     </a>
                                 </td>
