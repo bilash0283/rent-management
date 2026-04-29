@@ -317,6 +317,7 @@ if (isset($_POST['save_bill'])) {
 // monthly payment sql 
 $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
 while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
+    $invoice_id    = $pay_info_sh['id'];
     $billing_month_db = $pay_info_sh['billing_month'];
     $total_amount_db = $pay_info_sh['total_amount'];
     $paid_amount_db = $pay_info_sh['paid_amount'];
@@ -459,6 +460,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                     <div>
                                         <h5 class="fw-bold text-primary mb-1">INVOICE</h5>
+                                        <small>ID : #INV-<?= $invoice_id ?? '' ?></small>
                                     </div>
 
                                     <div class="text-end">
@@ -646,7 +648,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <small class="fw-semibold">Gas Bill Month </small>
+                                            <small class="fw-semibold">Gas </small>
                                             <input type="month" name="Gas_month"
                                                 value="<?php echo date('Y-m', strtotime('first day of last month')); ?>"
                                                 class="form-control">
@@ -660,13 +662,13 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                     <div class="row mt-2">
                                         <div class="col-md-6">
-                                            <small class="fw-semibold">Water Bill </small>
+                                            <small class="fw-semibold">Water </small>
                                             <input type="text" name="Water_month"
                                                 value="<?php echo date('M Y', strtotime('first day of this month -4 months')); ?>"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-6">
-                                            <small class="fw-semibold" for="status">Water Bill Amount</small>
+                                            <small class="fw-semibold" for="status">Water Amount</small>
                                             <input type="text" name="Water" value="<?= $water ?? '' ?>"
                                                 class="form-control">
                                         </div>
@@ -674,32 +676,32 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                     <div class="row mt-2">
                                         <div class="col-md-6">
-                                            <small class="fw-semibold">Electricity Bill <span class="text-warning"
-                                                    style="font-size:10px;">(<?= $size ?>)</span></small>
+                                            <small class="fw-semibold">Electricity <span class="text-warning"
+                                                    style="font-size:8px;">(<?= $size ?>)</span></small>
                                             <input type="text" name="Electricity_month"
                                                 value="<?php echo date('M Y', strtotime('first day of this month -2 months')); ?>"
                                                 placeholder="Note" class="form-control">
                                         </div>
                                         <div class="col-md-6">
-                                            <small class="fw-semibold" for="status">Electricity Bill Amount</small>
+                                            <small class="fw-semibold" for="status">Electricity Amount</small>
                                             <input type="text" name="Electricity" value="" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="row mt-2">
                                         <div class="col-md-6">
-                                            <small class="fw-semibold">Others Bill </small>
+                                            <small class="fw-semibold">Others </small>
                                             <input type="text" name="Others_month" placeholder="Note"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-6">
-                                            <small class="fw-semibold" for="status">Others Bill Amount</small>
+                                            <small class="fw-semibold" for="status">Others Amount</small>
                                             <input type="text" name="Others" value="" class="form-control">
                                         </div>
                                     </div>
 
                                     <button type="submit" name="create_invoice" class="btn btn-success btn-sm mt-3">
-                                        Create Invoice
+                                        Update Invoice
                                     </button>
                                 </div>
                             </form>
