@@ -141,6 +141,7 @@
     $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
     while ($pay_info_sh = mysqli_fetch_assoc($pay_info))
         {
+            $invoice_id = $pay_info_sh['id'];
             $billing_month_db = $pay_info_sh['billing_month'];
             $total_amount_db = $pay_info_sh['total_amount'];
             $paid_amount_db = $pay_info_sh['paid_amount'];
@@ -195,6 +196,7 @@
 
                 <div class="text-center">
                     <h5 class="fw-bold text-primary mb-1">INVOICE</h5>
+                    <small>ID : #INV-<?= $invoice_id ?? '' ?></small>
                 </div>
 
                 <div class="text-end">
