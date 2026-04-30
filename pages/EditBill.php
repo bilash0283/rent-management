@@ -86,7 +86,7 @@ if (isset($_POST['create_invoice'])) {
         //     AND `tenant_id` = '$tent_id'
         //     ");
 
-        echo "<script>alert('This invoice has already been created. Please edit it from the Invoice History table.'); window.history.back();</script>";
+        echo "<script>alert('This invoice has already been created. Please Edit it from the Invoice History table.'); window.history.back();</script>";
         exit;
         
     } else {
@@ -705,7 +705,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     </div>
 
                                     <button type="submit" name="create_invoice" class="btn btn-success btn-sm mt-3">
-                                        Update Invoice
+                                        Create Invoice
                                     </button>
                                 </div>
                             </form>
