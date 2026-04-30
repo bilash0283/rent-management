@@ -67,24 +67,28 @@ if (isset($_POST['create_invoice'])) {
     }
 
     if (mysqli_num_rows($month_sql) > 0) {
-        $bill_sql = mysqli_query($db, "UPDATE `invoices` SET 
-                `tenant_id` = '$tent_id',
-                `unit_id` = '$unit_id',
-                `billing_month` = '$billing_month',
-                `gas` = '$Gas',
-                `gas_month` = '$Gas_month',
-                `water` = '$Water',
-                `water_month` = '$Water_month',
-                `electricity` = '$Electricity',
-                `electricity_month` = '$Electricity_month',
-                `others` = '$Others',
-                `others_month` = '$Others_month',
-                `total_amount` = '$total_amount',
-                `due_amount` = '$total_amount',
-                `status` = '$status'
-            WHERE `id` = '$id_db' 
-            AND `tenant_id` = '$tent_id'
-            ");
+        // $bill_sql = mysqli_query($db, "UPDATE `invoices` SET 
+        //         `tenant_id` = '$tent_id',
+        //         `unit_id` = '$unit_id',
+        //         `billing_month` = '$billing_month',
+        //         `gas` = '$Gas',
+        //         `gas_month` = '$Gas_month',
+        //         `water` = '$Water',
+        //         `water_month` = '$Water_month',
+        //         `electricity` = '$Electricity',
+        //         `electricity_month` = '$Electricity_month',
+        //         `others` = '$Others',
+        //         `others_month` = '$Others_month',
+        //         `total_amount` = '$total_amount',
+        //         `due_amount` = '$total_amount',
+        //         `status` = '$status'
+        //     WHERE `id` = '$id_db' 
+        //     AND `tenant_id` = '$tent_id'
+        //     ");
+
+        echo "<script>alert('This invoice has already been created. Please edit it from the Invoice History table.'); window.history.back();</script>";
+        exit;
+        
     } else {
         $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
             (
