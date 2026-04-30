@@ -881,12 +881,12 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             </td>
                                             <td class="text-center pe-4">
                                                 <div class="btn-group">
-                                                    <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                            <i class="bi bi-pencil-square"></i>
-                                                        </button> -->
                                                     <a href="admin.php?page=viewInvoice&unit_id=<?php echo $unit_id; ?>&invoice_id=<?php echo $invoice_id_db; ?>"
-                                                        class="btn btn-sm btn-outline-success" title="view">
+                                                        class="p-1 btn btn-sm btn-success" title="view">
                                                         <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="" class="p-1 btn btn-sm btn-info" title="Edit">
+                                                        <i class="bi bi-pencil-square"></i>
                                                     </a>
                                                 </div>
                                             </td>
@@ -1000,13 +1000,13 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group">
-                                                    <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="btn btn-sm btn-success">
+                                                    <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="p-1 btn btn-sm btn-success">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="btn btn-sm btn-info">
-                                                        <i class="bi bi-pencil"></i>
+                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="p-1 btn btn-sm btn-info">
+                                                        <i class="bi bi-pencil-square"></i>
                                                     </a>
-                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this payment record?');">
+                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="p-1 btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this payment record?');">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
                                                 </div>
