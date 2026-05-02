@@ -673,7 +673,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         </div>
                                         <div class="col-md-6">
                                             <small class="fw-semibold" for="status">Water Amount</small>
-                                            <input type="text" name="Water" value="<?= $water ?? '' ?>"
+                                            <input type="text" name="Water" value="<?= $Water_db ?? '' ?>"
                                                 class="form-control">
                                         </div>
                                     </div>
