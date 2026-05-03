@@ -333,15 +333,6 @@
                 }
                 $stmt->close();
                 ?>
-
-                <?php if ($total_due > 0): ?>
-                    <div class="d-flex justify-content-between border-top mt-1 pt-1">
-                        <span class="small fw-bold text-primary">Total Amount = </span>
-                        <span class="small fw-bold text-primary">৳
-                            <?= number_format($total_due, 0) ?>
-                        </span>
-                    </div>
-                <?php endif; ?>
             </div>
 
             <div
