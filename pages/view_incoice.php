@@ -142,7 +142,7 @@
                                 <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : '' ?>
                             </td>
                             <td class="py-1 text-end">৳
-                                <?php echo number_format($rent, 2);
+                                <?php echo number_format($rent, 0);
                                 $total_bill = 0;
                                 $total_bill += $rent;
                                 ?>
@@ -157,7 +157,7 @@
                                     <?php $total_bill += $Gas_db; ?>
                                 </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Gas_db, 2); ?>
+                                    <?php echo number_format($Gas_db, 0); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -171,7 +171,7 @@
                                     ?>
                                 </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Water_db, 2); ?>
+                                    <?php echo number_format($Water_db, 0); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -186,7 +186,7 @@
                                     ?>
                                 </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Electricity_db, 2); ?>
+                                    <?php echo number_format($Electricity_db, 0); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -200,7 +200,7 @@
                                     ?>
                                 </td>
                                 <td class="py-1 text-end">৳
-                                    <?php echo number_format($Others_db, 2); ?>
+                                    <?php echo number_format($Others_db, 0); ?>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -212,30 +212,30 @@
                             <td class="fw-bold py-2 text-primary">Current Month Total = </td>
                             <td></td>
                             <td class="fw-bold py-2 text-end text-primary">৳
-                                <?= number_format($total_bill, 2) ?>
+                                <?= number_format($total_bill, 0) ?>
                             </td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
 
-            <div class="mt-3 p-2 bg-light rounded">
+            <div class="p-2 bg-light rounded px-4">
                 <?php if ($paid_amount_db > 0): ?>
-                    <div class="d-flex justify-content-between border-top mt-1 pt-1">
+                    <div class="d-flex justify-content-between">
                         <span class="small fw-bold text-success">Paid Amount = </span>
                         <span class="small fw-bold text-success">৳
-                            <?= number_format($paid_amount_db, 2) ?>
+                            <?= number_format($paid_amount_db, 0) ?>
                         </span>
                     </div>
                 <?php endif; ?>
             </div>
 
-            <div class="mt-3 p-2 bg-light rounded">
+            <div class="p-2 bg-light rounded px-4">
                 <?php if ($due_amount_db > 0): ?>
-                    <div class="d-flex justify-content-between border-top mt-1 pt-1">
+                    <div class="d-flex justify-content-between">
                         <span class="small fw-bold text-danger">Due Amount = </span>
                         <span class="small fw-bold text-danger">৳
-                            <?= number_format($due_amount_db, 2) ?>
+                            <?= number_format($due_amount_db, 0) ?>
                         </span>
                     </div>
                 <?php endif; ?>
