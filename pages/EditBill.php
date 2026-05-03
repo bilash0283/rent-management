@@ -623,6 +623,10 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                     <div class="mt-4 border-top">
                                         <p class="text-muted" style="font-size: 0.85rem;">
+                                            <!-- Please pay within <strong>7th
+                                                <?php echo date("M Y", strtotime($this_month)); ?></strong> to
+                                            following account &
+                                            WhatsApp your deposit slip to <strong>01715482363</strong>. -->
                                             Please complete the payment within <strong>7 days</strong> and share your deposit slip via WhatsApp at <strong>01715482363</strong>.
                                         </p>
                                         <div class="card  border-0 p-3">
