@@ -107,7 +107,7 @@
         break;
 
         case 'update_invoice':
-            include 'pages/unpdate_invoice.php';
+            include 'pages/update_invoice.php';
         break;
 
         default:
