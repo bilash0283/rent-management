@@ -106,6 +106,10 @@
             include 'pages/delete_payment.php';
         break;
 
+        case 'update_invoice':
+            include 'pages/unpdate_invoice.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
             break;
