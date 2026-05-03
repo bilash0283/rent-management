@@ -653,13 +653,27 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                     <div class="row">
                                         <div class="col-md-6">
+                                            <small class="fw-semibold">Rent for Month </small>
+                                            <input type="rent_month" name="Gas_month"
+                                                value="<?php echo $this_month; ?>"
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="fw-semibold" for="status">Rent Amount</small>
+                                            <input type="text" name="rent" value="<?= $rent ?? '' ?>"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
                                             <small class="fw-semibold">Gas </small>
                                             <input type="month" name="Gas_month"
                                                 value="<?php echo date('Y-m', strtotime('first day of last month')); ?>"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-6">
-                                            <small class="fw-semibold" for="status">Gas Bill Amount</small>
+                                            <small class="fw-semibold" for="status">Gas Amount</small>
                                             <input type="text" name="Gas" value="<?= $gas ?? '' ?>"
                                                 class="form-control">
                                         </div>
