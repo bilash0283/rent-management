@@ -354,10 +354,11 @@
 
             <div class="mt-4 border-top">
                 <p class="text-muted mt-3" style="font-size: 0.85rem;">
-                    Please pay within <strong>7th
+                    <!-- Please pay within <strong>7th
                         <?php echo date("M Y", strtotime($this_month)); ?></strong> to
                     following account &
-                    WhatsApp your deposit slip to <strong>01715482363</strong>.
+                    WhatsApp your deposit slip to <strong>01715482363</strong>. -->
+                    Please complete the payment within <strong>7 days</strong> and share your deposit slip via WhatsApp at <strong>01715482363</strong>.
                 </p>
                 <div class="card  border-0 p-3">
                     <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
