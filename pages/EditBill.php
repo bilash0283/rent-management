@@ -318,7 +318,7 @@ if (isset($_POST['save_bill'])) {
 }
 
 // monthly payment sql 
-$pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
+$pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ORDER BY billing_month ");
 while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $invoice_id    = $pay_info_sh['id'];
     $billing_month_db = $pay_info_sh['billing_month'];
@@ -469,7 +469,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     </div>
 
                                     <div class="text-end">
-                                        <small class="fw-semibold">Date : <?php echo date('d M Y'); ?></small>
+                                        <small class="fw-semibold">Date : <?php echo (!empty($created_at_db) && strtotime($created_at_db)) ? date("d M Y", strtotime($created_at_db)) : date("d M Y"); ?></small>
                                     </div>
                                 </div>
 
@@ -489,7 +489,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 style="font-size: 0.7rem;">Bill Month
                                             </small>
                                             <span class="badge bg-light text-dark border fw-semibold">
-                                                <?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?>
+                                                <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : date("M Y", strtotime($this_month)) ?>
                                             </span>
                                         </div>
                                     </div>
