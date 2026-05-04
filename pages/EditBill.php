@@ -137,8 +137,7 @@ if (isset($_POST['create_invoice'])) {
 }
 
 
-// ==================== Confirm Payment - Fixed & Clean Version ====================
-
+// Confirm Payment
 if (isset($_POST['save_bill'])) {
 
     // ==================== Get and Sanitize Input ====================
@@ -327,6 +326,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $paid_amount_db = $pay_info_sh['paid_amount'];
     $due_amount_db = $pay_info_sh['due_amount'];
     $status = $pay_info_sh['status'];
+    $Rent_db = $pay_info_sh['Rent'];
     $Gas_db = $pay_info_sh['Gas'];
     $Water_db = $pay_info_sh['Water'];
     $Electricity_db = $pay_info_sh['Electricity'];
@@ -336,6 +336,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $Water_month_db = $pay_info_sh['Water_month'];
     $Electricity_month_db = $pay_info_sh['Electricity_month'];
     $Others_month_db = $pay_info_sh['Others_month'];
+    $created_at_db = $pay_info_sh['created_at'];
 }
 ?>
 
