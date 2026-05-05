@@ -47,44 +47,49 @@ if (isset($_POST['update_invoice'])) {
     $Others_month = $_POST['Others_month'];
 
     $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
-
-    // Update query (Prepared Statement)
-    $update = $db->prepare("UPDATE invoices SET 
-        billing_month = ?,
-        Rent = ?,
-        Gas = ?,
-        Gas_month = ?,
-        Water = ?,
-        Water_month = ?,
-        Electricity = ?,
-        Electricity_month = ?,
-        Others = ?,
-        Others_month = ?,
-        total_amount = ?
-        WHERE id = ?
-    ");
-
-    $update->bind_param(
-        "siiisiisiiii",
-        $rent_month,
-        $rent,
-        $Gas,
-        $Gas_month,
-        $Water,
-        $Water_month,
-        $Electricity,
-        $Electricity_month,
-        $Others,
-        $Others_month,
-        $total_amount,
-        $invoice_id
-    );
-
-    if ($update->execute()) {
-        echo "<script>alert('Invoice Updated Successfully'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
+    
+    if ($total_amount <= 0 || empty($total_amount)) {
+        echo "<script>alert('Invoice cannot be created because the total amount must be greater than 0.'); window.history.back();</script>";
         exit;
     } else {
-        echo "Update Failed!";
+        // Update query (Prepared Statement)
+        $update = $db->prepare("UPDATE invoices SET 
+            billing_month = ?,
+            Rent = ?,
+            Gas = ?,
+            Gas_month = ?,
+            Water = ?,
+            Water_month = ?,
+            Electricity = ?,
+            Electricity_month = ?,
+            Others = ?,
+            Others_month = ?,
+            total_amount = ?
+            WHERE id = ?
+        ");
+
+        $update->bind_param(
+            "siiisiisiiii",
+            $rent_month,
+            $rent,
+            $Gas,
+            $Gas_month,
+            $Water,
+            $Water_month,
+            $Electricity,
+            $Electricity_month,
+            $Others,
+            $Others_month,
+            $total_amount,
+            $invoice_id
+        );
+
+        if ($update->execute()) {
+            echo "<script>alert('Invoice Updated Successfully'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
+            exit;
+        } else {
+            echo "Update Failed!";
+        }
     }
 }
 ?>

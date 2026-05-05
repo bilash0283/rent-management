@@ -46,7 +46,6 @@ if (isset($_POST['advance_save'])) {
 
 // Create Invoice
 if (isset($_POST['create_invoice'])) {
-
     $billing_month = $this_month;
     $status = 'Unpaid';
     $Gas = intval($_POST['Gas']);
@@ -69,8 +68,8 @@ if (isset($_POST['create_invoice'])) {
         $old_paid = intval($ex_month_row['paid_amount']);
     }
 
-    if (mysqli_num_rows($month_sql) > 5) {
-        echo "<script>alert('You can create a maximum of 5 invoices for a single tenant within one month.'); window.history.back();</script>";
+    if ($total_amount <= 0 || empty($total_amount)) {
+        echo "<script>alert('Invoice cannot be created because the total amount must be greater than 0.'); window.history.back();</script>";
         exit;
     } else {
         $bill_sql = mysqli_query($db, "INSERT INTO `invoices`
@@ -116,7 +115,6 @@ if (isset($_POST['create_invoice'])) {
         }
     }
 }
-
 
 // Confirm Payment
 if (isset($_POST['save_bill'])) {
@@ -296,7 +294,7 @@ if (isset($_POST['save_bill'])) {
     }
 }
 
-// monthly payment sql 
+// monthly Invoice sql show
 $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
 while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $invoice_id = $pay_info_sh['id'];
@@ -317,6 +315,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $Others_month_db = $pay_info_sh['Others_month'];
     $created_at_db = $pay_info_sh['created_at'];
 }
+
 ?>
 
 <div class="nxl-content">
@@ -342,7 +341,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                 <!-- Advance manage  -->
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="fw-bold mb-2">Advance & Payment Summary</h6>
+                        <h6 class="fw-bold mb-2 text-info">Advance & Payment Summary</h6>
                     </div>
                     <form method="POST" enctype="multipart/form-data">
                         <div class="card-body px-3 general-info">
@@ -421,10 +420,9 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                     </form>
                 </div>
 
-                <!-- Monthly Bill & summary  -->
+                <!-- Invoice Create // Confirm Payment  -->
                 <div class="card">
-                    <h6 class="fw-bold mt-4 mx-3 mb-3">Monthly Bills & Payment Summary</h6>
-                    <!-- Unit Name -->
+                    <h6 class="fw-bold mt-4 mx-3 mb-3 text-info">Monthly Invoice Create & Confirm Payment</h6>
                     <div class="row mx-1 ">
                         <!-- create Invoice  -->
                         <div class="col-md-6">
@@ -505,17 +503,17 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                             <form method="POST" enctype="multipart/form-data">
                                 <div class="card p-3">
                                     <h6>Confirm Payment :</h6>
-                                    <input type="hidden" name="total_amount" value="<?php echo $total_bill; ?>">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="">Amount *</label>
                                             <input type="text" name="paid_amount" class="form-control" required>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="">Pay For Month* <small class="text-warning"
+                                            <label class="">Pay For Invoice* <small class="text-warning"
                                                     style="font-size: 10px;">(Invoice)</small></label>
-                                            <input type="month" name="billing_month" value="<?php echo $this_month; ?>"
-                                                class="form-control" required>
+                                            <select name="billing_month" id="invoice" class="form-control form-select" required>
+                                                <option value="">Select Invoice</option>
+                                                <option value=""></option> 
                                         </div>
                                     </div>
                                     <div class="row">
@@ -582,19 +580,6 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             </div>
                                         </div>
 
-                                        <!-- Expense Section (সবসময় দেখাবে যখন payment_fields active থাকবে) -->
-                                        <div class="row" id="expense_row">
-                                            <div class="col-md-6">
-                                                <label for="expense">Expense Amount</label>
-                                                <input type="text" class="form-control" name="expense" id="expense">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="expense_note">Expense Note</label>
-                                                <input type="text" name="expense_note" id="expense_note"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
-
                                         <!-- Main Transaction ID (Non-Manager Digital Payments) -->
                                         <div class="row" id="transaction_id_div">
                                             <div class="col-md-6">
@@ -623,10 +608,10 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                     </div>
                 </div>
 
-                <!-- bill summary  -->
+                <!-- Invoice history  -->
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="fw-bold">Monthly bills (invoice history)</h6>
+                        <h6 class="fw-bold text-info">Monthly (invoice history)</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -699,7 +684,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                 <!-- payment History  -->
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="fw-bold">Payment history </h6>
+                        <h6 class="fw-bold text-info">Payment history </h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -825,74 +810,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
-
-<!-- JavaScript for input file dynamic change -->
-<script>
-    function togglePaymentFields() {
-        const method = document.getElementById('payment_method').value;
-
-        const paymentFields = document.getElementById('payment_fields');
-        const managerSection = document.getElementById('manager_section');
-        const managerTransactionDiv = document.getElementById('manager_transaction_id_div');
-        const transactionIdDiv = document.getElementById('transaction_id_div');
-        const expenseRow = document.getElementById('expense_row');
-
-        // Default: সব hide
-        paymentFields.style.display = 'none';
-        managerSection.style.display = 'none';
-        managerTransactionDiv.style.display = 'none';
-        transactionIdDiv.style.display = 'none';
-
-        if (method === "") {
-            return;
-        }
-
-        paymentFields.style.display = 'block';
-
-        if (method === "Manager") {
-            // Manager সিলেক্ট করলে
-            managerSection.style.display = 'flex';
-            managerTransactionDiv.style.display = 'none';  // Manager method সিলেক্ট না করা পর্যন্ত hide
-            transactionIdDiv.style.display = 'none';
-            expenseRow.style.display = 'flex'; // Expense সবসময় দেখাবে যখন payment_fields active থাকবে
-        }
-        else if (method === "Cash") {
-            // Cash এ শুধু Expense Amount + Note
-            transactionIdDiv.style.display = 'none';
-            expenseRow.style.display = 'none';
-        }
-        else {
-            // Bkash, Nagad, Bank Transfer, Card, Rocket
-            transactionIdDiv.style.display = 'flex';
-            expenseRow.style.display = 'none';
-        }
-    }
-
-    // Manager Payment Method এর জন্য আলাদা ফাংশন
-    function toggleManagerTransaction() {
-        const managerMethod = document.getElementById('manager_payment_method').value;
-        const managerTransactionDiv = document.getElementById('manager_transaction_id_div');
-
-        if (managerMethod === "Cash") {
-            managerTransactionDiv.style.display = 'none';
-        } else {
-            managerTransactionDiv.style.display = 'flex';
-        }
-    }
-
-    // Page load এ default behavior
-    window.onload = function () {
-        // যদি edit mode হয় তাহলে toggle চালু করবে
-        togglePaymentFields();
-
-        // Manager method থাকলে তার transaction ID ও চেক করবে
-        if (document.getElementById('manager_payment_method')) {
-            toggleManagerTransaction();
-        }
-    };
-</script>
