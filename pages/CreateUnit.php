@@ -109,7 +109,6 @@ if (isset($_POST['btn']) && empty($message)) {
             } else {
                 $message = "<div class='alert alert-danger'>Update failed: ".mysqli_error($db)."</div>";
             }
-
         } else {
 
             $sql = "INSERT INTO unit
@@ -118,11 +117,8 @@ if (isset($_POST['btn']) && empty($message)) {
             ($building_id,'$unit_name','$floor','$unit_type','$size',$rent,$advance,'$image_name','$status',$water,$gas)";
 
             if (mysqli_query($db,$sql)) {
-
                 $message = "<div class='alert alert-success'>Unit created successfully</div>";
-
             } else {
-
                 $message = "<div class='alert alert-danger'>Create failed: ".mysqli_error($db)."</div>";
             }
         }
