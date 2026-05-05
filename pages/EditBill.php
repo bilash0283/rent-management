@@ -879,7 +879,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         $billing_month_db = $pay_info_sh['billing_month'];
                                         $total_amount_db = $pay_info_sh['total_amount'];
                                         $paid_amount_db = $pay_info_sh['paid_amount'];
-                                        $due_amount_db = $pay_info_sh['due_amount'];
+                                        $due_amount_db = $total_amount_db-$paid_amount_db;
                                         $status = $pay_info_sh['status'];
                                         ?>
                                         <tr class="mb-1">
