@@ -95,7 +95,7 @@ if (isset($_POST['update_invoice'])) {
     <div class="page-header d-flex justify-content-between align-items-center">
         <div class="page-header-left">
             <h5 class="m-b-10">
-                Update Invoice
+                Update Invoice / #INV-<?php echo $invoice_id; ?>
             </h5>
         </div>
         <div class="page-header-right">
