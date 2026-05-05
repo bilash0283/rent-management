@@ -58,6 +58,9 @@ if (isset($_POST['create_invoice'])) {
     $Electricity_month = $_POST['Electricity_month'];
     $Others_month = $_POST['Others_month'];
     $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
+    $rent_month = $_POST['rent_month'];
+    $rent = $_POST['rent'];
+
 
     $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
     while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
@@ -95,6 +98,7 @@ if (isset($_POST['create_invoice'])) {
                 `tenant_id`,
                 `unit_id`,
                 `billing_month`,
+                `rent`,
                 `gas`,
                 `gas_month`,
                 `water`,
@@ -112,7 +116,8 @@ if (isset($_POST['create_invoice'])) {
             (
                 '$tent_id',
                 '$unit_id',
-                '$billing_month',
+                '$rent_month',
+                '$rent',
                 '$Gas',
                 '$Gas_month',
                 '$Water',
@@ -648,8 +653,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     <div class="row">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Rent for Month </small>
-                                            <input type="rent_month" name="Gas_month"
-                                                value="<?php echo date('M Y',$this_month); ?>"
+                                            <input type="month" name="rent_month"
+                                                value="<?php echo $this_month; ?>"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-6">
