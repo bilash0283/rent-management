@@ -1,83 +1,81 @@
 <?php
-    if (!isset($_GET['unit_id']) || !is_numeric($_GET['unit_id'])) {
-        echo "<div class='alert alert-danger'>Invalid Unit ID</div>";
-        exit;
-    }
+if (!isset($_GET['unit_id']) || !is_numeric($_GET['unit_id'])) {
+    echo "<div class='alert alert-danger'>Invalid Unit ID</div>";
+    exit;
+}
 
-    if (!isset($_GET['invoice_id']) || !is_numeric($_GET['invoice_id'])) {
-        echo "<div class='alert alert-danger'>Invalid Invoice ID</div>";
-        exit;
-    }
+if (!isset($_GET['invoice_id']) || !is_numeric($_GET['invoice_id'])) {
+    echo "<div class='alert alert-danger'>Invalid Invoice ID</div>";
+    exit;
+}
 
-    if (isset($_GET['unit_id'])) {
-        $unit_id = $_GET['unit_id'];
-    }
+if (isset($_GET['unit_id'])) {
+    $unit_id = $_GET['unit_id'];
+}
 
-    if (isset($_GET['invoice_id'])) {
-        $invoice_id = $_GET['invoice_id'];
-    }
+if (isset($_GET['invoice_id'])) {
+    $invoice_id = $_GET['invoice_id'];
+}
 
-    $query = "SELECT * FROM unit wHERE id = '$unit_id'";
-    $result = mysqli_query($db, $query);
-    while ($row = mysqli_fetch_assoc($result)) {
-        $unit_id = $row['id'];
-        $unit_name = $row['unit_name'];
-        $advance = $row['advance'];
-        $rent = $row['rent'];
-        $size = $row['size'];
-        // $Gas = $row['Gas'];
-        // $Water = $row['Water'];
-        $building_name = $row['building_name'];
-        $unit_type = $row['unit_type'];
-    }
+$query = "SELECT * FROM unit wHERE id = '$unit_id'";
+$result = mysqli_query($db, $query);
+while ($row = mysqli_fetch_assoc($result)) {
+    $unit_id = $row['id'];
+    $unit_name = $row['unit_name'];
+    $advance = $row['advance'];
+    $size = $row['size'];
+    $building_name = $row['building_name'];
+    $unit_type = $row['unit_type'];
+}
 
-    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
-    $building_row = mysqli_fetch_assoc($building);
-    $building_name_db = $building_row['name'];
+$building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_name' ");
+$building_row = mysqli_fetch_assoc($building);
+$building_name_db = $building_row['name'];
 
-    $tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
-    while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
-        $tent_name = $tent_row['name'];
-        $tent_id = $tent_row['id'];
-    }
+$tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
+while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
+    $tent_name = $tent_row['name'];
+    $tent_id = $tent_row['id'];
+}
 
-    // Advace Save SQL 
-    if (isset($_POST['advance_save'])) {
-        $advance_pay_amount = $_POST['advance_amount'];
+// Advace Save SQL 
+if (isset($_POST['advance_save'])) {
+    $advance_pay_amount = $_POST['advance_amount'];
 
-        $advance_add_sql = mysqli_query($db, "
+    $advance_add_sql = mysqli_query($db, "
                     INSERT INTO `advance`
                     (`tenant_id`, `unit_id`, `paid_amount`, `date`)
                     VALUES ('$tent_id', '$unit_id', '$advance_pay_amount', NOW())
                 ");
 
-        if ($advance_add_sql) {
-            header("Location: admin.php?page=editbill&unit_id=$unit_id");
-            exit();
-        }
+    if ($advance_add_sql) {
+        header("Location: admin.php?page=editbill&unit_id=$unit_id");
+        exit();
     }
+}
 
 
-    // monthly payment sql 
-    $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE id = '$invoice_id'");
-    while ($pay_info_sh = mysqli_fetch_assoc($pay_info))
-        {
-            $billing_month_db = $pay_info_sh['billing_month'];
-            $total_amount_db = $pay_info_sh['total_amount'];
-            $paid_amount_db = $pay_info_sh['paid_amount'];
-            $due_amount_db = $pay_info_sh['due_amount'];
-            $status = $pay_info_sh['status'];
-            $Gas_db = $pay_info_sh['Gas'];
-            $Water_db = $pay_info_sh['Water'];
-            $Electricity_db = $pay_info_sh['Electricity'];
-            $Others_db = $pay_info_sh['Others'];
+// monthly payment sql 
+$pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE id = '$invoice_id'");
+while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
+    $invoice_id    = $pay_info_sh['id'];
+    $billing_month_db = $pay_info_sh['billing_month'];
+    $total_amount_db = $pay_info_sh['total_amount'];
+    $paid_amount_db = $pay_info_sh['paid_amount'];
+    $due_amount_db = $total_amount_db-$paid_amount_db;
+    $status = $pay_info_sh['status'];
+    $Rent_db = $pay_info_sh['Rent'];
+    $Gas_db = $pay_info_sh['Gas'];
+    $Water_db = $pay_info_sh['Water'];
+    $Electricity_db = $pay_info_sh['Electricity'];
+    $Others_db = $pay_info_sh['Others'];
 
-            $Gas_month_db = $pay_info_sh['Gas_month'];
-            $Water_month_db = $pay_info_sh['Water_month'];
-            $Electricity_month_db = $pay_info_sh['Electricity_month'];
-            $Others_month_db = $pay_info_sh['Others_month'];
-            $created_at_db = $pay_info_sh['created_at'];
-    }
+    $Gas_month_db = $pay_info_sh['Gas_month'];
+    $Water_month_db = $pay_info_sh['Water_month'];
+    $Electricity_month_db = $pay_info_sh['Electricity_month'];
+    $Others_month_db = $pay_info_sh['Others_month'];
+    $created_at_db = $pay_info_sh['created_at'];
+}
 ?>
 
 <div class="nxl-content">
@@ -97,169 +95,217 @@
 
     <div class="mb-4">
         <div id="pdf-content" class="agreement-paper bg-white border" style="padding:90px;">
-            <div class="border-bottom-0 pt-4 d-flex justify-content-between align-items-start border-bottom">
-                <div>
-                    <h3 class="fw-bold mb-1 text-uppercase">
-                        <?php echo $building_name_db ?? 'Building Name'; ?>
-                    </h3>
+            <div class="card shadow-sm border-0" id="bill-card">
+                <div class="border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-start border-bottom">
+                    <div>
+                        <h4 class="fw-bold mb-1 text-uppercase">
+                            <?php echo $building_name_db ?? 'Building Name'; ?>
+                        </h4>
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bold text-primary mb-1">INVOICE</h5>
+                        <small>ID : #INV-<?= $invoice_id ?? '' ?></small>
+                    </div>
+
+                    <div class="text-end">
+                        <small class="fw-semibold">Date :
+                            <?php echo (!empty($created_at_db) && strtotime($created_at_db)) ? date("d M Y", strtotime($created_at_db)) : date("d M Y"); ?></small>
+                    </div>
                 </div>
 
-                <div class="text-center">
-                    <h5 class="fw-bold text-primary mb-1">INVOICE</h5>
-                </div>
+                <div class="card-body px-4">
+                    <div class="row mb-3">
+                        <div class="col-7">
+                            <small class="text-muted d-block text-uppercase fw-semibold"
+                                style="font-size: 0.7rem;">Tenant Name : <strong
+                                    class="text-black"><?php echo $tent_name ?? 'N/A' ?></strong></small>
 
-                <div class="text-end">
-                    <small class="fw-semibold">Date : <?php echo date("j-M-Y", strtotime($created_at_db)); ?></small>
-                </div>
-            </div>
+                            <small class="text-muted"><?php echo $unit_type ?? 'Unit ' ?> : <strong
+                                    class="text-black"><?php echo $unit_name ?? 'N/A' ?></strong>
+                            </small>
+                        </div>
+                        <div class="col-5 text-end">
+                            <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 0.7rem;">Bill
+                                Month
+                            </small>
+                            <span class="badge bg-light text-dark border fw-semibold">
+                                <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : date("M Y", strtotime($this_month)) ?>
+                            </span>
+                        </div>
+                    </div>
 
-            <div class="row mb-3">
-                <div class="col-7">
-                    <small class="text-muted d-block text-uppercase fw-semibold">
-                        Tenant Name : <span class="fw-bold"><?php echo $tent_name ?? 'N/A' ?></span>
-                    </small>
-                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 0.7rem;">
-                        <?php echo $unit_type . ' : ' . $unit_name ?? 'N/A' ?>
-                    </small>
-                </div>
-                <div class="col-5 text-end">
-                    <small class="text-muted d-block text-uppercase fw-semibold" style="font-size: 0.7rem;">Bill
-                        Month
-                    </small>
-                    <span class="badge bg-light text-dark border fw-semibold">
-                        <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : '' ?>
-                    </span>
-                </div>
-            </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped table-borderless align-middle mb-0"
+                            style="font-size: 0.85rem;">
+                            <tbody>
+                                <?php $total_bill = 0;
+                                if (!empty($Rent_db)) { ?>
+                                    <tr>
+                                        <td class="py-1">House Rent</td>
+                                        <td class="py-1 text-center">
+                                            <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : '' ?>
+                                        </td>
+                                        <td class="py-1 text-end">৳
+                                            <?php echo number_format($Rent_db, 0);
+                                            $total_bill += $Rent_db;
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
 
-            <div class="table-responsive">
-                <table class="table table-sm table-borderless align-middle mb-0" style="font-size: 0.85rem;">
+                                <?php if (!empty($Gas_db)) { ?>
+                                    <tr>
+                                        <td class="py-1">Gas Bill</td>
+                                        <td class="py-1 text-center">
+                                            <?= !empty($Gas_month_db) ? date("M Y", strtotime($Gas_month_db)) : '' ?>
+                                            <?php $total_bill += $Gas_db; ?>
+                                        </td>
+                                        <td class="py-1 text-end">৳
+                                            <?php echo number_format($Gas_db, 0); ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
 
-                    <tbody>
-                        <tr>
-                            <td class="py-1">House Rent</td>
-                            <td class="py-1 text-center">
-                                <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : '' ?>
-                            </td>
-                            <td class="py-1 text-end">৳
-                                <?php echo number_format($rent, 0);
-                                $total_bill = 0;
-                                $total_bill += $rent;
-                                ?>
-                            </td>
-                        </tr>
+                                <?php if (!empty($Water_db)) { ?>
+                                    <tr>
+                                        <td class="py-1">Water Bill</td>
+                                        <td class="py-1 text-center">
+                                            <?= $Water_month_db ?? '';
+                                            $total_bill += $Water_db;
+                                            ?>
+                                        </td>
+                                        <td class="py-1 text-end">৳
+                                            <?php echo number_format($Water_db, 0); ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
 
-                        <?php if (!empty($Gas_db)) { ?>
-                            <tr>
-                                <td class="py-1">Gas Bill</td>
-                                <td class="py-1 text-center">
-                                    <?= !empty($Gas_month_db) ? date("M Y", strtotime($Gas_month_db)) : '' ?>
-                                    <?php $total_bill += $Gas_db; ?>
-                                </td>
-                                <td class="py-1 text-end">৳
-                                    <?php echo number_format($Gas_db, 0); ?>
-                                </td>
-                            </tr>
-                        <?php } ?>
+                                <?php if (!empty($Electricity_db)) { ?>
+                                    <tr>
+                                        <td class="py-1">Electricity Bill <span class="text-warning"
+                                                style="font-size:10px;">(<?= $size ?>)</span></td>
+                                        <td class="py-1 text-center">
+                                            <?= $Electricity_month_db ?? '';
+                                            $total_bill += $Electricity_db;
+                                            ?>
+                                        </td>
+                                        <td class="py-1 text-end">৳
+                                            <?php echo number_format($Electricity_db, 0); ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
 
-                        <?php if (!empty($Water_db)) { ?>
-                            <tr>
-                                <td class="py-1">Water Bill</td>
-                                <td class="py-1 text-center">
-                                    <?= $Water_month_db ?? '';
-                                    $total_bill += $Water_db;
-                                    ?>
-                                </td>
-                                <td class="py-1 text-end">৳
-                                    <?php echo number_format($Water_db, 0); ?>
-                                </td>
-                            </tr>
-                        <?php } ?>
+                                <?php if (!empty($Others_db)) { ?>
+                                    <tr>
+                                        <td class="py-1">Others Bill</td>
+                                        <td class="py-1 text-center">
+                                            <?= $Others_month_db ?? '';
+                                            $total_bill += $Others_db;
+                                            ?>
+                                        </td>
+                                        <td class="py-1 text-end">৳
+                                            <?php echo number_format($Others_db, 0); ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
 
-                        <?php if (!empty($Electricity_db)) { ?>
-                            <tr>
-                                <td class="py-1">Electricity Bill <span class="text-warning"
-                                        style="font-size:10px;">(<?= $size ?>)</span></td>
-                                <td class="py-1 text-center">
-                                    <?= $Electricity_month_db ?? '';
-                                    $total_bill += $Electricity_db;
-                                    ?>
-                                </td>
-                                <td class="py-1 text-end">৳
-                                    <?php echo number_format($Electricity_db, 0); ?>
-                                </td>
-                            </tr>
-                        <?php } ?>
+                            </tbody>
+                            <tfoot class="border-top">
+                                <tr class="table-light">
+                                    <td class="fw-bold py-2 text-primary">Current Month Total = </td>
+                                    <td></td>
+                                    <td class="fw-bold py-2 text-end text-primary">৳
+                                        <?= number_format($total_bill, 0) ?>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
 
-                        <?php if (!empty($Others_db)) { ?>
-                            <tr>
-                                <td class="py-1">Others Bill</td>
-                                <td class="py-1 text-center">
-                                    <?= $Others_month_db ?? '';
-                                    $total_bill += $Others_db;
-                                    ?>
-                                </td>
-                                <td class="py-1 text-end">৳
-                                    <?php echo number_format($Others_db, 0); ?>
-                                </td>
-                            </tr>
-                        <?php } ?>
+                    <?php
+                    // Total Advance Paid
+                    $total_paid = 0;
 
-                    </tbody>
+                    $advance_sql = mysqli_query($db, "SELECT * FROM `advance` WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
+                    while ($advance_his = mysqli_fetch_assoc($advance_sql)) {
+                        $total_paid += $advance_his['paid_amount'];
+                    }
 
-                    <tfoot class="border-top">
-                        <tr class="table-light">
-                            <td class="fw-bold py-2 text-primary">Current Month Total = </td>
-                            <td></td>
-                            <td class="fw-bold py-2 text-end text-primary">৳
-                                <?= number_format($total_bill, 0) ?>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+                    // Remaining Payable Amount
+                    $payable = max($advance - $total_paid, 0); // avoid negative
+                    ?>
 
-            <div class="p-2 bg-light rounded px-4">
-                <?php if ($paid_amount_db > 0): ?>
-                    <div class="d-flex justify-content-between">
-                        <span class="small fw-bold text-success">Paid Amount = </span>
-                        <span class="small fw-bold text-success">৳
-                            <?= number_format($paid_amount_db, 0) ?>
+                    <div class="mt-3 p-2 bg-light rounded">
+                        <?php
+                        $stmt = $db->prepare("
+                                            SELECT id, billing_month, total_amount, paid_amount 
+                                            FROM invoices 
+                                            WHERE tenant_id = ? AND unit_id = ? 
+                                            ORDER BY billing_month
+                                        ");
+
+                        $stmt->bind_param("ii", $tent_id, $unit_id);
+                        $stmt->execute();
+                        $stmt->bind_result($id, $month, $total_amount, $paid_amount);
+
+                        $total_due = 0;
+
+                        while ($stmt->fetch()) {
+                            $due = (float) $total_amount - (float) $paid_amount;
+
+                            // যদি due থাকে তাহলে দেখাবে
+                            if ($due > 0) {
+                                $total_due += $due;
+
+                                echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
+                                echo '<span class="text-danger"> Due (' . date("M Y", strtotime($month)) . ') <span style="color:#0d6efd;font-size:10px;">#INV-' . $id . '</span></span>';
+                                echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 0) . '</span>';
+                                echo '</div>';
+                            }
+                        }
+                        if ($payable > 0) {
+                            $total_due += $payable;
+                            echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
+                            echo '<span class="text-danger">Advance Due</span>';
+                            echo '<span class="text-danger fw-semibold">৳ ' . number_format($payable, 0) . '</span>';
+                            echo '</div>';
+                        }
+                        $stmt->close();
+                        ?>
+
+                    </div>
+
+                    <div
+                        class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
+                        <span class="h6 mb-0 text-white">Total Payable Amount = </span>
+                        <span class="h5 mb-0 fw-bold text-white">৳
+                            <?= number_format($total_due, 0) ?>
                         </span>
                     </div>
-                <?php endif; ?>
-            </div>
 
-            <div class="p-2 bg-light rounded px-4">
-                <?php if ($due_amount_db > 0): ?>
-                    <div class="d-flex justify-content-between">
-                        <span class="small fw-bold text-danger">Due Amount = </span>
-                        <span class="small fw-bold text-danger">৳
-                            <?= number_format($due_amount_db, 0) ?>
-                        </span>
+                    <div class="mt-4 border-top">
+                        <p class="text-muted" style="font-size: 0.85rem;">
+                            <!-- Please pay within <strong>7th
+                                                <?php echo date("M Y", strtotime($this_month)); ?></strong> to
+                                            following account &
+                                            WhatsApp your deposit slip to <strong>01715482363</strong>. -->
+                            Please complete the payment within <strong>7 days</strong> and share your deposit slip via
+                            WhatsApp at <strong>01715482363</strong>.
+                        </p>
+                        <div class="card  border-0 p-3">
+                            <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
+                            <div class="text-primary fw-bold" style="letter-spacing: 1px;">A/C:
+                                1503101624157001</div>
+                            <small class="text-muted">BRAC BANK LTD | Moghbazar Branch</small>
+                        </div>
                     </div>
-                <?php endif; ?>
-            </div>
 
-            <div class="mt-4 border-top">
-                <p class="text-muted mt-3" style="font-size: 0.85rem;">
-                    <!-- Please pay within <strong>7th
-                        <?php echo date("M Y", strtotime($billing_month_db)); ?></strong> to
-                    following account &
-                    WhatsApp your deposit slip to <strong>01715482363</strong>. -->
-                    Please complete the payment within <strong>7 days</strong> and share your deposit slip via WhatsApp at <strong>01715482363</strong>.
-                </p>
-                <div class="card  border-0 p-3">
-                    <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
-                    <div class="text-primary fw-bold" style="letter-spacing: 1px;">A/C:
-                        1503101624157001</div>
-                    <small class="text-muted">BRACK BANK LTD | Moghbazar Branch</small>
+                    <div class="alert alert-warning mb-0 text-center" style="font-size: 0.8rem;">
+                        <i class="fas fa-exclamation-triangle me-1"></i> সিড়িতে ও দরজার সামনে জুতা,
+                        ময়লা রাখা সম্পূর্ণ নিষিদ্ধ।
+                    </div>
                 </div>
-            </div>
-
-            <div class="alert alert-warning mb-0 text-center" style="font-size: 0.8rem;">
-                <i class="fas fa-exclamation-triangle me-1"></i> সিড়িতে ও দরজার সামনে জুতা,
-                ময়লা রাখা সম্পূর্ণ নিষিদ্ধ।
             </div>
         </div><!-- #pdf-content -->
     </div>
@@ -309,29 +355,28 @@ document.getElementById('generatePdfBtn').addEventListener('click', function () 
 <!-- Image Generate  -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-document.getElementById('generatePdfBtn').addEventListener('click', function () {
+    document.getElementById('generatePdfBtn').addEventListener('click', function () {
 
-    const element = document.getElementById('pdf-content');
+        const element = document.getElementById('pdf-content');
 
-    html2canvas(element, {
-        scale: 3,          // high resolution
-        useCORS: true
-    }).then(canvas => {
+        html2canvas(element, {
+            scale: 3,          // high resolution
+            useCORS: true
+        }).then(canvas => {
 
-        // 👉 PNG download
-        let link = document.createElement('a');
-        link.download = 'Invoice <?= addslashes($tent_name ?? "Tenant") ?>.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+            // 👉 PNG download
+            let link = document.createElement('a');
+            link.download = 'Invoice <?= addslashes($tent_name ?? "Tenant") ?>.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+        });
 
     });
-
-});
 </script>
 
 <style>
-
-    #pdf-content{
+    #pdf-content {
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
     }
@@ -361,11 +406,11 @@ document.getElementById('generatePdfBtn').addEventListener('click', function () 
         margin-bottom: 25px;
     }
 
-    .card{
+    .card {
         box-shadow: none !important;
     }
 
-    .rounded{
+    .rounded {
         border-radius: 0 !important;
     }
 
