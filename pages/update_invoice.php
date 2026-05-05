@@ -52,12 +52,12 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                             <div class="row">
                                 <div class="col-md-6">
                                     <small class="fw-semibold">Rent for Month </small>
-                                    <input type="month" name="rent_month" value="<?php echo $this_month; ?>"
+                                    <input type="month" name="rent_month" value="<?php echo $billing_month_db; ?>"
                                         class="form-control">
                                 </div>
                                 <div class="col-md-6">
                                     <small class="fw-semibold" for="status">Rent Amount</small>
-                                    <input type="text" name="rent" value="<?= $rent ?? '' ?>" class="form-control">
+                                    <input type="text" name="rent" value="<?= $Rent_db ?? '' ?>" class="form-control">
                                 </div>
                             </div>
 
@@ -65,12 +65,12 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                 <div class="col-md-6">
                                     <small class="fw-semibold">Gas </small>
                                     <input type="month" name="Gas_month"
-                                        value="<?php echo date('Y-m', strtotime('first day of last month')); ?>"
+                                        value="<?php echo date('Y-m', strtotime($Gas_month_db)); ?>"
                                         class="form-control">
                                 </div>
                                 <div class="col-md-6">
                                     <small class="fw-semibold" for="status">Gas Amount</small>
-                                    <input type="text" name="Gas" value="<?= $gas ?? '' ?>" class="form-control">
+                                    <input type="text" name="Gas" value="<?= $Gas_db ?? '' ?>" class="form-control">
                                 </div>
                             </div>
 
@@ -78,7 +78,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                 <div class="col-md-6">
                                     <small class="fw-semibold">Water </small>
                                     <input type="text" name="Water_month"
-                                        value="<?php echo date('M Y', strtotime('first day of this month -4 months')); ?>"
+                                        value="<?php echo date('M Y', strtotime($Water_month_db)); ?>"
                                         class="form-control">
                                 </div>
                                 <div class="col-md-6">
@@ -91,23 +91,23 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                 <div class="col-md-6">
                                     <small class="fw-semibold">Electricity </small>
                                     <input type="text" name="Electricity_month"
-                                        value="<?php echo date('M Y', strtotime('first day of this month -2 months')); ?>"
+                                        value="<?php echo date('M Y', strtotime($Electricity_month_db)); ?>"
                                         placeholder="Note" class="form-control">
                                 </div>
                                 <div class="col-md-6">
                                     <small class="fw-semibold" for="status">Electricity Amount</small>
-                                    <input type="text" name="Electricity" value="" class="form-control">
+                                    <input type="text" name="Electricity" value="<?php echo $Electricity_db; ?>" class="form-control">
                                 </div>
                             </div>
 
                             <div class="row mt-2">
                                 <div class="col-md-6">
                                     <small class="fw-semibold">Others </small>
-                                    <input type="text" name="Others_month" placeholder="Note" class="form-control">
+                                    <input type="text" name="Others_month" value="<?php echo $Others_month_db; ?>" placeholder="Note" class="form-control">
                                 </div>
                                 <div class="col-md-6">
                                     <small class="fw-semibold" for="status">Others Amount</small>
-                                    <input type="text" name="Others" value="" class="form-control">
+                                    <input type="text" name="Others" value="<?php echo $Others_db; ?>" class="form-control">
                                 </div>
                             </div>
 
