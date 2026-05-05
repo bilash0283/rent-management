@@ -164,15 +164,16 @@ if (mysqli_num_rows($result) > 0) {
                                                 <?php
                                                 $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$id' AND unit_id = '$unit_id' ORDER BY billing_month ");
                                                     while ($pay_info_row = mysqli_fetch_assoc($pay_info)) {
+                                                        $invoice_id = $pay_info_row['id'];
                                                         $billing_month_db = $pay_info_row['billing_month'];
                                                         $paid_amount_db = $pay_info_row['paid_amount'];
-                                                        $due_amount_db = $pay_info_row['due_amount'];
                                                         $status = $pay_info_row['status'];
                                                         $total_amount = $pay_info_row['total_amount'];
+                                                        $due_amount_db = $total_amount-$paid_amount_db;
                                                     
                                                 ?>
                                                     <div class="activity-item mb-3">
-                                                        <h6 class="mb-1"><?= date(' M Y', strtotime($billing_month_db)) ?></h6>
+                                                        <h6 class="mb-1"><?= date(' M Y', strtotime($billing_month_db)) ?> <small class="text-success">(#INV-<?= $invoice_id; ?>)</small></h6>
                                                         <span class="text-muted small mb-0">🟡 <small>৳ </small><?= $total_amount ?></span> 🟢 <small>৳ </small><?= $paid_amount_db ?></span> <span class="text-muted small mb-0">🔴 <small>৳ </small> <?= $due_amount_db ?></span>
                                                     </div>
                                                 <?php } ?>
