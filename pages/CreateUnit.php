@@ -45,10 +45,10 @@ if (isset($_POST['btn']) && empty($message)) {
     $unit_type = mysqli_real_escape_string($db, $_POST['unit_type'] ?? 'Flat');
     $size      = mysqli_real_escape_string($db, trim($_POST['size'] ?? ''));
 
-    $rent    = (float)($_POST['rent'] ?? 0);
-    $advance = (float)($_POST['advance'] ?? 0);
-    $water   = (float)($_POST['water'] ?? 0);
-    $gas     = (float)($_POST['gas'] ?? 0);
+    $rent    = ($_POST['rent'] ?? 0);
+    $advance = ($_POST['advance'] ?? 0);
+    $water   = ($_POST['water'] ?? 0);
+    $gas     = ($_POST['gas'] ?? 0);
 
     // IMPORTANT FIX
     if ($edit_id > 0) {
@@ -217,13 +217,13 @@ if (isset($_POST['btn']) && empty($message)) {
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label>Rent (৳) <span class="text-danger">*</span></label>
-                                            <input type="number" step="0.01" min="0" name="rent" required
+                                            <input type="text" name="rent" required
                                                    value="<?= htmlspecialchars($unit['rent'] ?? 0) ?>"
                                                    class="form-control" placeholder="Monthly Rent">
                                         </div>
                                         <div class="col-md-6">
                                             <label>Advance / Security (৳)</label>
-                                            <input type="number" step="0.01" min="0" name="advance"
+                                            <input type="text" name="advance"
                                                    value="<?= htmlspecialchars($unit['advance'] ?? 0) ?>"
                                                    class="form-control" placeholder="Advance amount">
                                         </div>
@@ -240,13 +240,13 @@ if (isset($_POST['btn']) && empty($message)) {
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label>Water (৳/month)</label>
-                                            <input type="number" step="0.01" min="0" name="water"
+                                            <input type="text" name="water"
                                                    value="<?= htmlspecialchars($unit['water'] ?? 0) ?>"
                                                    class="form-control">
                                         </div>
                                         <div class="col-md-6">
                                             <label>Gas (৳/month)</label>
-                                            <input type="number" step="0.01" min="0" name="gas"
+                                            <input type="text" name="gas"
                                                    value="<?= htmlspecialchars($unit['gas'] ?? 0) ?>"
                                                    class="form-control">
                                         </div>

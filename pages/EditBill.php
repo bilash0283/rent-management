@@ -498,18 +498,19 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         <table class="table table-sm table-striped table-borderless align-middle mb-0"
                                             style="font-size: 0.85rem;">
                                             <tbody>
-                                                <tr>
-                                                    <td class="py-1">House Rent</td>
-                                                    <td class="py-1 text-center">
-                                                        <?= !empty($this_month) ? date("M Y", strtotime($this_month)) : '' ?>
-                                                    </td>
-                                                    <td class="py-1 text-end">৳
-                                                        <?php echo number_format($rent, 0);
-                                                        $total_bill = 0;
-                                                        $total_bill += $rent;
-                                                        ?>
-                                                    </td>
-                                                </tr>
+                                                <?php $total_bill = 0; if(!empty($Rent_db)){ ?>
+                                                    <tr>
+                                                        <td class="py-1">House Rent</td>
+                                                        <td class="py-1 text-center">
+                                                            <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : '' ?>
+                                                        </td>
+                                                        <td class="py-1 text-end">৳
+                                                            <?php echo number_format($Rent_db, 0);
+                                                            $total_bill += $Rent_db;
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
 
                                                 <?php if (!empty($Gas_db)) { ?>
                                                     <tr>
