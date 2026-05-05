@@ -899,7 +899,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                         class="p-1 btn btn-sm btn-success" title="view">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="admin.php?page=update_invoice&invoice_id=<?php echo $invoice_id_db; ?>" class="p-1 btn btn-sm btn-info" title="Edit">
+                                                    <a href="admin.php?page=update_invoice&unit_id=<?php echo $unit_id; ?>&invoice_id=<?php echo $invoice_id_db; ?>" class="p-1 btn btn-sm btn-info" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
                                                 </div>
