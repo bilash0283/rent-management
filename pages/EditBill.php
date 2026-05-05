@@ -110,7 +110,7 @@ if (isset($_POST['create_invoice'])) {
             now()
         )");
 
-        if($bill_sql){
+        if ($bill_sql) {
             echo "<script>alert('This invoice has been created Successfull.'); window.history.back();</script>";
             exit;
         }
@@ -122,23 +122,23 @@ if (isset($_POST['create_invoice'])) {
 if (isset($_POST['save_bill'])) {
 
     // ==================== Get and Sanitize Input ====================
-    $billing_month          = trim($_POST['billing_month'] ?? '');
-    $total_amount           = (int) ($_POST['total_amount'] ?? 0);        // reference only
-    $paid_amount            = (int) ($_POST['paid_amount'] ?? 0);
-    $note                   = trim($_POST['note'] ?? '');
-    $payment_date           = date('Y-m-d');                              // Today's date
-    $payment_method         = trim($_POST['payment_method'] ?? '');
-    $expense                = (int) ($_POST['expense'] ?? 0);
-    $expense_note           = trim($_POST['expense_note'] ?? '');
-    $transaction_id         = trim($_POST['transaction_id'] ?? '') ?: NULL;
+    $billing_month = trim($_POST['billing_month'] ?? '');
+    $total_amount = (int) ($_POST['total_amount'] ?? 0);        // reference only
+    $paid_amount = (int) ($_POST['paid_amount'] ?? 0);
+    $note = trim($_POST['note'] ?? '');
+    $payment_date = date('Y-m-d');                              // Today's date
+    $payment_method = trim($_POST['payment_method'] ?? '');
+    $expense = (int) ($_POST['expense'] ?? 0);
+    $expense_note = trim($_POST['expense_note'] ?? '');
+    $transaction_id = trim($_POST['transaction_id'] ?? '') ?: NULL;
 
-    $manager_payment        = (int) ($_POST['manager_payment'] ?? 0);
+    $manager_payment = (int) ($_POST['manager_payment'] ?? 0);
     $manager_payment_method = trim($_POST['manager_payment_method'] ?? '');
     $manager_transaction_id = trim($_POST['manager_transaction_id'] ?? '');
 
-    $tren_date              = trim($_POST['transaction_date'] ?? '');
-    $transaction_date       = $tren_date ? date('Y-m-d H:i:s', strtotime($tren_date)) : date('Y-m-d H:i:s');
-    $transaction_number     = trim($_POST['transaction_number'] ?? '');
+    $tren_date = trim($_POST['transaction_date'] ?? '');
+    $transaction_date = $tren_date ? date('Y-m-d H:i:s', strtotime($tren_date)) : date('Y-m-d H:i:s');
+    $transaction_number = trim($_POST['transaction_number'] ?? '');
 
     $manager_self = 0;
     $errors = [];
@@ -170,13 +170,12 @@ if (isset($_POST['save_bill'])) {
         // Final strict check
         if (($manager_payment + $expense + $manager_self) !== $paid_amount) {
             $errors[] = "Payment distribution error!\n\n" .
-                        "Paid Amount = $paid_amount\n" .
-                        "Manager Payment = $manager_payment\n" .
-                        "Expense = $expense\n" .
-                        "Manager Self = $manager_self";
+                "Paid Amount = $paid_amount\n" .
+                "Manager Payment = $manager_payment\n" .
+                "Expense = $expense\n" .
+                "Manager Self = $manager_self";
         }
-    } 
-    else {
+    } else {
         // Normal Payment (Cash, Bank, etc.)
         if ($paid_amount <= 0) {
             $errors[] = "Paid amount must be greater than 0.";
@@ -184,8 +183,8 @@ if (isset($_POST['save_bill'])) {
 
         // Reset manager fields
         $manager_payment = 0;
-        $expense         = 0;
-        $manager_self    = 0;
+        $expense = 0;
+        $manager_self = 0;
     }
 
     // Show errors if any
@@ -209,9 +208,9 @@ if (isset($_POST['save_bill'])) {
     $row = mysqli_fetch_assoc($month_sql);
 
     $invoice_id = $row['id'];
-    $old_total  = (int) $row['total_amount'];
-    $old_paid   = (int) $row['paid_amount'];
-    $old_due    = (int) $old_total-$old_paid;
+    $old_total = (int) $row['total_amount'];
+    $old_paid = (int) $row['paid_amount'];
+    $old_due = (int) $old_total - $old_paid;
     $old_status = $row['status'];
 
     // Already fully paid?
@@ -239,7 +238,7 @@ if (isset($_POST['save_bill'])) {
 
     // ==================== Calculate New Values ====================
     $new_paid = $old_paid + $paid_amount;
-    $new_due  = $old_total - $new_paid;
+    $new_due = $old_total - $new_paid;
 
     // Auto update status
     if ($new_due <= 0) {
@@ -300,11 +299,11 @@ if (isset($_POST['save_bill'])) {
 // monthly payment sql 
 $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
 while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
-    $invoice_id    = $pay_info_sh['id'];
+    $invoice_id = $pay_info_sh['id'];
     $billing_month_db = $pay_info_sh['billing_month'];
     $total_amount_db = $pay_info_sh['total_amount'];
     $paid_amount_db = $pay_info_sh['paid_amount'];
-    $due_amount_db = $total_amount_db-$paid_amount_db;
+    $due_amount_db = $total_amount_db - $paid_amount_db;
     $status = $pay_info_sh['status'];
     $Rent_db = $pay_info_sh['Rent'];
     $Gas_db = $pay_info_sh['Gas'];
@@ -424,226 +423,18 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                 <!-- Monthly Bill & summary  -->
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <h6 class="fw-bold ">Monthly Bills & Payment Summary</h6>
-                        <a href="admin.php?page=invoice&unit_id=<?php echo $unit_id; ?>"
-                            class="btn btn-sm btn-success ">
-                            Invoice
-                        </a>
-                    </div>
+                    <h6 class="fw-bold mt-4 mx-3 mb-3">Monthly Bills & Payment Summary</h6>
                     <!-- Unit Name -->
                     <div class="row mx-1 ">
-                        <div class="col-lg-7 mx-auto">
-                            <div class="card shadow-sm border-0" id="bill-card">
-                                <div
-                                    class="border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-start border-bottom">
-                                    <div>
-                                        <h4 class="fw-bold mb-1 text-uppercase">
-                                            <?php echo $building_name_db ?? 'Building Name'; ?>
-                                        </h4>
-                                    </div>
-
-                                    <div>
-                                        <h5 class="fw-bold text-primary mb-1">INVOICE</h5>
-                                        <small>ID : #INV-<?= $invoice_id ?? '' ?></small>
-                                    </div>
-
-                                    <div class="text-end">
-                                        <small class="fw-semibold">Date : <?php echo (!empty($created_at_db) && strtotime($created_at_db)) ? date("d M Y", strtotime($created_at_db)) : date("d M Y"); ?></small>
-                                    </div>
-                                </div>
-
-                                <div class="card-body px-4">
-                                    <div class="row mb-3">
-                                        <div class="col-7">
-                                            <small class="text-muted d-block text-uppercase fw-semibold"
-                                                style="font-size: 0.7rem;">Tenant Name : <strong
-                                                    class="text-black"><?php echo $tent_name ?? 'N/A' ?></strong></small>
-
-                                            <small class="text-muted"><?php echo $unit_type ?? 'Unit ' ?> : <strong
-                                                    class="text-black"><?php echo $unit_name ?? 'N/A' ?></strong>
-                                            </small>
-                                        </div>
-                                        <div class="col-5 text-end">
-                                            <small class="text-muted d-block text-uppercase fw-semibold"
-                                                style="font-size: 0.7rem;">Bill Month
-                                            </small>
-                                            <span class="badge bg-light text-dark border fw-semibold">
-                                                <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : date("M Y", strtotime($this_month)) ?>
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="table-responsive">
-                                        <table class="table table-sm table-striped table-borderless align-middle mb-0"
-                                            style="font-size: 0.85rem;">
-                                            <tbody>
-                                                <?php $total_bill = 0; if(!empty($Rent_db)){ ?>
-                                                    <tr>
-                                                        <td class="py-1">House Rent</td>
-                                                        <td class="py-1 text-center">
-                                                            <?= !empty($billing_month_db) ? date("M Y", strtotime($billing_month_db)) : '' ?>
-                                                        </td>
-                                                        <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Rent_db, 0);
-                                                            $total_bill += $Rent_db;
-                                                            ?>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-
-                                                <?php if (!empty($Gas_db)) { ?>
-                                                    <tr>
-                                                        <td class="py-1">Gas Bill</td>
-                                                        <td class="py-1 text-center">
-                                                            <?= !empty($Gas_month_db) ? date("M Y", strtotime($Gas_month_db)) : '' ?>
-                                                            <?php $total_bill += $Gas_db; ?>
-                                                        </td>
-                                                        <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Gas_db, 0); ?>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-
-                                                <?php if (!empty($Water_db)) { ?>
-                                                    <tr>
-                                                        <td class="py-1">Water Bill</td>
-                                                        <td class="py-1 text-center">
-                                                            <?= $Water_month_db ?? '';
-                                                            $total_bill += $Water_db;
-                                                            ?>
-                                                        </td>
-                                                        <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Water_db, 0); ?>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-
-                                                <?php if (!empty($Electricity_db)) { ?>
-                                                    <tr>
-                                                        <td class="py-1">Electricity Bill <span class="text-warning"
-                                                                style="font-size:10px;">(<?= $size ?>)</span></td>
-                                                        <td class="py-1 text-center">
-                                                            <?= $Electricity_month_db ?? '';
-                                                            $total_bill += $Electricity_db;
-                                                            ?>
-                                                        </td>
-                                                        <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Electricity_db, 0); ?>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-
-                                                <?php if (!empty($Others_db)) { ?>
-                                                    <tr>
-                                                        <td class="py-1">Others Bill</td>
-                                                        <td class="py-1 text-center">
-                                                            <?= $Others_month_db ?? '';
-                                                            $total_bill += $Others_db;
-                                                            ?>
-                                                        </td>
-                                                        <td class="py-1 text-end">৳
-                                                            <?php echo number_format($Others_db, 0); ?>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-
-                                            </tbody>
-                                            <tfoot class="border-top">
-                                                <tr class="table-light">
-                                                    <td class="fw-bold py-2 text-primary">Current Month Total = </td>
-                                                    <td></td>
-                                                    <td class="fw-bold py-2 text-end text-primary">৳
-                                                        <?= number_format($total_bill, 0) ?>
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-
-                                    <div class="mt-3 p-2 bg-light rounded">
-                                        <?php
-                                        $stmt = $db->prepare("
-                                            SELECT id, billing_month, total_amount, paid_amount 
-                                            FROM invoices 
-                                            WHERE tenant_id = ? AND unit_id = ? 
-                                            ORDER BY billing_month
-                                        ");
-
-                                        $stmt->bind_param("ii", $tent_id, $unit_id);
-                                        $stmt->execute();
-                                        $stmt->bind_result($id,$month, $total_amount, $paid_amount);
-
-                                        $total_due = 0;
-
-                                        while ($stmt->fetch()) {
-                                            $due = (float)$total_amount - (float)$paid_amount;
-
-                                            // যদি due থাকে তাহলে দেখাবে
-                                            if ($due > 0) {
-                                                $total_due += $due;
-
-                                                echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
-                                                echo '<span class="text-danger"> Due (' . date("M Y", strtotime($month)) . ') <span style="color:#0d6efd;font-size:10px;">#INV-' . $id . '</span></span>';
-                                                echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 0) . '</span>';
-                                                echo '</div>';
-                                            }
-                                        }
-                                        if ($payable > 0) {
-                                            $total_due += $payable;
-                                            echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
-                                            echo '<span class="text-danger">Advance Due</span>';
-                                            echo '<span class="text-danger fw-semibold">৳ ' . number_format($payable, 0) . '</span>';
-                                            echo '</div>';
-                                        }
-                                        $stmt->close();
-                                        ?>
-                                        
-                                    </div>
-
-                                    <div
-                                        class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
-                                        <span class="h6 mb-0 text-white">Total Payable Amount = </span>
-                                        <span class="h5 mb-0 fw-bold text-white">৳
-                                            <?= number_format($total_due, 0) ?>
-                                        </span>
-                                    </div>
-
-                                    <div class="mt-4 border-top">
-                                        <p class="text-muted" style="font-size: 0.85rem;">
-                                            <!-- Please pay within <strong>7th
-                                                <?php echo date("M Y", strtotime($this_month)); ?></strong> to
-                                            following account &
-                                            WhatsApp your deposit slip to <strong>01715482363</strong>. -->
-                                            Please complete the payment within <strong>7 days</strong> and share your deposit slip via WhatsApp at <strong>01715482363</strong>.
-                                        </p>
-                                        <div class="card  border-0 p-3">
-                                            <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
-                                            <div class="text-primary fw-bold" style="letter-spacing: 1px;">A/C:
-                                                1503101624157001</div>
-                                            <small class="text-muted">BRAC BANK LTD | Moghbazar Branch</small>
-                                        </div>
-                                    </div>
-
-                                    <div class="alert alert-warning mb-0 text-center" style="font-size: 0.8rem;">
-                                        <i class="fas fa-exclamation-triangle me-1"></i> সিড়িতে ও দরজার সামনে জুতা,
-                                        ময়লা রাখা সম্পূর্ণ নিষিদ্ধ।
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-5">
-                            <!-- create Invoice  -->
+                        <!-- create Invoice  -->
+                        <div class="col-md-6">
                             <form method="POST" enctype="multipart/form-data">
                                 <div class="card p-3">
                                     <h6>Create Invoice : </h6>
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Rent for Month </small>
-                                            <input type="month" name="rent_month"
-                                                value="<?php echo $this_month; ?>"
+                                            <input type="month" name="rent_month" value="<?php echo $this_month; ?>"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-6">
@@ -652,7 +443,6 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 class="form-control">
                                         </div>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Gas </small>
@@ -666,7 +456,6 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 class="form-control">
                                         </div>
                                     </div>
-
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Water </small>
@@ -680,7 +469,6 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 class="form-control">
                                         </div>
                                     </div>
-
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Electricity <span class="text-warning"
@@ -694,7 +482,6 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             <input type="text" name="Electricity" value="" class="form-control">
                                         </div>
                                     </div>
-
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Others </small>
@@ -706,20 +493,19 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             <input type="text" name="Others" value="" class="form-control">
                                         </div>
                                     </div>
-
                                     <button type="submit" name="create_invoice" class="btn btn-success btn-sm mt-3">
                                         Create Invoice
                                     </button>
                                 </div>
                             </form>
-
-                            <!-- confirm payment  -->
+                        </div>
+                            
+                        <!-- confirm payment  -->
+                        <div class="col-md-6">
                             <form method="POST" enctype="multipart/form-data">
                                 <div class="card p-3">
                                     <h6>Confirm Payment :</h6>
-
                                     <input type="hidden" name="total_amount" value="<?php echo $total_bill; ?>">
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="">Amount *</label>
@@ -732,11 +518,11 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 class="form-control" required>
                                         </div>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="transaction_date">Transaction Time *</label>
-                                            <input type="datetime-local" class="form-control" name="transaction_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
+                                            <input type="datetime-local" class="form-control" name="transaction_date"
+                                                value="<?= date('Y-m-d\TH:i'); ?>" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="payment_method">Payment Method *</label>
@@ -747,27 +533,30 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <option value="Cash">Cash</option>
                                                 <option value="Bkash">Bkash</option>
                                                 <option value="Nagad">Nagad</option>
-                                                <option value="Rocket">Rocket</option> 
+                                                <option value="Rocket">Rocket</option>
                                                 <option value="Bank Transfer">Bank Transfer</option>
                                                 <option value="Card">Card</option>
                                                 <option value="Manager">Manager</option>
                                             </select>
                                         </div>
                                     </div>
-
                                     <!-- Dynamic Fields -->
                                     <div id="payment_fields" style="display: none;">
 
                                         <!-- Manager Payment Section -->
                                         <div class="row" id="manager_section" style="display: none;">
                                             <div class="col-md-6">
-                                                <label for="manager_payment" style="font-size: 12px; color: blue;">Manager Payment Amount</label>
-                                                <input type="text" class="form-control" name="manager_payment" id="manager_payment">
+                                                <label for="manager_payment"
+                                                    style="font-size: 12px; color: blue;">Manager Payment Amount</label>
+                                                <input type="text" class="form-control" name="manager_payment"
+                                                    id="manager_payment">
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="manager_payment_method" style="font-size: 12px; color: blue;">Manager Payment Method</label>
-                                                <select name="manager_payment_method" id="manager_payment_method" 
-                                                    class="form-control form-select" onchange="toggleManagerTransaction()">
+                                                <label for="manager_payment_method"
+                                                    style="font-size: 12px; color: blue;">Manager Payment Method</label>
+                                                <select name="manager_payment_method" id="manager_payment_method"
+                                                    class="form-control form-select"
+                                                    onchange="toggleManagerTransaction()">
                                                     <option value="" selected disabled>Select One</option>
                                                     <option value="Cash">Cash</option>
                                                     <option value="Bkash">Bkash</option>
@@ -780,14 +569,16 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         </div>
 
                                         <!-- Manager Transaction ID -->
-                                        <div class="row" id="manager_transaction_id_div" >
+                                        <div class="row" id="manager_transaction_id_div">
                                             <div class="col-md-6">
                                                 <label class="">Transaction ID</label>
-                                                <input type="text" name="manager_transaction_id" id="manager_transaction_id" class="form-control">
+                                                <input type="text" name="manager_transaction_id"
+                                                    id="manager_transaction_id" class="form-control">
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="">Transaction Number</label>
-                                                <input type="text" name="transaction_number" id="transaction_number" class="form-control">
+                                                <input type="text" name="transaction_number" id="transaction_number"
+                                                    class="form-control">
                                             </div>
                                         </div>
 
@@ -799,7 +590,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="expense_note">Expense Note</label>
-                                                <input type="text" name="expense_note" id="expense_note" class="form-control">
+                                                <input type="text" name="expense_note" id="expense_note"
+                                                    class="form-control">
                                             </div>
                                         </div>
 
@@ -807,21 +599,21 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         <div class="row" id="transaction_id_div">
                                             <div class="col-md-6">
                                                 <label class="">Transaction ID</label>
-                                                <input type="text" name="transaction_id" id="transaction_id" class="form-control">
+                                                <input type="text" name="transaction_id" id="transaction_id"
+                                                    class="form-control">
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="">Transaction Number</label>
-                                                <input type="text" name="transaction_number" id="transaction_number" class="form-control">
+                                                <input type="text" name="transaction_number" id="transaction_number"
+                                                    class="form-control">
                                             </div>
                                         </div>
 
                                     </div>
-
                                     <div>
                                         <label class="">Note</label>
                                         <input type="text" name="note" class="form-control">
                                     </div>
-
                                     <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3">
                                         Confirm Payment
                                     </button>
@@ -858,7 +650,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         $billing_month_db = $pay_info_sh['billing_month'];
                                         $total_amount_db = $pay_info_sh['total_amount'];
                                         $paid_amount_db = $pay_info_sh['paid_amount'];
-                                        $due_amount_db = $total_amount_db-$paid_amount_db;
+                                        $due_amount_db = $total_amount_db - $paid_amount_db;
                                         $status = $pay_info_sh['status'];
                                         ?>
                                         <tr class="mb-1">
@@ -890,7 +682,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                         class="p-1 btn btn-sm btn-success" title="view">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="admin.php?page=update_invoice&unit_id=<?php echo $unit_id; ?>&invoice_id=<?php echo $invoice_id_db; ?>" class="p-1 btn btn-sm btn-info" title="Edit">
+                                                    <a href="admin.php?page=update_invoice&unit_id=<?php echo $unit_id; ?>&invoice_id=<?php echo $invoice_id_db; ?>"
+                                                        class="p-1 btn btn-sm btn-info" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
                                                 </div>
@@ -936,17 +729,17 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         $pay_slip_id = $pay_history['id'];
                                         $bill_his = $pay_history['bill_month']; // উদাহরণ: 2026-04
                                         $pay_method_his = $pay_history['payment_method'];
-                                        $total_bill_amount = (float)$pay_history['total']; 
-                                        $current_paid_entry = (float)$pay_history['paid_amount'];
-                                        
+                                        $total_bill_amount = (float) $pay_history['total'];
+                                        $current_paid_entry = (float) $pay_history['paid_amount'];
+
                                         // একই মাস এবং একই ইউজারের জন্য আগের পেইড অ্যামাউন্ট হিসাব করা
                                         if (!isset($monthly_paid_tracker[$bill_his])) {
                                             $monthly_paid_tracker[$bill_his] = 0;
                                         }
-                                        
+
                                         // রানিং টোটাল আপডেট করা
                                         $monthly_paid_tracker[$bill_his] += $current_paid_entry;
-                                        
+
                                         // বর্তমান সারির জন্য ক্যালকুলেটেড ভ্যালু
                                         $calculated_total_paid = $monthly_paid_tracker[$bill_his];
                                         $calculated_due = $total_bill_amount - $calculated_total_paid;
@@ -962,7 +755,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         $manager_transaction_id = $pay_history['manager_transaction_id'];
                                         $transaction_date = $pay_history['transaction_date'];
                                         $transaction_number = $pay_history['transaction_number'];
-                                    ?>
+                                        ?>
                                         <tr>
                                             <td class="ps-4 fw-medium">
                                                 <?= date('d M Y', strtotime($pay_date_his)) ?>
@@ -972,11 +765,13 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             </td>
                                             <td class="text-end text-secondary fw-semibold">
                                                 <?= $pay_method_his ?><br>
-                                                <?php if (!empty($transaction_id_db)) : ?>
-                                                    <small style="font-size:8px;">( Txn ID : <?= $transaction_id_db ?> )</small><br>
+                                                <?php if (!empty($transaction_id_db)): ?>
+                                                    <small style="font-size:8px;">( Txn ID : <?= $transaction_id_db ?>
+                                                        )</small><br>
                                                 <?php endif; ?>
-                                                <?php if (!empty($manager_transaction_id)) : ?>
-                                                    <small style="font-size:8px;">( Mgr Txn : <?= $manager_transaction_id ?> )</small><br>
+                                                <?php if (!empty($manager_transaction_id)): ?>
+                                                    <small style="font-size:8px;">( Mgr Txn : <?= $manager_transaction_id ?>
+                                                        )</small><br>
                                                 <?php endif; ?>
                                             </td>
                                             <td class="text-end text-success fw-bold">
@@ -994,24 +789,31 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 </span>
                                             </td>
                                             <td class="text-end">
-                                                <span class="text-danger"><?= $manager_self ? '<small>Self: ৳ </small>' . $manager_self : ''; ?></span>
+                                                <span
+                                                    class="text-danger"><?= $manager_self ? '<small>Self: ৳ </small>' . $manager_self : ''; ?></span>
                                             </td>
                                             <td class="text-end">
-                                                <span class="text-danger"><?= $expense ? '<small>৳ </small>' . $expense : ''; ?></span><br>
-                                                <small class="text-muted"><?= $expense_note ? '(' . $expense_note . ')' : ''; ?></small>
+                                                <span
+                                                    class="text-danger"><?= $expense ? '<small>৳ </small>' . $expense : ''; ?></span><br>
+                                                <small
+                                                    class="text-muted"><?= $expense_note ? '(' . $expense_note . ')' : ''; ?></small>
                                             </td>
                                             <td class="text-center">
                                                 <small class="text-secondary"><?= $note_his ?? '' ?></small>
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group">
-                                                    <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="p-1 btn btn-sm btn-success">
+                                                    <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>"
+                                                        class="p-1 btn btn-sm btn-success">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="p-1 btn btn-sm btn-info">
+                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>"
+                                                        class="p-1 btn btn-sm btn-info">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
-                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="p-1 btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this payment record?');">
+                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>"
+                                                        class="p-1 btn btn-sm btn-danger"
+                                                        onclick="return confirm('Are you sure you want to delete this payment record?');">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
                                                 </div>
@@ -1033,7 +835,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 <script>
     function togglePaymentFields() {
         const method = document.getElementById('payment_method').value;
-        
+
         const paymentFields = document.getElementById('payment_fields');
         const managerSection = document.getElementById('manager_section');
         const managerTransactionDiv = document.getElementById('manager_transaction_id_div');
@@ -1087,7 +889,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     window.onload = function () {
         // যদি edit mode হয় তাহলে toggle চালু করবে
         togglePaymentFields();
-        
+
         // Manager method থাকলে তার transaction ID ও চেক করবে
         if (document.getElementById('manager_payment_method')) {
             toggleManagerTransaction();
