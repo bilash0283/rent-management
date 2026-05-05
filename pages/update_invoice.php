@@ -1,73 +1,95 @@
 <?php
-if (empty($_GET['invoice_id']) || $_GET['invoice_id'] == '' || $_GET['invoice_id'] == null) {
-    echo "Invoice Id not Found !";
-}
-$unit_id = $_GET['unit_id'];
-$invoice_id = $_GET['invoice_id'];
-
-
-// invoice show from db 
-$pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE id='$invoice_id' ");
-while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
-    $invoice_id = $pay_info_sh['id'];
-    $billing_month_db = $pay_info_sh['billing_month'];
-    $total_amount_db = $pay_info_sh['total_amount'];
-    $paid_amount_db = $pay_info_sh['paid_amount'];
-    $due_amount_db = $total_amount_db - $paid_amount_db;
-    $status = $pay_info_sh['status'];
-    $Rent_db = $pay_info_sh['Rent'];
-    $Gas_db = $pay_info_sh['Gas'];
-    $Water_db = $pay_info_sh['Water'];
-    $Electricity_db = $pay_info_sh['Electricity'];
-    $Others_db = $pay_info_sh['Others'];
-
-    $Gas_month_db = $pay_info_sh['Gas_month'];
-    $Water_month_db = $pay_info_sh['Water_month'];
-    $Electricity_month_db = $pay_info_sh['Electricity_month'];
-    $Others_month_db = $pay_info_sh['Others_month'];
-    $created_at_db = $pay_info_sh['created_at'];
+if (!isset($_GET['invoice_id']) || empty($_GET['invoice_id'])) {
+    die("Invoice Id not Found!");
 }
 
-// update invoice 
+$invoice_id = intval($_GET['invoice_id']);
+$unit_id = isset($_GET['unit_id']) ? intval($_GET['unit_id']) : 0;
+
+// Fetch invoice data
+$stmt = $db->prepare("SELECT * FROM invoices WHERE id = ?");
+$stmt->bind_param("i", $invoice_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows == 0) {
+    die("Invoice not found!");
+}
+
+$data = $result->fetch_assoc();
+
+$billing_month_db = $data['billing_month'];
+$Rent_db = $data['Rent'];
+$Gas_db = $data['Gas'];
+$Water_db = $data['Water'];
+$Electricity_db = $data['Electricity'];
+$Others_db = $data['Others'];
+
+$Gas_month_db = $data['Gas_month'];
+$Water_month_db = $data['Water_month'];
+$Electricity_month_db = $data['Electricity_month'];
+$Others_month_db = $data['Others_month'];
+
+
+// Update invoice
 if (isset($_POST['update_invoice'])) {
-    $billing_month = $this_month;
-    $status = 'Unpaid';
+
+    $rent = intval($_POST['rent']);
     $Gas = intval($_POST['Gas']);
     $Water = intval($_POST['Water']);
     $Electricity = intval($_POST['Electricity']);
     $Others = intval($_POST['Others']);
+
+    $rent_month = $_POST['rent_month'];
     $Gas_month = $_POST['Gas_month'];
     $Water_month = $_POST['Water_month'];
     $Electricity_month = $_POST['Electricity_month'];
     $Others_month = $_POST['Others_month'];
+
     $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
-    $rent_month = $_POST['rent_month'];
-    $rent = $_POST['rent'];
 
-    $bill_sql = mysqli_query($db, "UPDATE `invoices` SET 
-                `gas` = '$Gas',
-                `gas_month` = '$Gas_month',
-                `water` = '$Water',
-                `water_month` = '$Water_month',
-                `electricity` = '$Electricity',
-                `electricity_month` = '$Electricity_month',
-                `others` = '$Others',
-                `others_month` = '$Others_month',
-                `total_amount` = '$total_amount',
-                `due_amount` = '$total_amount',
-                `status` = '$status'
-            WHERE `id` = '$id_db' 
-            AND `tenant_id` = '$tent_id'
-            ");
+    // Update query (Prepared Statement)
+    $update = $db->prepare("UPDATE invoices SET 
+        billing_month = ?,
+        Rent = ?,
+        Gas = ?,
+        Gas_month = ?,
+        Water = ?,
+        Water_month = ?,
+        Electricity = ?,
+        Electricity_month = ?,
+        Others = ?,
+        Others_month = ?,
+        total_amount = ?
+        WHERE id = ?
+    ");
 
-    if($bill_sql){
-        echo "<script>alert('This invoice has already been Update Successfull.'); window.history.back();</script>";
+    $update->bind_param(
+        "siiisiisiiii",
+        $rent_month,
+        $rent,
+        $Gas,
+        $Gas_month,
+        $Water,
+        $Water_month,
+        $Electricity,
+        $Electricity_month,
+        $Others,
+        $Others_month,
+        $total_amount,
+        $invoice_id
+    );
+
+    if ($update->execute()) {
+        echo "<script>alert('Invoice Updated Successfully'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
         exit;
+    } else {
+        echo "Update Failed!";
     }
-
 }
-
 ?>
+
+
 <div class="nxl-content">
     <!-- Page Header -->
     <div class="page-header d-flex justify-content-between align-items-center">

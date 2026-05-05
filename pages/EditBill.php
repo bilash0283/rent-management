@@ -57,9 +57,9 @@ if (isset($_POST['create_invoice'])) {
     $Water_month = $_POST['Water_month'];
     $Electricity_month = $_POST['Electricity_month'];
     $Others_month = $_POST['Others_month'];
-    $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
     $rent_month = $_POST['rent_month'];
     $rent = $_POST['rent'];
+    $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
 
 
     $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
