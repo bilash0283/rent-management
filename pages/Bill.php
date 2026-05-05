@@ -129,8 +129,9 @@
                                             mysqli_data_seek($pay_info, 0); // rewind result to loop again
                                             while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 $billing_month_db = $pay_info_sh['billing_month'];
+                                                $total_amount_db = $pay_info_sh['total_amount'];
                                                 $paid_amount_db = $pay_info_sh['paid_amount'];
-                                                $due_amount_db = $pay_info_sh['due_amount'];
+                                                $due_amount_db = $total_amount_db-$paid_amount_db;
                                                 $created_at = $pay_info_sh['created_at'];
                                                 $status = $pay_info_sh['status'];
 

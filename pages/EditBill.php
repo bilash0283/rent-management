@@ -108,7 +108,6 @@ if (isset($_POST['create_invoice'])) {
                 `others`,
                 `others_month`,
                 `total_amount`,
-                `due_amount`,
                 `status`,
                 `created_at`
             ) 
@@ -126,7 +125,6 @@ if (isset($_POST['create_invoice'])) {
                 '$Electricity_month',
                 '$Others',
                 '$Others_month',
-                '$total_amount',
                 '$total_amount',
                 '$status',
                 now()
@@ -235,7 +233,7 @@ if (isset($_POST['save_bill'])) {
     $invoice_id = $row['id'];
     $old_total  = (int) $row['total_amount'];
     $old_paid   = (int) $row['paid_amount'];
-    $old_due    = (int) $row['due_amount'];
+    $old_due    = (int) $old_total-$old_paid;
     $old_status = $row['status'];
 
     // Already fully paid?
@@ -276,8 +274,7 @@ if (isset($_POST['save_bill'])) {
 
     // ==================== Update Invoice ====================
     $update_invoice = mysqli_query($db, "UPDATE invoices SET 
-            paid_amount = '$new_paid',
-            due_amount  = '$new_due',
+            paid_amount = '$new_paid'
             status      = '$new_status',
             note        = '" . mysqli_real_escape_string($db, $note) . "'
             WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
@@ -329,7 +326,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $billing_month_db = $pay_info_sh['billing_month'];
     $total_amount_db = $pay_info_sh['total_amount'];
     $paid_amount_db = $pay_info_sh['paid_amount'];
-    $due_amount_db = $pay_info_sh['due_amount'];
+    $due_amount_db = $total_amount_db-$paid_amount_db;
     $status = $pay_info_sh['status'];
     $Rent_db = $pay_info_sh['Rent'];
     $Gas_db = $pay_info_sh['Gas'];
@@ -588,17 +585,31 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                                     <div class="mt-3 p-2 bg-light rounded">
                                         <?php
-                                        $stmt = $db->prepare("SELECT billing_month, due_amount FROM invoices WHERE tenant_id = ? AND unit_id = ? AND due_amount > 0 ORDER BY billing_month");
+                                        $stmt = $db->prepare("
+                                            SELECT billing_month, total_amount, paid_amount 
+                                            FROM invoices 
+                                            WHERE tenant_id = ? AND unit_id = ? 
+                                            ORDER BY billing_month
+                                        ");
+
                                         $stmt->bind_param("ii", $tent_id, $unit_id);
                                         $stmt->execute();
-                                        $stmt->bind_result($month, $due);
+                                        $stmt->bind_result($month, $total_amount, $paid_amount);
+
                                         $total_due = 0;
+
                                         while ($stmt->fetch()) {
-                                            $total_due += (float) $due;
-                                            echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
-                                            echo '<span class="text-danger">Due (' . date("M Y", strtotime($month)) . ')</span>';
-                                            echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 0) . '</span>';
-                                            echo '</div>';
+                                            $due = (float)$total_amount - (float)$paid_amount;
+
+                                            // যদি due থাকে তাহলে দেখাবে
+                                            if ($due > 0) {
+                                                $total_due += $due;
+
+                                                echo '<div class="d-flex justify-content-between" style="font-size: 0.8rem;">';
+                                                echo '<span class="text-danger">Due (' . date("M Y", strtotime($month)) . ')</span>';
+                                                echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 0) . '</span>';
+                                                echo '</div>';
+                                            }
                                         }
                                         if ($payable > 0) {
                                             $total_due += $payable;
