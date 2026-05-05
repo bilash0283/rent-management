@@ -105,11 +105,8 @@ if (isset($_POST['btn']) && empty($message)) {
                 WHERE id=$edit_id";
 
             if (mysqli_query($db,$sql)) {
-
                 $message = "<div class='alert alert-success'>Unit updated successfully</div>";
-
             } else {
-
                 $message = "<div class='alert alert-danger'>Update failed: ".mysqli_error($db)."</div>";
             }
 
