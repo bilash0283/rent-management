@@ -301,16 +301,16 @@ $total_unit = mysqli_num_rows($result);
                                         <small class="text-success fw-bold"><?= htmlspecialchars($pay_method) ?></small><br>
 
                                         <?php if ($received > 0): ?>
-                                            <small class="text-warning fw-bold">Manager Rechive: ৳
+                                            <small class="text-primary fw-bold">Rechive: ৳
                                                 <?= number_format($received, 0) ?></small><br>
                                         <?php endif; ?>
 
                                         <?php if ($manager_paid > 0): ?>
-                                            <small class="text-warning fw-bold">Paid: ৳
+                                            <small class="text-success fw-bold">Paid: ৳
                                                 <?= number_format($manager_paid, 0) ?></small><br>
                                         <?php endif; ?>
 
-                                        <strong class="text-primary">Manager Self: ৳
+                                        <strong class="text-warning"> Self: ৳
                                             <?= number_format($manager_self ?? 0,) ?>
                                         </strong>
 
