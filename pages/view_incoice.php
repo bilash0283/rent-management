@@ -35,7 +35,7 @@ while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
     $tent_id = $tent_row['id'];
 }
 
-// ৪. বর্তমান ইনভয়েসের (যেটি স্ক্রিনে দেখা যাচ্ছে) তথ্য আনা
+// ৪. ইনভয়েসের তথ্য আনা
 $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE id = '$invoice_id'");
 while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $billing_month_db = $pay_info_sh['billing_month'];
@@ -47,11 +47,11 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $Gas_month_db = $pay_info_sh['Gas_month'];
     $Water_month_db = $pay_info_sh['Water_month'];
     $Electricity_month_db = $pay_info_sh['Electricity_month'];
-    $Others_month_db = $pay_info_sh['Others_month'];
+    $Others_month_db = $pay_info_sh['Others_month']; // ফিক্সড ভ্যারিয়েবল নাম
     $created_at_db = $pay_info_sh['created_at'];
 }
 
-// ৫. অ্যাডভান্স বকেয়া হিসেব (Current Invoice এর সাথে সম্পর্ক নেই)
+// ৫. অ্যাডভান্স বকেয়া হিসেব
 $total_advance_paid = 0;
 $advance_sql = mysqli_query($db, "SELECT SUM(paid_amount) as total FROM `advance` WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
 $advance_res = mysqli_fetch_assoc($advance_sql);
@@ -106,27 +106,38 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                         </div>
                     </div>
 
-                    <!-- বর্তমান মাসের বিলের টেবিল -->
                     <div class="table-responsive">
                         <table class="table table-sm table-striped table-borderless align-middle mb-0" style="font-size: 0.85rem;">
+                            <thead>
+                                <tr class="border-bottom">
+                                    <th class="py-2">Description</th>
+                                    <th class="py-2 text-center">Month</th>
+                                    <th class="py-2 text-end">Amount</th>
+                                </tr>
+                            </thead>
                             <tbody>
                                 <?php 
                                 $current_month_total = 0;
+                                // অ্যারে ইনডেক্স ঠিক করা হয়েছে যাতে Others Month শো করে
                                 $bill_items = [
-                                    ['Rent', $Rent_db, $billing_month_db, 'House Rent'],
-                                    ['Gas', $Gas_db, $Gas_month_db, 'Gas Bill'],
-                                    ['Water', $Water_db, $Water_month_db, 'Water Bill'],
-                                    ['Electricity', $Electricity_db, $Electricity_month_db, "Electricity Bill ($size)"],
-                                    ['Others', $Others_db, $Others_month_db, 'Others Bill']
+                                    ['House Rent', $Rent_db, $billing_month_db],
+                                    ['Gas Bill', $Gas_db, $Gas_month_db],
+                                    ['Water Bill', $Water_db, $Water_month_db],
+                                    ['Electricity Bill (' . $size . ')', $Electricity_db, $Electricity_month_db],
+                                    ['Others Bill', $Others_db, $Others_month_db]
                                 ];
 
                                 foreach ($bill_items as $item) {
-                                    if (!empty($item[1])) {
-                                        $current_month_total += $item[1];
+                                    $label = $item[0];
+                                    $amount = $item[1];
+                                    $month = $item[2];
+
+                                    if (!empty($amount) && $amount > 0) {
+                                        $current_month_total += $amount;
                                         echo "<tr>
-                                                <td class='py-1'>{$item[3]}</td>
-                                                <td class='py-1 text-center'>" . (!empty($item[2]) ? date('M Y', strtotime($item[2])) : '') . "</td>
-                                                <td class='py-1 text-end'>৳ " . number_format($item[1], 0) . "</td>
+                                                <td class='py-1'>$label</td>
+                                                <td class='py-1 text-center'>" . (!empty($month) ? date('M Y', strtotime($month)) : '') . "</td>
+                                                <td class='py-1 text-end'>৳ " . number_format($amount, 0) . "</td>
                                               </tr>";
                                     }
                                 }
@@ -142,13 +153,11 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                         </table>
                     </div>
 
-                    <!-- বকেয়া সেকশন (ID != current invoice id ব্যবহার করা হয়েছে যাতে ডাবল না আসে) -->
                     <div id="due-section" style="display: none;">
                         <div class="mt-3 p-2 bg-light rounded border-start border-danger border-3">
                             <small class="fw-bold text-muted d-block mb-1">Previous Dues:</small>
                             <?php
                             $total_old_due = 0;
-                            // এখানে ID != ? ব্যবহার করা হয়েছে যাতে বর্তমান ইনভয়েসটি বকেয়া হিসেবে না আসে
                             $stmt = $db->prepare("SELECT id, billing_month, total_amount, paid_amount FROM invoices WHERE tenant_id = ? AND unit_id = ? AND id != ? ORDER BY billing_month ASC");
                             $stmt->bind_param("iii", $tent_id, $unit_id, $invoice_id);
                             $stmt->execute();
@@ -176,7 +185,6 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                         </div>
                     </div>
 
-                    <!-- মোট প্রদেয় বিল -->
                     <div class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
                         <span class="h6 mb-0 text-white">Total Payable Amount = </span>
                         <span class="h5 mb-0 fw-bold text-white" id="finalPayableDisplay">
@@ -184,7 +192,6 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                         </span>
                     </div>
 
-                    <!-- পেমেন্ট গেটওয়ে ও সতর্কবার্তা -->
                     <div class="mt-4 border-top">
                         <p class="text-muted mt-2" style="font-size: 0.85rem;">
                             Please complete the payment within <strong>7 days</strong> and share your deposit slip via WhatsApp at <strong>01715482363</strong>.
@@ -207,7 +214,6 @@ $payable_advance = max($advance - $total_advance_paid, 0);
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-    // PHP থেকে ভ্যালুগুলো নিয়ে আসা
     const currentMonthTotal = <?= (float)$current_month_total ?>;
     const previousDueTotal = <?= (float)$total_old_due ?>;
     
@@ -215,7 +221,6 @@ $payable_advance = max($advance - $total_advance_paid, 0);
     const dueSection = document.getElementById('due-section');
     const finalDisplay = document.getElementById('finalPayableDisplay');
 
-    // চেকবক্স হ্যান্ডলার
     includeDueBtn.addEventListener('change', function() {
         if (this.checked) {
             dueSection.style.display = 'block';
@@ -227,7 +232,6 @@ $payable_advance = max($advance - $total_advance_paid, 0);
         }
     });
 
-    // ডাউনলোড ইমেজ (PNG)
     document.getElementById('generatePdfBtn').addEventListener('click', function () {
         const element = document.getElementById('pdf-content');
         html2canvas(element, {
@@ -251,7 +255,6 @@ $payable_advance = max($advance - $total_advance_paid, 0);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     .form-switch .form-check-input { width: 2.5em; height: 1.25em; cursor: pointer; }
-    .card { border: none !important; }
     #pdf-content { color: #000; }
     @media print {
         body * { visibility: hidden; }

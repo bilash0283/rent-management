@@ -579,8 +579,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         <th scope="col" class="text-end">Payment Method</th>
                                         <th scope="col" class="text-end">Payment Amount</th>
                                         <th scope="col" class="text-end">Bill Summary</th>
-                                        <th scope="col" class="text-end">Manager Self</th>
-                                        <th scope="col" class="text-end">Expense</th>
+                                        <th scope="col" class="text-end">Manager Paid to Admin</th>
                                         <th scope="col" class="text-center">Note</th>
                                         <th scope="col" class="text-center">Action</th>
                                     </tr>
@@ -618,11 +617,11 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         $pay_method_his = $pay_history['payment_method'];
                                         $note_his = $pay_history['note'];
                                         $pay_date_his = $pay_history['payment_date'];
-                                        $manager_self = $pay_history['manager_paid']; // আপনার আগের কোডে 'manager_paid' ছিল
-                                        $expense = $pay_history['expense'] ?? 0;
-                                        $expense_note = $pay_history['expense_note'] ?? '';
+                                        $manager_paid = $pay_history['manager_paid']; // আপনার আগের কোডে 'manager_paid' ছিল
                                         $transaction_id_db = $pay_history['transaction_id'];
                                         $manager_transaction_id = $pay_history['manager_transaction_id'] ?? '';
+                                        $transaction_number = $pay_history['transaction_number'];
+                                        $manager_payment_method = $pay_history['manager_payment_method'];
                                         ?>
                                         <tr>
                                             <td class="text-end">#INV-<?= $invoice_id; ?></td>
@@ -652,12 +651,10 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     <small>Due: ৳ </small><?= number_format($calculated_due, 0) ?>
                                                 </span>
                                             </td>
-                                            <td class="text-end text-danger">
-                                                <?= $manager_self ? '<small>৳ </small>' . number_format($manager_self, 0) : '-'; ?>
-                                            </td>
-                                            <td class="text-end text-danger">
-                                                <?= $expense ? '<small>৳ </small>' . number_format($expense, 0) : '-'; ?><br>
-                                                <small class="text-muted" style="font-size: 10px;"><?= $expense_note ?></small>
+                                            <td class="text-end text-success">
+                                                <?= $manager_paid ? '<small>৳ </small>' . number_format($manager_paid, 0) : '-'; ?><br>
+                                                <small style="font-size:10px;" class="text-dark">(Txn Num : <?= $transaction_number ?>)</small><br>
+                                                    <small style="font-size:10px;" class="text-dark">(Method : <?= $manager_payment_method ?>)</small><br>
                                             </td>
                                             <td class="text-center">
                                                 <small class="text-secondary"><?= $note_his ?></small>
