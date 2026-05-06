@@ -374,94 +374,114 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                             
                         <!-- confirm payment  -->
                         <div class="col-md-6">
-    <form method="POST" enctype="multipart/form-data" id="paymentForm">
-        <div class="card p-3">
-            <h6>Confirm Payment :</h6>
-            <div class="row">
-                <div class="col-md-6">
-                    <label>Pay For Invoice*</label>
-                    <select name="billing_month" id="invoice_select" class="form-control form-select" required onchange="updateDueAmount()">
-                        <option value="">Select Invoice</option>
-                        <?php 
-                        // শুধুমাত্র যেগুলোর বিল বাকি আছে সেগুলো দেখাবে
-                        mysqli_data_seek($pay_info, 0);
-                        while ($row = mysqli_fetch_assoc($pay_info)): 
-                            $due = $row['total_amount'] - $row['paid_amount'];
-                            if($due > 0):
-                        ?>
-                            <option value="<?= $row['billing_month']; ?>" data-due="<?= $due; ?>">
-                                <?= date("M Y", strtotime($row['billing_month'])) ?> (Due: <?= $due ?>)
-                            </option>
-                        <?php 
-                            endif;
-                        endwhile; 
-                        ?>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label>Amount *</label>
-                    <input type="number" name="paid_amount" id="amount_input" class="form-control" required>
-                    <input type="hidden" id="max_due_limit" value="0">
-                </div>
-            </div>
+                            <form method="POST" enctype="multipart/form-data" id="paymentForm">
+                                <div class="card p-3">
+                                    <h6>Confirm Payment :</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Pay For Invoice*</label>
+                                            <select name="invoice_id" id="invoice_select" class="form-control form-select" required onchange="updateDueAmount()">
+                                                <option value="">Select Invoice</option>
+                                                <?php 
+                                                // শুধুমাত্র যেগুলোর বিল বাকি আছে সেগুলো দেখাবে
+                                                mysqli_data_seek($pay_info, 0);
+                                                while ($row = mysqli_fetch_assoc($pay_info)): 
+                                                    $invoice_id = $row['id'];
+                                                    $due = $row['total_amount'] - $row['paid_amount'];
+                                                    if($due > 0):
+                                                ?>
+                                                    <option value="<?= $row['billing_month']; ?>" data-due="<?= $due; ?>">
+                                                        <small>(INV-<?= $invoice_id; ?>)</small><?= date("M Y", strtotime($row['billing_month'])) ?> (Due: <?= $due ?>)
+                                                    </option>
+                                                <?php 
+                                                    endif;
+                                                endwhile; 
+                                                ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Amount *</label>
+                                            <input type="number" name="paid_amount" id="amount_input" class="form-control" required>
+                                            <input type="hidden" id="max_due_limit" value="0">
+                                        </div>
+                                    </div>
 
-            <div class="row mt-2">
-                <div class="col-md-6">
-                    <label>Transaction Time *</label>
-                    <input type="datetime-local" class="form-control" name="transaction_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
-                </div>
-                <div class="col-md-6">
-                    <label>Payment Method *</label>
-                    <select name="payment_method" id="payment_method" class="form-control form-select" required onchange="togglePaymentFields()">
-                        <option value="" selected disabled>Select One</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Bkash">Bkash</option>
-                        <option value="Nagad">Nagad</option>
-                        <option value="Rocket">Rocket</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
-                        <option value="Card">Card</option>
-                        <option value="Manager">Manager</option>
-                    </select>
-                </div>
-            </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <label>Transaction Time *</label>
+                                            <input type="datetime-local" class="form-control" name="transaction_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Payment Method *</label>
+                                            <select name="payment_method" id="payment_method" class="form-control form-select" required onchange="togglePaymentFields()">
+                                                <option value="" selected disabled>Select One</option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="Bkash">Bkash</option>
+                                                <option value="Nagad">Nagad</option>
+                                                <option value="Rocket">Rocket</option>
+                                                <option value="Bank Transfer">Bank Transfer</option>
+                                                <option value="Card">Card</option>
+                                                <option value="Manager">Manager</option>
+                                            </select>
+                                        </div>
+                                    </div>
 
-            <!-- Digital Payment Fields (Bkash, Bank, etc.) -->
-            <div id="digital_payment_fields" class="mt-2" style="display: none;">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Transaction ID</label>
-                        <input type="text" name="transaction_id" class="form-control">
-                    </div>
-                    <div class="col-md-6">
-                        <label>Transaction Number</label>
-                        <input type="text" name="transaction_number" class="form-control">
-                    </div>
-                </div>
-            </div>
+                                    <!-- Digital Payment Fields (Bkash, Bank, etc.) -->
+                                    <div id="digital_payment_fields" class="mt-2" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Transaction ID</label>
+                                                <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Transaction Number</label>
+                                                <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
 
-            <!-- Manager Payment Section -->
-            <div id="manager_fields" class="mt-2" style="display: none;">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label style="color: blue;">Manager Payment Amount</label>
-                        <input type="number" class="form-control" name="manager_payment">
-                    </div>
-                    <div class="col-md-6">
-                        <label style="color: blue;">Expense Amount</label>
-                        <input type="number" class="form-control" name="expense">
-                    </div>
-                </div>
-            </div>
+                                    <!-- Manager Payment Section -->
+                                    <div id="manager_fields" class="mt-2" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label style="color: blue;">Manager paid to Admin</label>
+                                                <input type="text" class="form-control" name="manager_paid_amount" placeholder="Manager Paid Amount">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label style="color: blue;">Manager Paid Method</label>
+                                                <select name="manager_paid_method" class="form-control form-select" id="">
+                                                    <option value="" selected disabled>Select One</option>
+                                                    <option value="Cash">Cash</option>
+                                                    <option value="Bkash">Bkash</option>
+                                                    <option value="Nagad">Nagad</option>
+                                                    <option value="Rocket">Rocket</option>
+                                                    <option value="Bank Transfer">Bank Transfer</option>
+                                                    <option value="Card">Card</option>
+                                                    <option value="Manager">Manager</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Transaction ID</label>
+                                                <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Transaction Number</label>
+                                                <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
 
-            <div class="mt-2">
-                <label>Note</label>
-                <input type="text" name="note" class="form-control">
-            </div>
+                                    <div class="mt-2">
+                                        <label>Note</label>
+                                        <input type="text" name="note" placeholder="Note for Payment" class="form-control">
+                                    </div>
 
-            <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3 w-100">Confirm Payment</button>
-        </div>
-    </form>
-</div>
+                                    <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3 w-100">Confirm Payment</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
