@@ -118,179 +118,53 @@ if (isset($_POST['create_invoice'])) {
 
 // Confirm Payment
 if (isset($_POST['save_bill'])) {
+    $billing_month = mysqli_real_escape_string($db, $_POST['billing_month']);
+    $paid_amount = (int)$_POST['paid_amount'];
+    $payment_method = mysqli_real_escape_string($db, $_POST['payment_method']);
+    $note = mysqli_real_escape_string($db, $_POST['note']);
+    $transaction_id = mysqli_real_escape_string($db, $_POST['transaction_id'] ?? '');
+    $transaction_number = mysqli_real_escape_string($db, $_POST['transaction_number'] ?? '');
+    
+    // Manager logic
+    $manager_payment = (int)($_POST['manager_payment'] ?? 0);
+    $expense = (int)($_POST['expense'] ?? 0);
+    $manager_self = ($payment_method === 'Manager') ? ($paid_amount - $manager_payment - $expense) : 0;
 
-    // ==================== Get and Sanitize Input ====================
-    $billing_month = trim($_POST['billing_month'] ?? '');
-    $total_amount = (int) ($_POST['total_amount'] ?? 0);        // reference only
-    $paid_amount = (int) ($_POST['paid_amount'] ?? 0);
-    $note = trim($_POST['note'] ?? '');
-    $payment_date = date('Y-m-d');                              // Today's date
-    $payment_method = trim($_POST['payment_method'] ?? '');
-    $expense = (int) ($_POST['expense'] ?? 0);
-    $expense_note = trim($_POST['expense_note'] ?? '');
-    $transaction_id = trim($_POST['transaction_id'] ?? '') ?: NULL;
+    $tren_date = $_POST['transaction_date'];
+    $transaction_date = date('Y-m-d H:i:s', strtotime($tren_date));
 
-    $manager_payment = (int) ($_POST['manager_payment'] ?? 0);
-    $manager_payment_method = trim($_POST['manager_payment_method'] ?? '');
-    $manager_transaction_id = trim($_POST['manager_transaction_id'] ?? '');
+    // ১. ইনভয়েস চেক করা
+    $check_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1");
+    $inv = mysqli_fetch_assoc($check_sql);
 
-    $tren_date = trim($_POST['transaction_date'] ?? '');
-    $transaction_date = $tren_date ? date('Y-m-d H:i:s', strtotime($tren_date)) : date('Y-m-d H:i:s');
-    $transaction_number = trim($_POST['transaction_number'] ?? '');
-
-    $manager_self = 0;
-    $errors = [];
-
-    // ==================== Validation ====================
-
-    if (empty($payment_method)) {
-        $errors[] = "Please select a Payment Method.";
+    if (!$inv) {
+        echo "<script>alert('Invoice not found!'); window.history.back();</script>";
+        exit;
     }
 
-    if ($payment_method === 'Manager') {
-        // Manager Payment Logic
-        if ($paid_amount < 0 || $manager_payment < 0 || $expense < 0) {
-            $errors[] = "Paid amount, Manager payment and Expense cannot be negative.";
-        }
+    $new_paid_total = $inv['paid_amount'] + $paid_amount;
+    $new_due = $inv['total_amount'] - $new_paid_total;
 
-        if ($paid_amount <= 0) {
-            $errors[] = "Paid amount must be greater than 0.";
-        }
+    if ($new_due < 0) {
+        echo "<script>alert('Payment exceeds due amount!'); window.history.back();</script>";
+        exit;
+    }
 
-        $calculated_self = $paid_amount - $manager_payment - $expense;
+    $status = ($new_due <= 0) ? 'Paid' : 'Partial';
 
-        if ($calculated_self < 0) {
-            $errors[] = "Manager payment + Expense cannot exceed Paid Amount.";
-        } else {
-            $manager_self = $calculated_self;
-        }
+    // ২. ইনভয়েস টেবিল আপডেট
+    mysqli_query($db, "UPDATE invoices SET paid_amount = '$new_paid_total', status = '$status' WHERE id = '{$inv['id']}'");
 
-        // Final strict check
-        if (($manager_payment + $expense + $manager_self) !== $paid_amount) {
-            $errors[] = "Payment distribution error!\n\n" .
-                "Paid Amount = $paid_amount\n" .
-                "Manager Payment = $manager_payment\n" .
-                "Expense = $expense\n" .
-                "Manager Self = $manager_self";
-        }
+    // ৩. পেমেন্ট হিস্ট্রি ইনসার্ট
+    $history_sql = "INSERT INTO payment_history 
+        (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, transaction_id, transaction_date, transaction_number) 
+        VALUES 
+        ('$tent_id', '$billing_month', '$payment_method', '{$inv['total_amount']}', '$new_paid_total', '$paid_amount', '$new_due', '$note', CURDATE(), '$manager_self', '$expense', '$transaction_id', '$transaction_date', '$transaction_number')";
+
+    if (mysqli_query($db, $history_sql)) {
+        echo "<script>window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
     } else {
-        // Normal Payment (Cash, Bank, etc.)
-        if ($paid_amount <= 0) {
-            $errors[] = "Paid amount must be greater than 0.";
-        }
-
-        // Reset manager fields
-        $manager_payment = 0;
-        $expense = 0;
-        $manager_self = 0;
-    }
-
-    // Show errors if any
-    if (!empty($errors)) {
-        $error_message = addslashes(implode("\\n\\n", $errors));
-        echo "<script>alert('$error_message'); window.history.back();</script>";
-        exit;
-    }
-
-    // ==================== Fetch Current Invoice ====================
-    $month_sql = mysqli_query($db, "SELECT * FROM invoices 
-                                    WHERE billing_month = '$billing_month' 
-                                    AND tenant_id = '$tent_id' 
-                                    LIMIT 1");
-
-    if (mysqli_num_rows($month_sql) == 0) {
-        echo "<script>alert('No invoice found for the selected month. Please create an invoice first.'); window.history.back();</script>";
-        exit;
-    }
-
-    $row = mysqli_fetch_assoc($month_sql);
-
-    $invoice_id = $row['id'];
-    $old_total = (int) $row['total_amount'];
-    $old_paid = (int) $row['paid_amount'];
-    $old_due = (int) $old_total - $old_paid;
-    $old_status = $row['status'];
-
-    // Already fully paid?
-    if ($old_status === 'Paid' || $old_due <= 0) {
-        echo "<script>alert('This month bill is already fully paid. No more payment is allowed the selected month.'); window.history.back();</script>";
-        exit;
-    }
-
-    // Overpayment check
-    if ($paid_amount > $old_due) {
-        echo "<script>alert('You cannot pay more than the due amount. Due amount is: $old_due'); window.history.back();</script>";
-        exit;
-    }
-
-    // Transaction ID duplicate check
-    if ($transaction_id !== NULL) {
-        $check_query = mysqli_query($db, "SELECT id FROM payment_history 
-                                          WHERE transaction_id = '" . mysqli_real_escape_string($db, $transaction_id) . "' 
-                                          LIMIT 1");
-        if (mysqli_num_rows($check_query) > 0) {
-            echo "<script>alert('This Transaction ID already exists. Please use a unique one.'); window.history.back();</script>";
-            exit;
-        }
-    }
-
-    // ==================== Calculate New Values ====================
-    $new_paid = $old_paid + $paid_amount;
-    $new_due = $old_total - $new_paid;
-
-    // Auto update status
-    if ($new_due <= 0) {
-        $new_status = 'Paid';
-    } elseif ($new_paid > 0) {
-        $new_status = 'Partial';
-    } else {
-        $new_status = $old_status;
-    }
-
-    // ==================== Update Invoice ====================
-    $update_invoice = mysqli_query($db, "UPDATE invoices SET 
-            paid_amount = '$new_paid'
-            status      = '$new_status',
-            note        = '" . mysqli_real_escape_string($db, $note) . "'
-            WHERE id = '$invoice_id' AND tenant_id = '$tent_id'");
-
-    if (!$update_invoice) {
-        die("Invoice Update Error: " . mysqli_error($db));
-    }
-
-    // ==================== Insert Payment History (FIXED) ====================
-
-    $sql = "INSERT INTO payment_history 
-            (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, 
-             payment_date, manager_self, expense, expense_note, transaction_id, 
-             manager_payment_method, manager_transaction_id, transaction_date, transaction_number) 
-            VALUES 
-            ('$tent_id', 
-             '$billing_month', 
-             '" . mysqli_real_escape_string($db, $payment_method) . "', 
-             '$old_total', 
-             '$new_paid', 
-             '$paid_amount', 
-             '$new_due', 
-             '" . mysqli_real_escape_string($db, $note) . "', 
-             '$payment_date', 
-             '$manager_self', 
-             '$expense', 
-             '" . mysqli_real_escape_string($db, $expense_note) . "', 
-             " . ($transaction_id === NULL ? "NULL" : "'" . mysqli_real_escape_string($db, $transaction_id) . "'") . ",
-             " . (empty($manager_payment_method) ? "NULL" : "'" . mysqli_real_escape_string($db, $manager_payment_method) . "'") . ",
-             " . (empty($manager_transaction_id) ? "NULL" : "'" . mysqli_real_escape_string($db, $manager_transaction_id) . "'") . ",
-             '" . mysqli_real_escape_string($db, $transaction_date) . "',
-             " . (empty($transaction_number) ? "NULL" : "'" . mysqli_real_escape_string($db, $transaction_number) . "'") . "
-            )";
-
-    $insert_history = mysqli_query($db, $sql);
-
-    if ($insert_history) {
-        header("Location: admin.php?page=editbill&unit_id=$unit_id");
-        exit();
-    } else {
-        die("Payment History Insert Error: " . mysqli_error($db));
+        echo "Error: " . mysqli_error($db);
     }
 }
 
@@ -500,111 +374,94 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                             
                         <!-- confirm payment  -->
                         <div class="col-md-6">
-                            <form method="POST" enctype="multipart/form-data">
-                                <div class="card p-3">
-                                    <h6>Confirm Payment :</h6>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label class="">Amount *</label>
-                                            <input type="text" name="paid_amount" class="form-control" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="">Pay For Invoice* <small class="text-warning"
-                                                    style="font-size: 10px;">(Invoice)</small></label>
-                                            <select name="billing_month" id="invoice" class="form-control form-select" required>
-                                                <option value="">Select Invoice</option>
-                                                <option value=""></option> 
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="transaction_date">Transaction Time *</label>
-                                            <input type="datetime-local" class="form-control" name="transaction_date"
-                                                value="<?= date('Y-m-d\TH:i'); ?>" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="payment_method">Payment Method *</label>
-                                            <select name="payment_method" id="payment_method"
-                                                class="form-control form-select" required
-                                                onchange="togglePaymentFields()">
-                                                <option value="" selected disabled>Select One</option>
-                                                <option value="Cash">Cash</option>
-                                                <option value="Bkash">Bkash</option>
-                                                <option value="Nagad">Nagad</option>
-                                                <option value="Rocket">Rocket</option>
-                                                <option value="Bank Transfer">Bank Transfer</option>
-                                                <option value="Card">Card</option>
-                                                <option value="Manager">Manager</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <!-- Dynamic Fields -->
-                                    <div id="payment_fields" style="display: none;">
+    <form method="POST" enctype="multipart/form-data" id="paymentForm">
+        <div class="card p-3">
+            <h6>Confirm Payment :</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Pay For Invoice*</label>
+                    <select name="billing_month" id="invoice_select" class="form-control form-select" required onchange="updateDueAmount()">
+                        <option value="">Select Invoice</option>
+                        <?php 
+                        // শুধুমাত্র যেগুলোর বিল বাকি আছে সেগুলো দেখাবে
+                        mysqli_data_seek($pay_info, 0);
+                        while ($row = mysqli_fetch_assoc($pay_info)): 
+                            $due = $row['total_amount'] - $row['paid_amount'];
+                            if($due > 0):
+                        ?>
+                            <option value="<?= $row['billing_month']; ?>" data-due="<?= $due; ?>">
+                                <?= date("M Y", strtotime($row['billing_month'])) ?> (Due: <?= $due ?>)
+                            </option>
+                        <?php 
+                            endif;
+                        endwhile; 
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label>Amount *</label>
+                    <input type="number" name="paid_amount" id="amount_input" class="form-control" required>
+                    <input type="hidden" id="max_due_limit" value="0">
+                </div>
+            </div>
 
-                                        <!-- Manager Payment Section -->
-                                        <div class="row" id="manager_section" style="display: none;">
-                                            <div class="col-md-6">
-                                                <label for="manager_payment"
-                                                    style="font-size: 12px; color: blue;">Manager Payment Amount</label>
-                                                <input type="text" class="form-control" name="manager_payment"
-                                                    id="manager_payment">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="manager_payment_method"
-                                                    style="font-size: 12px; color: blue;">Manager Payment Method</label>
-                                                <select name="manager_payment_method" id="manager_payment_method"
-                                                    class="form-control form-select"
-                                                    onchange="toggleManagerTransaction()">
-                                                    <option value="" selected disabled>Select One</option>
-                                                    <option value="Cash">Cash</option>
-                                                    <option value="Bkash">Bkash</option>
-                                                    <option value="Nagad">Nagad</option>
-                                                    <option value="Rocket">Rocket</option>
-                                                    <option value="Bank Transfer">Bank Transfer</option>
-                                                    <option value="Card">Card</option>
-                                                </select>
-                                            </div>
-                                        </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <label>Transaction Time *</label>
+                    <input type="datetime-local" class="form-control" name="transaction_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
+                </div>
+                <div class="col-md-6">
+                    <label>Payment Method *</label>
+                    <select name="payment_method" id="payment_method" class="form-control form-select" required onchange="togglePaymentFields()">
+                        <option value="" selected disabled>Select One</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Bkash">Bkash</option>
+                        <option value="Nagad">Nagad</option>
+                        <option value="Rocket">Rocket</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Card">Card</option>
+                        <option value="Manager">Manager</option>
+                    </select>
+                </div>
+            </div>
 
-                                        <!-- Manager Transaction ID -->
-                                        <div class="row" id="manager_transaction_id_div">
-                                            <div class="col-md-6">
-                                                <label class="">Transaction ID</label>
-                                                <input type="text" name="manager_transaction_id"
-                                                    id="manager_transaction_id" class="form-control">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="">Transaction Number</label>
-                                                <input type="text" name="transaction_number" id="transaction_number"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
+            <!-- Digital Payment Fields (Bkash, Bank, etc.) -->
+            <div id="digital_payment_fields" class="mt-2" style="display: none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Transaction ID</label>
+                        <input type="text" name="transaction_id" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Transaction Number</label>
+                        <input type="text" name="transaction_number" class="form-control">
+                    </div>
+                </div>
+            </div>
 
-                                        <!-- Main Transaction ID (Non-Manager Digital Payments) -->
-                                        <div class="row" id="transaction_id_div">
-                                            <div class="col-md-6">
-                                                <label class="">Transaction ID</label>
-                                                <input type="text" name="transaction_id" id="transaction_id"
-                                                    class="form-control">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="">Transaction Number</label>
-                                                <input type="text" name="transaction_number" id="transaction_number"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
+            <!-- Manager Payment Section -->
+            <div id="manager_fields" class="mt-2" style="display: none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label style="color: blue;">Manager Payment Amount</label>
+                        <input type="number" class="form-control" name="manager_payment">
+                    </div>
+                    <div class="col-md-6">
+                        <label style="color: blue;">Expense Amount</label>
+                        <input type="number" class="form-control" name="expense">
+                    </div>
+                </div>
+            </div>
 
-                                    </div>
-                                    <div>
-                                        <label class="">Note</label>
-                                        <input type="text" name="note" class="form-control">
-                                    </div>
-                                    <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3">
-                                        Confirm Payment
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+            <div class="mt-2">
+                <label>Note</label>
+                <input type="text" name="note" class="form-control">
+            </div>
+
+            <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3 w-100">Confirm Payment</button>
+        </div>
+    </form>
+</div>
                     </div>
                 </div>
 
@@ -814,3 +671,48 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
         </div>
     </div>
 </div>
+
+<script>
+function updateDueAmount() {
+    const select = document.getElementById('invoice_select');
+    const selectedOption = select.options[select.selectedIndex];
+    const due = selectedOption.getAttribute('data-due');
+    
+    if (due) {
+        document.getElementById('amount_input').value = due;
+        document.getElementById('max_due_limit').value = due;
+    } else {
+        document.getElementById('amount_input').value = '';
+        document.getElementById('max_due_limit').value = '0';
+    }
+}
+
+function togglePaymentFields() {
+    const method = document.getElementById('payment_method').value;
+    const digitalFields = document.getElementById('digital_payment_fields');
+    const managerFields = document.getElementById('manager_fields');
+
+    // Hide all first
+    digitalFields.style.display = 'none';
+    managerFields.style.display = 'none';
+
+    if (['Bkash', 'Nagad', 'Rocket', 'Bank Transfer', 'Card'].includes(method)) {
+        digitalFields.style.display = 'block';
+    } else if (method === 'Manager') {
+        managerFields.style.display = 'block';
+    }
+}
+
+// Form Validation before submit
+document.getElementById('paymentForm').onsubmit = function(e) {
+    const paidAmount = parseFloat(document.getElementById('amount_input').value);
+    const maxDue = parseFloat(document.getElementById('max_due_limit').value);
+
+    if (paidAmount > maxDue) {
+        alert("Error: You cannot pay more than the due amount (" + maxDue + " ৳)");
+        e.preventDefault();
+        return false;
+    }
+    return true;
+};
+</script>
