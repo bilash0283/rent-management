@@ -116,9 +116,9 @@ if (isset($_POST['create_invoice'])) {
     }
 }
 
-// Confirm Payment
+// Confirm Payment Logic
 if (isset($_POST['save_bill'])) {
-    $billing_month = mysqli_real_escape_string($db, $_POST['billing_month']);
+    $invoice_id = mysqli_real_escape_string($db, $_POST['invoice_id']);
     $paid_amount = (int)$_POST['paid_amount'];
     $payment_method = mysqli_real_escape_string($db, $_POST['payment_method']);
     $note = mysqli_real_escape_string($db, $_POST['note']);
@@ -126,15 +126,14 @@ if (isset($_POST['save_bill'])) {
     $transaction_number = mysqli_real_escape_string($db, $_POST['transaction_number'] ?? '');
     
     // Manager logic
-    $manager_payment = (int)($_POST['manager_payment'] ?? 0);
-    $expense = (int)($_POST['expense'] ?? 0);
-    $manager_self = ($payment_method === 'Manager') ? ($paid_amount - $manager_payment - $expense) : 0;
+    $manager_paid_amount = (int)($_POST['manager_paid_amount'] ?? 0);
+    $manager_payment_method = mysqli_real_escape_string($db, $_POST['manager_payment_method'] ?? '');
 
-    $tren_date = $_POST['transaction_date'];
-    $transaction_date = date('Y-m-d H:i:s', strtotime($tren_date));
+    $tren_date = $_POST['payment_date'] ?? date('Y-m-d H:i:s');
+    $payment_date = date('Y-m-d H:i:s', strtotime($tren_date));
 
-    // ১. ইনভয়েস চেক করা
-    $check_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1");
+    // ১. ইনভয়েস চেক করা (নিশ্চিত হওয়া যে ইনভয়েসটি সঠিক)
+    $check_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id = '$invoice_id' AND tenant_id = '$tent_id' LIMIT 1");
     $inv = mysqli_fetch_assoc($check_sql);
 
     if (!$inv) {
@@ -142,27 +141,34 @@ if (isset($_POST['save_bill'])) {
         exit;
     }
 
-    $new_paid_total = $inv['paid_amount'] + $paid_amount;
-    $new_due = $inv['total_amount'] - $new_paid_total;
-
-    if ($new_due < 0) {
-        echo "<script>alert('Payment exceeds due amount!'); window.history.back();</script>";
+    if ($manager_paid_amount > $paid_amount) {
+        echo "<script>alert('Error: Manager paid amount ($manager_paid_amount ৳) cannot be greater than Total paid amount ($paid_amount ৳)'); window.history.back();</script>";
         exit;
     }
 
+    // ডিউ চেক করার মেইন লজিক
+    $current_due = $inv['total_amount'] - $inv['paid_amount'];
+
+    if ($paid_amount > $current_due) {
+        echo "<script>alert('Error: You cannot pay more than the due amount ($current_due ৳)'); window.history.back();</script>";
+        exit;
+    }
+
+    $new_paid_total = $inv['paid_amount'] + $paid_amount;
+    $new_due = $inv['total_amount'] - $new_paid_total;
     $status = ($new_due <= 0) ? 'Paid' : 'Partial';
 
     // ২. ইনভয়েস টেবিল আপডেট
-    mysqli_query($db, "UPDATE invoices SET paid_amount = '$new_paid_total', status = '$status' WHERE id = '{$inv['id']}'");
+    mysqli_query($db, "UPDATE invoices SET paid_amount = '$new_paid_total', status = '$status' WHERE id = '$invoice_id'");
 
-    // ৩. পেমেন্ট হিস্ট্রি ইনসার্ট
+    // ৩. পেমেন্ট হিস্ট্রি ইনসার্ট (কলামের নাম ঠিক করা হয়েছে)
     $history_sql = "INSERT INTO payment_history 
-        (tenant_id, bill_month, payment_method, total, paid, paid_amount, due, note, payment_date, manager_self, expense, transaction_id, transaction_date, transaction_number) 
+        (invoice_id, tenant_id, payment_method, paid_amount, note, payment_date, manager_paid,manager_payment_method, transaction_id, transaction_number) 
         VALUES 
-        ('$tent_id', '$billing_month', '$payment_method', '{$inv['total_amount']}', '$new_paid_total', '$paid_amount', '$new_due', '$note', CURDATE(), '$manager_self', '$expense', '$transaction_id', '$transaction_date', '$transaction_number')";
+        ('$invoice_id','$tent_id', '$payment_method', '$paid_amount', '$note', '$payment_date', '$manager_paid_amount', '$manager_payment_method', '$transaction_id', '$transaction_number')";
 
     if (mysqli_query($db, $history_sql)) {
-        echo "<script>window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
+        echo "<script>alert('Payment Successful!'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
     } else {
         echo "Error: " . mysqli_error($db);
     }
@@ -390,7 +396,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     $due = $row['total_amount'] - $row['paid_amount'];
                                                     if($due > 0):
                                                 ?>
-                                                    <option value="<?= $row['billing_month']; ?>" data-due="<?= $due; ?>">
+                                                    <option value="<?= $invoice_id; ?>" data-due="<?= $due; ?>">
                                                         <small>(INV-<?= $invoice_id; ?>)</small><?= date("M Y", strtotime($row['billing_month'])) ?> (Due: <?= $due ?>)
                                                     </option>
                                                 <?php 
@@ -409,7 +415,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     <div class="row mt-2">
                                         <div class="col-md-6">
                                             <label>Transaction Time *</label>
-                                            <input type="datetime-local" class="form-control" name="transaction_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
+                                            <input type="datetime-local" class="form-control" name="payment_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label>Payment Method *</label>
@@ -448,8 +454,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <input type="text" class="form-control" name="manager_paid_amount" placeholder="Manager Paid Amount">
                                             </div>
                                             <div class="col-md-6">
-                                                <label style="color: blue;">Manager Paid Method</label>
-                                                <select name="manager_paid_method" class="form-control form-select" id="">
+                                                <label style="color: blue;">Manager Payment Method</label>
+                                                <select name="manager_payment_method" class="form-control form-select" id="">
                                                     <option value="" selected disabled>Select One</option>
                                                     <option value="Cash">Cash</option>
                                                     <option value="Bkash">Bkash</option>
@@ -693,46 +699,44 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 </div>
 
 <script>
-function updateDueAmount() {
-    const select = document.getElementById('invoice_select');
-    const selectedOption = select.options[select.selectedIndex];
-    const due = selectedOption.getAttribute('data-due');
-    
-    if (due) {
-        document.getElementById('amount_input').value = due;
-        document.getElementById('max_due_limit').value = due;
-    } else {
-        document.getElementById('amount_input').value = '';
-        document.getElementById('max_due_limit').value = '0';
+    function updateDueAmount() {
+        const select = document.getElementById('invoice_select');
+        const selectedOption = select.options[select.selectedIndex];
+        const due = selectedOption.getAttribute('data-due');
+        
+        if (due) {
+            document.getElementById('amount_input').value = due;
+            document.getElementById('max_due_limit').value = due;
+        } else {
+            document.getElementById('amount_input').value = '';
+            document.getElementById('max_due_limit').value = '0';
+        }
     }
-}
+    function togglePaymentFields() {
+        const method = document.getElementById('payment_method').value;
+        const digitalFields = document.getElementById('digital_payment_fields');
+        const managerFields = document.getElementById('manager_fields');
 
-function togglePaymentFields() {
-    const method = document.getElementById('payment_method').value;
-    const digitalFields = document.getElementById('digital_payment_fields');
-    const managerFields = document.getElementById('manager_fields');
+        // Hide all first
+        digitalFields.style.display = 'none';
+        managerFields.style.display = 'none';
 
-    // Hide all first
-    digitalFields.style.display = 'none';
-    managerFields.style.display = 'none';
-
-    if (['Bkash', 'Nagad', 'Rocket', 'Bank Transfer', 'Card'].includes(method)) {
-        digitalFields.style.display = 'block';
-    } else if (method === 'Manager') {
-        managerFields.style.display = 'block';
+        if (['Bkash', 'Nagad', 'Rocket', 'Bank Transfer', 'Card'].includes(method)) {
+            digitalFields.style.display = 'block';
+        } else if (method === 'Manager') {
+            managerFields.style.display = 'block';
+        }
     }
-}
+    // Form Validation before submit
+    document.getElementById('paymentForm').onsubmit = function(e) {
+        const paidAmount = parseFloat(document.getElementById('amount_input').value);
+        const maxDue = parseFloat(document.getElementById('max_due_limit').value);
 
-// Form Validation before submit
-document.getElementById('paymentForm').onsubmit = function(e) {
-    const paidAmount = parseFloat(document.getElementById('amount_input').value);
-    const maxDue = parseFloat(document.getElementById('max_due_limit').value);
-
-    if (paidAmount > maxDue) {
-        alert("Error: You cannot pay more than the due amount (" + maxDue + " ৳)");
-        e.preventDefault();
-        return false;
-    }
-    return true;
-};
+        if (paidAmount > maxDue) {
+            alert("Error: You cannot pay more than the due amount (" + maxDue + " ৳)");
+            e.preventDefault();
+            return false;
+        }
+        return true;
+    };
 </script>
