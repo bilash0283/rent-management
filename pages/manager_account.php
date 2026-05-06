@@ -112,8 +112,7 @@ $total_unit = mysqli_num_rows($result);
     $manager_summary = mysqli_query($db, "
             SELECT 
                 SUM(ph.paid_amount) as total_received,
-                SUM(ph.manager_self) as manager_self_total,
-                SUM(ph.expense) as expense_total
+                SUM(ph.manager_paid) as manager_paid_total
             FROM payment_history ph
             JOIN tenants t ON ph.tenant_id = t.id
             WHERE t.building_id = '$building_id' 
@@ -124,42 +123,33 @@ $total_unit = mysqli_num_rows($result);
     $summary = mysqli_fetch_assoc($manager_summary);
 
     $total_received = (float) ($summary['total_received'] ?? 0);
-    $manager_self_total = (float) ($summary['manager_self_total'] ?? 0);
-    $expense_total = (float) ($summary['expense_total'] ?? 0);
-    $manager_net_paid = $total_received - $manager_self_total - $expense_total;
+    $manager_paid_total = (float) ($summary['manager_paid_total'] ?? 0);
+    $manager_paid = $total_received - $manager_paid_total;
     ?>
 
     <!-- Summary Cards -->
     <div class="row g-3 mb-4 mx-3">
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-primary text-white">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 bg-info text-white">
                 <div class="card-body text-center">
-                    <h6 class="mb-1 text-white">Total Paid</h6>
+                    <h6 class="mb-1 text-white">Total Paid by Manager</h6>
                     <h4 class="mb-0 text-white">৳ <?= number_format($total_received, 0) ?></h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-danger">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 bg-success">
                 <div class="card-body text-center">
-                    <h6 class="mb-1 text-white">Manager Self</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format($manager_self_total, 0) ?></h4>
+                    <h6 class="mb-1 text-white">Manager Paid to Admin</h6>
+                    <h4 class="mb-0 text-white">৳ <?= number_format($manager_paid_total, 0) ?></h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card shadow-sm border-0 bg-warning text-white">
-                <div class="card-body text-center ">
-                    <h6 class="mb-1 text-white">Manager Expense</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format($expense_total, 0) ?></h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card shadow-sm border-0 bg-success text-white">
                 <div class="card-body text-center">
-                    <h6 class="mb-1 text-white">Manager Paid</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format(max($manager_net_paid, 0), 0) ?></h4>
+                    <h6 class="mb-1 text-white">Manager self (Net Payable)</h6>
+                    <h4 class="mb-0 text-white">৳ <?= number_format(max($manager_paid, 0), 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -232,7 +222,7 @@ $total_unit = mysqli_num_rows($result);
                                 $Others = (float) ($inv['Others'] ?? 0);
                                 $total_bill = $rent + $Gas + $Water + $Electricity + $Others;
                                 $paid_amount_db = (float) ($inv['paid_amount'] ?? 0);
-                                $due_amount_db = (float) ($inv['due_amount'] ?? $rent);
+                                $due_amount_db = (float) $total_bill-$paid_amount_db;
                                 $status = $inv['status'] ?? 'Unpaid';
                             }
 
@@ -245,19 +235,18 @@ $total_unit = mysqli_num_rows($result);
                                 ");
 
                             $manager_self = 0;
-                            $expense = 0;
                             $received = 0;
+                            $manager_paid = 0;
                             $pay_method = '';
 
                             if (mysqli_num_rows($history_sql) > 0) {
                                 while ($his = mysqli_fetch_assoc($history_sql)) {
                                     $pay_his_id = $his['id'];
-                                    $manager_self += (float) ($his['manager_self'] ?? 0);
-                                    $expense += (float) ($his['expense'] ?? 0);
                                     $received += (float) ($his['paid_amount'] ?? 0);
+                                    $manager_paid += (float) ($his['manager_paid'] ?? 0);
                                     $pay_method = $his['payment_method'];
                                 }
-                                $manager_paid = $received - $manager_self - $expense;
+                                $manager_self = $received - $manager_paid;
                             }
                             ?>
                             <tr>
@@ -311,18 +300,20 @@ $total_unit = mysqli_num_rows($result);
                                     <?php else: ?>
                                         <small class="text-success fw-bold"><?= htmlspecialchars($pay_method) ?></small><br>
 
-                                        <?php if ($manager_self > 0): ?>
-                                            <small class="text-warning fw-bold">Self: ৳
-                                                <?= number_format($manager_self, 0) ?></small><br>
+                                        <?php if ($received > 0): ?>
+                                            <small class="text-warning fw-bold">Manager Rechive: ৳
+                                                <?= number_format($received, 0) ?></small><br>
                                         <?php endif; ?>
 
-                                        <?php if ($expense > 0): ?>
-                                            <small class="text-danger fw-bold">Expense: ৳
-                                                <?= number_format($expense, 0) ?></small><br>
+                                        <?php if ($manager_paid > 0): ?>
+                                            <small class="text-warning fw-bold">Paid: ৳
+                                                <?= number_format($manager_paid, 0) ?></small><br>
                                         <?php endif; ?>
 
-                                        <strong class="text-primary">Manager Paid: ৳
-                                            <?= number_format(max($manager_paid ?? 0, 0), 0) ?></strong>
+                                        <strong class="text-primary">Manager Self: ৳
+                                            <?= number_format($manager_self ?? 0,) ?>
+                                        </strong>
+
                                     <?php endif; ?>
                                 </td>
 
