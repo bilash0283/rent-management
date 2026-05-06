@@ -652,9 +652,11 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 </span>
                                             </td>
                                             <td class="text-end text-success">
-                                                <?= $manager_paid ? '<small>৳ </small>' . number_format($manager_paid, 0) : '-'; ?><br>
-                                                <small style="font-size:10px;" class="text-dark">(Txn Num : <?= $transaction_number ?>)</small><br>
+                                                <?php if(!empty($manager_paid)){ ?>
+                                                    <?= $manager_paid ? '<small>৳ </small>' . number_format($manager_paid, 0) : '-'; ?><br>
+                                                    <small style="font-size:10px;" class="text-dark">(Txn Num : <?= $transaction_number ?>)</small><br>
                                                     <small style="font-size:10px;" class="text-dark">(Method : <?= $manager_payment_method ?>)</small><br>
+                                                <?php }else{echo '-'; } ?>
                                             </td>
                                             <td class="text-center">
                                                 <small class="text-secondary"><?= $note_his ?></small>
