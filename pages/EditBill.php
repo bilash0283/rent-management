@@ -124,6 +124,11 @@ if (isset($_POST['save_bill'])) {
     $note = mysqli_real_escape_string($db, $_POST['note']);
     $transaction_id = mysqli_real_escape_string($db, $_POST['transaction_id'] ?? '');
     $transaction_number = mysqli_real_escape_string($db, $_POST['transaction_number'] ?? '');
+
+    // billing_month query 
+    $bill_mon_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id='$invoice_id' ");
+    $pay_info_for_pay = mysqli_fetch_assoc($bill_mon_sql);
+    $bill_month = $pay_info_for_pay['billing_month'];
     
     // Manager logic
     $manager_paid_amount = (int)($_POST['manager_paid_amount'] ?? 0);
@@ -163,9 +168,9 @@ if (isset($_POST['save_bill'])) {
 
     // ৩. পেমেন্ট হিস্ট্রি ইনসার্ট (কলামের নাম ঠিক করা হয়েছে)
     $history_sql = "INSERT INTO payment_history 
-        (invoice_id, tenant_id, payment_method, paid_amount, note, payment_date, manager_paid,manager_payment_method, transaction_id, transaction_number) 
+        (invoice_id, tenant_id, bill_month, payment_method, paid_amount, note, payment_date, manager_paid,manager_payment_method, transaction_id, transaction_number) 
         VALUES 
-        ('$invoice_id','$tent_id', '$payment_method', '$paid_amount', '$note', '$payment_date', '$manager_paid_amount', '$manager_payment_method', '$transaction_id', '$transaction_number')";
+        ('$invoice_id','$tent_id', '$bill_month', '$payment_method', '$paid_amount', '$note', '$payment_date', '$manager_paid_amount', '$manager_payment_method', '$transaction_id', '$transaction_number')";
 
     if (mysqli_query($db, $history_sql)) {
         echo "<script>alert('Payment Successful!'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
