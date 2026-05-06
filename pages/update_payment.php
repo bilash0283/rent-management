@@ -6,9 +6,11 @@ if (!isset($_GET['pay_his_id']) || empty($_GET['pay_his_id'])) {
 }
 
 $pay_his_id = (int) $_GET['pay_his_id'];
+$unit_id = $_GET['unit_id'] ?? '';
+$success_msg = false;
+$error_msg = false;
 
 // ==================== FETCH EXISTING DATA ====================
-// JOIN ব্যবহার করে ইনভয়েসের তথ্যও একবারে নিয়ে আসা হচ্ছে
 $his_query = mysqli_query($db, "SELECT ph.*, inv.total_amount, inv.paid_amount as inv_paid_total, inv.status as inv_status 
                                 FROM payment_history ph 
                                 JOIN invoices inv ON ph.invoice_id = inv.id 
@@ -21,7 +23,11 @@ if (mysqli_num_rows($his_query) == 0) {
 
 $history = mysqli_fetch_assoc($his_query);
 $invoice_id = $history['invoice_id'];
-$old_entry_amount = (float) $history['paid_amount']; // এই নির্দিষ্ট ট্রানজেকশনে আগে কত ছিল
+$old_entry_amount = (float) $history['paid_amount'];
+
+// ইনভয়েসের বাকি অংশ ক্যালকুলেশন (এই ট্রানজেকশন বাদে কত টাকা পেইড আছে)
+$other_payments_total = (float)$history['inv_paid_total'] - $old_entry_amount;
+$max_allowable = (float)$history['total_amount'] - $other_payments_total;
 
 // ==================== UPDATE LOGIC ====================
 if (isset($_POST['update_payment'])) {
@@ -31,53 +37,50 @@ if (isset($_POST['update_payment'])) {
     $transaction_id = mysqli_real_escape_string($db, $_POST['transaction_id'] ?? '');
     $transaction_number = mysqli_real_escape_string($db, $_POST['transaction_number'] ?? '');
     
-    // Manager logic
-    $manager_paid_amount = (int)($_POST['manager_paid_amount'] ?? 0);
+    $manager_paid_amount = (float)($_POST['manager_paid_amount'] ?? 0);
     $manager_payment_method = mysqli_real_escape_string($db, $_POST['manager_payment_method'] ?? '');
 
     $post_date = $_POST['payment_date'];
     $payment_date = date('Y-m-d H:i:s', strtotime($post_date));
 
-    // ১. ইনভয়েস ক্যালকুলেশন (Adjustment)
-    // ইনভয়েসের বর্তমান পেইড থেকে আগের এই এন্ট্রি বাদ দিয়ে নতুন এন্ট্রি যোগ করা
-    $invoice_total_bill = (float)$history['total_amount'];
-    $current_inv_paid = (float)$history['inv_paid_total'];
-    
-    $adjusted_paid = ($current_inv_paid - $old_entry_amount) + $new_paid_amount;
-    $new_due = $invoice_total_bill - $adjusted_paid;
+    // ১. ভ্যালিডেশন: ইনভয়েসের লিমিট ক্রস করছে কিনা
+    if ($new_paid_amount > $max_allowable) {
+        $error_msg = "Error: Amount exceeds the remaining bill balance! Max allowed: $max_allowable ৳";
+    } 
+    // ২. ভ্যালিডেশন: ম্যানেজার পেইড টেন্যান্ট পেইড এর চেয়ে বেশি কিনা
+    elseif ($payment_method === 'Manager' && $manager_paid_amount > $new_paid_amount) {
+        $error_msg = "Error: Manager payment to Admin cannot exceed Tenant's payment ($new_paid_amount ৳)!";
+    } 
+    else {
+        // ৩. ইনভয়েস টেবিল আপডেট
+        $adjusted_inv_paid = $other_payments_total + $new_paid_amount;
+        $new_status = ($adjusted_inv_paid >= (float)$history['total_amount']) ? 'Paid' : (($adjusted_inv_paid > 0) ? 'Partial' : 'Unpaid');
 
-    // ভ্যালিডেশন
-    if ($new_due < 0) {
-        echo "<script>alert('Error: Total payment exceeds invoice amount!'); window.history.back();</script>";
-        exit;
-    }
-    
-    if ($payment_method === 'Manager' && $manager_paid_amount > $new_paid_amount) {
-        echo "<script>alert('Error: Manager paid cannot be greater than Tenant paid!'); window.history.back();</script>";
-        exit;
-    }
+        mysqli_query($db, "UPDATE invoices SET paid_amount = '$adjusted_inv_paid', status = '$new_status' WHERE id = '$invoice_id'");
 
-    $status = ($new_due <= 0) ? 'Paid' : 'Partial';
+        // ৪. পেমেন্ট হিস্ট্রি আপডেট
+        $update_sql = "UPDATE payment_history SET 
+            paid_amount = '$new_paid_amount',
+            payment_method = '$payment_method',
+            note = '$note',
+            payment_date = '$payment_date',
+            manager_paid = '$manager_paid_amount',
+            manager_payment_method = '$manager_payment_method',
+            transaction_id = '$transaction_id',
+            transaction_number = '$transaction_number'
+            WHERE id = '$pay_his_id'";
 
-    // ২. আপডেট ইনভয়েস টেবিল
-    mysqli_query($db, "UPDATE invoices SET paid_amount = '$adjusted_paid', status = '$status' WHERE id = '$invoice_id'");
-
-    // ৩. আপডেট পেমেন্ট হিস্ট্রি
-    $update_sql = "UPDATE payment_history SET 
-        paid_amount = '$new_paid_amount',
-        payment_method = '$payment_method',
-        note = '$note',
-        payment_date = '$payment_date',
-        manager_paid = '$manager_paid_amount',
-        manager_payment_method = '$manager_payment_method',
-        transaction_id = '$transaction_id',
-        transaction_number = '$transaction_number'
-        WHERE id = '$pay_his_id'";
-
-    if (mysqli_query($db, $update_sql)) {
-        echo "<script>alert('Payment Updated Successfully!'); window.location.href='admin.php?page=editbill&unit_id=" . ($_GET['unit_id'] ?? '') . "';</script>";
-    } else {
-        echo "Error: " . mysqli_error($db);
+        if (mysqli_query($db, $update_sql)) {
+            $success_msg = "Payment Updated Successfully!";
+            // ডাটা আপডেট হওয়ার পর আবার রিফ্রেশড ডাটা নিয়ে আসা (পেজে দেখানোর জন্য)
+            $his_query = mysqli_query($db, "SELECT ph.*, inv.total_amount, inv.paid_amount as inv_paid_total, inv.status as inv_status FROM payment_history ph JOIN invoices inv ON ph.invoice_id = inv.id WHERE ph.id = '$pay_his_id' LIMIT 1");
+            $history = mysqli_fetch_assoc($his_query);
+            $old_entry_amount = (float) $history['paid_amount'];
+            $other_payments_total = (float)$history['inv_paid_total'] - $old_entry_amount;
+            $max_allowable = (float)$history['total_amount'] - $other_payments_total;
+        } else {
+            $error_msg = "Database Error: " . mysqli_error($db);
+        }
     }
 }
 ?>
@@ -85,6 +88,21 @@ if (isset($_POST['update_payment'])) {
 <div class="container-fluid mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            <!-- Alerts -->
+            <?php if($success_msg): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Success!</strong> <?= $success_msg ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <?php if($error_msg): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Failed!</strong> <?= $error_msg ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
             <form method="POST" id="paymentForm">
                 <div class="card shadow-sm">
                     <div class="card-header bg-info text-white d-flex justify-content-between">
@@ -95,11 +113,9 @@ if (isset($_POST['update_payment'])) {
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="fw-bold">Amount Paid by Tenant *</label>
-                                <input type="number" name="paid_amount" id="amount_input" class="form-control" value="<?= $history['paid_amount'] ?>" required>
-                                <!-- Max limit calculations -->
-                                <?php $max_allow = $history['total_amount'] - ($history['inv_paid_total'] - $history['paid_amount']); ?>
-                                <input type="hidden" id="max_due_limit" value="<?= $max_allow ?>">
-                                <small class="text-muted">Maximum allowable: <?= $max_allow ?> ৳</small>
+                                <input type="number" name="paid_amount" id="amount_input" class="form-control" value="<?= $history['paid_amount'] ?>" step="any" required>
+                                <small class="text-danger fw-bold">Max allowable: <span id="max_span"><?= $max_allowable ?></span> ৳</small>
+                                <input type="hidden" id="max_due_limit" value="<?= $max_allowable ?>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="fw-bold">Payment Date & Time *</label>
@@ -143,7 +159,7 @@ if (isset($_POST['update_payment'])) {
                             <div class="row">
                                 <div class="col-md-6">
                                     <label class="text-primary fw-bold">Manager paid to Admin</label>
-                                    <input type="number" class="form-control" name="manager_paid_amount" id="manager_paid_amount" value="<?= $history['manager_paid'] ?>" placeholder="Manager Paid Amount">
+                                    <input type="number" class="form-control" name="manager_paid_amount" id="manager_paid_amount" value="<?= $history['manager_paid'] ?>" step="any" placeholder="Manager Paid Amount">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="text-primary fw-bold">Manager Payment Method</label>
@@ -159,10 +175,7 @@ if (isset($_POST['update_payment'])) {
                         </div>
 
                         <div class="mt-4 row">
-                            <div class="col-6">
-                                <a href="admin.php?page=editbill&unit_id=<?= $_GET['unit_id'] ?? '' ?>" class="btn btn-secondary w-100">Cancel</a>
-                            </div>
-                            <div class="col-6">
+                            <div class="col-12">
                                 <button type="submit" name="update_payment" class="btn btn-info w-100 text-white">Update Payment</button>
                             </div>
                         </div>
@@ -190,12 +203,12 @@ if (isset($_POST['update_payment'])) {
     }
 
     document.getElementById('paymentForm').onsubmit = function(e) {
-        const paidAmount = parseFloat(document.getElementById('amount_input').value);
-        const maxLimit = parseFloat(document.getElementById('max_due_limit').value);
+        const paidAmount = parseFloat(document.getElementById('amount_input').value || 0);
+        const maxLimit = parseFloat(document.getElementById('max_due_limit').value || 0);
         const method = document.getElementById('payment_method').value;
 
         if (paidAmount > maxLimit) {
-            alert("Error: Total bill limit exceeded. Max allowed: " + maxLimit + " ৳");
+            alert("Error: Payment amount cannot exceed the remaining bill! Max allowed: " + maxLimit + " ৳");
             e.preventDefault();
             return false;
         }
@@ -203,7 +216,7 @@ if (isset($_POST['update_payment'])) {
         if (method === 'Manager') {
             const managerPaid = parseFloat(document.getElementById('manager_paid_amount').value || 0);
             if (managerPaid > paidAmount) {
-                alert("Error: Manager payment to Admin cannot exceed Tenant's payment.");
+                alert("Error: Manager payment to Admin (" + managerPaid + ") cannot exceed Tenant's payment (" + paidAmount + ").");
                 e.preventDefault();
                 return false;
             }

@@ -432,20 +432,6 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         </div>
                                     </div>
 
-                                    <!-- Digital Payment Fields (Bkash, Bank, etc.) -->
-                                    <div id="digital_payment_fields" class="mt-2" style="display: none;">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Transaction ID</label>
-                                                <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label>Transaction Number</label>
-                                                <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <!-- Manager Payment Section -->
                                     <div id="manager_fields" class="mt-2" style="display: none;">
                                         <div class="row">
@@ -466,15 +452,16 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Transaction ID</label>
-                                                <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label>Transaction Number</label>
-                                                <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control">
-                                            </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Transaction ID</label>
+                                            <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Transaction Number</label>
+                                            <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control">
                                         </div>
                                     </div>
 
@@ -634,7 +621,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             <td class="text-end text-secondary fw-semibold">
                                                 <?= $pay_method_his ?><br>
                                                 <?php if (!empty($transaction_id_db)): ?>
-                                                    <small style="font-size:10px;">(Txn: <?= $transaction_id_db ?>)</small>
+                                                    <small style="font-size:10px;">(Txn: <?= $transaction_id_db ?>)</small><br>
+                                                    <small style="font-size:10px;" >(Txn Num : <?= $transaction_number ?>)</small><br>
                                                 <?php endif; ?>
                                             </td>
                                             <td class="text-end text-success fw-bold">
@@ -654,7 +642,6 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             <td class="text-end text-success">
                                                 <?php if(!empty($manager_paid)){ ?>
                                                     <?= $manager_paid ? '<small>৳ </small>' . number_format($manager_paid, 0) : '-'; ?><br>
-                                                    <small style="font-size:10px;" class="text-dark">(Txn Num : <?= $transaction_number ?>)</small><br>
                                                     <small style="font-size:10px;" class="text-dark">(Method : <?= $manager_payment_method ?>)</small><br>
                                                 <?php }else{echo '-'; } ?>
                                             </td>
@@ -704,12 +691,9 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
         const managerFields = document.getElementById('manager_fields');
 
         // Hide all first
-        digitalFields.style.display = 'none';
         managerFields.style.display = 'none';
 
-        if (['Bkash', 'Nagad', 'Rocket', 'Bank Transfer', 'Card'].includes(method)) {
-            digitalFields.style.display = 'block';
-        } else if (method === 'Manager') {
+        if (method === 'Manager') {
             managerFields.style.display = 'block';
         }
     }

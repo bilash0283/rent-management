@@ -47,6 +47,7 @@ $current_paid_entry = (float)$pay_history['paid_amount'];
 $pay_method_his = $pay_history['payment_method'];
 $pay_date_his = $pay_history['payment_date'];
 $transaction_id_db = $pay_history['transaction_id'];
+$transaction_number_db = $pay_history['transaction_number'];
 
 // ৪. এই ইনভয়েসের জন্য এ পর্যন্ত মোট কত পেইড হয়েছে তা বের করা (Running Total)
 $total_paid_query = mysqli_query($db, "SELECT SUM(paid_amount) as total_paid_till_now 
@@ -119,6 +120,10 @@ if ($calculated_due <= 0) {
                     <div class="d-flex justify-content-between mb-1">
                         <span class="text-muted small">Transaction ID:</span>
                         <span class="fw-bold small"><?= $transaction_id_db ?: 'N/A'; ?></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted small">Transaction Number:</span>
+                        <span class="fw-bold small"><?= $transaction_number_db ?: 'N/A'; ?></span>
                     </div>
                     <div class="d-flex justify-content-between">
                         <span class="text-muted small">Payment Date:</span>
