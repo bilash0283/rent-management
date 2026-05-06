@@ -24,6 +24,9 @@ $Gas_db = $data['Gas'];
 $Water_db = $data['Water'];
 $Electricity_db = $data['Electricity'];
 $Others_db = $data['Others'];
+$paid_amount_db = $data['paid_amount'];
+
+$total_amount_db = $Rent_db + $Gas_db + $Water_db + $Electricity_db + $Others_db;
 
 $Gas_month_db = $data['Gas_month'];
 $Water_month_db = $data['Water_month'];
@@ -47,8 +50,18 @@ if (isset($_POST['update_invoice'])) {
     $Others_month = $_POST['Others_month'];
 
     $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
-    
-    if ($total_amount <= 0 || empty($total_amount)) {
+
+    // Logic for Status
+    $status = 'Unpaid'; // Default fallback
+    if ($total_amount == $paid_amount_db && $total_amount > 0) {
+        $status = 'Paid';
+    } else if ($paid_amount_db > 0 && $paid_amount_db < $total_amount) {
+        $status = 'Partial';
+    } else if ($paid_amount_db <= 0) {
+        $status = 'Unpaid';
+    }
+
+    if ($total_amount <= 0) {
         echo "<script>alert('Invoice cannot be created because the total amount must be greater than 0.'); window.history.back();</script>";
         exit;
     } else {
@@ -64,44 +77,44 @@ if (isset($_POST['update_invoice'])) {
             Electricity_month = ?,
             Others = ?,
             Others_month = ?,
-            total_amount = ?
+            total_amount = ?,
+            status = ?
             WHERE id = ?
         ");
 
+        // The Fix: 13 characters for 13 variables
+        // s = string, i = integer
         $update->bind_param(
-            "siiisiisiiii",
-            $rent_month,
-            $rent,
-            $Gas,
-            $Gas_month,
-            $Water,
-            $Water_month,
-            $Electricity,
-            $Electricity_month,
-            $Others,
-            $Others_month,
-            $total_amount,
-            $invoice_id
+            "siiisiisiissi", 
+            $rent_month,        // s
+            $rent,              // i
+            $Gas,               // i
+            $Gas_month,         // s
+            $Water,             // i
+            $Water_month,       // s
+            $Electricity,       // i
+            $Electricity_month, // s
+            $Others,            // i
+            $Others_month,      // s
+            $total_amount,      // i
+            $status,            // s
+            $invoice_id         // i
         );
 
         if ($update->execute()) {
             echo "<script>alert('Invoice Updated Successfully'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
             exit;
         } else {
-            echo "Update Failed!";
+            echo "Update Failed: " . $db->error;
         }
     }
 }
 ?>
 
-
 <div class="nxl-content">
-    <!-- Page Header -->
     <div class="page-header d-flex justify-content-between align-items-center">
         <div class="page-header-left">
-            <h5 class="m-b-10">
-                Update Invoice / #INV-<?php echo $invoice_id; ?>
-            </h5>
+            <h5 class="m-b-10">Update Invoice / #INV-<?php echo $invoice_id; ?></h5>
         </div>
         <div class="page-header-right">
             <a href="admin.php?page=editbill&unit_id=<?php echo $unit_id; ?>" class="btn btn-primary">Back</a>
@@ -112,72 +125,62 @@ if (isset($_POST['update_invoice'])) {
         <div class="card-body">
             <div class="row">
                 <div class="col-10 mx-auto">
-                    <!-- create Invoice  -->
                     <form method="POST" enctype="multipart/form-data">
                         <div class="card p-3">
                             <h4 class="mb-3 text-success">Update Invoice</h4>
+                            
                             <div class="row">
                                 <div class="col-md-6">
-                                    <small class="fw-semibold">Rent for Month </small>
-                                    <input type="month" name="rent_month" value="<?php echo $billing_month_db; ?>"
-                                        class="form-control">
+                                    <small class="fw-semibold">Rent for Month</small>
+                                    <input type="month" name="rent_month" value="<?php echo htmlspecialchars($billing_month_db); ?>" class="form-control">
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="fw-semibold" for="status">Rent Amount</small>
-                                    <input type="text" name="rent" value="<?= $Rent_db ?? '' ?>" class="form-control">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <small class="fw-semibold">Gas </small>
-                                    <input type="month" name="Gas_month"
-                                        value="<?php echo date('Y-m', strtotime($Gas_month_db)); ?>"
-                                        class="form-control">
-                                </div>
-                                <div class="col-md-6">
-                                    <small class="fw-semibold" for="status">Gas Amount</small>
-                                    <input type="text" name="Gas" value="<?= $Gas_db ?? '' ?>" class="form-control">
+                                    <small class="fw-semibold">Rent Amount</small>
+                                    <input type="number" name="rent" value="<?= $Rent_db ?>" class="form-control">
                                 </div>
                             </div>
 
                             <div class="row mt-2">
                                 <div class="col-md-6">
-                                    <small class="fw-semibold">Water </small>
-                                    <input type="text" name="Water_month"
-                                        value="<?php echo date('M Y', strtotime($Water_month_db)); ?>"
-                                        class="form-control">
+                                    <small class="fw-semibold">Gas Month</small>
+                                    <input type="month" name="Gas_month" value="<?php echo date('Y-m', strtotime($Gas_month_db)); ?>" class="form-control">
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="fw-semibold" for="status">Water Amount</small>
-                                    <input type="text" name="Water" value="<?= $Water_db ?? '' ?>" class="form-control">
+                                    <small class="fw-semibold">Gas Amount</small>
+                                    <input type="number" name="Gas" value="<?= $Gas_db ?>" class="form-control">
                                 </div>
                             </div>
 
                             <div class="row mt-2">
                                 <div class="col-md-6">
-                                    <small class="fw-semibold">Electricity </small>
-                                    <input type="text" name="Electricity_month"
-                                        value="<?php echo date('M Y', strtotime($Electricity_month_db)); ?>"
-                                        placeholder="Note" class="form-control">
+                                    <small class="fw-semibold">Water Month/Note</small>
+                                    <input type="text" name="Water_month" value="<?php echo htmlspecialchars($Water_month_db); ?>" class="form-control">
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="fw-semibold" for="status">Electricity Amount</small>
-                                    <input type="text" name="Electricity" value="<?php echo $Electricity_db; ?>"
-                                        class="form-control">
+                                    <small class="fw-semibold">Water Amount</small>
+                                    <input type="number" name="Water" value="<?= $Water_db ?>" class="form-control">
                                 </div>
                             </div>
 
                             <div class="row mt-2">
                                 <div class="col-md-6">
-                                    <small class="fw-semibold">Others </small>
-                                    <input type="text" name="Others_month" value="<?php echo $Others_month_db; ?>"
-                                        placeholder="Note" class="form-control">
+                                    <small class="fw-semibold">Electricity Month/Note</small>
+                                    <input type="text" name="Electricity_month" value="<?php echo htmlspecialchars($Electricity_month_db); ?>" class="form-control">
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="fw-semibold" for="status">Others Amount</small>
-                                    <input type="text" name="Others" value="<?php echo $Others_db; ?>"
-                                        class="form-control">
+                                    <small class="fw-semibold">Electricity Amount</small>
+                                    <input type="number" name="Electricity" value="<?php echo $Electricity_db; ?>" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <small class="fw-semibold">Others Note</small>
+                                    <input type="text" name="Others_month" value="<?php echo htmlspecialchars($Others_month_db); ?>" class="form-control">
+                                </div>
+                                <div class="col-md-6">
+                                    <small class="fw-semibold">Others Amount</small>
+                                    <input type="number" name="Others" value="<?php echo $Others_db; ?>" class="form-control">
                                 </div>
                             </div>
 
