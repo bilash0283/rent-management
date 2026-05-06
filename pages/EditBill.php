@@ -463,7 +463,6 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     <option value="Rocket">Rocket</option>
                                                     <option value="Bank Transfer">Bank Transfer</option>
                                                     <option value="Card">Card</option>
-                                                    <option value="Manager">Manager</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -574,7 +573,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th scope="col" class="ps-4">Date</th>
+                                        <th scope="col" class="text-end">Invoice Id</th>
+                                        <th scope="col" class="ps-4">Date & Time</th>
                                         <th scope="col" class="text-end">Bill Month</th>
                                         <th scope="col" class="text-end">Payment Method</th>
                                         <th scope="col" class="text-end">Payment Amount</th>
@@ -587,103 +587,86 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    // আপনার ডাটাবেস থেকে পেমেন্ট হিস্ট্রি নিয়ে আসা
-                                    $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' ORDER BY `payment_date` ASC, `id` ASC");
+                                    // JOIN ব্যবহার করা হয়েছে যাতে invoices টেবিল থেকে total_amount এবং billing_month পাওয়া যায়
+                                    $history_sql = mysqli_query($db, "SELECT ph.*, inv.total_amount, inv.billing_month 
+                                                                    FROM `payment_history` ph 
+                                                                    JOIN `invoices` inv ON ph.invoice_id = inv.id 
+                                                                    WHERE ph.tenant_id = '$tent_id' 
+                                                                    ORDER BY ph.payment_date ASC, ph.id ASC");
 
-                                    // মাস ভিত্তিক পেইড অ্যামাউন্ট ট্র্যাক করার জন্য একটি অ্যারে
                                     $monthly_paid_tracker = [];
 
                                     while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                                         $pay_slip_id = $pay_history['id'];
-                                        $bill_his = $pay_history['bill_month']; // উদাহরণ: 2026-04
-                                        $pay_method_his = $pay_history['payment_method'];
-                                        $total_bill_amount = (float) $pay_history['total'];
-                                        $current_paid_entry = (float) $pay_history['paid_amount'];
+                                        $invoice_id = $pay_history['invoice_id'];
+                                        $bill_month = $pay_history['billing_month']; // ইনভয়েস টেবিল থেকে আসা মাস
+                                        $total_bill_amount = (float)$pay_history['total_amount']; // ইনভয়েস টেবিল থেকে আসা মোট বিল
+                                        $current_paid_entry = (float)$pay_history['paid_amount'];
 
-                                        // একই মাস এবং একই ইউজারের জন্য আগের পেইড অ্যামাউন্ট হিসাব করা
-                                        if (!isset($monthly_paid_tracker[$bill_his])) {
-                                            $monthly_paid_tracker[$bill_his] = 0;
+                                        // মাস ভিত্তিক পেইড অ্যামাউন্ট ট্র্যাক করা (প্রতিটি ইনভয়েসের জন্য আলাদা হিসাব)
+                                        if (!isset($monthly_paid_tracker[$invoice_id])) {
+                                            $monthly_paid_tracker[$invoice_id] = 0;
                                         }
 
-                                        // রানিং টোটাল আপডেট করা
-                                        $monthly_paid_tracker[$bill_his] += $current_paid_entry;
+                                        // রানিং টোটাল আপডেট
+                                        $monthly_paid_tracker[$invoice_id] += $current_paid_entry;
 
-                                        // বর্তমান সারির জন্য ক্যালকুলেটেড ভ্যালু
-                                        $calculated_total_paid = $monthly_paid_tracker[$bill_his];
+                                        $calculated_total_paid = $monthly_paid_tracker[$invoice_id];
                                         $calculated_due = $total_bill_amount - $calculated_total_paid;
 
                                         // অন্যান্য ডাটা
+                                        $pay_method_his = $pay_history['payment_method'];
                                         $note_his = $pay_history['note'];
                                         $pay_date_his = $pay_history['payment_date'];
-                                        $manager_self = $pay_history['manager_self'];
-                                        $expense = $pay_history['expense'];
-                                        $expense_note = $pay_history['expense_note'];
+                                        $manager_self = $pay_history['manager_paid']; // আপনার আগের কোডে 'manager_paid' ছিল
+                                        $expense = $pay_history['expense'] ?? 0;
+                                        $expense_note = $pay_history['expense_note'] ?? '';
                                         $transaction_id_db = $pay_history['transaction_id'];
-                                        $manager_payment_method = $pay_history['manager_payment_method'];
-                                        $manager_transaction_id = $pay_history['manager_transaction_id'];
-                                        $transaction_date = $pay_history['transaction_date'];
-                                        $transaction_number = $pay_history['transaction_number'];
+                                        $manager_transaction_id = $pay_history['manager_transaction_id'] ?? '';
                                         ?>
                                         <tr>
+                                            <td class="text-end">#INV-<?= $invoice_id; ?></td>
                                             <td class="ps-4 fw-medium">
-                                                <?= date('d M Y', strtotime($pay_date_his)) ?>
+                                                <?= date('j-M-y g:i A', strtotime($pay_date_his)) ?>
                                             </td>
                                             <td class="text-end fw-semibold text-uppercase text-secondary">
-                                                <?= date('M Y', strtotime($bill_his)) ?>
+                                                <?= date('M Y', strtotime($bill_month)) ?>
                                             </td>
                                             <td class="text-end text-secondary fw-semibold">
                                                 <?= $pay_method_his ?><br>
                                                 <?php if (!empty($transaction_id_db)): ?>
-                                                    <small style="font-size:8px;">( Txn ID : <?= $transaction_id_db ?>
-                                                        )</small><br>
-                                                <?php endif; ?>
-                                                <?php if (!empty($manager_transaction_id)): ?>
-                                                    <small style="font-size:8px;">( Mgr Txn : <?= $manager_transaction_id ?>
-                                                        )</small><br>
+                                                    <small style="font-size:10px;">(Txn: <?= $transaction_id_db ?>)</small>
                                                 <?php endif; ?>
                                             </td>
                                             <td class="text-end text-success fw-bold">
-                                                <?= $current_paid_entry ? '<small>৳ </small>' . number_format($current_paid_entry, 0) : '0'; ?>
+                                                <?= '<small>৳ </small>' . number_format($current_paid_entry, 0); ?>
                                             </td>
                                             <td class="text-end fw-semibold">
                                                 <span class="text-primary" title="Total Bill">
                                                     <small>Total: ৳ </small><?= number_format($total_bill_amount, 0) ?>
                                                 </span><br>
-                                                <span class="text-success" title="Total Paid for this month">
+                                                <span class="text-success" title="Total Paid till this entry">
                                                     <small>Paid: ৳ </small><?= number_format($calculated_total_paid, 0) ?>
                                                 </span><br>
-                                                <span class="text-danger" title="Remaining Due">
+                                                <span class="<?= ($calculated_due > 0) ? 'text-danger' : 'text-muted' ?>" title="Remaining Due">
                                                     <small>Due: ৳ </small><?= number_format($calculated_due, 0) ?>
                                                 </span>
                                             </td>
-                                            <td class="text-end">
-                                                <span
-                                                    class="text-danger"><?= $manager_self ? '<small>Self: ৳ </small>' . $manager_self : ''; ?></span>
+                                            <td class="text-end text-danger">
+                                                <?= $manager_self ? '<small>৳ </small>' . number_format($manager_self, 0) : '-'; ?>
                                             </td>
-                                            <td class="text-end">
-                                                <span
-                                                    class="text-danger"><?= $expense ? '<small>৳ </small>' . $expense : ''; ?></span><br>
-                                                <small
-                                                    class="text-muted"><?= $expense_note ? '(' . $expense_note . ')' : ''; ?></small>
+                                            <td class="text-end text-danger">
+                                                <?= $expense ? '<small>৳ </small>' . number_format($expense, 0) : '-'; ?><br>
+                                                <small class="text-muted" style="font-size: 10px;"><?= $expense_note ?></small>
                                             </td>
                                             <td class="text-center">
-                                                <small class="text-secondary"><?= $note_his ?? '' ?></small>
+                                                <small class="text-secondary"><?= $note_his ?></small>
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group">
-                                                    <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>"
-                                                        class="p-1 btn btn-sm btn-success">
-                                                        <i class="bi bi-eye"></i>
-                                                    </a>
-                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>"
-                                                        class="p-1 btn btn-sm btn-info">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </a>
-                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>"
-                                                        class="p-1 btn btn-sm btn-danger"
-                                                        onclick="return confirm('Are you sure you want to delete this payment record?');">
-                                                        <i class="bi bi-trash"></i>
-                                                    </a>
+                                                    <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="p-1 btn btn-sm btn-success"><i class="bi bi-eye"></i></a>
+                                                    <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="p-1 btn btn-sm btn-info"><i class="bi bi-pencil-square"></i></a>
+                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&unit_id=<?= $unit_id ?>" class="p-1 btn btn-sm btn-danger" onclick="return confirm('Are you sure?');"><i class="bi bi-trash"></i></a>
                                                 </div>
                                             </td>
                                         </tr>
