@@ -115,8 +115,7 @@ $total_unit = mysqli_num_rows($result);
     $manager_summary = mysqli_query($db, "
             SELECT 
                 SUM(ph.paid_amount) as total_received,
-                SUM(ph.manager_self) as manager_self_total,
-                SUM(ph.expense) as expense_total
+                SUM(ph.manager_paid) as manager_paid_total
             FROM payment_history ph
             JOIN tenants t ON ph.tenant_id = t.id
             WHERE t.building_id = '$building_id' 
@@ -127,9 +126,8 @@ $total_unit = mysqli_num_rows($result);
     $summary = mysqli_fetch_assoc($manager_summary);
 
     $total_received = (float) ($summary['total_received'] ?? 0);
-    $manager_self_total = (float) ($summary['manager_self_total'] ?? 0);
-    $expense_total = (float) ($summary['expense_total'] ?? 0);
-    $manager_net_paid = $total_received - $manager_self_total - $expense_total;
+    $manager_paid_total = (float) ($summary['manager_paid_total'] ?? 0);
+    $manager_net_paid = $total_received - $manager_paid_total;
     ?>
 
     <!-- Summary Cards -->
@@ -238,7 +236,7 @@ $total_unit = mysqli_num_rows($result);
                     <strong>Paid By Manager</strong><br>
                     <div style="text-align: left; margin: 0px -13px;">
                         <small>Total : ৳ <?= number_format(max($total_received, 0), 0) ?></small><br>
-                        <small>Manager Self : ৳ <?= number_format(max($manager_self_total, 0), 0) ?></small><br>
+                        <small>Manager Self : ৳ <?= number_format(max($manager_paid_total, 0), 0) ?></small><br>
                         <small>Manager Paid : ৳ <?= number_format(max($manager_net_paid, 0), 0) ?></small>
                     </div>
                 </div>
@@ -256,8 +254,7 @@ $total_unit = mysqli_num_rows($result);
         $manager_summary_query = "
             SELECT 
                 COALESCE(SUM(ph.paid_amount), 0) as total_received,
-                COALESCE(SUM(ph.manager_self), 0) as manager_self_total,
-                COALESCE(SUM(ph.expense), 0)     as expense_total
+                COALESCE(SUM(ph.manager_paid), 0) as manager_paid_total
             FROM payment_history ph
             JOIN tenants t ON ph.tenant_id = t.id
             WHERE t.building_id = '$building_id' 
@@ -270,17 +267,15 @@ $total_unit = mysqli_num_rows($result);
         if ($manager_result) {
             $manager_summary = mysqli_fetch_assoc($manager_result);
         } else {
-            $manager_summary = ['total_received' => 0, 'manager_self_total' => 0, 'expense_total' => 0];
+            $manager_summary = ['total_received' => 0, 'manager_paid_total' => 0];
         }
 
         // ====================== AGGREGATE QUERY FROM payment_history (FIXED) ======================
 
         $agg_query = "
             SELECT 
-                COALESCE(SUM(ph.manager_self), 0) as total_manager_self,
-                COALESCE(SUM(ph.expense), 0)     as total_expense,
+                COALESCE(SUM(ph.manager_paid), 0) as total_manager_paid,
                 COALESCE(SUM(ph.paid_amount), 0) as total_paid,           -- Changed from 'paid' to 'paid_amount'
-                COALESCE(SUM(ph.paid), 0)        as total_paid_old        -- if you have both columns
             FROM payment_history ph
             JOIN tenants t ON ph.tenant_id = t.id
             WHERE t.building_id = '$building_id' 
@@ -289,8 +284,7 @@ $total_unit = mysqli_num_rows($result);
 
         $agg_result = mysqli_query($db, $agg_query);
         $agg = mysqli_fetch_assoc($agg_result) ?: [
-            'total_manager_self' => 0,
-            'total_expense'      => 0,
+            'total_manager_paid' => 0,
             'total_paid'         => 0
         ];
 

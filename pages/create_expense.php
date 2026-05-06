@@ -152,8 +152,10 @@ if ($editData) {
 
         <div class="col-md-6">
             <label class="form-label">Expense By</label>
-            <input type="text" name="expense_by" class="form-control"
-                   value="<?= $editData['expense_by'] ?? '' ?>" placeholder="Manager / Admin">
+            <select name="expense_by" class="form-control">
+                <option value="Manager" <?= (($editData['expense_by'] ?? '') == 'Manager') ? 'selected' : '' ?>>Manager</option>
+                <option value="Admin" <?= (($editData['expense_by'] ?? '') == 'Admin') ? 'selected' : '' ?>>Admin</option>
+            </select>
         </div>
 
         <div class="col-12">

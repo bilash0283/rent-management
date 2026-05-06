@@ -17,30 +17,35 @@
         if (isset($_GET['id']) && !empty($_GET['id'])) {
             $building_id = mysqli_real_escape_string($db, $_GET['id']);
         } else {
-            // Default select the first building if no ID is found
             $first_b = mysqli_query($db, "SELECT id FROM building LIMIT 1");
             $fb_row = mysqli_fetch_assoc($first_b);
             $building_id = $fb_row['id'] ?? '';
         }
     }
 
-    // ==================== MANAGER EXPENSE SUMMARY ====================
-    $manager_sum_sql = mysqli_query($db, "
-        SELECT SUM(ph.expense) as expense_total 
-        FROM payment_history ph
-        JOIN tenants t ON ph.tenant_id = t.id
-        WHERE t.building_id = '$building_id' 
-        AND ph.bill_month = '$this_month'
-    ");
-    $m_summary = mysqli_fetch_assoc($manager_sum_sql);
-    $manger_expense_total = (float)($m_summary['expense_total'] ?? 0);
+    // ==================== EXPENSE SUMMARIES (Based on expense_by) ====================
+    
+    // 1. Total Expense
+    $total_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month'");
+    $total_row = mysqli_fetch_assoc($total_sql);
+    $grand_total = (float)($total_row['total'] ?? 0);
 
-    // ==================== ADMIN EXPENSE SUMMARY ====================
-    $admin_sum_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month'");
-    $a_summary = mysqli_fetch_assoc($admin_sum_sql);
-    $admin_total = (float)($a_summary['total'] ?? 0);
+    // 2. Admin Expense (Assuming 'expense_by' contains 'Admin')
+    $admin_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' AND expense_by = 'Admin'");
+    $admin_row = mysqli_fetch_assoc($admin_sql);
+    $admin_total = (float)($admin_row['total'] ?? 0);
 
-    // Handle Delete (Only for expense table)
+    // 3. Manager Expense (Assuming 'expense_by' contains 'Manager')
+    $manager_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' AND expense_by = 'Manager'");
+    $manager_row = mysqli_fetch_assoc($manager_sql);
+    $manager_total = (float)($manager_row['total'] ?? 0);
+
+    // Fetch Building Name for UI
+    $b_name_sql = mysqli_query($db, "SELECT name FROM building WHERE id='$building_id'");
+    $b_name_row = mysqli_fetch_assoc($b_name_sql);
+    $active_building_name = $b_name_row['name'] ?? 'N/A';
+
+    // Handle Delete
     if (isset($_GET['delete_id'])) {
         $delete_id = (int)$_GET['delete_id'];
         mysqli_query($db, "DELETE FROM expense WHERE id=$delete_id");
@@ -50,22 +55,25 @@
 ?>
 
 <div class="nxl-content mx-3">
-    <div class="page-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">Expense Reports</h5>
-        <div class="d-flex align-items-center gap-3 py-3">
+    <!-- Header Section -->
+    <div class="page-header d-flex align-items-center justify-content-between pb-3">
+        <div>
+            <h4 class="fw-bold mb-0">Expense Reports</h4>
+            <small class="text-muted">Building: <span class="text-primary fw-bold"><?= $active_building_name ?></span></small>
+        </div>
+        <div class="d-flex align-items-center gap-3">
             <form method="POST" class="d-flex gap-2">
-                <select name="month" class="form-select form-select-sm" style="width: 150px;">
+                <select name="month" class="form-select form-select-sm" style="width: 140px;">
                     <?php
-                    $year = date('Y');
                     for ($m = 1; $m <= 12; $m++) {
-                        $m_val = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
+                        $m_val = date('Y') . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
                         $m_name = date('F', mktime(0, 0, 0, $m, 1));
                         $selected = ($m_val == $this_month) ? 'selected' : '';
                         echo "<option value='$m_val' $selected>$m_name</option>";
                     }
                     ?>
                 </select>
-                <select name="building" class="form-select form-select-sm" style="width: 180px;">
+                <select name="building" class="form-select form-select-sm" style="width: 170px;">
                     <?php
                     $b_list = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
                     while ($b = mysqli_fetch_assoc($b_list)) {
@@ -74,116 +82,134 @@
                     }
                     ?>
                 </select>
-                <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+                <button type="submit" class="btn btn-sm btn-dark">Filter</button>
             </form>
-            <a href="admin.php?page=create_expense" class="btn btn-primary ">
-                <i class="feather-plus"></i> Create Expense
+            <a href="admin.php?page=create_expense" class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-lg"></i> Create Expense
             </a>
         </div>
     </div>
 
-    <div class="row mt-4">
+    <!-- Summary Cards Section -->
+    <div class="row g-3 mt-2">
         <div class="col-md-4">
-            <div class="card card-body shadow-sm text-center">
-                <h6 class="text-muted">Admin Expense</h6>
-                <h3 class="mb-0"><?= number_format($admin_total, 0) ?> ৳</h3>
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-body bg-light-primary" style="border-left: 5px solid #0d6efd;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1 text-uppercase small fw-bold">Admin Expense</h6>
+                            <h3 class="mb-0 fw-bold">৳ <?= number_format($admin_total, 0) ?></h3>
+                        </div>
+                        <div class="bg-primary text-white p-2 rounded-3">
+                            <i class="bi bi-person-badge fs-4"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card card-body shadow-sm text-center">
-                <h6 class="text-muted">Manager Expense</h6>
-                <h3 class="mb-0"><?= number_format($manger_expense_total, 0) ?> ৳</h3>
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-body bg-light-warning" style="border-left: 5px solid #ffc107;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1 text-uppercase small fw-bold">Manager Expense</h6>
+                            <h3 class="mb-0 fw-bold">৳ <?= number_format($manager_total, 0) ?></h3>
+                        </div>
+                        <div class="bg-warning text-dark p-2 rounded-3">
+                            <i class="bi bi-person-gear fs-4"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card card-body shadow-sm text-center bg-primary ">
-                <h6 class="text-white">Total Expense</h6>
-                <h3 class="mb-0 text-white"><?= number_format($admin_total + $manger_expense_total, 0) ?> ৳</h3>
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-body bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white-50 mb-1 text-uppercase small fw-bold">Total Monthly Expense</h6>
+                            <h3 class="mb-0 fw-bold text-white">৳ <?= number_format($grand_total, 0) ?></h3>
+                        </div>
+                        <div class="bg-white text-primary p-2 rounded-3">
+                            <i class="bi bi-wallet2 fs-4"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="card mt-4 shadow-sm">
+    <!-- Data Table Section -->
+    <div class="card mt-4 border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom py-3">
+            <h6 class="mb-0 fw-bold"><i class="bi bi-list-ul me-2"></i>Detailed Expense List</h6>
+        </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Date</th>
+                        <th class="ps-3">Date</th>
                         <th>Particulars of Expense</th>
                         <th>Amount</th>
-                        <th>Payment Method</th>
-                        <th>Expense By</th>
-                        <th class="text-end">Action</th>
+                        <th>Method</th>
+                        <th>By</th>
+                        <th class="text-end pe-3">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    // 1. Fetch from 'expense' table
-                    $exp_query = mysqli_query($db, "SELECT * FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' ORDER BY id DESC");
-                    while ($row = mysqli_fetch_assoc($exp_query)) {
+                    $exp_query = mysqli_query($db, "SELECT * FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' ORDER BY date DESC, id DESC");
+                    
+                    if (mysqli_num_rows($exp_query) > 0) {
+                        while ($row = mysqli_fetch_assoc($exp_query)) {
+                            // Assign color based on 'expense_by'
+                            $by_badge = ($row['expense_by'] == 'Admin') ? 'bg-primary' : 'bg-warning text-dark';
                     ?>
                         <tr>
-                            <td><?= date('d M Y', strtotime($row['date'])) ?></td>
+                            <td class="ps-3 text-muted small"><?= date('d M Y', strtotime($row['date'])) ?></td>
                             <td>
-                                <?= $row['expense_for'] ?><br>
+                                <span class="fw-bold d-block"><?= htmlspecialchars($row['expense_for']) ?></span>
                                 <?php 
                                     if(!empty($row['unit_id'])) {
-                                    $unit_info_expense = mysqli_query($db, "SELECT id, unit_name FROM unit WHERE id='{$row['unit_id']}'");
-                                    $unit_row_expanse = mysqli_fetch_assoc($unit_info_expense);
+                                        $unit_info_expense = mysqli_query($db, "SELECT unit_name FROM unit WHERE id='{$row['unit_id']}'");
+                                        $unit_row_expanse = mysqli_fetch_assoc($unit_info_expense);
+                                        echo '<small class="badge bg-light text-dark border mt-1">Unit: ' . ($unit_row_expanse['unit_name'] ?? 'N/A') . '</small>';
+                                    } 
                                 ?>
-                                <small class="text-muted">Unit : <?= $unit_row_expanse['unit_name'] ?: ''?></small>
-                                <?php } ?>
                             </td>
-                            <td class="fw-bold"><?= number_format($row['amount'], 0) ?> ৳</td>
-                            <td><?= $row['expense_method'] ?></td>
-                            <td class="text-success"><?= $row['expense_by'] ?></td>
-                            <td class="text-end">
-                                <div class="btn-group ">
-                                    <a href="admin.php?page=create_expense&edit_id=<?= $row['id'] ?>" class="p-1 btn btn-sm btn-icon btn-primary"><i class="bi bi-pencil"></i></a>
-                                    <a href="admin.php?page=Expense&id=<?= $building_id ?>&delete_id=<?= $row['id'] ?>" class="p-1 btn btn-sm btn-icon btn-danger " onclick="return confirm('Delete this record?')"><i class="bi bi-trash"></i></a>
+                            <td class="fw-bold">৳ <?= number_format($row['amount'], 0) ?></td>
+                            <td><span class="text-muted small"><?= $row['expense_method'] ?></span></td>
+                            <td>
+                                <span class="badge <?= $by_badge ?> py-1 px-2" style="font-size: 10px;">
+                                    <?= strtoupper($row['expense_by']) ?>
+                                </span>
+                            </td>
+                            <td class="text-end pe-3">
+                                <div class="btn-group">
+                                    <a href="admin.php?page=create_expense&edit_id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-primary shadow-none border-0"><i class="bi bi-pencil-square"></i></a>
+                                    <a href="admin.php?page=Expense&id=<?= $building_id ?>&delete_id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-danger shadow-none border-0" onclick="return confirm('Delete this record?')"><i class="bi bi-trash"></i></a>
                                 </div>
                             </td>
                         </tr>
-                    <?php } ?>
-
-                    <?php
-                    // 2. Fetch from 'payment_history' table (Manager deductions)
-                    $ph_query = mysqli_query($db, "
-                        SELECT ph.*, t.unit_id as unit_id 
-                        FROM payment_history ph
-                        JOIN tenants t ON ph.tenant_id = t.id
-                        WHERE t.building_id = '$building_id' 
-                        AND ph.bill_month = '$this_month' 
-                        AND ph.expense > 0
-                    ");
-                    while ($ph_row = mysqli_fetch_assoc($ph_query)) {
-                    ?>
-                        <tr class="table-light">
-                            <td><?= date('d M Y', strtotime($ph_row['payment_date'])) ?></td>
-                            <td>
-                                <?= $ph_row['expense_note'] ?: 'No Note' ?><br>
-                                <?php 
-                                    if(!empty($ph_row['unit_id'])) {
-                                    $unit_info = mysqli_query($db, "SELECT id, unit_name FROM unit WHERE id='{$ph_row['unit_id']}'");
-                                    $unit_row = mysqli_fetch_assoc($unit_info);
-                                ?>
-                                <small class="text-muted">Unit : <?= $unit_row['unit_name'] ?: ''?></small>
-                                <?php } ?>
-                            </td>
-                            <td class="fw-bold"><?= number_format($ph_row['expense'], 0) ?> ৳</td>
-                            <td>Cash</td>
-                            <td class="text-warning">Manager</td>
-                            <td class="text-end text-muted"></td>
-                        </tr>
-                    <?php } ?>
-
-                    <?php if (mysqli_num_rows($exp_query) == 0 && mysqli_num_rows($ph_query) == 0): ?>
+                    <?php 
+                        } 
+                    } else { ?>
                         <tr>
-                            <td colspan="7" class="text-center py-4">No records found for this month and building.</td>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+                                <span class="text-muted">No expense records found for this period.</span>
+                            </td>
                         </tr>
-                    <?php endif; ?>
+                    <?php } ?>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<style>
+    .bg-light-primary { background-color: #f0f7ff !important; }
+    .bg-light-warning { background-color: #fffbef !important; }
+    .card { border-radius: 12px; }
+    .table thead th { font-size: 12px; text-transform: uppercase; color: #6c757d; }
+</style>
