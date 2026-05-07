@@ -12,8 +12,8 @@ while($row = mysqli_fetch_assoc($result)) {
 
 <nav class="nxl-navigation">
     <div class="navbar-wrapper">
-        <div class="m-header">
-            <a href="admin.php" class="b-brand">
+        <div class="m-header" style="border-bottom: none;">
+            <a href="admin.php" class="mx-auto my-3" style="width:100px;height:100px;">
                 <!-- ========   change your logo hear   ============ -->
                 <img src="public/assets/images/logo-full.png" alt="" class="logo logo-lg img-fluid" />
                 <img src="public/assets/images/logo-abbr.png" alt="" class="logo logo-sm" />
@@ -28,16 +28,16 @@ while($row = mysqli_fetch_assoc($result)) {
                 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="admin.php" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-airplay"></i></span>
+                        <span class="nxl-micon"><i class="feather-airplay text-info"></i></span>
                         <span class="nxl-mtext">Dashboards</span>
                     </a>
                 </li>
 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-home"></i></span>
+                        <span class="nxl-micon"><i class="feather-home text-info"></i></span>
                         <span class="nxl-mtext">Building</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
                     </a>
                     <ul class="nxl-submenu">
                         <?php foreach($buildings as $row): 
@@ -55,9 +55,9 @@ while($row = mysqli_fetch_assoc($result)) {
 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-dollar-sign"></i></span>
+                        <span class="nxl-micon"><i class="feather-dollar-sign text-info"></i></span>
                         <span class="nxl-mtext">Bills</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
                     </a>
                     <ul class="nxl-submenu">
                         <?php foreach($buildings as $row): 
@@ -75,9 +75,9 @@ while($row = mysqli_fetch_assoc($result)) {
 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-pie-chart"></i></span>
+                        <span class="nxl-micon"><i class="feather-pie-chart text-info"></i></span>
                         <span class="nxl-mtext">Report</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
                     </a>
                     <ul class="nxl-submenu">
                         <li class="nxl-item"><a class="nxl-link" href="admin.php?page=building_report&unit_id=0&id=<?= htmlspecialchars($id) ?>">Monthly</a></li>
@@ -87,51 +87,51 @@ while($row = mysqli_fetch_assoc($result)) {
 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-dollar-sign"></i></span>
+                        <span class="nxl-micon"><i class="feather-dollar-sign text-info"></i></span>
                         <span class="nxl-mtext">Manager Accounts</span>
                     </a>
                 </li>
 
                 <li class="nxl-item">
                     <a class="nxl-link" href="admin.php?page=Expense&id=<?= htmlspecialchars($id) ?>">
-                        <span class="nxl-micon"> <i class="feather-pocket"></i></span>
+                        <span class="nxl-micon"> <i class="feather-pocket text-info"></i></span>
                         <span class="nxl-mtext">Expense</span>
                     </a>
                 </li>
                 
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
-                        <span class="nxl-micon"><i class="feather-settings"></i></span>
+                        <span class="nxl-micon"><i class="feather-settings text-info"></i></span>
                         <span class="nxl-mtext">Settings</span>
-                        <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                        <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
                     </a>
 
                     <ul class="nxl-submenu">
                         <li class="nxl-item">
                             <a class="nxl-link" href="admin.php?page=profile">
-                                 <span class="nxl-micon"> <i class="feather-user"></i></span>
+                                 <span class="nxl-micon"> <i class="feather-user text-info"></i></span>
                                 <span class="nxl-mtext">Profile</span>
                             </a>
                         </li>
                         <li class="nxl-item">
                             <a class="nxl-link" href="admin.php?page=users">
-                                <span class="nxl-micon"> <i class="feather-users"></i></span>
+                                <span class="nxl-micon"> <i class="feather-users text-info"></i></span>
                                 <span class="nxl-mtext">Users</span>
                             </a>
                         </li>
 
                         <li class="nxl-item">
                             <a href="admin.php?page=building" class="nxl-link">
-                                <span class="nxl-micon"><i class="feather-home"></i></span>
+                                <span class="nxl-micon"><i class="feather-home text-info"></i></span>
                                 <span class="nxl-mtext">Building</span>
                             </a>
                         </li>
 
                         <li class="nxl-item nxl-hasmenu">
                             <a href="javascript:void(0);" class="nxl-link">
-                                <span class="nxl-micon"><i class="feather-layout"></i>  </span>
+                                <span class="nxl-micon"><i class="feather-layout text-info"></i>  </span>
                                 <span class="nxl-mtext">Unit</span>
-                                <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                                <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
                             </a>
                             <ul class="nxl-submenu">
                                 <?php foreach($buildings as $row): 
@@ -149,9 +149,9 @@ while($row = mysqli_fetch_assoc($result)) {
 
                         <li class="nxl-item nxl-hasmenu">
                             <a href="javascript:void(0);" class="nxl-link">
-                                <span class="nxl-micon"><i class="feather-users"></i></span>
+                                <span class="nxl-micon"><i class="feather-users text-info"></i></span>
                                 <span class="nxl-mtext">Tenant</span>
-                                <span class="nxl-arrow"><i class="feather-chevron-right"></i></span>
+                                <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
                             </a>
                             <ul class="nxl-submenu">
                                 <?php foreach($buildings as $row): 
