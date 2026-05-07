@@ -1,18 +1,24 @@
 <?php
 // Default values
 $building_id = '';
-$this_month = date('Y-m');   // Current month in YYYY-MM format
+$this_month_only = date('m'); // বর্তমান মাস (01-12)
+$this_year = date('Y');       // বর্তমান বছর (YYYY)
 
 // Handle POST Filter
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['month']) && !empty($_POST['month'])) {
-        $this_month = mysqli_real_escape_string($db, $_POST['month']);
+    if (isset($_POST['year']) && !empty($_POST['year'])) {
+        $this_year = mysqli_real_escape_string($db, $_POST['year']);
     }
-    
+    if (isset($_POST['month']) && !empty($_POST['month'])) {
+        $this_month_only = mysqli_real_escape_string($db, $_POST['month']);
+    }
     if (isset($_POST['building']) && !empty($_POST['building'])) {
         $building_id = mysqli_real_escape_string($db, $_POST['building']);
     }
 }
+
+// Database query এর জন্য YYYY-MM ফরম্যাট তৈরি
+$this_month = $this_year . '-' . str_pad($this_month_only, 2, '0', STR_PAD_LEFT);
 
 // If no POST, get building_id from URL
 if (empty($building_id)) {
@@ -31,8 +37,7 @@ $building_name_db = $building_row['name'] ?? 'Unknown Building';
 // Fetch all rented units for this building
 $query = "SELECT * FROM unit 
           WHERE building_name = '$building_id' 
-            AND status = 'Rented' 
-          ";
+            AND status = 'Rented'";
 
 $result = mysqli_query($db, $query);
 $total_unit = mysqli_num_rows($result);
@@ -64,25 +69,36 @@ $total_unit = mysqli_num_rows($result);
 
         <!-- Filter Form -->
         <form method="POST" class="d-flex flex-wrap gap-2 align-items-center">
-            <div class="input-group input-group-sm shadow-sm" style="width: 180px;">
+            <!-- Year Selector -->
+            <div class="input-group input-group-sm shadow-sm" style="width: 120px;">
+                <span class="input-group-text bg-white border-end-0"><i class="far fa-calendar text-muted"></i></span>
+                <select name="year" class="form-select border-start-0 ps-0 fw-medium">
+                    <?php 
+                    $startYear = 2026; // আপনি চাইলে এটা পরিবর্তন করতে পারেন
+                    $endYear = date('Y') + 1;
+                    for ($y = $startYear; $y <= $endYear; $y++): ?>
+                        <option value="<?= $y ?>" <?= $y == $this_year ? 'selected' : '' ?>><?= $y ?></option>
+                    <?php endfor; ?>
+                </select>
+            </div>
+
+            <!-- Month Selector -->
+            <div class="input-group input-group-sm shadow-sm" style="width: 140px;">
                 <span class="input-group-text bg-white border-end-0"><i class="far fa-calendar-check text-muted"></i></span>
                 <select name="month" class="form-select border-start-0 ps-0 fw-medium">
                     <?php 
-                    $currentYear = date('Y');
-                    $selectedMonth = (int)substr($this_month, 5, 2);
-                    
                     for ($m = 1; $m <= 12; $m++): 
-                        $monthValue = $currentYear . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
-                        $displayText = date('F', mktime(0, 0, 0, $m, 1, $currentYear)); // শুধু month
+                        $monthValue = str_pad($m, 2, '0', STR_PAD_LEFT);
+                        $displayText = date('F', mktime(0, 0, 0, $m, 1));
                     ?>
-                        <option value="<?= $monthValue ?>" <?= $m == $selectedMonth ? 'selected' : '' ?>>
+                        <option value="<?= $monthValue ?>" <?= $m == (int)$this_month_only ? 'selected' : '' ?>>
                             <?= $displayText ?>
                         </option>
                     <?php endfor; ?>
                 </select>
             </div>
 
-            <div class="input-group input-group-sm shadow-sm" style="width: 220px;">
+            <div class="input-group input-group-sm shadow-sm" style="width: 200px;">
                 <span class="input-group-text bg-white border-end-0"><i class="fas fa-building text-muted"></i></span>
                 <select name="building" class="form-select border-start-0 ps-0 fw-medium">
                     <?php
