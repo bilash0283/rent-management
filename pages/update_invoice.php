@@ -33,79 +33,62 @@ $Water_month_db = $data['Water_month'];
 $Electricity_month_db = $data['Electricity_month'];
 $Others_month_db = $data['Others_month'];
 
-
 // Update invoice
 if (isset($_POST['update_invoice'])) {
 
+    // ইনপুট ভ্যালু রিসিভ করা
     $rent = intval($_POST['rent']);
     $Gas = intval($_POST['Gas']);
     $Water = intval($_POST['Water']);
     $Electricity = intval($_POST['Electricity']);
     $Others = intval($_POST['Others']);
 
-    $rent_month = $_POST['rent_month'];
-    $Gas_month = $_POST['Gas_month'];
-    $Water_month = $_POST['Water_month'];
-    $Electricity_month = $_POST['Electricity_month'];
-    $Others_month = $_POST['Others_month'];
+    $rent_month = mysqli_real_escape_string($db, $_POST['rent_month']);
+    $Gas_month = mysqli_real_escape_string($db, $_POST['Gas_month']);
+    $Water_month = mysqli_real_escape_string($db, $_POST['Water_month']);
+    $Electricity_month = mysqli_real_escape_string($db, $_POST['Electricity_month']);
+    $Others_month = mysqli_real_escape_string($db, $_POST['Others_month']);
 
     $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
 
-    // Logic for Status
-    $status = 'Unpaid'; // Default fallback
-    if ($total_amount == $paid_amount_db && $total_amount > 0) {
+    // পেমেন্ট স্ট্যাটাস নির্ধারণ (paid_amount_db এর সাথে তুলনা করে)
+    $status = 'Unpaid'; 
+    if ($paid_amount_db > 0 && $paid_amount_db >= $total_amount) {
         $status = 'Paid';
     } else if ($paid_amount_db > 0 && $paid_amount_db < $total_amount) {
         $status = 'Partial';
-    } else if ($paid_amount_db <= 0) {
+    } else {
         $status = 'Unpaid';
     }
 
+    // ভ্যালিডেশন
     if ($total_amount <= 0) {
-        echo "<script>alert('Invoice cannot be created because the total amount must be greater than 0.'); window.history.back();</script>";
+        echo "<script>alert('Total amount must be greater than 0.'); window.history.back();</script>";
         exit;
     } else {
-        // Update query (Prepared Statement)
-        $update = $db->prepare("UPDATE invoices SET 
-            billing_month = ?,
-            Rent = ?,
-            Gas = ?,
-            Gas_month = ?,
-            Water = ?,
-            Water_month = ?,
-            Electricity = ?,
-            Electricity_month = ?,
-            Others = ?,
-            Others_month = ?,
-            total_amount = ?,
-            status = ?
-            WHERE id = ?
-        ");
+        // আপডেট কোয়েরি (সরাসরি কলাম অনুযায়ী)
+        $update_query = "UPDATE `invoices` SET 
+            `billing_month`     = '$rent_month',
+            `Rent`              = '$rent',
+            `Gas`               = '$Gas',
+            `Gas_month`         = '$Gas_month',
+            `water`             = '$Water',
+            `Water_month`       = '$Water_month',
+            `Electricity`       = '$Electricity',
+            `Electricity_month` = '$Electricity_month',
+            `Others`            = '$Others',
+            `Others_month`      = '$Others_month',
+            `total_amount`      = '$total_amount',
+            `status`            = '$status'
+            WHERE `id`          = '$invoice_id'";
 
-        // The Fix: 13 characters for 13 variables
-        // s = string, i = integer
-        $update->bind_param(
-            "siiisiisiissi", 
-            $rent_month,        // s
-            $rent,              // i
-            $Gas,               // i
-            $Gas_month,         // s
-            $Water,             // i
-            $Water_month,       // s
-            $Electricity,       // i
-            $Electricity_month, // s
-            $Others,            // i
-            $Others_month,      // s
-            $total_amount,      // i
-            $status,            // s
-            $invoice_id         // i
-        );
+        $result = mysqli_query($db, $update_query);
 
-        if ($update->execute()) {
+        if ($result) {
             echo "<script>alert('Invoice Updated Successfully'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
             exit;
         } else {
-            echo "Update Failed: " . $db->error;
+            echo "Error Updating Invoice: " . mysqli_error($db);
         }
     }
 }
@@ -147,7 +130,7 @@ if (isset($_POST['update_invoice'])) {
                                 </div>
                                 <div class="col-md-6">
                                     <small class="fw-semibold">Gas Amount</small>
-                                    <input type="number" name="Gas" value="<?= $Gas_db ?>" class="form-control">
+                                    <input type="text" name="Gas" value="<?= $Gas_db ?>" class="form-control">
                                 </div>
                             </div>
 

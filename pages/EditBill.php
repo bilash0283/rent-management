@@ -77,15 +77,15 @@ if (isset($_POST['create_invoice'])) {
             `tenant_id`,
             `unit_id`,
             `billing_month`,
-            `rent`,
-            `gas`,
-            `gas_month`,
+            `Rent`,
+            `Gas`,
+            `Gas_month`,
             `water`,
-            `water_month`,
-            `electricity`,
-            `electricity_month`,
-            `others`,
-            `others_month`,
+            `Water_month`,
+            `Electricity`,
+            `Electricity_month`,
+            `Others`,
+            `Others_month`,
             `total_amount`,
             `status`,
             `created_at`
@@ -329,7 +329,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     <div class="row">
                                         <div class="col-md-6">
                                             <small class="fw-semibold">Gas </small>
-                                            <input type="month" name="Gas_month"
+                                            <input type="text" name="Gas_month"
                                                 value="<?php echo date('Y-m', strtotime('first day of last month')); ?>"
                                                 class="form-control">
                                         </div>

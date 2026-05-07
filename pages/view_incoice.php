@@ -118,7 +118,7 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                             <tbody>
                                 <?php 
                                 $current_month_total = 0;
-                                // অ্যারে ইনডেক্স ঠিক করা হয়েছে যাতে Others Month শো করে
+                                
                                 $bill_items = [
                                     ['House Rent', $Rent_db, $billing_month_db],
                                     ['Gas Bill', $Gas_db, $Gas_month_db],
@@ -130,15 +130,31 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                                 foreach ($bill_items as $item) {
                                     $label = $item[0];
                                     $amount = $item[1];
-                                    $month = $item[2];
+                                    $month_or_desc = $item[2]; // এটি এখন মাস অথবা বর্ণনা (Description) হতে পারে
 
                                     if (!empty($amount) && $amount > 0) {
                                         $current_month_total += $amount;
+                                        
+                                        // চেক করা হচ্ছে এটি কি তারিখ নাকি সাধারণ টেক্সট
+                                        if (!empty($month_or_desc)) {
+                                            //strtotime দিয়ে চেক করা হচ্ছে এটি বৈধ ডেট ফরম্যাট কি না
+                                            $timestamp = strtotime($month_or_desc);
+                                            if ($timestamp && (date('Y-m-d', $timestamp) === $month_or_desc || date('Y-m', $timestamp) === $month_or_desc || strlen($month_or_desc) <= 10)) {
+                                                // যদি তারিখ হয় (যেমন: 2024-05)
+                                                $display_text = date('M Y', $timestamp);
+                                            } else {
+                                                // যদি সাধারণ টেক্সট হয় (যেমন: "Service Charge" বা অন্য কিছু)
+                                                $display_text = htmlspecialchars($month_or_desc);
+                                            }
+                                        } else {
+                                            $display_text = '';
+                                        }
+
                                         echo "<tr>
                                                 <td class='py-1'>$label</td>
-                                                <td class='py-1 text-center'>" . (!empty($month) ? date('M Y', strtotime($month)) : '') . "</td>
+                                                <td class='py-1 text-center'>$display_text</td>
                                                 <td class='py-1 text-end'>৳ " . number_format($amount, 0) . "</td>
-                                              </tr>";
+                                            </tr>";
                                     }
                                 }
                                 ?>
