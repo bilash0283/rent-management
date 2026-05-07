@@ -128,55 +128,28 @@ $total_unit = mysqli_num_rows($result);
 
     <!-- Summary Cards -->
     <div class="row g-3 mb-4 mx-3">
-        <?php 
-            //======= Card Information Details =========
-        $total_bill_amount = 0;
-        $paid_amount_db_amount = 0;
-        $due_amount_db_amount = 0;
+        <?php
+            $total_bill_amount = 0;
+            $paid_amount_db_amount = 0;
+            $due_amount_db_amount = 0;
 
-        while ($row = mysqli_fetch_assoc($result)) {
+            $pay_info = mysqli_query($db, "
+                SELECT 
+                    SUM(ph.paid_amount) as total_paid,
+                    SUM(inv.total_amount) as total_bill
+                FROM payment_history ph
+                JOIN tenants t ON ph.tenant_id = t.id
+                JOIN invoices inv ON ph.invoice_id = inv.id 
+                WHERE t.building_id = '$building_id' 
+                AND ph.bill_month = '$this_month' 
+            ");
 
-            $unit_id = $row['id'];
-
-            // Tenant Info
-            $tenant_query = mysqli_query($db, "SELECT * FROM tenants 
-                WHERE building_id = '$building_id' AND unit_id = '$unit_id' LIMIT 1");
-
-            $tenant = mysqli_fetch_assoc($tenant_query);
-            $tent_id = $tenant['id'] ?? 0;
-
-            // Default values
-            // $Gas = $Water = $Electricity = $Others = 0;
-            $total_amount_db = 0;
-            $paid_amount_db = 0;
-            $due_amount_db = 0;
-
-            // Invoice Info
-            if ($tent_id) {
-                $inv_query = mysqli_query($db, "SELECT * FROM invoices 
-                    WHERE tenant_id = '$tent_id' 
-                    AND unit_id = '$unit_id' 
-                    AND billing_month = '$this_month' LIMIT 1");
-
-                if ($inv = mysqli_fetch_assoc($inv_query)) {
-
-                    // $Gas = (float) ($inv['Gas'] ?? 0);
-                    // $Water = (float) ($inv['Water'] ?? 0);
-                    // $Electricity = (float) ($inv['Electricity'] ?? 0);
-                    // $Others = (float) ($inv['Others'] ?? 0);
-                    
-                    $total_amount_db = (float) ($inv['total_amount'] ?? 0);
-                    $paid_amount_db = (float) ($inv['paid_amount'] ?? 0);
-                    $due_amount_db = (float)$total_amount_db-$paid_amount_db;
-                }
+            if ($pay_info && $row = mysqli_fetch_assoc($pay_info)) {
+                $total_bill_amount = (float)$row['total_bill'];
+                $paid_amount_db_amount = (float)$row['total_paid'];
+                $due_amount_db_amount = $total_bill_amount - $paid_amount_db_amount;
             }
-
-            // Add to summary
-            $total_bill_amount += $total_amount_db;
-            $paid_amount_db_amount += $paid_amount_db;
-            $due_amount_db_amount += $due_amount_db;
-        }
-        ?>
+        ?>  
         <div class="col-md">
             <div class="card shadow-sm border-0 bg-primary text-white">
                 <div class="card-body text-center">
@@ -290,9 +263,9 @@ $total_unit = mysqli_num_rows($result);
                                         // echo '<span style="color: #198754; font-weight: 600;">Paid    = ৳ ' . $total_paid . '</span><br>'; // Green
                                     
                                         // Show Due only if payable > 0
-                                        if ($payable > 0) {
-                                            echo '<span style="color: #dc3545; font-weight: 600;">Advance     = <small> ৳ </small>' . $payable . '</span><br>'; // Red
-                                        }
+                                        // if ($payable > 0) {
+                                        //     echo '<span style="color: #dc3545; font-weight: 600;">Advance     = <small> ৳ </small>' . $payable . '</span><br>'; // Red
+                                        // }
                                         ?>
 
                                         <!-- <?php 
@@ -305,9 +278,10 @@ $total_unit = mysqli_num_rows($result);
                                         <?php
                                         $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
                                         if (!mysqli_num_rows($pay_info) > 0) {
-                                            echo '<span class="fw-bold text-danger">';
-                                            echo 'Due = ৳ ' . number_format($rent, 2);
-                                            echo '</span>';
+                                            // echo '<span class="fw-bold text-danger">';
+                                            // echo 'Due = ৳ ' . number_format($rent, 2);
+                                            // echo '</span>';
+                                            echo '<span class="text-danger">Invoice Not Found!</span>';
                                         } else {
                                             mysqli_data_seek($pay_info, 0); // rewind result to loop again
                                             while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
@@ -395,7 +369,7 @@ $total_unit = mysqli_num_rows($result);
                                         $history_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' AND bill_month = '$this_month' ");
                                         
                                         if (mysqli_num_rows($history_sql) == 0) {
-                                            echo '<span class="fw-bold text-warning" style="font-size:10px;">Not Found</span>';
+                                            echo '<span class="text-danger" style="font-size:10px;">Payment Not Found!</span>';
                                         } else {
                                             $manager_paid_total = 0;
                                             $manager_self = 0;
