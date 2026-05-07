@@ -74,7 +74,7 @@ $total_unit = mysqli_num_rows($result);
                 <span class="input-group-text bg-white border-end-0"><i class="far fa-calendar text-muted"></i></span>
                 <select name="year" class="form-select border-start-0 ps-0 fw-medium">
                     <?php 
-                    $startYear = 2026; // আপনি চাইলে এটা পরিবর্তন করতে পারেন
+                    $startYear = 2025; // আপনি চাইলে এটা পরিবর্তন করতে পারেন
                     $endYear = date('Y') + 1;
                     for ($y = $startYear; $y <= $endYear; $y++): ?>
                         <option value="<?= $y ?>" <?= $y == $this_year ? 'selected' : '' ?>><?= $y ?></option>
@@ -151,21 +151,21 @@ $total_unit = mysqli_num_rows($result);
 
             $pay_info = mysqli_query($db, "
                 SELECT 
-                    SUM(ph.paid_amount) as total_paid,
-                    SUM(inv.total_amount) as total_bill
-                FROM payment_history ph
-                JOIN tenants t ON ph.tenant_id = t.id
-                JOIN invoices inv ON ph.invoice_id = inv.id 
+                    SUM(total_amount) as total_bill,
+                    SUM(paid_amount) as total_paid
+                FROM invoices inv
+                JOIN tenants t ON inv.tenant_id = t.id
                 WHERE t.building_id = '$building_id' 
-                AND ph.bill_month = '$this_month' 
+                AND inv.billing_month = '$this_month'
             ");
 
             if ($pay_info && $row = mysqli_fetch_assoc($pay_info)) {
                 $total_bill_amount = (float)$row['total_bill'];
                 $paid_amount_db_amount = (float)$row['total_paid'];
+                
                 $due_amount_db_amount = $total_bill_amount - $paid_amount_db_amount;
             }
-        ?>  
+            ?>
         <div class="col-md">
             <div class="card shadow-sm border-0 bg-primary text-white">
                 <div class="card-body text-center">

@@ -140,23 +140,24 @@ $filter_condication_two = "bill_month >= '$from_month' AND bill_month <= '$to_mo
         // ==================== BILLING SUMMARY ====================
         $total_bill_amount = 0;
         $paid_amount_db_amount = 0;
+        $due_amount_db_amount = 0;
 
-        $pay_info_sum = mysqli_query($db, "
+        $pay_info = mysqli_query($db, "
             SELECT 
-                SUM(ph.paid_amount) as total_paid,
-                SUM(inv.total_amount) as total_bill
-            FROM payment_history ph
-            JOIN tenants t ON ph.tenant_id = t.id
-            JOIN invoices inv ON ph.invoice_id = inv.id 
+                SUM(total_amount) as total_bill,
+                SUM(paid_amount) as total_paid
+            FROM invoices inv
+            JOIN tenants t ON inv.tenant_id = t.id
             WHERE t.building_id = '$building_id' 
-            AND $filter_condition
+            AND inv.billing_month = '$this_month'
         ");
 
-        if ($pay_info_sum && $row_sum = mysqli_fetch_assoc($pay_info_sum)) {
-            $total_bill_amount = (float)$row_sum['total_bill'];
-            $paid_amount_db_amount = (float)$row_sum['total_paid'];
+        if ($pay_info && $row = mysqli_fetch_assoc($pay_info)) {
+            $total_bill_amount = (float)$row['total_bill'];
+            $paid_amount_db_amount = (float)$row['total_paid'];
+            
+            $due_amount_db_amount = $total_bill_amount - $paid_amount_db_amount;
         }
-        $due_amount_db_amount = $total_bill_amount - $paid_amount_db_amount;
     ?>
 
     <!-- Summary Cards -->
