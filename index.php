@@ -66,7 +66,14 @@
             border-radius: 15px;
         }
     </style>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0d6efd">
 </head>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
 <body>
 
 <div class="container vh-100 d-flex align-items-center justify-content-center">
