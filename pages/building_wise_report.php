@@ -186,6 +186,92 @@ $total_unit = mysqli_num_rows($result);
         </div>
     </div>
 
+    <!-- Payment Method wise ratio Report  -->
+    <?php 
+        $pm_query = "
+            SELECT 
+                ph.payment_method,
+                COALESCE(SUM(ph.paid_amount), 0) as method_total
+            FROM payment_history ph
+            JOIN tenants t ON ph.tenant_id = t.id
+            WHERE t.building_id = '$building_id' 
+            AND ph.bill_month = '$this_month'
+            GROUP BY ph.payment_method
+            ORDER BY method_total DESC
+        ";
+
+        $pm_result = mysqli_query($db, $pm_query);
+
+        $payment_methods = [];
+        $total_paid_ratio = $paid_amount_db_amount > 0 ? $paid_amount_db_amount : 1;
+
+        while ($pm = mysqli_fetch_assoc($pm_result)) {
+            $perc = round(($pm['method_total'] / $total_paid_ratio) * 100, 2);
+            $payment_methods[] = [
+                'method'      => $pm['payment_method'] ?: 'Unknown',
+                'amount'      => $pm['method_total'],
+                'percentage'  => $perc
+            ];
+        }
+
+        // Raw values for display (no formatting here)
+        $total_bill = $summary['total_bill'] ?? 0;
+        $total_paid = $agg['total_paid'] ?? 0;           // Using aggregate data
+        $total_due  = $summary['total_due'] ?? 0;
+    ?>
+    <div class="mb-2 mx-4">
+        <h5 class="mb-2">Payment Method Wise Ratio</h5>
+        
+        <?php if (empty($payment_methods)): ?>
+            <div class="alert alert-light text-center border shadow-sm rounded-3 py-2">
+                No payment data found for this period.
+            </div>
+        <?php else: ?>
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-4">
+                
+                <div class="progress mb-4" style="height: 22px; border-radius: 10px; overflow: hidden; background-color: #f0f0f0;">
+                    <?php 
+                    // কালার প্যালেট (বিভিন্ন মেথডের জন্য আলাদা কালার)
+                    $colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger', 'bg-secondary'];
+                    foreach ($payment_methods as $index => $pm): 
+                        $color_class = $colors[$index % count($colors)]; // মেথড অনুযায়ী কালার ঘুরিয়ে ফিরিয়ে আসবে
+                    ?>
+                        <div class="progress-bar <?= $color_class ?>" 
+                             role="progressbar" 
+                             style="width: <?= $pm['percentage'] ?>%; border-right: 1px solid rgba(255,255,255,0.3);" 
+                             aria-valuenow="<?= $pm['percentage'] ?>" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100"
+                             data-bs-toggle="tooltip" 
+                             title="<?= htmlspecialchars($pm['method']) ?>: <?= $pm['percentage'] ?>%">
+                             <?= ($pm['percentage'] > 5) ? $pm['percentage'].'%' : '' ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="row g-2">
+                    <?php foreach ($payment_methods as $index => $pm): 
+                        $color_class = $colors[$index % count($colors)];
+                        // বুটস্ট্র্যাপের কালার ক্লাসের সাথে টেক্সট কালার ম্যাচ করার জন্য
+                        $text_color = str_replace('bg-', 'text-', $color_class);
+                    ?>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="d-flex align-items-center">
+                                <div class="<?= $color_class ?> rounded-circle me-2" style="width: 10px; height: 10px;"></div>
+                                <div class="small">
+                                    <span class="fw-bold text-dark"><?= htmlspecialchars($pm['method']) ?></span>
+                                    <br>
+                                    <span class="text-muted">৳ <?= number_format($pm['amount'], 0) ?> (<?= $pm['percentage'] ?>%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+            </div>
+        <?php endif; ?>
+    </div>
+
     <!-- Main Table -->
     <div class="card shadow-sm">
         <div class="card-body p-0">
