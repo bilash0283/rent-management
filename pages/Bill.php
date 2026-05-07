@@ -214,8 +214,8 @@
                                         if (mysqli_num_rows($history_sql) == 0) {
                                             echo '<span class="fw-bold text-warning" style="font-size:10px;">Not Found</span>';
                                         } else {
-                                            $manager_self_total = 0;
-                                            $expense_total = 0;
+                                            $manager_paid_total = 0;
+                                            $manager_self = 0;
                                             
                                             // তথ্য সংগ্রহের লুপ
                                             while ($pay_history = mysqli_fetch_assoc($history_sql)) {
@@ -224,8 +224,16 @@
                                                 $manager_payment_method = $pay_history['manager_payment_method'];
                                                 $transaction_date = $pay_history['payment_date'];
                                                 $transaction_number = $pay_history['transaction_number'];
+                                                $paid_amount_calcu = $pay_history['paid_amount'];
+                                            }
 
-                                                $manager_self_total += (float)$pay_history['manager_paid'];  
+
+                                            $manager_acount_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' AND bill_month = '$this_month' AND payment_method = 'Manager' ");
+                                            while($manger_ac = mysqli_fetch_assoc($manager_acount_sql)){
+
+                                                $paid_amu = $manger_ac['paid_amount'];
+                                                $manager_paid_total += (float)$manger_ac['manager_paid'];  
+                                                $manager_self = (float)$paid_amu-$manager_paid_total;
                                             }
 
                                             // কন্টেইনার শুরু (গ্যাপ কমানোর জন্য CSS ব্যবহার করা হয়েছে)
@@ -234,16 +242,12 @@
                                                 // পেমেন্ট মেথড
                                                 echo "<small class='text-success fw-bold' style='font-size: 11px;'>$pay_method_his</small>";
 
-                                                if ($manager_self_total > 0) {
-                                                    echo "<small class='text-dark' style='font-size: 9px;'><b>Manager (Paid):</b> " . number_format($manager_self_total, 0) . "</small>";
+                                                if ($manager_paid_total > 0) {
+                                                    echo "<small class='text-dark' style='font-size: 9px;'><b>Manager (Paid):  ৳</b> " . number_format($manager_paid_total, 0) . "</small>";
                                                 }
 
-                                                if ($expense_total > 0) {
-                                                    echo "<small class='text-danger' style='font-size: 9px;'><b>Expense:</b> " . number_format($expense_total, 0) . "</small>";
-                                                }
-
-                                                if (!empty($expense_note)) {
-                                                    echo "<small class='text-muted' style='font-size: 9px; font-style: italic;'>Note: " . htmlspecialchars($expense_note) . "</small>";
+                                                if ($manager_self > 0) {
+                                                    echo "<small class='text-danger' style='font-size: 9px;'><b>Manager (Self):  ৳</b> " . number_format($manager_self, 0) . "</small>";
                                                 }
 
                                                 // ট্রানজেকশন ডাটা এরে

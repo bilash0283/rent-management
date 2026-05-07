@@ -578,7 +578,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    // JOIN ব্যবহার করা হয়েছে যাতে invoices টেবিল থেকে total_amount এবং billing_month পাওয়া যায়
+                                    // JOIN ব্যবহার করা হয়েছে যাতে invoices টেবিল থেকে total_amount এবং billing_month পাওয়া যায়
                                     $history_sql = mysqli_query($db, "SELECT ph.*, inv.total_amount, inv.billing_month 
                                                                     FROM `payment_history` ph 
                                                                     JOIN `invoices` inv ON ph.invoice_id = inv.id 
@@ -590,31 +590,37 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                                         $pay_slip_id = $pay_history['id'];
                                         $invoice_id = $pay_history['invoice_id'];
-                                        $bill_month = $pay_history['billing_month']; // ইনভয়েস টেবিল থেকে আসা মাস
-                                        $total_bill_amount = (float)$pay_history['total_amount']; // ইনভয়েস টেবিল থেকে আসা মোট বিল
+                                        $bill_month = $pay_history['billing_month']; 
+                                        $total_bill_amount = (float)$pay_history['total_amount']; 
                                         $current_paid_entry = (float)$pay_history['paid_amount'];
+                                        
+                                        // পেমেন্ট মেথড এবং ম্যানেজার সংক্রান্ত ডাটা
+                                        $pay_method_his = $pay_history['payment_method'];
+                                        $manager_paid_val = (float)$pay_history['manager_paid']; 
+                                        $manager_payment_method = $pay_history['manager_payment_method'];
 
-                                        // মাস ভিত্তিক পেইড অ্যামাউন্ট ট্র্যাক করা (প্রতিটি ইনভয়েসের জন্য আলাদা হিসাব)
+                                        // --- লজিক ফিক্স: যদি মেথড Manager হয় তবে self ক্যালকুলেট হবে ---
+                                        $manager_self = 0;
+                                        if ($pay_method_his == 'Manager') {
+                                            $manager_self = $current_paid_entry - $manager_paid_val;
+                                        }
+                                        // --------------------------------------------------------
+
+                                        // মাস ভিত্তিক পেইড অ্যামাউন্ট ট্র্যাক করা
                                         if (!isset($monthly_paid_tracker[$invoice_id])) {
                                             $monthly_paid_tracker[$invoice_id] = 0;
                                         }
-
-                                        // রানিং টোটাল আপডেট
                                         $monthly_paid_tracker[$invoice_id] += $current_paid_entry;
 
                                         $calculated_total_paid = $monthly_paid_tracker[$invoice_id];
                                         $calculated_due = $total_bill_amount - $calculated_total_paid;
 
-                                        // অন্যান্য ডাটা
-                                        $pay_method_his = $pay_history['payment_method'];
                                         $note_his = $pay_history['note'];
                                         $pay_date_his = $pay_history['payment_date'];
-                                        $manager_paid = $pay_history['manager_paid']; 
                                         $transaction_id_db = $pay_history['transaction_id'];
-                                        $manager_transaction_id = $pay_history['manager_transaction_id'] ?? '';
                                         $transaction_number = $pay_history['transaction_number'];
-                                        $manager_payment_method = $pay_history['manager_payment_method'];
                                         ?>
+
                                         <tr>
                                             <td class="text-end">#INV-<?= $invoice_id; ?></td>
                                             <td class="ps-4 fw-medium">
@@ -627,7 +633,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <?= $pay_method_his ?><br>
                                                 <?php if (!empty($transaction_id_db)): ?>
                                                     <small style="font-size:10px;">(Txn: <?= $transaction_id_db ?>)</small><br>
-                                                    <small style="font-size:10px;" >(Txn Num : <?= $transaction_number ?>)</small><br>
+                                                    <small style="font-size:10px;">(Txn Num : <?= $transaction_number ?>)</small><br>
                                                 <?php endif; ?>
                                             </td>
                                             <td class="text-end text-success fw-bold">
@@ -645,10 +651,13 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 </span>
                                             </td>
                                             <td class="text-end text-success">
-                                                <?php if(!empty($manager_paid)){ ?>
-                                                    <?= $manager_paid ? '<small>৳ </small>' . number_format($manager_paid, 0) : '-'; ?><br>
-                                                    <small style="font-size:10px;" class="text-dark">(Method : <?= $manager_payment_method ?>)</small><br>
-                                                <?php }else{echo '-'; } ?>
+                                                <?php if ($pay_method_his == 'Manager'): ?>
+                                                    <small>Paid : ৳ <?= number_format($manager_paid_val, 0) ?></small><br>
+                                                    <small class="text-danger">Self : ৳ <?= number_format($manager_self, 0) ?></small><br>
+                                                    <small style="font-size:10px;" class="text-dark">Method : <?= $manager_payment_method ?></small><br>
+                                                <?php else: ?>
+                                                    -
+                                                <?php endif; ?>
                                             </td>
                                             <td class="text-center">
                                                 <small class="text-secondary"><?= $note_his ?></small>
@@ -659,7 +668,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id; ?>" class="p-1 btn btn-sm btn-info"><i class="bi bi-pencil-square"></i></a>
                                                     <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id ?>&unit_id=<?= $unit_id ?>" 
                                                         class="p-1 btn btn-sm btn-danger" 
-                                                        onclick="return confirm('Are you sure you want to delete this payment? It will adjust the invoice balance.');">
+                                                        onclick="return confirm('Are you sure you want to delete this payment?');">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
                                                 </div>
