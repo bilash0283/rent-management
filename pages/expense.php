@@ -1,6 +1,6 @@
 <?php 
     $building_id = '';
-    $this_month = date('Y-m');   // Default current month
+    $this_month = date('Y-m'); 
 
     // Handle POST Filter
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,29 +23,23 @@
         }
     }
 
-    // ==================== EXPENSE SUMMARIES (Based on expense_by) ====================
-    
-    // 1. Total Expense
+    // Calculations
     $total_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month'");
     $total_row = mysqli_fetch_assoc($total_sql);
     $grand_total = (float)($total_row['total'] ?? 0);
 
-    // 2. Admin Expense (Assuming 'expense_by' contains 'Admin')
     $admin_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' AND expense_by = 'Admin'");
     $admin_row = mysqli_fetch_assoc($admin_sql);
     $admin_total = (float)($admin_row['total'] ?? 0);
 
-    // 3. Manager Expense (Assuming 'expense_by' contains 'Manager')
     $manager_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' AND expense_by = 'Manager'");
     $manager_row = mysqli_fetch_assoc($manager_sql);
     $manager_total = (float)($manager_row['total'] ?? 0);
 
-    // Fetch Building Name for UI
     $b_name_sql = mysqli_query($db, "SELECT name FROM building WHERE id='$building_id'");
     $b_name_row = mysqli_fetch_assoc($b_name_sql);
     $active_building_name = $b_name_row['name'] ?? 'N/A';
 
-    // Handle Delete
     if (isset($_GET['delete_id'])) {
         $delete_id = (int)$_GET['delete_id'];
         mysqli_query($db, "DELETE FROM expense WHERE id=$delete_id");
@@ -54,162 +48,233 @@
     }
 ?>
 
-<div class="nxl-content mx-3">
-    <!-- Header Section -->
-    <div class="page-header d-flex align-items-center justify-content-between pb-3">
-        <div>
-            <h4 class="fw-bold mb-0">Expense Reports</h4>
-            <small class="text-muted">Building: <span class="text-primary fw-bold"><?= $active_building_name ?></span></small>
+<div class="app-container">
+    <!-- Floating Action Button -->
+    <a href="admin.php?page=create_expense" class="fab-btn shadow-lg">
+        <i class="bi bi-plus-lg"></i>
+    </a>
+
+    <!-- Sticky Header -->
+    <div class="app-header bg-white p-3 shadow-sm mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="text-uppercase small fw-bold text-primary mb-1" style="letter-spacing: 1px;">Building Ledger</h6>
+                <h4 class="fw-bold mb-0 text-dark"><?= $active_building_name ?></h4>
+            </div>
+            <button class="btn btn-light-soft rounded-circle" type="button" data-bs-toggle="collapse" data-bs-target="#filterPanel">
+                <i class="bi bi-sliders2-vertical fs-5"></i>
+            </button>
         </div>
-        <div class="d-flex align-items-center gap-3">
-            <form method="POST" class="d-flex gap-2">
-                <select name="month" class="form-select form-select-sm" style="width: 140px;">
-                    <?php
-                    for ($m = 1; $m <= 12; $m++) {
-                        $m_val = date('Y') . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
-                        $m_name = date('F', mktime(0, 0, 0, $m, 1));
-                        $selected = ($m_val == $this_month) ? 'selected' : '';
-                        echo "<option value='$m_val' $selected>$m_name</option>";
-                    }
-                    ?>
-                </select>
-                <select name="building" class="form-select form-select-sm" style="width: 170px;">
-                    <?php
-                    $b_list = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
-                    while ($b = mysqli_fetch_assoc($b_list)) {
-                        $sel = ($b['id'] == $building_id) ? 'selected' : '';
-                        echo "<option value='{$b['id']}' $sel>{$b['name']}</option>";
-                    }
-                    ?>
-                </select>
-                <button type="submit" class="btn btn-sm btn-dark">Filter</button>
+
+        <div class="collapse" id="filterPanel">
+            <form method="POST" class="mt-3 p-3 bg-light rounded-4 border-0">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <select name="month" class="form-select border-0 shadow-sm rounded-3">
+                            <?php
+                            for ($m = 1; $m <= 12; $m++) {
+                                $m_val = date('Y') . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
+                                $m_name = date('F', mktime(0, 0, 0, $m, 1));
+                                $selected = ($m_val == $this_month) ? 'selected' : '';
+                                echo "<option value='$m_val' $selected>$m_name</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <select name="building" class="form-select border-0 shadow-sm rounded-3">
+                            <?php
+                            $b_list = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
+                            while ($b = mysqli_fetch_assoc($b_list)) {
+                                $sel = ($b['id'] == $building_id) ? 'selected' : '';
+                                echo "<option value='{$b['id']}' $sel>{$b['name']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <button type="submit" class="btn btn-dark w-100 rounded-3 py-2 fw-bold">Update View</button>
+                    </div>
+                </div>
             </form>
-            <a href="admin.php?page=create_expense" class="btn btn-sm btn-primary">
-                <i class="bi bi-plus-lg"></i> Create Expense
-            </a>
         </div>
     </div>
 
-    <!-- Summary Cards Section -->
-    <div class="row g-3 mt-2">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm overflow-hidden">
-                <div class="card-body bg-light-primary" style="border-left: 5px solid #0d6efd;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1 text-uppercase small fw-bold">Admin Expense</h6>
-                            <h3 class="mb-0 fw-bold">৳ <?= number_format($admin_total, 0) ?></h3>
-                        </div>
-                        <div class="bg-primary text-white p-2 rounded-3">
-                            <i class="bi bi-person-badge fs-4"></i>
-                        </div>
-                    </div>
+    <!-- Stats Card -->
+    <div class="px-3 mb-4">
+        <div class="main-card p-4">
+            <p class="text-white-50 small mb-1 text-uppercase fw-bold">Net Monthly Spending</p>
+            <h2 class="text-white fw-bold mb-4">৳ <?= number_format($grand_total, 0) ?></h2>
+            
+            <div class="row text-center border-top border-white-10 pt-3">
+                <div class="col-6 border-end border-white-10">
+                    <small class="text-white-50 d-block mb-1">Admin</small>
+                    <span class="text-white fw-bold small">৳ <?= number_format($admin_total, 0) ?></span>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm overflow-hidden">
-                <div class="card-body bg-light-warning" style="border-left: 5px solid #ffc107;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1 text-uppercase small fw-bold">Manager Expense</h6>
-                            <h3 class="mb-0 fw-bold">৳ <?= number_format($manager_total, 0) ?></h3>
-                        </div>
-                        <div class="bg-warning text-dark p-2 rounded-3">
-                            <i class="bi bi-person-gear fs-4"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm overflow-hidden">
-                <div class="card-body bg-primary text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-white-50 mb-1 text-uppercase small fw-bold">Total Monthly Expense</h6>
-                            <h3 class="mb-0 fw-bold text-white">৳ <?= number_format($grand_total, 0) ?></h3>
-                        </div>
-                        <div class="bg-white text-primary p-2 rounded-3">
-                            <i class="bi bi-wallet2 fs-4"></i>
-                        </div>
-                    </div>
+                <div class="col-6">
+                    <small class="text-white-50 d-block mb-1">Manager</small>
+                    <span class="text-white fw-bold small">৳ <?= number_format($manager_total, 0) ?></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Data Table Section -->
-    <div class="card mt-4 border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom py-3">
-            <h6 class="mb-0 fw-bold"><i class="bi bi-list-ul me-2"></i>Detailed Expense List</h6>
+    <!-- Expense List -->
+    <div class="px-3 pb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-dark mb-0">Expense Details</h6>
+            <span class="small text-muted fw-semibold"><?= date('M Y', strtotime($this_month)) ?></span>
         </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="ps-3">Date</th>
-                        <th>Particulars of Expense</th>
-                        <th>Amount</th>
-                        <th>Method</th>
-                        <th>By</th>
-                        <th class="text-end pe-3">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $exp_query = mysqli_query($db, "SELECT * FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' ORDER BY date DESC, id DESC");
+
+        <?php
+        $exp_query = mysqli_query($db, "SELECT * FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' ORDER BY date DESC, id DESC");
+        if (mysqli_num_rows($exp_query) > 0) {
+            while ($row = mysqli_fetch_assoc($exp_query)) {
+                $is_admin = ($row['expense_by'] == 'Admin');
+                $accent_color = $is_admin ? '#0d6efd' : '#f59e0b';
+                $bg_soft = $is_admin ? '#e7f1ff' : '#fef3c7';
+        ?>
+        <div class="expense-card p-3 mb-3 border-0 shadow-sm bg-white position-relative overflow-hidden">
+            <!-- Source Tag (Admin/Manager) -->
+            <div class="source-tag" style="background: <?= $accent_color ?>;">
+                <?= $row['expense_by'] ?>
+            </div>
+
+            <div class="d-flex align-items-start gap-3">
+                <!-- Icon based on category -->
+                <div class="icon-box" style="background: <?= $bg_soft ?>; color: <?= $accent_color ?>;">
+                    <i class="bi <?= $is_admin ? 'bi-shield-check' : 'bi-person-circle' ?> fs-4"></i>
+                </div>
+                
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="fw-bold mb-1 text-dark"><?= htmlspecialchars($row['expense_for']) ?></h6>
+                        <span class="fw-bold text-dark">৳ <?= number_format($row['amount'], 0) ?></span>
+                    </div>
                     
-                    if (mysqli_num_rows($exp_query) > 0) {
-                        while ($row = mysqli_fetch_assoc($exp_query)) {
-                            // Assign color based on 'expense_by'
-                            $by_badge = ($row['expense_by'] == 'Admin') ? 'bg-primary' : 'bg-warning text-dark';
-                    ?>
-                        <tr>
-                            <td class="ps-3 text-muted small"><?= date('d M Y', strtotime($row['date'])) ?></td>
-                            <td>
-                                <span class="fw-bold d-block"><?= htmlspecialchars($row['expense_for']) ?></span>
-                                <?php 
-                                    if(!empty($row['unit_id'])) {
-                                        $unit_info_expense = mysqli_query($db, "SELECT unit_name FROM unit WHERE id='{$row['unit_id']}'");
-                                        $unit_row_expanse = mysqli_fetch_assoc($unit_info_expense);
-                                        echo '<small class="badge bg-light text-dark border mt-1">Unit: ' . ($unit_row_expanse['unit_name'] ?? 'N/A') . '</small>';
-                                    } 
-                                ?>
-                            </td>
-                            <td class="fw-bold">৳ <?= number_format($row['amount'], 0) ?></td>
-                            <td><span class="text-muted small"><?= $row['expense_method'] ?></span></td>
-                            <td>
-                                <span class="badge <?= $by_badge ?> py-1 px-2" style="font-size: 10px;">
-                                    <?= strtoupper($row['expense_by']) ?>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div class="d-flex flex-wrap gap-1">
+                            <span class="badge-custom text-muted">
+                                <i class="bi bi-calendar3 me-1"></i> <?= date('d M', strtotime($row['date'])) ?>
+                            </span>
+                            <span class="badge-custom text-muted">
+                                <i class="bi bi-wallet2 me-1"></i> <?= $row['expense_method'] ?>
+                            </span>
+                            <?php if(!empty($row['unit_id'])): ?>
+                                <span class="badge-custom text-primary bg-light">
+                                    <i class="bi bi-house me-1"></i> Unit <?= $row['unit_id'] ?>
                                 </span>
-                            </td>
-                            <td class="text-end pe-3">
-                                <div class="btn-group">
-                                    <a href="admin.php?page=create_expense&edit_id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-primary shadow-none border-0"><i class="bi bi-pencil-square"></i></a>
-                                    <a href="admin.php?page=Expense&id=<?= $building_id ?>&delete_id=<?= $row['id'] ?>" class="btn btn-sm btn-outline-danger shadow-none border-0" onclick="return confirm('Delete this record?')"><i class="bi bi-trash"></i></a>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php 
-                        } 
-                    } else { ?>
-                        <tr>
-                            <td colspan="6" class="text-center py-5">
-                                <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
-                                <span class="text-muted">No expense records found for this period.</span>
-                            </td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="d-flex gap-2 ms-2">
+                            <a href="admin.php?page=create_expense&edit_id=<?= $row['id'] ?>" class="btn-action edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="admin.php?page=Expense&id=<?= $building_id ?>&delete_id=<?= $row['id'] ?>" class="btn-action delete" onclick="return confirm('Delete?')">
+                                <i class="bi bi-trash3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <?php 
+            } 
+        } else { ?>
+            <div class="text-center py-5">
+                <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="80" class="opacity-25 mb-3">
+                <p class="text-muted small">No expenses recorded for this month.</p>
+            </div>
+        <?php } ?>
     </div>
 </div>
 
 <style>
-    .bg-light-primary { background-color: #f0f7ff !important; }
-    .bg-light-warning { background-color: #fffbef !important; }
-    .card { border-radius: 12px; }
-    .table thead th { font-size: 12px; text-transform: uppercase; color: #6c757d; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    
+    body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; color: #1f2937; }
+    .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
+
+    /* Header */
+    .app-header { border-radius: 0 0 25px 25px; position: sticky; top: 0; z-index: 1000; }
+    .btn-light-soft { background: #f3f4f6; color: #4b5563; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: none; }
+
+    /* Summary Card */
+    .main-card {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border-radius: 28px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+    .border-white-10 { border-color: rgba(255,255,255,0.1) !important; }
+
+    /* Expense Card */
+    .expense-card {
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    /* Source Tag (Top Right) */
+    .source-tag {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 3px 12px;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: white;
+        border-bottom-left-radius: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Badges & Actions */
+    .badge-custom {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+    .btn-action.edit { background: #eff6ff; color: #3b82f6; }
+    .btn-action.delete { background: #fef2f2; color: #ef4444; }
+
+    /* Floating Button */
+    .fab-btn {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 60px;
+        height: 60px;
+        background: #0d6efd;
+        color: white;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        z-index: 1100;
+        text-decoration: none;
+    }
 </style>

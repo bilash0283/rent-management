@@ -11,5 +11,5 @@
 
 <!-- কন্টেন্ট যেন ফুটারের নিচে ঢাকা না পড়ে সেজন্য বডিতে প্যাডিং দিন -->
 <style>
-    body { padding-bottom: 50px !important; }
+    body { padding-bottom: 110px !important; margin-bottom:50px;}
 </style>
