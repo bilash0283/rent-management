@@ -112,12 +112,12 @@
                                         }
                                         ?>
 
-                                        <?php 
+                                        <!-- <?php 
                                             if(!empty($rent)){ ?>
-                                                <span class="fw-semibold text-primary">
+                                                <span class="fw-semibold text-dark">
                                             Rent = ৳ <?= number_format($rent, 0) ?? '' ?>
                                             </span><br>
-                                        <?php } ?> 
+                                        <?php } ?>  -->
 
                                         <?php
                                         $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
@@ -139,40 +139,38 @@
                                                 $Water = $pay_info_sh['Water'];
                                                 $Electricity = $pay_info_sh['Electricity'];
                                                 $Others = $pay_info_sh['Others'];
-
-                                                $total_bill = $rent+$Gas+$Water+$Electricity+$Others;
                                                 ?>     
                                                 
-                                                <?php 
+                                                <!-- <?php 
                                                     if(!empty($Water)){ ?>
-                                                        <span class="fw-semibold text-primary">
+                                                        <span class="fw-semibold text-dark">
                                                     Water = <small>৳ </small> <?= number_format($Water, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?> 
 
                                                 <?php 
                                                     if(!empty($Gas)){ ?>
-                                                        <span class="fw-semibold text-primary">
+                                                        <span class="fw-semibold text-dark">
                                                     Gas = <small>৳ </small> <?= number_format($Gas, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?> 
 
                                                 <?php 
                                                     if(!empty($Electricity)){ ?>
-                                                        <span class="fw-semibold text-primary">
+                                                        <span class="fw-semibold text-dark">
                                                     Electricity = <small>৳ </small> <?= number_format($Electricity, 0) ?? '' ?>
                                                     </span><br>
                                                 <?php } ?>
 
                                                 <?php 
                                                     if(!empty($Others)){ ?>
-                                                        <span class="fw-semibold text-primary">
+                                                        <span class="fw-semibold text-dark">
                                                     Others = <small>৳ </small> <?= number_format($Others, 0) ?? '' ?>
                                                     </span><br>
-                                                <?php } ?>
+                                                <?php } ?> -->
 
                                                 <span class="fw-semibold text-primary">
-                                                    Total = <small>৳ </small> <?= number_format($total_bill, 0) ?? '' ?>
+                                                    Total = <small>৳ </small> <?= number_format($total_amount_db, 0) ?? '' ?>
                                                 </span><br>
 
                                                 <?php if (!empty($paid_amount_db)) { ?>

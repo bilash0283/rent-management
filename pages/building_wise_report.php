@@ -107,8 +107,8 @@ $total_unit = mysqli_num_rows($result);
 
 <div class="main-content">
     <?php
-    // ==================== OVERALL MANAGER PAYMENT SUMMARY ====================
-    $manager_summary = mysqli_query($db, "
+        // ==================== MANAGER PAYMENT SUMMARY ====================
+        $manager_summary = mysqli_query($db, "
             SELECT 
                 SUM(ph.paid_amount) as total_received,
                 SUM(ph.manager_paid) as manager_paid_total
@@ -119,20 +119,69 @@ $total_unit = mysqli_num_rows($result);
             AND ph.payment_method = 'Manager'
         ");
 
-    $summary = mysqli_fetch_assoc($manager_summary);
+        $summary = mysqli_fetch_assoc($manager_summary);
 
-    $total_received = (float) ($summary['total_received'] ?? 0);
-    $manager_paid_total = (float) ($summary['manager_paid_total'] ?? 0);
-    $manager_paid = $total_received - $manager_paid_total;
+        $total_received = (float) ($summary['total_received'] ?? 0);
+        $manager_paid_total = (float) ($summary['manager_paid_total'] ?? 0);
+        $manager_paid = $total_received - $manager_paid_total;
     ?>
 
     <!-- Summary Cards -->
     <div class="row g-3 mb-4 mx-3">
+        <?php 
+            //======= Card Information Details =========
+        $total_bill_amount = 0;
+        $paid_amount_db_amount = 0;
+        $due_amount_db_amount = 0;
+
+        while ($row = mysqli_fetch_assoc($result)) {
+
+            $unit_id = $row['id'];
+
+            // Tenant Info
+            $tenant_query = mysqli_query($db, "SELECT * FROM tenants 
+                WHERE building_id = '$building_id' AND unit_id = '$unit_id' LIMIT 1");
+
+            $tenant = mysqli_fetch_assoc($tenant_query);
+            $tent_id = $tenant['id'] ?? 0;
+
+            // Default values
+            // $Gas = $Water = $Electricity = $Others = 0;
+            $total_amount_db = 0;
+            $paid_amount_db = 0;
+            $due_amount_db = 0;
+
+            // Invoice Info
+            if ($tent_id) {
+                $inv_query = mysqli_query($db, "SELECT * FROM invoices 
+                    WHERE tenant_id = '$tent_id' 
+                    AND unit_id = '$unit_id' 
+                    AND billing_month = '$this_month' LIMIT 1");
+
+                if ($inv = mysqli_fetch_assoc($inv_query)) {
+
+                    // $Gas = (float) ($inv['Gas'] ?? 0);
+                    // $Water = (float) ($inv['Water'] ?? 0);
+                    // $Electricity = (float) ($inv['Electricity'] ?? 0);
+                    // $Others = (float) ($inv['Others'] ?? 0);
+                    
+                    $total_amount_db = (float) ($inv['total_amount'] ?? 0);
+                    $paid_amount_db = (float) ($inv['paid_amount'] ?? 0);
+                    $due_amount_db = (float)$total_amount_db-$paid_amount_db;
+                }
+            }
+
+            // Add to summary
+            $total_bill_amount += $total_amount_db;
+            $paid_amount_db_amount += $paid_amount_db;
+            $due_amount_db_amount += $due_amount_db;
+        }
+        ?>
         <div class="col-md">
             <div class="card shadow-sm border-0 bg-primary text-white">
                 <div class="card-body text-center">
                     <h6 class="mb-1 text-white">Total Amount</h6>
-                    <h4 class="mb-0 text-white"></h4>
+                    <h4 class="mb-0 text-white"><?= number_format($total_bill_amount, 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -140,7 +189,7 @@ $total_unit = mysqli_num_rows($result);
             <div class="card shadow-sm border-0 bg-success">
                 <div class="card-body text-center">
                     <h6 class="mb-1 text-white">Total Paid</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format($manager_paid_total, 0) ?></h4>
+                    <h4 class="mb-0 text-white">৳ <?= number_format($paid_amount_db_amount, 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -148,13 +197,13 @@ $total_unit = mysqli_num_rows($result);
             <div class="card shadow-sm border-0 bg-warning text-white">
                 <div class="card-body text-center">
                     <h6 class="mb-1 text-white">Total Due</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format(max($manager_paid, 0), 0) ?></h4>
+                    <h4 class="mb-0 text-white">৳ <?= number_format(max($due_amount_db_amount, 0), 0) ?></h4>
                 </div>
             </div>
         </div>
         <div class="col-md">
             <div class="card shadow-sm border-0 bg-secondary text-white">
-                <div class="card-body text-left">
+                <div class="card-body text-left p-1 pl-4 mx-auto">
                     <strong class="mb-1 text-white">Paid By Manager</strong><br>
                     <small>Total Rechive : ৳ <?= number_format($total_received, 0) ?></small><br>
                     <small>Paid to Admin : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
@@ -204,24 +253,20 @@ $total_unit = mysqli_num_rows($result);
                                 ? "public/uploads/tenants/" . $tenant['tenant_image']
                                 : "public/uploads/tenants/no-image.png";
 
-                            // Advance Due
-                            $adv_sql = mysqli_query($db, "SELECT SUM(paid_amount) as total 
-                                    FROM advance WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
-                            $adv = mysqli_fetch_assoc($adv_sql);
-                            $total_advance_paid = (float) ($adv['total'] ?? 0);
-                            $advance_due = max($advance - $total_advance_paid, 0);
-
-                            // Invoice Info
+                            // Invoice Info check (Primary Condition)
                             $inv_query = mysqli_query($db, "SELECT * FROM invoices 
                                     WHERE tenant_id = '$tent_id' 
                                     AND unit_id = '$unit_id' 
                                     AND billing_month = '$this_month' LIMIT 1");
+                            
                             $has_invoice = mysqli_num_rows($inv_query) > 0;
+                            
+                            // ডিফল্ট ভ্যালু সেট করা
                             $status = 'No Invoice';
-                            $total_bill = $rent;
+                            $total_bill = 0;
                             $paid_amount_db = 0;
-                            $due_amount_db = $rent;
-                            $Gas = $Water = $Electricity = $Others = 0;
+                            $due_amount_db = 0;
+                            $advance_due = 0;
 
                             if ($has_invoice) {
                                 $inv = mysqli_fetch_assoc($inv_query);
@@ -229,27 +274,35 @@ $total_unit = mysqli_num_rows($result);
                                 $Water = (float) ($inv['Water'] ?? 0);
                                 $Electricity = (float) ($inv['Electricity'] ?? 0);
                                 $Others = (float) ($inv['Others'] ?? 0);
+                                
                                 $total_bill = $rent + $Gas + $Water + $Electricity + $Others;
                                 $paid_amount_db = (float) ($inv['paid_amount'] ?? 0);
-                                $due_amount_db = (float) $total_bill-$paid_amount_db;
+                                $due_amount_db = (float) $total_bill - $paid_amount_db;
                                 $status = $inv['status'] ?? 'Unpaid';
+
+                                // Advance Due calculation (Only if invoice exists)
+                                $adv_sql = mysqli_query($db, "SELECT SUM(paid_amount) as total 
+                                        FROM advance WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
+                                $adv = mysqli_fetch_assoc($adv_sql);
+                                $total_advance_paid = (float) ($adv['total'] ?? 0);
+                                $advance_due = max($advance - $total_advance_paid, 0);
                             }
 
-                            // Manager Payment for this tenant
+                            // Manager Payment Info
                             $history_sql = mysqli_query($db, "
                                     SELECT * FROM payment_history 
                                     WHERE tenant_id = '$tent_id' 
                                     AND bill_month = '$this_month'
                                 ");
-
-                            $manager_self = 0;
+                            
+                            $has_payment = mysqli_num_rows($history_sql) > 0;
                             $received = 0;
                             $manager_paid = 0;
+                            $manager_self = 0;
                             $pay_method = '';
 
-                            if (mysqli_num_rows($history_sql) > 0) {
+                            if ($has_payment) {
                                 while ($his = mysqli_fetch_assoc($history_sql)) {
-                                    $pay_his_id = $his['id'];
                                     $received += (float) ($his['paid_amount'] ?? 0);
                                     $manager_paid += (float) ($his['manager_paid'] ?? 0);
                                     $pay_method = $his['payment_method'];
@@ -268,64 +321,55 @@ $total_unit = mysqli_num_rows($result);
                                             <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>"
                                                 class="fw-bold text-secondary"><?= htmlspecialchars($name) ?></a>
                                             <?php if ($size): ?>
-                                                <small class="text-muted d-block">Ele.M.N:
-                                                    <?= htmlspecialchars($size) ?></small>
+                                                <small class="text-muted d-block">Ele.M.N: <?= htmlspecialchars($size) ?></small>
                                             <?php endif; ?>
                                         </div>
                                     </div>
                                 </td>
 
-                                <!-- Bill Details -->
                                 <td>
-                                    <?php if ($advance_due > 0): ?>
-                                        <span class="text-danger fw-bold" style="font-size:10px;">Advance Due: ৳
-                                            <?= number_format($advance_due, 0) ?></span><br>
-                                    <?php endif; ?>
+                                    <?php if ($has_invoice): ?>
+                                        <?php if ($advance_due > 0): ?>
+                                            <span class="text-danger fw-bold" style="font-size:10px;">Advance Due: ৳
+                                                <?= number_format($advance_due, 0) ?></span><br>
+                                        <?php endif; ?>
 
-                                    <strong style="font-size:10px;">Total = ৳ <?= number_format($total_bill, 0) ?></strong><br>
+                                        <strong style="font-size:10px;">Total = ৳ <?= number_format($total_bill, 0) ?></strong><br>
 
-                                    <?php if ($paid_amount_db > 0): ?>
-                                        <span class="text-success fw-bold" style="font-size:10px;">Paid = ৳
-                                            <?= number_format($paid_amount_db, 0) ?></span><br>
-                                    <?php endif; ?>
-                                    <?php if ($due_amount_db > 0): ?>
-                                        <span class="text-danger fw-bold" style="font-size:10px;">Due = ৳ <?= number_format($due_amount_db, 0) ?></span>
+                                        <?php if ($paid_amount_db > 0): ?>
+                                            <span class="text-success fw-bold" style="font-size:10px;">Paid = ৳
+                                                <?= number_format($paid_amount_db, 0) ?></span><br>
+                                        <?php endif; ?>
+                                        
+                                        <?php if ($due_amount_db > 0): ?>
+                                            <span class="text-danger fw-bold" style="font-size:10px;">Due = ৳ <?= number_format($due_amount_db, 0) ?></span>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <small class="text-muted">---</small>
                                     <?php endif; ?>
                                 </td>
 
-                                <!-- Status -->
                                 <td>
-                                    <button
-                                        class="p-1 btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : ($status == 'Unpaid' ? 'danger' : 'secondary')) ?>">
+                                    <button class="p-1 btn btn-sm btn-<?= $status == 'Paid' ? 'success' : ($status == 'Partial' ? 'warning' : ($status == 'Unpaid' ? 'danger' : 'secondary')) ?>">
                                         <?= htmlspecialchars($status) ?>
                                     </button>
                                 </td>
 
-                                <!-- Manager Payment Info -->
                                 <td>
-                                    <?php if (mysqli_num_rows($history_sql) == 0): ?>
-                                        <small class="text-danger">No Payment Found !</small>
-                                    <?php else: ?>
+                                    <?php if ($has_payment): ?>
                                         <small class="text-success fw-bold"><?= htmlspecialchars($pay_method) ?></small><br>
-
                                         <?php if ($received > 0): ?>
-                                            <small class="text-primary fw-bold">Rechive: ৳
-                                                <?= number_format($received, 0) ?></small><br>
+                                            <small class="text-primary fw-bold">Receive: ৳ <?= number_format($received, 0) ?></small><br>
                                         <?php endif; ?>
-
                                         <?php if ($manager_paid > 0): ?>
-                                            <small class="text-success fw-bold">Paid: ৳
-                                                <?= number_format($manager_paid, 0) ?></small><br>
+                                            <small class="text-success fw-bold">Paid: ৳ <?= number_format($manager_paid, 0) ?></small><br>
                                         <?php endif; ?>
-
-                                        <strong class="text-warning"> Self: ৳
-                                            <?= number_format($manager_self ?? 0,) ?>
-                                        </strong>
-
+                                        <strong class="text-warning"> Self: ৳ <?= number_format($manager_self, 0) ?></strong>
+                                    <?php else: ?>
+                                        <small class="text-muted">No Payment Found !</small>
                                     <?php endif; ?>
                                 </td>
 
-                                <!-- Action -->
                                 <td class="text-end">
                                     <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
                                         class="text-end p-1 btn btn-sm btn-info" title="Invoice Create & Payment">
