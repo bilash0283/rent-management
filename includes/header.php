@@ -26,7 +26,7 @@ $old_image= $user_row['image'];
     <meta name="description" content="" />
     <meta name="keyword" content="" />
     <meta name="author" content="flexilecode" />
-    <title>RENT-MANAGER</title>
+    <title>RENT MANAGER</title>
     <link rel="shortcut icon" type="image/x-icon" href="public/assets/images/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="public/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="public/assets/vendors/css/vendors.min.css" />
@@ -61,7 +61,7 @@ $old_image= $user_row['image'];
                 <div class="d-flex align-items-center">
 
                     <!-- full screen  -->
-                    <div class="nxl-h-item d-none d-sm-flex">
+                    <!-- <div class="nxl-h-item d-none d-sm-flex">
                         <div class="full-screen-switcher">
                             <a href="javascript:void(0);" class="nxl-head-link me-0"
                                 onclick="$('body').fullScreenHelper('toggle');">
@@ -69,7 +69,7 @@ $old_image= $user_row['image'];
                                 <i class="feather-minimize minimize"></i>
                             </a>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- full screen  -->
 
@@ -180,7 +180,7 @@ $old_image= $user_row['image'];
                             </div>
 
                             <a href="admin.php?page=profile" class="dropdown-item">
-                                <i class="feather-user"></i>
+                                <i class="feather-user text-info"></i>
                                 <span>Profile Details</span>
                             </a>
                             <!-- <a href="javascript:void(0);" class="dropdown-item">
@@ -193,7 +193,7 @@ $old_image= $user_row['image'];
                             </a> -->
                             <div class="dropdown-divider"></div>
                             <a href="pages/logout.php" class="dropdown-item">
-                                <i class="feather-log-out"></i>
+                                <i class="feather-log-out text-info"></i>
                                 <span>Logout</span>
                             </a>
                         </div>
