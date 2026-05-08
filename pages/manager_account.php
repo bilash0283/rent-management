@@ -150,7 +150,7 @@ $manager_net_payable = max($total_received - $manager_paid_total, 0);
                 </thead>
                 <tbody>
                     <?php mysqli_data_seek($result, 0); while ($row = mysqli_fetch_assoc($result)): 
-                        include 'logic_block.php'; // Logic to fetch tenant & invoice data (reuse your logic)
+                         // Logic to fetch tenant & invoice data (reuse your logic)
                     ?>
                     <!-- Logic re-execution (keeping your original variable names) -->
                     <?php
