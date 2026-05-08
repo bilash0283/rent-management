@@ -118,20 +118,20 @@ $manager_net_payable = max($total_received - $manager_paid_total, 0);
     <div class="row g-3 px-2 mb-4">
         <div class="col-4 text-center">
             <div class="p-2 bg-info bg-opacity-10 rounded-3">
-                <p class="small text-muted mb-1 text-truncate">Collected</p>
-                <h6 class="fw-bold text-info mb-0">৳<?= number_format($total_received, 0) ?></h6>
+                <p class="small text-muted mb-1 text-white">Collected</p>
+                <strong class="fw-bold mb-0 text-white">৳<?= number_format($total_received, 0) ?></strong>
             </div>
         </div>
         <div class="col-4 text-center">
             <div class="p-2 bg-success bg-opacity-10 rounded-3">
-                <p class="small text-muted mb-1 text-truncate">To Admin</p>
-                <h6 class="fw-bold text-success mb-0">৳<?= number_format($manager_paid_total, 0) ?></h6>
+                <p class="small text-muted mb-1 text-white">To Admin</p>
+                <strong class="fw-bold  mb-0 text-white">৳<?= number_format($manager_paid_total, 0) ?></strong>
             </div>
         </div>
         <div class="col-4 text-center">
             <div class="p-2 bg-warning bg-opacity-10 rounded-3">
-                <p class="small text-muted mb-1 text-truncate">Self/Net</p>
-                <h6 class="fw-bold text-warning mb-0">৳<?= number_format($manager_net_payable, 0) ?></h6>
+                <p class="small text-muted mb-1 text-white">Self/Net</p>
+                <strong class="fw-bold  mb-0 text-white">৳<?= number_format($manager_net_payable, 0) ?></strong>
             </div>
         </div>
     </div>
