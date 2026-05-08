@@ -97,7 +97,7 @@
                 <div class="d-flex align-items-center mb-3">
                     <img src="<?= $image ?>" class="rounded-circle me-3 border" width="55" height="55" style="object-fit: cover;">
                     <div>
-                        <h6 class="mb-0 fw-bold text-dark"><?= $name ?></h6>
+                        <p class="mb-0 fw-bold text-dark"><?= $name ?></p>
                         <small class="text-muted">Unit: <strong><?= $unit_name ?></strong> <?php if($size) echo "| Ele: $size"; ?></small>
                     </div>
                 </div>
