@@ -28,7 +28,7 @@ if (mysqli_num_rows($result) > 0) {
 
         $nid = !empty($row['nid_image'])
             ? "public/uploads/nid/" . $row['nid_image']
-            : "public/uploads/tenants/no-image.png";
+            : "public/assets/images/no-image.png";
 
         $id = $row['id'];
         $phone = $row['phone'];
