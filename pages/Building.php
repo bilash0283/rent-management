@@ -1,246 +1,342 @@
 <?php
 $message = '';
 
+// ==============================
+// DELETE BUILDING + RELATED UNITS
+// ==============================
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
 
     $id = (int) $_GET['id'];
 
+    // Get building image
     $sql = "SELECT image FROM building WHERE id = $id";
     $result = mysqli_query($db, $sql);
 
     if ($result && $row = mysqli_fetch_assoc($result)) {
 
         if (!empty($row['image'])) {
+
             $file = "public/uploads/buildings/" . $row['image'];
+
             if (file_exists($file)) {
                 unlink($file);
             }
         }
     }
 
+    // Delete units images first
+    $sql_unit = "SELECT unit_image FROM unit WHERE building_name = $id";
+    $result_unit = mysqli_query($db, $sql_unit);
+
+    while ($result_unit && $unit_img = mysqli_fetch_assoc($result_unit)) {
+
+        if (!empty($unit_img['unit_image'])) {
+
+            $unit_file = "public/uploads/units/" . $unit_img['unit_image'];
+
+            if (file_exists($unit_file)) {
+                unlink($unit_file);
+            }
+        }
+    }
+
+    // Delete units
+    mysqli_query($db, "DELETE FROM unit WHERE building_name = $id");
+
+    // Delete building
     $delete_query = "DELETE FROM building WHERE id = $id";
 
     if (mysqli_query($db, $delete_query)) {
 
-        if (isset($id)) {
-
-            $sql_unit = "SELECT unit_image FROM unit WHERE building_name = $id";
-            $result_unit = mysqli_query($db, $sql_unit);
-
-            while ($result_unit && $unit_imge = mysqli_fetch_assoc($result_unit)) {
-
-                if (!empty($unit_imge['unit_image'])) {
-                    $files_unit = "public/uploads/units/" . $unit_imge['unit_image'];
-                    if (file_exists($files_unit)) {
-                        unlink($files_unit);
-                    }
-                }
-            }
-
-            $delete_query = "DELETE FROM unit WHERE building_name = $id";
-
-            if (mysqli_query($db, $delete_query)) {
-                $message = '
-                <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
-                    <strong>Success!</strong> Building Delete Successfull 
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>';
-            }
-        }
-    } else {
         $message = '
-        <div class="alert alert-danger alert-dismissible fade show mx-5 mt-2 mb-0" role="alert">
+        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+            <strong>Success!</strong> Building deleted successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>';
+
+    } else {
+
+        $message = '
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
             <strong>Error!</strong> Delete Failed : ' . mysqli_error($db) . '
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>';
     }
 }
 
-// Fetch all buildings
+
+// ==============================
+// FETCH BUILDINGS
+// ==============================
 $sql = "SELECT * FROM building ORDER BY id DESC";
-$result = mysqli_query($db, $sql) or die("Query failed: " . mysqli_error($db));
+$result = mysqli_query($db, $sql) or die("Query Failed : " . mysqli_error($db));
 ?>
+
+<style>
+    .mobile-building-card {
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+        transition: 0.3s;
+        height: 100%;
+    }
+
+    .mobile-building-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .building-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .building-body {
+        padding: 15px;
+    }
+
+    .building-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .building-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #eef2ff;
+        color: #4338ca;
+        margin-bottom: 12px;
+    }
+
+    .building-text {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 8px;
+        line-height: 1.6;
+    }
+
+    .building-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .building-actions a {
+        flex: 1;
+        border-radius: 12px;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .top-header-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .create-btn-mobile {
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .location-btn {
+        text-decoration: none;
+        color: #2563eb;
+        font-weight: 600;
+    }
+
+    @media(max-width: 768px) {
+        .building-image {
+            height: 180px;
+        }
+
+        .building-title {
+            font-size: 16px;
+        }
+    }
+</style>
 
 <div class="nxl-content">
 
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="page-header-left d-flex align-items-center">
-            <div class="page-header-title">
-                <h5 class="m-b-10">Building Manage</h5>
-            </div>
+    <!-- HEADER -->
+    <div class="top-header-mobile">
+
+        <div>
+            <h4 class="mb-1 fw-bold">Building Manage</h4>
+            <small class="text-muted">All Buildings List</small>
         </div>
-        <div class="page-header-right ms-auto">
-            <div class="page-header-right-items">
-                <div class="d-flex d-md-none">
-                    <a href="javascript:void(0)" class="page-header-right-close-toggle">
-                        <i class="feather-arrow-left me-2"></i>
-                        <span>Back</span>
-                    </a>
-                </div>
-                <div class="d-flex align-items-center gap-2 page-header-right-items-wrapper">
-                    <a href="javascript:void(0);" class="btn btn-icon btn-light-brand" data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne">
-                        <i class="feather-bar-chart"></i>
-                    </a>
-                    <a href="admin.php?page=CreateBuilding" class="btn btn-primary">
-                        <i class="feather-plus me-2"></i>
-                        <span>Create Building</span>
-                    </a>
-                </div>
-            </div>
-            <div class="d-md-none d-flex align-items-center">
-                <a href="javascript:void(0)" class="page-header-right-open-toggle">
-                    <i class="feather-align-right fs-20"></i>
-                </a>
-            </div>
-        </div>
+
+        <a href="admin.php?page=CreateBuilding" class="btn btn-primary create-btn-mobile">
+            <i class="feather-plus"></i>
+        </a>
+
     </div>
 
-    <!-- Filter collapse (placeholder) -->
-    <div id="collapseOne" class="accordion-collapse collapse page-header-collapse">
-        <div class="accordion-body pb-2">
-            <div class="row">
+    <!-- MESSAGE -->
+    <?= $message ?>
+
+    <!-- BUILDING GRID -->
+    <div class="row g-3">
+
+        <?php if (mysqli_num_rows($result) > 0): ?>
+
+            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+
+                <?php
+
+                $img_path = !empty($row['image'])
+                    ? "public/uploads/buildings/" . htmlspecialchars($row['image'])
+                    : "public/uploads/users/no-image.png";
+
+                // Building Type
+                switch ($row['building_type']) {
+
+                    case 1:
+                        $type = 'Residential';
+                        break;
+
+                    case 2:
+                        $type = 'Commercial';
+                        break;
+
+                    case 3:
+                        $type = 'Industrial';
+                        break;
+
+                    case 4:
+                        $type = 'Institutional';
+                        break;
+
+                    case 5:
+                        $type = 'Residential & Commercial';
+                        break;
+
+                    default:
+                        $type = 'Unknown';
+                }
+
+                ?>
+
                 <div class="col-12">
-                    <h6>Filter Section (Coming Soon)</h6>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="row">
-            <div class="col-xxl-12">
-                <div class="card stretch stretch-full">
-                    <div class="card-header">
-                        <h5 class="card-title">Buildings List</h5>
-                        <!-- Show message if any -->
-                        <?php if ($message !== ''): ?>
-                            <?= $message ?>
-                        <?php endif; ?>
-                    </div>
+                    <div class="mobile-building-card">
 
-                    <div class="card-body custom-card-action p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">Image</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Building Type</th>
-                                        <th scope="col">Address</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Location</th>
-                                        <th scope="col" class="text-end">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if (mysqli_num_rows($result) > 0): ?>
-                                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                                            <tr>
-                                                <td>
-                                                    <?php
-                                                    $img_path = !empty($row['image'])
-                                                        ? "public/uploads/buildings/" . htmlspecialchars($row['image'])
-                                                        : "public/uploads/users/no-image.png";
-                                                    ?>
-                                                    <img src="<?= $img_path ?>" alt="Building Image" class="rounded"
-                                                        style="width: 60px; height: 60px; object-fit: cover;">
-                                                </td>
-                                                <td>
-                                                    <strong><?= htmlspecialchars($row['name']) ?></strong>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    $type = $row['building_type'] ?? null;
+                        <!-- IMAGE -->
+                        <img src="<?= $img_path ?>"
+                             class="building-image"
+                             alt="Building">
 
-                                                    switch ($type) {
-                                                        case 1:
-                                                            echo 'Residential';
-                                                            break;
-                                                        case 2:
-                                                            echo 'Commercial';
-                                                            break;
-                                                        case 3:
-                                                            echo 'Industrial';
-                                                            break;
-                                                        case 4:
-                                                            echo 'Institutional';
-                                                            break;
-                                                            case 5:
-                                                            echo 'Residential & Commercial';
-                                                            break;
-                                                        default:
-                                                            echo '—';
-                                                            break;
-                                                    }
-                                                    ?>
-                                                </td>
-                                                <td><?= htmlspecialchars($row['address'] ?? '—') ?></td>
-                                                <td>
-                                                    <?php
-                                                    $desc = htmlspecialchars($row['description'] ?? '');
-                                                    echo strlen($desc) > 80 ? substr($desc, 0, 80) . '...' : $desc;
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php if (!empty($row['location'])): ?>
-                                                        <a href="<?= htmlspecialchars($row['location']) ?>" target="_blank">
-                                                            <i class="feather-eye"></i>
-                                                        </a>
-                                                    <?php else: ?>
-                                                        —
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td class="text-end">
-                                                    <div class="d-flex justify-content-end gap-2">
-                                                        <!-- Edit Button -->
-                                                        <a href="admin.php?page=CreateBuilding&id=<?= $row['id'] ?>"
-                                                            class="btn btn-sm btn-icon btn-light-primary"
-                                                            title="Edit this building" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top">
-                                                            <i class="feather-edit-2"></i>
-                                                        </a>
+                        <!-- BODY -->
+                        <div class="building-body">
 
-                                                        <!-- Delete Button -->
-                                                        <a href="admin.php?page=building&action=delete&id=<?= $row['id'] ?>"
-                                                            class="btn btn-sm btn-icon btn-light-danger delete-btn"
-                                                            onclick="return confirm('Are you sure you want to delete this building?\n\nThis action cannot be undone.');"
-                                                            title="Delete this building" data-bs-toggle="tooltip"
-                                                            data-bs-placement="top">
-                                                            <i class="feather-trash-2"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <?php endwhile; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="7" class="text-center py-5 text-muted">
-                                                No buildings found.
-                                            </td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
+                            <div class="building-title">
+                                <?= htmlspecialchars($row['name']) ?>
+                            </div>
+
+                            <div class="building-badge">
+                                <?= $type ?>
+                            </div>
+
+                            <div class="building-text">
+                                <strong>Address:</strong><br>
+                                <?= htmlspecialchars($row['address'] ?? 'N/A') ?>
+                            </div>
+
+                            <div class="building-text">
+                                <strong>Description:</strong><br>
+
+                                <?php
+                                $desc = htmlspecialchars($row['description'] ?? '');
+
+                                echo strlen($desc) > 120
+                                    ? substr($desc, 0, 120) . '...'
+                                    : $desc;
+                                ?>
+                            </div>
+
+                            <?php if (!empty($row['location'])): ?>
+
+                                <div class="mt-2">
+                                    <a href="<?= htmlspecialchars($row['location']) ?>"
+                                       target="_blank"
+                                       class="location-btn">
+
+                                        <i class="feather-map-pin"></i>
+                                        View Location
+                                    </a>
+                                </div>
+
+                            <?php endif; ?>
+
+                            <!-- ACTION BUTTONS -->
+                            <div class="building-actions">
+
+                                <!-- EDIT -->
+                                <a href="admin.php?page=CreateBuilding&id=<?= $row['id'] ?>"
+                                   class="btn btn-primary">
+
+                                    <i class="feather-edit-2"></i>
+                                    Edit
+                                </a>
+
+                                <!-- DELETE -->
+                                <a href="admin.php?page=building&action=delete&id=<?= $row['id'] ?>"
+                                   class="btn btn-danger"
+                                   onclick="return confirm('Are you sure?\n\nThis action cannot be undone.')">
+
+                                    <i class="feather-trash-2"></i>
+                                    Delete
+                                </a>
+
+                            </div>
+
                         </div>
+
                     </div>
 
-                    <!-- Pagination (placeholder - implement real pagination later) -->
-                    <div class="card-footer">
-                        <ul
-                            class="list-unstyled d-flex align-items-center gap-2 mb-0 pagination-common-style justify-content-center">
-                            <li><a href="javascript:void(0);"><i class="bi bi-arrow-left"></i></a></li>
-                            <li><a href="javascript:void(0);" class="active">1</a></li>
-                            <li><a href="javascript:void(0);">2</a></li>
-                            <li><a href="javascript:void(0);">3</a></li>
-                            <li><a href="javascript:void(0);"><i class="bi bi-arrow-right"></i></a></li>
-                        </ul>
-                    </div>
                 </div>
+
+            <?php endwhile; ?>
+
+        <?php else: ?>
+
+            <div class="col-12">
+
+                <div class="card border-0 shadow-sm rounded-4">
+
+                    <div class="card-body text-center py-5">
+
+                        <img src="public/uploads/users/no-image.png"
+                             width="80"
+                             class="mb-3 opacity-50">
+
+                        <h5 class="fw-bold mb-2">
+                            No Buildings Found
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Please create a new building.
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
-        </div>
+
+        <?php endif; ?>
+
     </div>
 
 </div>
