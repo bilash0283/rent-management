@@ -107,7 +107,7 @@ if (isset($_POST['update_invoice'])) {
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-10 mx-auto">
+                <div class="col-12 mx-auto" >
                     <form method="POST" enctype="multipart/form-data">
                         <div class="card p-3">
                             <h4 class="mb-3 text-success">Update Invoice</h4>
