@@ -82,8 +82,7 @@ if ('serviceWorker' in navigator) {
             <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
                 
                 <!-- Login Card -->
-                <div class="card border-0 shadow-lg rounded-4">
-                    <div class="card-body p-4 p-sm-5">
+                    <div class=" p-4 p-sm-5">
                         
                         <!-- Header & Logo -->
                         <div class="text-center mb-4">
@@ -141,7 +140,6 @@ if ('serviceWorker' in navigator) {
                         </form>
 
                     </div>
-                </div>
                 
                 <!-- Footer Text -->
                 <div class="text-center mt-4 text-muted small">
