@@ -50,7 +50,7 @@
 
 <div class="app-container">
     <!-- Floating Action Button -->
-    <a href="admin.php?page=create_expense" class="fab-btn shadow-lg">
+    <a href="admin.php?page=create_expense" class="fab-btn shadow-lg mb-3">
         <i class="bi bi-plus-lg"></i>
     </a>
 
