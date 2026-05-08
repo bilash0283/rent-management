@@ -1222,14 +1222,18 @@ CREATE INVOICE FULL FIXED UI
                     href="admin.php?page=payslip&unit_id=<?= $unit_id ?>&id=<?= $pay['id'] ?>"
                     class="btn btn-success btn-sm"
                 >
-                    Slip
+                    <i class="bi bi-eye"></i>
                 </a>
 
                 <a
                     href="admin.php?page=update_payment&pay_his_id=<?= $pay['id'] ?>&invoice_id=<?= $pay['invoice_id'] ?>"
                     class="btn btn-primary btn-sm"
                 >
-                    Edit
+                   <i class="bi bi-pencil-square"></i>
+                </a>
+
+                <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay['id'] ?>&invoice_id=<?= $pay['invoice_id'] ?>&unit_id=<?= $unit_id ?>" class="p-1 btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this payment?');">
+                    <i class="bi bi-trash"></i>
                 </a>
 
             </div>
