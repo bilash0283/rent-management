@@ -61,11 +61,11 @@ $payable_advance = max($advance - $total_advance_paid, 0);
 
 <div class="nxl-content">
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
-        <h5 class="mb-0">Monthly Invoice</h5>
+        <!-- <h5 class="mb-0">Monthly Invoice</h5> -->
         <div class="d-flex align-items-center gap-3">
             <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" id="includeDueBtn">
-                <label class="form-check-label fw-bold" for="includeDueBtn" style="cursor:pointer;">Include Previous Due</label>
+                <small><label class="form-check-label fw-bold" for="includeDueBtn" style="cursor:pointer;">Include Previous Due</label></small>
             </div>
             <button id="generatePdfBtn" class="btn btn-success btn-sm">
                 <i class="feather-icon icon-download me-2"></i> Download
@@ -76,7 +76,7 @@ $payable_advance = max($advance - $total_advance_paid, 0);
         </div>
     </div>
 
-    <div class="mb-4">
+    <div class="">
         <div id="pdf-content" class="agreement-paper bg-white border" style="padding:80px;">
             <div class="card shadow-sm border-0">
                 <div class="pt-4 px-4 d-flex justify-content-between align-items-start border-bottom pb-3">
