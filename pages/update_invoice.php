@@ -1,10 +1,14 @@
 <?php
 if (!isset($_GET['invoice_id']) || empty($_GET['invoice_id'])) {
     die("Invoice Id not Found!");
+}else{
+    $invoice_id = intval($_GET['invoice_id']);
 }
-
-$invoice_id = intval($_GET['invoice_id']);
-$unit_id = isset($_GET['unit_id']) ? intval($_GET['unit_id']) : 0;
+if (!isset($_GET['unit_id']) || empty($_GET['unit_id'])) {
+    die("Unit Id not Found!");
+}else{
+    $unit_id = intval($_GET['unit_id']);
+}
 
 // Fetch invoice data
 $stmt = $db->prepare("SELECT * FROM invoices WHERE id = ?");

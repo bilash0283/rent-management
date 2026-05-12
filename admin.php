@@ -106,8 +106,12 @@
             include 'pages/delete_payment.php';
         break;
 
-        case 'update_invoice':
+        case 'UpdateInvoice':
             include 'pages/update_invoice.php';
+        break;
+
+        case 'DeleteInvoice':
+            include 'pages/DeleteInvoice.php';
         break;
 
         default:
