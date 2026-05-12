@@ -537,15 +537,15 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             </td>
                                             <td class="text-center pe-4">
                                                 <div class="btn-group">
-                                                    <a href="admin.php?page=viewInvoice&unit_id=<?php echo $unit_id; ?>&invoice_id=<?php echo $invoice_id_db; ?>"
+                                                    <a href="admin.php?page=viewInvoice&unit_id=<?php echo $unit_id;?>&invoice_id=<?php echo $invoice_id_db; ?>"
                                                         class="p-1 btn btn-sm btn-success" title="view">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <a href="admin.php?page=UpdateInvoice&unit_id=<?php echo $unit_id; ?>&invoice_id=<?php echo $invoice_id_db; ?>"
+                                                    <a href="admin.php?page=UpdateInvoice&unit_id=<?php echo $unit_id;?>&invoice_id=<?php echo $invoice_id_db; ?>"
                                                         class="p-1 btn btn-sm btn-info" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
-                                                    <a href="admin.php?page=DeleteInvoice&unit_id=<?php echo $unit_id; ?>&invoice_id=<?php echo $invoice_id_db; ?>"
+                                                    <a href="admin.php?page=DeleteInvoice&unit_id=<?php echo $unit_id;?>&invoice_id=<?php echo $invoice_id_db; ?>"
                                                         class="p-1 btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this Invoice?');">
                                                         <i class="bi bi-trash"></i>
                                                     </a>

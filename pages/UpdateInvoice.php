@@ -10,17 +10,8 @@ if (!isset($_GET['unit_id']) || empty($_GET['unit_id'])) {
     $unit_id = intval($_GET['unit_id']);
 }
 
-// Fetch invoice data
-$stmt = $db->prepare("SELECT * FROM invoices WHERE id = ?");
-$stmt->bind_param("i", $invoice_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows == 0) {
-    die("Invoice not found!");
-}
-
-$data = $result->fetch_assoc();
+$invoice_db_info = mysqli_query($db,"SELECT * FROM invoices WHERE id = '$invoice_id' ");
+$data = mysqli_fetch_assoc($invoice_db_info);
 
 $billing_month_db = $data['billing_month'];
 $Rent_db = $data['Rent'];

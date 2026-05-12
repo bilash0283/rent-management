@@ -107,7 +107,7 @@
         break;
 
         case 'UpdateInvoice':
-            include 'pages/update_invoice.php';
+            include 'pages/UpdateInvoice.php';
         break;
 
         case 'DeleteInvoice':
