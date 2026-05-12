@@ -45,6 +45,12 @@ foreach ($monthly_totals as $month => $data) {
     $chart_paids[] = $data['paid'] / 1000;
     $chart_dues[]  = ($calc_due > 0 ? $calc_due : 0) / 1000;
 }
+
+
+// building query  
+$building_sql = mysqli_query($db,"SELECT * FROM building");
+$building_info = mysqli_fetch_assoc($building_sql);
+$building_id = $building_info['id'];
 ?>
 
 <style>
@@ -78,7 +84,7 @@ foreach ($monthly_totals as $month => $data) {
             </div>
             <!-- Units -->
             <div class="col-6 col-lg-3">
-                <a href="admin.php?page=unit" class="text-decoration-none">
+                <a href="admin.php?page=unit&id=<?php echo $building_id; ?>" class="text-decoration-none">
                     <div class="card dashboard-card shadow-sm rounded-4">
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-center">
@@ -92,7 +98,7 @@ foreach ($monthly_totals as $month => $data) {
             </div>
             <!-- Tenants -->
             <div class="col-6 col-lg-3">
-                <a href="admin.php?page=tenant" class="text-decoration-none">
+                <a href="admin.php?page=tenant&building_id=<?php echo $building_id; ?>" class="text-decoration-none">
                     <div class="card dashboard-card shadow-sm rounded-4">
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-center">
