@@ -934,10 +934,10 @@ CREATE INVOICE FULL FIXED UI
 
                 <div class="mb-2">
 
-                    <small>Manager Paid</small>
+                    <small>Manager Paid to Admin</small>
 
                     <input
-                        type="number"
+                        type="text"
                         name="manager_paid_amount"
                         class="form-control mobile-input"
                     >
@@ -946,7 +946,7 @@ CREATE INVOICE FULL FIXED UI
 
                 <div class="mb-2">
 
-                    <small>Manager Method</small>
+                    <small>Manager Payment Method</small>
 
                     <select
                         name="manager_payment_method"
@@ -957,7 +957,9 @@ CREATE INVOICE FULL FIXED UI
                         <option value="Cash">Cash</option>
                         <option value="Bkash">Bkash</option>
                         <option value="Nagad">Nagad</option>
-
+                        <option value="Rocket">Rocket</option>
+                        <option value="Bank">Bank</option>
+                        <option value="Card">Card</option>
                     </select>
 
                 </div>
@@ -1196,7 +1198,7 @@ CREATE INVOICE FULL FIXED UI
 
             <div class="d-flex justify-content-between mb-1">
 
-                <small>Manager Paid</small>
+                <small>Manager Paid to Admin</small>
 
                 <strong>
                     ৳ <?= number_format($pay['manager_paid']) ?>
