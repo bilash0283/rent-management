@@ -19,6 +19,10 @@ $total_unit = mysqli_num_rows($unit_q);
 $tenant_q = mysqli_query($db, "SELECT * FROM tenants");
 $total_tenant = mysqli_num_rows($tenant_q);
 
+// users list data 
+$user_sql = mysqli_query($db,"SELECT * FROM `users` ");
+$total_users = mysqli_num_rows($user_sql);
+
 // ৪. বর্তমান মাসের সামারি (Bill, Paid, Due Calculation)
 $result = mysqli_query($db, "SELECT 
     SUM(total_amount) AS total_bill,
@@ -85,7 +89,7 @@ foreach ($monthly_totals as $month => $data) {
     <div class="main-content">
         <div class="row">
             <!-- Building Card -->
-            <div class="col-lg-4">
+            <div class="col-lg-3">
                 <a href="admin.php?page=building" class="text-decoration-none">
                     <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-body d-flex justify-content-between align-items-center">
@@ -105,8 +109,8 @@ foreach ($monthly_totals as $month => $data) {
             </div>
 
             <!-- Unit Card -->
-            <div class="col-lg-4">
-                <a href="admin.php?page=unit" class="text-decoration-none">
+            <div class="col-lg-3">
+                <a href="admin.php?page=unit&id=<?php echo $buill_id; ?>" class="text-decoration-none">
                     <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center gap-3">
@@ -125,8 +129,8 @@ foreach ($monthly_totals as $month => $data) {
             </div>
 
             <!-- Tenant Card -->
-            <div class="col-lg-4">
-                <a href="admin.php?page=tenant" class="text-decoration-none">
+            <div class="col-lg-3">
+                <a href="admin.php?page=tenant&building_id=<?php echo $buill_id; ?>" class="text-decoration-none">
                     <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center gap-3">
@@ -139,6 +143,26 @@ foreach ($monthly_totals as $month => $data) {
                                 </div>
                             </div>
                             <h3 class="fw-bold text-warning mb-0"><?= $total_tenant ?></h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Users Card -->
+            <div class="col-lg-3">
+                <a href="admin.php?page=users" class="text-decoration-none">
+                    <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="icon-circle bg-info-subtle text-info">
+                                    <i class="fas fa-user fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 fw-bold text-dark">Total Users</h6>
+                                    <small class="text-muted">Currently Active Users</small>
+                                </div>
+                            </div>
+                            <h3 class="fw-bold text-info mb-0 ml-2"><?= $total_users ?></h3>
                         </div>
                     </div>
                 </a>
