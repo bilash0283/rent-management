@@ -167,7 +167,7 @@ $result = mysqli_query($db, $sql) or die("Query Failed : " . mysqli_error($db));
     }
 </style>
 
-<div class="nxl-content">
+<div class="nxl-content mx-2 mt-2">
 
     <!-- HEADER -->
     <div class="top-header-mobile">

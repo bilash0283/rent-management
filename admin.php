@@ -7,60 +7,60 @@
 
     switch ($page) {
         case 'building':
-            include 'pages/building.php';
-            break;
+            include 'pages/Building.php';
+        break;
 
         case 'CreateBuilding':
             include 'pages/CreateBuilding.php';
-            break;
+        break;
 
         case 'unit':
             include 'pages/Unit.php';
-            break;
+        break;
 
         case 'CreateUnit':
             include 'pages/CreateUnit.php';
-            break;
+        break;
 
         case 'tenant':
             include 'pages/Tenant.php';
-            break;
+        break;
 
         case 'CreateTenant':
             include 'pages/CreateTenant.php';
-            break;
+        break;
 
         case 'view_tenant':
             include 'pages/view_tenant.php';
-            break;
+        break;
 
         case 'bill':
             include 'pages/Bill.php';
-            break;
+        break;
 
         case 'editbill':
             include 'pages/EditBill.php';
-            break;
+        break;
 
         case 'setting':
             include 'pages/Setting.php';
-            break;
+        break;
 
         case 'Agreement':
             include 'pages/Agreement.php';
-            break;
+        break;
 
         case 'invoice':
             include 'pages/invoice.php';
-            break;
+        break;
 
         case 'profile':
             include 'pages/profile.php';
-            break;
+        break;
 
         case 'users':
             include 'pages/users.php';
-            break;
+        break;
 
         case 'viewInvoice':
             include 'pages/view_incoice.php';
@@ -106,13 +106,17 @@
             include 'pages/delete_payment.php';
         break;
 
-        case 'update_invoice':
-            include 'pages/update_invoice.php';
+        case 'UpdateInvoice':
+            include 'pages/UpdateInvoice.php';
+        break;
+
+        case 'DeleteInvoice':
+            include 'pages/DeleteInvoice.php';
         break;
 
         default:
             include 'pages/dashboard.php';
-            break;
+        break;
     }
     ?>
 
