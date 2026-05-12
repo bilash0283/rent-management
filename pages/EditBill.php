@@ -1109,14 +1109,19 @@ CREATE INVOICE FULL FIXED UI
                     href="admin.php?page=viewInvoice&unit_id=<?= $unit_id ?>&invoice_id=<?= $inv['id'] ?>"
                     class="btn btn-success btn-sm"
                 >
-                    View
+                    <i class="bi bi-eye"></i>
                 </a>
 
                 <a
-                    href="admin.php?page=update_invoice&unit_id=<?= $unit_id ?>&invoice_id=<?= $inv['id'] ?>"
-                    class="btn btn-primary btn-sm"
+                    href="admin.php?page=UpdateInvoice&unit_id=<?= $unit_id ?>&invoice_id=<?= $inv['id'] ?>"
+                    class="btn btn-info btn-sm"
                 >
-                    Edit
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+
+                <a href="admin.php?page=DeleteInvoice&unit_id=<?php echo $unit_id;?>&invoice_id=<?php echo $inv['id']; ?>"
+                    class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this Invoice ?');">
+                   <i class="bi bi-trash"></i>
                 </a>
 
             </div>

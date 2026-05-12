@@ -92,7 +92,7 @@ if (isset($_POST['update_invoice'])) {
 <div class="nxl-content">
     <div class="page-header d-flex justify-content-between align-items-center">
         <div class="page-header-left">
-            <h5 class="m-b-10">Update Invoice / #INV-<?php echo $invoice_id; ?> Unit id = <?= $unit_id ?></h5>
+            <h5 class="m-b-10">Update Invoice / #INV-<?php echo $invoice_id; ?></h5>
         </div>
         <div class="page-header-right">
             <a href="admin.php?page=editbill&unit_id=<?php echo $unit_id; ?>" class="btn btn-primary">Back</a>
