@@ -3,8 +3,8 @@ if (!isset($_GET['invoice_id']) || empty($_GET['invoice_id'])) {
     die("Invoice Id not Found!");
 }
 
-$invoice_id = intval($_GET['invoice_id']);
-$unit_id = isset($_GET['unit_id']) ? intval($_GET['unit_id']) : 0;
+$invoice_id = $_GET['invoice_id'];
+$unit_id = $_GET['unit_id'];
 
 // Fetch invoice data
 $stmt = $db->prepare("SELECT * FROM invoices WHERE id = ?");
@@ -35,8 +35,6 @@ $Others_month_db = $data['Others_month'];
 
 // Update invoice
 if (isset($_POST['update_invoice'])) {
-
-    // ইনপুট ভ্যালু রিসিভ করা
     $rent = intval($_POST['rent']);
     $Gas = intval($_POST['Gas']);
     $Water = intval($_POST['Water']);
@@ -97,7 +95,7 @@ if (isset($_POST['update_invoice'])) {
 <div class="nxl-content">
     <div class="page-header d-flex justify-content-between align-items-center">
         <div class="page-header-left">
-            <h5 class="m-b-10">Update Invoice / #INV-<?php echo $invoice_id; ?></h5>
+            <h5 class="m-b-10">Update Invoice / #INV-<?php echo $invoice_id; ?> Unit id = <?= $unit_id ?></h5>
         </div>
         <div class="page-header-right">
             <a href="admin.php?page=editbill&unit_id=<?php echo $unit_id; ?>" class="btn btn-primary">Back</a>
