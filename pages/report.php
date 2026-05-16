@@ -2,21 +2,11 @@
 // Default values
 $building_id = '';
 $current_year = date('Y');
-$from_month = date('Y-01'); // Default starts from January of current year
-$to_month = date('Y-m');    // Default to current month
 
 // Handle POST Filter
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['year']) && !empty($_POST['year'])) {
         $current_year = mysqli_real_escape_string($db, $_POST['year']);
-    }
-    
-    if (isset($_POST['from_month']) && !empty($_POST['from_month'])) {
-        $from_month = $current_year . '-' . mysqli_real_escape_string($db, $_POST['from_month']);
-    }
-    
-    if (isset($_POST['to_month']) && !empty($_POST['to_month'])) {
-        $to_month = $current_year . '-' . mysqli_real_escape_string($db, $_POST['to_month']);
     }
 
     if (isset($_POST['building']) && !empty($_POST['building'])) {
@@ -45,8 +35,6 @@ $total_unit = mysqli_num_rows($result);
 
 // Filter Condition for SQL (Used in multiple places)
 $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_month' ";
-$invoice_filter = " billing_month >= '$from_month' AND billing_month <= '$to_month' ";
-$filter_condication_two = "bill_month >= '$from_month' AND bill_month <= '$to_month' ";
 ?>
 
 <div class="nxl-content">

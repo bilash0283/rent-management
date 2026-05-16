@@ -324,9 +324,9 @@
         <!-- Footer -->
         <div class="footer-text">
             &copy; <?= date('Y') ?> Rent Manager |
-            Design by
-            <a href="https://bilash.ci-gsc.com/" target="_blank">
-                Bilash Kumar
+            Powered by
+            <a href="https://gsc.co.com/" target="_blank">
+                GSC
             </a>
         </div>
 
