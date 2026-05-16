@@ -53,71 +53,192 @@ $invoice_filter_condition = " inv.billing_month >= '$from_month' AND inv.billing
 ?>
 
 <div class="nxl-content">
-    <!-- Page Header -->
-    <div class="page-header d-flex flex-wrap align-items-center justify-content-between p-4 mb-4 bg-white shadow-sm rounded-3">
-        <div class="d-flex align-items-center mb-2 mb-lg-0">
-            <div class="icon-box bg-primary-soft text-primary me-3 p-3 rounded-circle" style="background: rgba(13, 110, 253, 0.1);">
-                <i class="fas fa-file-invoice-dollar fs-4"></i>
-            </div>
-            <div>
-                <h4 class="mb-1 fw-bold text-dark"><?= htmlspecialchars($building_name_db) ?></h4>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">
-                        <i class="fas fa-door-open me-1"></i> Total Units: <?= $total_unit ?>
-                    </span>
-                    <span class="text-muted small">
-                        <i class="far fa-calendar-alt me-1"></i> <?= date('M Y', strtotime($from_month)) ?> - <?= date('M Y', strtotime($to_month)) ?>
-                    </span>
+ <!-- Page Header Card -->
+<div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
+    <div class="card-body p-3 p-md-4">
+        <div class="d-flex flex-column flex-xl-row align-items-start align-items-xl-center justify-content-between gap-4">
+            
+            <!-- Left Side: Building Info Dashboard -->
+            <div class="d-flex align-items-center w-100 w-xl-auto">
+                <div class="icon-box bg-primary bg-opacity-10 text-white me-3 p-3 rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 54px; height: 54px;">
+                    <i class="fas fa-file-invoice-dollar fs-4"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <h4 class="mb-1 fw-bold text-dark text-truncate" style="max-width: 100%;">
+                        <?= htmlspecialchars($building_name_db) ?>
+                    </h4>
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-2 small text-nowrap">
+                            <i class="fas fa-door-open me-1"></i> Total Units: <?= $total_unit ?>
+                        </span>
+                        <span class="text-muted small bg-light px-2 py-1 rounded-2 text-nowrap">
+                            <i class="far fa-calendar-alt me-1"></i> 
+                            <?= date('M Y', strtotime($from_month)) ?> - <?= date('M Y', strtotime($to_month)) ?>
+                        </span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Right Side: Pixel-Perfect Responsive Form -->
+            <div class="w-100 w-xl-auto">
+                <form method="POST" class="header-filter-form">
+                    
+                    <!-- Year Field -->
+                    <div class="filter-field-group field-year">
+                        <label class="form-label-custom">Year</label>
+                        <select name="year" class="form-select custom-select-input shadow-sm-custom">
+                            <?php for($y = date('Y'); $y >= 2024; $y--): ?>
+                                <option value="<?= $y ?>" <?= $y == $current_year ? 'selected' : '' ?>><?= $y ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+
+                    <!-- From Month Field -->
+                    <div class="filter-field-group field-month">
+                        <label class="form-label-custom">From Month</label>
+                        <select name="from_month" class="form-select custom-select-input shadow-sm-custom">
+                            <?php for ($m = 1; $m <= 12; $m++): 
+                                $mVal = str_pad($m, 2, '0', STR_PAD_LEFT);
+                                $selected = (substr($from_month, 5, 2) == $mVal) ? 'selected' : '';
+                            ?>
+                                <option value="<?= $mVal ?>" <?= $selected ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+
+                    <!-- To Month Field -->
+                    <div class="filter-field-group field-month">
+                        <label class="form-label-custom">To Month</label>
+                        <select name="to_month" class="form-select custom-select-input shadow-sm-custom">
+                            <?php for ($m = 1; $m <= 12; $m++): 
+                                $mVal = str_pad($m, 2, '0', STR_PAD_LEFT);
+                                $selected = (substr($to_month, 5, 2) == $mVal) ? 'selected' : '';
+                            ?>
+                                <option value="<?= $mVal ?>" <?= $selected ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+
+                    <!-- Building Field -->
+                    <div class="filter-field-group field-building">
+                        <label class="form-label-custom">Building</label>
+                        <select name="building" class="form-select custom-select-input shadow-sm-custom">
+                            <?php
+                            $buildings_sql = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
+                            while ($buil = mysqli_fetch_assoc($buildings_sql)) {
+                                $selected = ($buil['id'] == $building_id) ? 'selected' : '';
+                                echo "<option value='{$buil['id']}' $selected>{$buil['name']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="filter-field-group field-button">
+                        <button type="submit" class="btn btn-primary w-100 btn-filter-submit shadow-sm d-flex align-items-center justify-content-center gap-2 fw-medium transition-all">
+                            <i class="fas fa-filter fs-7"></i> <span>Filter</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
         </div>
-
-        <form method="POST" class="d-flex flex-wrap gap-2 align-items-center mt-2">
-            <!-- Year Selection -->
-            <select name="year" class="form-select form-select-sm shadow-sm" style="width: 100px;">
-                <?php for($y = date('Y'); $y >= 2024; $y--): ?>
-                    <option value="<?= $y ?>" <?= $y == $current_year ? 'selected' : '' ?>><?= $y ?></option>
-                <?php endfor; ?>
-            </select>
-
-            <!-- From Month -->
-            <select name="from_month" class="form-select form-select-sm shadow-sm" style="width: 120px;">
-                <?php for ($m = 1; $m <= 12; $m++): 
-                    $mVal = str_pad($m, 2, '0', STR_PAD_LEFT);
-                    $selected = (substr($from_month, 5, 2) == $mVal) ? 'selected' : '';
-                ?>
-                    <option value="<?= $mVal ?>" <?= $selected ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
-                <?php endfor; ?>
-            </select>
-
-            <span class="text-muted small">to</span>
-
-            <!-- To Month -->
-            <select name="to_month" class="form-select form-select-sm shadow-sm" style="width: 120px;">
-                <?php for ($m = 1; $m <= 12; $m++): 
-                    $mVal = str_pad($m, 2, '0', STR_PAD_LEFT);
-                    $selected = (substr($to_month, 5, 2) == $mVal) ? 'selected' : '';
-                ?>
-                    <option value="<?= $mVal ?>" <?= $selected ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
-                <?php endfor; ?>
-            </select>
-
-            <!-- Building Selection -->
-            <select name="building" class="form-select form-select-sm shadow-sm" style="width: 150px;">
-                <?php
-                $buildings_sql = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
-                while ($buil = mysqli_fetch_assoc($buildings_sql)) {
-                    $selected = ($buil['id'] == $building_id) ? 'selected' : '';
-                    echo "<option value='{$buil['id']}' $selected>{$buil['name']}</option>";
-                }
-                ?>
-            </select>
-
-            <button type="submit" class="btn btn-success  px-3 shadow-sm d-flex align-items-center gap-2">
-                <i class="fas fa-filter"></i> <span>Filter</span>
-            </button>
-        </form>
     </div>
+</div>
+
+<!-- Custom CSS Core Styles -->
+<style>
+    /* Custom Styling Core */
+    .shadow-sm-custom {
+        box-shadow: 0 2px 5px rgba(0,0,0,.03) !important;
+    }
+    .form-label-custom {
+        font-size: 0.785rem;
+        color: #6c757d;
+        margin-bottom: 5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        display: block;
+    }
+    .custom-select-input {
+        border-color: #e2e8f0;
+        padding: 0.52rem 0.85rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        color: #334155;
+        background-color: #fff;
+    }
+    .custom-select-input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+    }
+    .btn-filter-submit {
+        height: 40px;
+        border-radius: 8px;
+        padding: 0 1.5rem;
+        background-color: #0d6efd;
+        border: none;
+    }
+    .transition-all {
+        transition: all 0.2s ease-in-out;
+    }
+    .transition-all:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2) !important;
+    }
+
+    /* Professional Layout System (Flex-Grid CSS) */
+    .header-filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+    }
+    .filter-field-group {
+        flex: 1 1 calc(50% - 6px); /* মোবাইলে সমান ২ কলাম */
+    }
+    .filter-field-group.field-button {
+        flex: 1 1 100%; /* মোবাইলে বাটন ফুল উইডথ */
+    }
+
+    /* ছোট ও মাঝারি ডিভাইস (Tablets & Landscape Mobile) */
+    @media (min-width: 576px) {
+        .filter-field-group {
+            flex: 1 1 calc(33.333% - 8px);
+        }
+        .filter-field-group.field-building {
+            flex: 1 1 calc(66.666% - 8px); /* বিল্ডিং নাম বড় তাই বেশি জায়গা */
+        }
+        .filter-field-group.field-button {
+            flex: 1 1 100%;
+        }
+    }
+
+    /* ডেক্সটপ এবং বড় স্ক্রিন সংস্করণ (Perfect Single Line Alignment) */
+    @media (min-width: 1200px) {
+        .header-filter-form {
+            flex-wrap: nowrap; /* এক লাইনে লক থাকবে */
+            gap: 10px;
+        }
+        .filter-field-group {
+            flex: 0 0 auto;
+        }
+        .filter-field-group.field-year {
+            width: 95px;
+        }
+        .filter-field-group.field-month {
+            width: 125px;
+        }
+        .filter-field-group.field-building {
+            width: 165px;
+        }
+        .filter-field-group.field-button {
+            width: auto;
+        }
+    }
+</style>
 </div>
 
 <div class="main-content">
