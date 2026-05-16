@@ -72,8 +72,7 @@ $invoice_filter_condition = " inv.billing_month >= '$from_month' AND inv.billing
             </div>
         </div>
 
-        <!-- Filter Form -->
-        <form method="POST" class="d-flex flex-wrap gap-2 align-items-center">
+        <form method="POST" class="d-flex flex-wrap gap-2 align-items-center mt-2">
             <!-- Year Selection -->
             <select name="year" class="form-select form-select-sm shadow-sm" style="width: 100px;">
                 <?php for($y = date('Y'); $y >= 2024; $y--): ?>
@@ -114,7 +113,7 @@ $invoice_filter_condition = " inv.billing_month >= '$from_month' AND inv.billing
                 ?>
             </select>
 
-            <button type="submit" class="btn btn-success btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
+            <button type="submit" class="btn btn-success  px-3 shadow-sm d-flex align-items-center gap-2">
                 <i class="fas fa-filter"></i> <span>Filter</span>
             </button>
         </form>
