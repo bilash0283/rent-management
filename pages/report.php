@@ -3,6 +3,10 @@
 $building_id = '';
 $current_year = date('Y');
 
+// ডিফল্ট মান: চলতি বছরের জানুয়ারি থেকে বর্তমান মাস পর্যন্ত
+$from_month = $current_year . '-01';
+$to_month = date('Y-m'); 
+
 // Handle POST Filter
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['year']) && !empty($_POST['year'])) {
@@ -11,6 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['building']) && !empty($_POST['building'])) {
         $building_id = mysqli_real_escape_string($db, $_POST['building']);
+    }
+
+    // মাস এবং বছরকে একসাথে জোড়া লাগিয়ে YYYY-MM ফরম্যাটে রূপান্তর
+    if (isset($_POST['from_month']) && !empty($_POST['from_month'])) {
+        $from_month = $current_year . '-' . mysqli_real_escape_string($db, $_POST['from_month']);
+    }
+    if (isset($_POST['to_month']) && !empty($_POST['to_month'])) {
+        $to_month = $current_year . '-' . mysqli_real_escape_string($db, $_POST['to_month']);
     }
 }
 
@@ -33,8 +45,11 @@ $query = "SELECT * FROM unit WHERE building_name = '$building_id' AND status = '
 $result = mysqli_query($db, $query);
 $total_unit = mysqli_num_rows($result);
 
-// Filter Condition for SQL (Used in multiple places)
+// Filter Condition for SQL (payment_history টেবিলের জন্য এলিয়াস ph সহ)
 $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_month' ";
+
+// invoices টেবিলের জন্য এলিয়াস inv সহ আলাদা কন্ডিশন
+$invoice_filter_condition = " inv.billing_month >= '$from_month' AND inv.billing_month <= '$to_month' ";
 ?>
 
 <div class="nxl-content">
@@ -55,54 +70,54 @@ $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_m
                     </span>
                 </div>
             </div>
-
-            <!-- Filter Form -->
-            <form method="POST" class="d-flex flex-wrap gap-2 align-items-center">
-                <!-- Year Selection -->
-                <select name="year" class="form-select form-select-sm shadow-sm" style="width: 100px;">
-                    <?php for($y = date('Y'); $y >= 2024; $y--): ?>
-                        <option value="<?= $y ?>" <?= $y == $current_year ? 'selected' : '' ?>><?= $y ?></option>
-                    <?php endfor; ?>
-                </select>
-
-                <!-- From Month -->
-                <select name="from_month" class="form-select form-select-sm shadow-sm" style="width: 100px;">
-                    <?php for ($m = 1; $m <= 12; $m++): 
-                        $mVal = str_pad($m, 2, '0', STR_PAD_LEFT);
-                        $selected = (substr($from_month, 5, 2) == $mVal) ? 'selected' : '';
-                    ?>
-                        <option value="<?= $mVal ?>" <?= $selected ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
-                    <?php endfor; ?>
-                </select>
-
-                <span class="text-muted small">to</span>
-
-                <!-- To Month -->
-                <select name="to_month" class="form-select form-select-sm shadow-sm" style="width: 100px;">
-                    <?php for ($m = 1; $m <= 12; $m++): 
-                        $mVal = str_pad($m, 2, '0', STR_PAD_LEFT);
-                        $selected = (substr($to_month, 5, 2) == $mVal) ? 'selected' : '';
-                    ?>
-                        <option value="<?= $mVal ?>" <?= $selected ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
-                    <?php endfor; ?>
-                </select>
-
-                <!-- Building Selection -->
-                <select name="building" class="form-select form-select-sm shadow-sm" style="width: 120px;">
-                    <?php
-                    $buildings_sql = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
-                    while ($buil = mysqli_fetch_assoc($buildings_sql)) {
-                        $selected = ($buil['id'] == $building_id) ? 'selected' : '';
-                        echo "<option value='{$buil['id']}' $selected>{$buil['name']}</option>";
-                    }
-                    ?>
-                </select>
-
-                <button type="submit" class="btn btn-success btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
-                    <i class="fas fa-filter"></i> <span>Filter</span>
-                </button>
-            </form>
         </div>
+
+        <!-- Filter Form -->
+        <form method="POST" class="d-flex flex-wrap gap-2 align-items-center">
+            <!-- Year Selection -->
+            <select name="year" class="form-select form-select-sm shadow-sm" style="width: 100px;">
+                <?php for($y = date('Y'); $y >= 2024; $y--): ?>
+                    <option value="<?= $y ?>" <?= $y == $current_year ? 'selected' : '' ?>><?= $y ?></option>
+                <?php endfor; ?>
+            </select>
+
+            <!-- From Month -->
+            <select name="from_month" class="form-select form-select-sm shadow-sm" style="width: 120px;">
+                <?php for ($m = 1; $m <= 12; $m++): 
+                    $mVal = str_pad($m, 2, '0', STR_PAD_LEFT);
+                    $selected = (substr($from_month, 5, 2) == $mVal) ? 'selected' : '';
+                ?>
+                    <option value="<?= $mVal ?>" <?= $selected ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
+                <?php endfor; ?>
+            </select>
+
+            <span class="text-muted small">to</span>
+
+            <!-- To Month -->
+            <select name="to_month" class="form-select form-select-sm shadow-sm" style="width: 120px;">
+                <?php for ($m = 1; $m <= 12; $m++): 
+                    $mVal = str_pad($m, 2, '0', STR_PAD_LEFT);
+                    $selected = (substr($to_month, 5, 2) == $mVal) ? 'selected' : '';
+                ?>
+                    <option value="<?= $mVal ?>" <?= $selected ?>><?= date('F', mktime(0, 0, 0, $m, 1)) ?></option>
+                <?php endfor; ?>
+            </select>
+
+            <!-- Building Selection -->
+            <select name="building" class="form-select form-select-sm shadow-sm" style="width: 150px;">
+                <?php
+                $buildings_sql = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
+                while ($buil = mysqli_fetch_assoc($buildings_sql)) {
+                    $selected = ($buil['id'] == $building_id) ? 'selected' : '';
+                    echo "<option value='{$buil['id']}' $selected>{$buil['name']}</option>";
+                }
+                ?>
+            </select>
+
+            <button type="submit" class="btn btn-success btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
+                <i class="fas fa-filter"></i> <span>Filter</span>
+            </button>
+        </form>
     </div>
 </div>
 
@@ -137,13 +152,12 @@ $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_m
             FROM invoices inv
             JOIN tenants t ON inv.tenant_id = t.id
             WHERE t.building_id = '$building_id' 
-            AND inv.billing_month = '$this_month'
+            AND $invoice_filter_condition
         ");
 
         if ($pay_info && $row = mysqli_fetch_assoc($pay_info)) {
             $total_bill_amount = (float)$row['total_bill'];
             $paid_amount_db_amount = (float)$row['total_paid'];
-            
             $due_amount_db_amount = $total_bill_amount - $paid_amount_db_amount;
         }
     ?>
@@ -154,7 +168,7 @@ $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_m
             <div class="card shadow-sm border-0 bg-primary text-white">
                 <div class="card-body text-center">
                     <h6 class="mb-1 text-white">Total Amount</h6>
-                    <h4 class="mb-0 text-white"><?= number_format($total_bill_amount, 0) ?></h4>
+                    <h4 class="mb-0 text-white">৳ <?= number_format($total_bill_amount, 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -273,7 +287,8 @@ $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_m
                                 </td>
                                 <td style="font-size: 11px;">
                                     <?php
-                                    $pay_info = mysqli_query($db, "SELECT SUM(total_amount) as total, SUM(paid_amount) as paid FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND $invoice_filter");
+                                    // বিলিং টেবিলের জন্য ইনভয়েস কন্ডিশন ব্যবহার করা হয়েছে 
+                                    $pay_info = mysqli_query($db, "SELECT SUM(total_amount) as total, SUM(paid_amount) as paid FROM invoices inv WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND $invoice_filter_condition");
                                     $bill_data = mysqli_fetch_assoc($pay_info);
                                     if ($bill_data['total'] > 0) {
                                         echo "<span class='text-primary'>Total: ৳".number_format($bill_data['total'],0)."</span><br>";
@@ -287,7 +302,6 @@ $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_m
                                 </td>
                                 <td>
                                     <?php 
-                                    // Status logic based on range
                                     if ($bill_data['total'] > 0) {
                                         if ($bill_data['paid'] >= $bill_data['total']) echo '<span class="badge bg-success">Paid</span>';
                                         elseif ($bill_data['paid'] > 0) echo '<span class="badge bg-warning">Partial</span>';
@@ -297,7 +311,8 @@ $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_m
                                 </td>
                                 <td>
                                     <?php
-                                    $h_sql = mysqli_query($db, "SELECT * FROM payment_history WHERE tenant_id = '$tent_id' AND $filter_condication_two ");
+                                    // নির্দিষ্ট সময়ের পেমেন্ট হিস্ট্রি ডাটা ফিল্টার
+                                    $h_sql = mysqli_query($db, "SELECT * FROM payment_history ph WHERE tenant_id = '$tent_id' AND $filter_condition LIMIT 1");
                                     if ($h_row = mysqli_fetch_assoc($h_sql)) {
                                         echo "<small class='text-success fw-bold' style='font-size:10px;'>{$h_row['payment_method']}</small><br>";
                                         echo "<small style='font-size:9px;'>Date: {$h_row['payment_date']}</small>";
