@@ -114,6 +114,10 @@
             include 'pages/DeleteInvoice.php';
         break;
 
+        case 'inactive_tenant':
+            include 'pages/inactive_tenant.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
         break;

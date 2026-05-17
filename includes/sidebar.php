@@ -167,6 +167,13 @@ while($row = mysqli_fetch_assoc($result)) {
                             </ul>
                         </li>
 
+                        <li class="nxl-item nxl-hasmenu">
+                            <a href="admin.php?page=inactive_tenant&building_id=<?= htmlspecialchars($id) ?>" class="nxl-link">
+                                <span class="nxl-micon"><i class="feather-users text-info"></i></span>
+                                <span class="nxl-mtext">Inactive Tenant</span>
+                            </a>
+                        </li>
+
                     </ul>
                 </li>
                 
