@@ -46,7 +46,6 @@ $total_unit = mysqli_num_rows($result);
 <div class="nxl-content">
     <!-- Page Header -->
     <div class="page-header d-flex flex-wrap align-items-center justify-content-between p-4 mb-4 bg-white shadow-sm rounded-3">
-
         <div class="d-flex align-items-center mb-2 mb-lg-0">
             <div class="icon-box bg-primary-soft text-primary me-3 p-3 rounded-circle"
                 style="background: rgba(13, 110, 253, 0.1);">
