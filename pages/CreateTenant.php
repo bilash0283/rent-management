@@ -65,6 +65,8 @@ if (isset($_POST['save_tenant'])) {
     $unit     = $_POST['unit'];
     $start_tanent = $_POST['start_tanent'];
     $nid_no   = $_POST['nid_no'];
+    $status   = $_POST['status'];
+    $booking_month = $_POST['booking_month'];
 
     $tenant_img = $_POST['old_tenant_image'];
     if (!empty($_FILES['tenant_image']['name'])) {
@@ -90,6 +92,8 @@ if (isset($_POST['save_tenant'])) {
                 name='$name',
                 phone='$phone',
                 email='$email',
+                status='$status',
+                booking_month='$booking_month',
                 start_tanent='$start_tanent',
                 nid_no='$nid_no',
                 permanent_address='$address',
@@ -106,13 +110,12 @@ if (isset($_POST['save_tenant'])) {
         // ADD TENANT
         mysqli_query($db, "
             INSERT INTO tenants
-            (name, phone, email, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id, start_tanent, nid_no)
+            (name, phone, email, status, booking_month, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id, start_tanent, nid_no)
             VALUES
-            ('$name','$phone','$email','$address','$family','$tenant_img','$nid_img','$building','$unit','$start_tanent','$nid_no')
+            ('$name','$phone','$email', '$status', '$booking_month', '$address','$family','$tenant_img','$nid_img','$building','$unit','$start_tanent','$nid_no')
         ");
 
         mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");
-
         $message = "<div class='alert alert-success'>Tenant added successfully</div>";
     }
 }
