@@ -51,20 +51,24 @@
 
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">
-            <?php 
-                $sql_building = "SELECT * FROM building  ";
-                $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
-                while($buil = mysqli_fetch_assoc($result_building)){
-                $buil_id   = $buil['id'];
-                $buil_name = $buil['name'];
-                echo $buil_name.' - '.$count_row.' / Tenant Manage';
-                }
-            ?>
-        </h5>
+        <form action="" method="POST" class="d-flex align-items-center justify-content-between gap-3">
+            <select name="select_building" id="select_building" class="form-control custom-select">
+                <option value="" selected>All Building</option>
+                <?php 
+                    $sql_building = "SELECT * FROM building  ";
+                    $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
+                    while($buil = mysqli_fetch_assoc($result_building)){
+                    $buil_id   = $buil['id'];
+                    $buil_name = $buil['name'];
+                ?>
+                <option value="<?php echo $buil_id; ?>"><?php echo $buil_name; ?></option>
+                <?php } ?>
+            </select>
+            <button type="submit" class="btn btn-success">Filter</button>
+        </form>
 
         <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="btn btn-primary">
-            <i class="feather-plus me-1"></i> Create Tenant
+            <i class="feather-plus me-1"></i> Tenant
         </a>
     </div>
 
