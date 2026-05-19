@@ -154,24 +154,22 @@ while($row = mysqli_fetch_assoc($result)) {
                                 <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
                             </a>
                             <ul class="nxl-submenu">
-                                <?php foreach($buildings as $row): 
-                                    $id   = $row['id'];
-                                    $name = $row['name'] ?? 'Unnamed';
-                                ?>
-                                    <li class="nxl-item">
-                                        <a class="nxl-link" href="admin.php?page=tenant&building_id=<?= htmlspecialchars($id) ?>">
-                                            <?= htmlspecialchars($name) ?>
-                                        </a>
-                                    </li>
-                                <?php endforeach; ?>
+                                <li class="nxl-item nxl-hasmenu">
+                                    <a href="admin.php?page=tenant&status=Active" class="nxl-link">
+                                        <span class="nxl-mtext">Active Tenant</span>
+                                    </a>
+                                </li>
+                                <li class="nxl-item nxl-hasmenu">
+                                    <a href="admin.php?page=tenant&status=Inactive" class="nxl-link">
+                                        <span class="nxl-mtext">Inactive Tenant</span>
+                                    </a>
+                                </li>
+                                <li class="nxl-item nxl-hasmenu">
+                                    <a href="admin.php?page=tenant&status=Booked" class="nxl-link">
+                                        <span class="nxl-mtext">Booked Tenant</span>
+                                    </a>
+                                </li>
                             </ul>
-                        </li>
-
-                        <li class="nxl-item nxl-hasmenu">
-                            <a href="admin.php?page=inactive_tenant&building_id=<?= htmlspecialchars($id) ?>" class="nxl-link">
-                                <span class="nxl-micon"><i class="feather-users text-info"></i></span>
-                                <span class="nxl-mtext">Inactive Tenant</span>
-                            </a>
                         </li>
 
                     </ul>

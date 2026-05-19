@@ -1,14 +1,11 @@
 <?php
-   if(isset($_GET['building_id'])){
-        $building_id_get = $_GET['building_id'];
-          // Fetch all units
-        $query_sql  = "SELECT * FROM unit wHERE building_name = '$building_id_get' ORDER BY id DESC";
-        $result_bul = mysqli_query($db, $query_sql);
 
-        if (!$result_bul) {
-            die("Query Failed: " . mysqli_error($db));
-        }
+    if(!isset($_GET['status'])){
+        echo '<div class="alert alert-danger">Tenant Status Not Found !</div>';
+    }else{
+        $status = $_GET['status'];
     }
+
     $message = "";
 
     /* ================= DELETE TENANT ================= */
@@ -52,17 +49,14 @@
     }
 
     /* ================= FETCH TENANTS ================= */
-    $query = "
-        SELECT 
-        u.*, 
-        t.*, 
-        b.name AS building_name
-        FROM unit u
-        JOIN building b ON u.building_name = b.id
-        LEFT JOIN tenants t ON t.unit_id = u.id
-        WHERE u.building_name = '$building_id_get' AND t.status = 'Active'
-        ORDER BY u.unit_name ASC;
-    ";
+    $query = "SELECT * FROM tenants WHERE ";
+    if(isset($_POST['filter_btn'])){
+        if($_POST['select_building'] != 'all'){
+            $select_building = $_POST['select_building'];
+            $query = $query."building_id = '$select_building' AND ";
+        }
+    }
+    $query =  $query ." status = '$status' ";
     $result = mysqli_query($db, $query);
     $count_row = mysqli_num_rows($result);
 ?>
@@ -71,20 +65,24 @@
 
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
-        <h5 class="mb-0">
-            <?php 
-                $sql_building = "SELECT * FROM building WHERE id = $building_id_get ";
-                $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
-                while($buil = mysqli_fetch_assoc($result_building)){
-                $buil_id   = $buil['id'];
-                $buil_name = $buil['name'];
-                echo $buil_name.' - '.$count_row.' / Tenant Manage';
-                }
-            ?>
-        </h5>
+        <form action="" method="POST" class="d-flex align-items-center justify-content-between gap-3">
+            <select name="select_building" id="select_building" class="form-control custom-select">
+                <option value="all" selected>All Building</option>
+                <?php 
+                    $sql_building = "SELECT * FROM building  ";
+                    $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
+                    while($buil = mysqli_fetch_assoc($result_building)){
+                    $buil_id   = $buil['id'];
+                    $buil_name = $buil['name'];
+                ?>
+                <option value="<?php echo $buil_id; ?>" <?php if(isset($_POST['select_building']) && $_POST['select_building'] == $buil_id){echo "selected";} ?>><?php echo $buil_name; ?></option>
+                <?php } ?>
+            </select>
+            <button type="submit" class="btn btn-success" name="filter_btn">Filter</button>
+        </form>
 
         <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="btn btn-primary">
-            <i class="feather-plus me-1"></i> Create Tenant
+            <i class="feather-plus me-1"></i> Tenant
         </a>
     </div>
 
@@ -92,7 +90,7 @@
     <div class="main-content">
         <div class="card shadow-sm">
             <div class="card-header">
-                <h6 class="mb-0">Tenant List</h6>
+                <h6 class="mb-0"><?= $status; ?> Tenant List - <?= $count_row; ?></h6>
                 <?= $message ?>
             </div>
 
@@ -113,8 +111,10 @@
 
                         <tbody>
                         <?php if (mysqli_num_rows($result) > 0): ?>
-                            <?php while ($row = mysqli_fetch_assoc($result)): ?>
-
+                            <?php while ($row = mysqli_fetch_assoc($result)): 
+                                    $unit_id = $row['unit_id'];
+                                    $building_id = $row['building_id'];
+                                ?>
                                 <?php
                                     $image = !empty($row['tenant_image'])
                                     ? "public/uploads/tenants/" . $row['tenant_image']
@@ -128,15 +128,43 @@
                                              style="object-fit:cover;border-radius:6px;border-radius:50%;">
                                     </td>
 
-                                    <td><?= htmlspecialchars($row['unit_name']) ?></td>
+                                    <td>
+                                        <?php 
+                                            $unit = mysqli_query($db,"SELECT unit_name FROM unit WHERE id = '$unit_id' ");
+                                            $unit_row = mysqli_fetch_assoc($unit);
+                                            echo $unit_row['unit_name'];
+                                        ?>
+                                    </td>
+
                                     <td><a href="admin.php?page=view_tenant&id=<?= $row['id'] ?>" class="text-secendary fw-bold"><?= htmlspecialchars($row['name']) ?></a></td>
                                     <td><?= htmlspecialchars($row['phone']) ?></td>
-                                    <td><?= htmlspecialchars($row['building_name']) ?></td>
 
                                     <td>
-                                        <span class="badge <?= $row['status']=='Rented' ? 'bg-danger' : 'bg-success' ?>">
-                                            <?= $row['status'] ?>
-                                        </span>
+                                        <?php
+                                            $building = mysqli_query($db,"SELECT name FROM building WHERE id = '$building_id' ");
+                                            $building_row = mysqli_fetch_assoc($building);
+                                            echo $building_row['name'];
+                                        ?>
+                                    </td>
+
+                                    <td>
+                                        <?php
+                                            $statusClass = '';
+
+                                            if($row['status'] == 'Active'){
+                                                $statusClass = 'bg-success';
+                                            }elseif($row['status'] == 'Inactive'){
+                                                $statusClass = 'bg-danger';
+                                            }elseif($row['status'] == 'Booked'){
+                                                $statusClass = 'bg-info';
+                                            }else{
+                                                $statusClass = 'bg-secondary';
+                                            }
+                                            ?>
+
+                                            <span class="badge <?= $statusClass; ?>">
+                                                <?= $row['status']; ?>
+                                            </span>
                                     </td>
 
                                     <td>
@@ -168,7 +196,7 @@
                         <?php else: ?>
                             <tr>
                                 <td colspan="7" class="text-center py-4 text-muted">
-                                    No tenants found
+                                    <?= $status; ?> Tenants Not Found
                                 </td>
                             </tr>
                         <?php endif; ?>
