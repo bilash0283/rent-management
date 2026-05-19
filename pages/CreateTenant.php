@@ -2,9 +2,9 @@
 $message = '';
 $editData = null;
 
-if(isset($_GET['building_id'])){
-    $building_id_get = $_GET['building_id'];
-}
+// if(isset($_GET['building_id'])){
+//     $building_id_get = $_GET['building_id'];
+// }
 
 /* ================= AJAX : LOAD UNIT ================= */
 if (isset($_POST['ajax']) && $_POST['ajax'] === 'get_units') {
@@ -166,9 +166,9 @@ if (isset($_POST['save_tenant'])) {
         <div class="col-md-6">
             <label for="start_tanent" class="p-2">Status <span class="text-danger">*</span></label>
             <select name="status" id="status" class="form-control custom-select" required>
-                <option value="Active" <?php if($editData['status'] == 'Active'){echo 'selected';} ?> >Active</option>
-                <option value="Inactive" <?php if($editData['status'] == 'Inactive'){echo 'selected';} ?> >Inactive</option>
-                <option value="Booked" <?php if($editData['status'] == 'Booked'){echo 'selected';} ?> >Booked</option>
+                <option value="Active" <?php if(isset($editData['status']) && $editData['status'] == 'Active'){echo 'selected';} ?> >Active</option>
+                <option value="Inactive" <?php if(isset($editData['status']) && $editData['status'] == 'Inactive'){echo 'selected';} ?> >Inactive</option>
+                <option value="Booked" <?php if(isset($editData['status']) && $editData['status'] == 'Booked'){echo 'selected';} ?> >Booked</option>
             </select>
         </div>
 

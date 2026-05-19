@@ -81,7 +81,7 @@
             <button type="submit" class="btn btn-success" name="filter_btn">Filter</button>
         </form>
 
-        <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="btn btn-primary">
+        <a href="admin.php?page=CreateTenant" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Tenant
         </a>
     </div>
@@ -189,7 +189,6 @@
                                             </a>
                                         </div>
                                     </td>
-
                                 </tr>
 
                             <?php endwhile; ?>
