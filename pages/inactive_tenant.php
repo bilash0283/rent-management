@@ -43,9 +43,11 @@
 
     /* ================= FETCH TENANTS ================= */
     $query = "SELECT * FROM tenants WHERE ";
-    if(isset($_POST['filter_btn']) && $_POST['select_building'] != 'all'){
-        $select_building = $_POST['select_building'];
-        $query = $query."building_id = '$select_building' AND ";
+    if(isset($_POST['filter_btn'])){
+        if($_POST['select_building'] != 'all'){
+            $select_building = $_POST['select_building'];
+            $query = $query."building_id = '$select_building' AND ";
+        }
     }
     $query =  $query ." status = 'Inactive' ";
     $result = mysqli_query($db, $query);
@@ -66,7 +68,7 @@
                     $buil_id   = $buil['id'];
                     $buil_name = $buil['name'];
                 ?>
-                <option value="<?php echo $buil_id; ?>" <?php if($_POST['select_building'] == $buil_id){echo "selected";} ?>><?php echo $buil_name; ?></option>
+                <option value="<?php echo $buil_id; ?>" <?php if(isset($_POST['select_building']) && $_POST['select_building'] == $buil_id){echo "selected";} ?>><?php echo $buil_name; ?></option>
                 <?php } ?>
             </select>
             <button type="submit" class="btn btn-success" name="filter_btn">Filter</button>
