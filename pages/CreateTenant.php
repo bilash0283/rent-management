@@ -128,34 +128,54 @@ if (isset($_POST['save_tenant'])) {
         <input type="hidden" name="old_nid_image" value="<?= $editData['nid_image'] ?? '' ?>">
 
         <div class="col-md-6">
+            <label for="name" class="p-2 ">Name <span class="text-danger">*</span></label>
             <input type="text" name="name" class="form-control" value="<?= $editData['name'] ?? '' ?>" placeholder="Tenant Name" required>
         </div>
 
         <div class="col-md-6">
+            <label for="phone" class="p-2 ">Phone Number <span class="text-danger">*</span></label>
             <input type="text" name="phone" class="form-control" value="<?= $editData['phone'] ?? '' ?>" placeholder="Phone" required>
         </div>
 
         <div class="col-md-6">
+            <label for="email" class="p-2 ">Email </label>
             <input type="email" name="email" class="form-control" value="<?= $editData['email'] ?? '' ?>" placeholder="Email">
         </div>
 
         <div class="col-md-6">
+            <label for="family" class="p-2 ">Family Member</label>
             <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>" placeholder="Family Member">
         </div>
 
         <div class="col-12">
+            <label for="address" class="p-2 ">Address</label>
             <textarea name="address" class="form-control" placeholder="Permanent Address"><?= $editData['permanent_address'] ?? '' ?></textarea>
         </div>
         <div class="col-md-6">
-            <label for="start_tanent">Tenant Start Date</label>
+            <label for="start_tanent" class="p-2">Tenant Start Date <span class="text-danger">*</span> </label>
             <input type="date" name="start_tanent" class="form-control" value="<?php echo $editData['start_tanent'] ?>" placeholder="Start Tenant" required>
         </div>
         <div class="col-md-6">
-            <label for="nid_no">NID Number</label>
-            <input type="text" name="nid_no" class="form-control" value="<?php echo $editData['nid_no'] ?? '' ?>" placeholder="NID Number" required>
+            <label for="nid_no" class="p-2">NID Number </label>
+            <input type="text" name="nid_no" class="form-control" value="<?php echo $editData['nid_no'] ?? '' ?>" placeholder="NID Number" >
         </div>
 
         <div class="col-md-6">
+            <label for="start_tanent" class="p-2">Status <span class="text-danger">*</span></label>
+            <select name="status" id="status" class="form-control custom-select" required>
+                <option value="Active" <?php if($editData['status'] == 'Active'){echo 'selected';} ?> >Active</option>
+                <option value="Inactive" <?php if($editData['status'] == 'Inactive'){echo 'selected';} ?> >Inactive</option>
+                <option value="Booked" <?php if($editData['status'] == 'Booked'){echo 'selected';} ?> >Booked</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label for="nid_no" class="p-2">Booking Month</label>
+            <input type="month" name="booking_month" value="<?php echo $editData['booking_month'] ?>" class="form-control" placeholder="Booking Month" >
+        </div>
+
+        <div class="col-md-6">
+            <label for="building" class="p-2 ">Building <span class="text-danger">*</span></label>
             <select name="building" id="building" class="form-control" required>
                 <option value="">Select Building</option>
                 <?php
@@ -169,13 +189,14 @@ if (isset($_POST['save_tenant'])) {
         </div>
 
         <div class="col-md-6">
+            <label for="unit" class="p-2 ">Unit <span class="text-danger">*</span></label>
             <select name="unit" id="unit" class="form-control" required>
                 <option value="">Select Unit</option>
             </select>
         </div>
 
         <div class="col-md-6">
-            <label for="tenant_image" >Tenant Image</label>
+            <label for="tenant_image" class="p-2">Tenant Image</label>
             <?php if(!empty($editData['tenant_image'])){ ?>
             <img src="<?php echo 'public/uploads/tenants/'.$editData['tenant_image'] ?? 'No Image Found!' ?>" alt="" style="width:40px; border-radius:50%; height: 40px;">
             <?php } else {echo "<span class='text-danger'>Please Upload Image File!</span>";}?>
@@ -183,7 +204,7 @@ if (isset($_POST['save_tenant'])) {
         </div>
 
         <div class="col-md-6">
-            <label for="nid_image" >Nid Image</label>
+            <label for="nid_image" class="p-2">Nid Image</label>
             <?php if(!empty($editData['nid_image'])){ ?>
             <img src="<?php echo 'public/uploads/nid/'.$editData['nid_image'] ?? 'No Image Found!' ?>" alt="" style="width:40px; border-radius:50%; height: 40px;">
             <?php } else {echo "<span class='text-danger'>Please Upload Image File!</span>";}?>
