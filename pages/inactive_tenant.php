@@ -42,7 +42,12 @@
     }
 
     /* ================= FETCH TENANTS ================= */
-    $query = "SELECT * FROM tenants WHERE status = 'Inactive' ";
+    $query = "SELECT * FROM tenants WHERE ";
+    if(isset($_POST['filter_btn']) && $_POST['select_building'] != 'all'){
+        $select_building = $_POST['select_building'];
+        $query = $query."building_id = '$select_building' AND ";
+    }
+    $query =  $query ." status = 'Inactive' ";
     $result = mysqli_query($db, $query);
     $count_row = mysqli_num_rows($result);
 ?>
@@ -53,7 +58,7 @@
     <div class="page-header d-flex align-items-center justify-content-between">
         <form action="" method="POST" class="d-flex align-items-center justify-content-between gap-3">
             <select name="select_building" id="select_building" class="form-control custom-select">
-                <option value="" selected>All Building</option>
+                <option value="all" selected>All Building</option>
                 <?php 
                     $sql_building = "SELECT * FROM building  ";
                     $result_building = mysqli_query($db, $sql_building) or die("Query failed: " . mysqli_error($db));
@@ -61,10 +66,10 @@
                     $buil_id   = $buil['id'];
                     $buil_name = $buil['name'];
                 ?>
-                <option value="<?php echo $buil_id; ?>"><?php echo $buil_name; ?></option>
+                <option value="<?php echo $buil_id; ?>" <?php if($_POST['select_building'] == $buil_id){echo "selected";} ?>><?php echo $buil_name; ?></option>
                 <?php } ?>
             </select>
-            <button type="submit" class="btn btn-success">Filter</button>
+            <button type="submit" class="btn btn-success" name="filter_btn">Filter</button>
         </form>
 
         <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="btn btn-primary">
@@ -97,8 +102,10 @@
 
                         <tbody>
                         <?php if (mysqli_num_rows($result) > 0): ?>
-                            <?php while ($row = mysqli_fetch_assoc($result)): ?>
-
+                            <?php while ($row = mysqli_fetch_assoc($result)): 
+                                    $unit_id = $row['unit_id'];
+                                    $building_id = $row['building_id'];
+                                ?>
                                 <?php
                                     $image = !empty($row['tenant_image'])
                                     ? "public/uploads/tenants/" . $row['tenant_image']
@@ -112,10 +119,24 @@
                                              style="object-fit:cover;border-radius:6px;border-radius:50%;">
                                     </td>
 
-                                    <td><?= htmlspecialchars($row['unit_id']) ?></td>
+                                    <td>
+                                        <?php 
+                                            $unit = mysqli_query($db,"SELECT unit_name FROM unit WHERE id = '$unit_id' ");
+                                            $unit_row = mysqli_fetch_assoc($unit);
+                                            echo $unit_row['unit_name'];
+                                        ?>
+                                    </td>
+
                                     <td><a href="admin.php?page=view_tenant&id=<?= $row['id'] ?>" class="text-secendary fw-bold"><?= htmlspecialchars($row['name']) ?></a></td>
                                     <td><?= htmlspecialchars($row['phone']) ?></td>
-                                    <td><?= htmlspecialchars($row['building_id']) ?></td>
+
+                                    <td>
+                                        <?php
+                                            $building = mysqli_query($db,"SELECT name FROM building WHERE id = '$building_id' ");
+                                            $building_row = mysqli_fetch_assoc($building);
+                                            echo $building_row['name'];
+                                        ?>
+                                    </td>
 
                                     <td>
                                         <span class="badge <?= $row['status']=='Active' ? 'bg-success' : 'bg-danger' ?>">
