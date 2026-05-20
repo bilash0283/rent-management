@@ -121,7 +121,7 @@ if (isset($_POST['save_tenant'])) {
 }
 ?>
 
-<div class="container my-4 px-4">
+<div class="container mb-3 px-4">
     <h4 class="py-3"><?= $editData ? 'Update Tenant' : 'Add Tenant' ?></h4>
     <?= $message ?>
 
