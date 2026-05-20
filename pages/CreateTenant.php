@@ -46,10 +46,10 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'get_units') {
 
 /* ================= EDIT FETCH ================= */
 if (isset($_GET['edit_id'])) {
-    $id = (int)$_GET['edit_id'];
+    $id = (int)$_GET['edit_id'] ?? '';
     $q = mysqli_query($db, "SELECT * FROM tenants WHERE id=$id");
     $editData = mysqli_fetch_assoc($q);
-    $old_unit_id = $editData['unit_id'];
+    $old_unit_id = $editData['unit_id'] ?? '';
 }
 
 /* ================= ADD / UPDATE TENANT ================= */

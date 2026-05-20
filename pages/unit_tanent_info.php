@@ -186,9 +186,23 @@
                                     </td>
 
                                     <td>
-                                        <span class="badge p-1 <?= $row['status']=='Rented' ? 'bg-danger' : 'bg-success' ?>">
-                                            <?= $row['status'] ?>
-                                        </span>
+                                        <?php
+                                            $statusClass = '';
+
+                                            if($row['status'] == 'Active'){
+                                                $statusClass = 'bg-success';
+                                            }elseif($row['status'] == 'Inactive'){
+                                                $statusClass = 'bg-danger';
+                                            }elseif($row['status'] == 'Booked'){
+                                                $statusClass = 'bg-info';
+                                            }else{
+                                                // $statusClass = 'bg-secondary';
+                                            }
+                                            ?>
+
+                                            <span class="badge <?= $statusClass; ?>">
+                                                <?= $row['status']; ?>
+                                            </span>
                                     </td>
 
                                     <td>

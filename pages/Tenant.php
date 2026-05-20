@@ -158,7 +158,7 @@
                                             }elseif($row['status'] == 'Booked'){
                                                 $statusClass = 'bg-info';
                                             }else{
-                                                $statusClass = 'bg-secondary';
+                                                // $statusClass = 'bg-secondary';
                                             }
                                             ?>
 
