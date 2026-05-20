@@ -181,6 +181,13 @@
                                                 <i class="feather-edit"></i>
                                             </a>
 
+                                             <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>&building_id=<?= $building_id_get ?>"
+                                            class="btn btn-sm btn-light-info"
+                                            onclick="return confirm('Change Tenant Status ');"
+                                            title="Status Change">
+                                                <i class="feather-toggle-left"></i>
+                                            </a>
+
                                             <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>&building_id=<?= $building_id_get ?>"
                                             class="btn btn-sm btn-light-danger"
                                             onclick="return confirm('Are you sure?');"
