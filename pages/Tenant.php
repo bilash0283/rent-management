@@ -181,9 +181,8 @@
                                                 <i class="feather-edit"></i>
                                             </a>
 
-                                             <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>&building_id=<?= $building_id_get ?>"
+                                            <a href="admin.php?page=status_change&edit_id=<?= $row['id'] ?>"
                                             class="btn btn-sm btn-light-info"
-                                            onclick="return confirm('Change Tenant Status ');"
                                             title="Status Change">
                                                 <i class="feather-toggle-left"></i>
                                             </a>

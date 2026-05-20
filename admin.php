@@ -114,6 +114,10 @@
             include 'pages/DeleteInvoice.php';
         break;
 
+        case 'status_change':
+            include 'pages/status_change.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
         break;
