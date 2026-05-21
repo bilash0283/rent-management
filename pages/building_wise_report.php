@@ -532,7 +532,7 @@ $total_unit = mysqli_num_rows($result);
                                             <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button> -->
-                                            <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>"
+                                            <a href="admin.php?page=editbill&tenant_id=<?= $tent_id ?>"
                                                 class="text-end p-1 btn btn-sm btn-info" title="Invoice Create & Payment">
                                                 Details
                                             </a>

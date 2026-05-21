@@ -74,7 +74,7 @@ if (mysqli_num_rows($result) > 0) {
                             <p class="text-muted mb-3"><?= $phone ?></p>
                             <p class="text-muted mb-3"><?= $email ?></p>
                             <div class="d-flex justify-content-center gap-2 mb-4">
-                                <a href="admin.php?page=editbill&unit_id=<?= $unit_id; ?>" class="btn btn-outline-primary">
+                                <a href="admin.php?page=editbill&tenant_id=<?= $id; ?>" class="btn btn-outline-primary">
                                     <i class="fas fa-credit-card me-2"></i>Payment
                                 </a>
 

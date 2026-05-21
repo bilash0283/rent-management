@@ -135,14 +135,14 @@
                     Inactive
                 </option>
 
-                <option value="Booked"
+                <!-- <option value="Booked"
                     <?php 
                         if(isset($editData['status']) && $editData['status'] == 'Booked'){
                             echo 'selected';
                         } 
                     ?>>
                     Booked
-                </option>
+                </option> -->
 
             </select>
         </div>

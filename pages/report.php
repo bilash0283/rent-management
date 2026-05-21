@@ -441,7 +441,7 @@ $invoice_filter_condition = " inv.billing_month >= '$from_month' AND inv.billing
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
-                                        <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>" class="btn btn-sm btn-info p-1">Details</a>
+                                        <a href="admin.php?page=editbill&tenant_id=<?= $tent_id ?>" class="btn btn-sm btn-info p-1">Details</a>
                                         <a href="admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>" class="btn btn-sm btn-success p-1"><i class="bi bi-send"></i></a>
                                     </div>
                                 </td>

@@ -1,6 +1,12 @@
 <?php
-if (isset($_GET['unit_id'])) {
-    $unit_id = $_GET['unit_id'];
+if (isset($_GET['tenant_id'])) {
+    $tent_id = $_GET['tenant_id'];
+
+    $tent_sqls = mysqli_query($db, "SELECT * FROM tenants WHERE id = '$tent_id' ");
+    while ($tent_rows = mysqli_fetch_assoc($tent_sqls)) {
+        $unit_id = $tent_rows['unit_id'];
+        $tent_name = $tent_rows['name'];
+    }
 }
 
 $query = "SELECT * FROM unit wHERE id = '$unit_id'";
@@ -22,11 +28,10 @@ $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_n
 $building_row = mysqli_fetch_assoc($building);
 $building_name_db = $building_row['name'];
 
-$tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' AND status = 'Active' ");
-while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
-    $tent_name = $tent_row['name'];
-    $tent_id = $tent_row['id'];
-}
+// $tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' AND status = 'Active' ");
+// while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
+   
+// }
 
 // Advace Save SQL 
 if (isset($_POST['advance_save'])) {
