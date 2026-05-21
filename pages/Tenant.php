@@ -56,7 +56,7 @@
             $query = $query."building_id = '$select_building' AND ";
         }
     }
-    $query =  $query ." status = '$status' ";
+    $query =  $query ." status = '$status' ORDER BY unit_id ASC ";
     $result = mysqli_query($db, $query);
     $count_row = mysqli_num_rows($result);
 ?>

@@ -22,7 +22,7 @@ $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_n
 $building_row = mysqli_fetch_assoc($building);
 $building_name_db = $building_row['name'];
 
-$tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
+$tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' AND status = 'Active' ");
 while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
     $tent_name = $tent_row['name'];
     $tent_id = $tent_row['id'];
