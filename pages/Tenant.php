@@ -187,7 +187,7 @@
                                                 <i class="feather-toggle-left"></i>
                                             </a>
 
-                                            <a href="admin.php?page=tenant&action=delete&delete_id=<?= $row['id'] ?>&building_id=<?= $building_id_get ?>"
+                                            <a href="admin.php?page=tenant&status=<?php echo $status; ?>&action=delete&delete_id=<?= $row['id'] ?>"
                                             class="btn btn-sm btn-light-danger"
                                             onclick="return confirm('Are you sure?');"
                                             title="Delete">

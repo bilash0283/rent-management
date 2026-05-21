@@ -2,18 +2,14 @@
 $message = '';
 $editData = null;
 
-// if(isset($_GET['building_id'])){
-//     $building_id_get = $_GET['building_id'];
-// }
-
 /* ================= AJAX : LOAD UNIT ================= */
 if (isset($_POST['ajax']) && $_POST['ajax'] === 'get_units') {
-
-    $building_id  = (int)$_POST['building_id'];
+    $building_id   = (int)$_POST['building_id'];
     $selected_unit = isset($_POST['selected_unit']) ? (int)$_POST['selected_unit'] : 0;
+    $status        = isset($_POST['status']) ? $_POST['status'] : 'Active'; // Default Active for add
 
     if ($selected_unit > 0) {
-        // EDIT MODE → Available + current rented unit
+        // EDIT MODE → Available + Current Unit
         $sql = "
             SELECT id, unit_name, rent, advance
             FROM unit
@@ -22,18 +18,28 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'get_units') {
             ORDER BY unit_name ASC
         ";
     } else {
-        // ADD MODE → Only available units
-        $sql = "
-            SELECT id, unit_name, rent, advance
-            FROM unit
-            WHERE building_name = $building_id
-            AND status = 'Available'
-            ORDER BY unit_name ASC
-        ";
+        // ADD MODE
+        if ($status === 'Booked') {
+            // Booked হলে সব ইউনিট
+            $sql = "
+                SELECT id, unit_name, rent, advance
+                FROM unit
+                WHERE building_name = $building_id
+                ORDER BY unit_name ASC
+            ";
+        } else {
+            // Active হলে শুধু Available
+            $sql = "
+                SELECT id, unit_name, rent, advance
+                FROM unit
+                WHERE building_name = $building_id
+                AND status = 'Available'
+                ORDER BY unit_name ASC
+            ";
+        }
     }
 
     $q = mysqli_query($db, $sql);
-
     echo '<option value="">Select Unit</option>';
     while ($row = mysqli_fetch_assoc($q)) {
         $selected = ($row['id'] == $selected_unit) ? 'selected' : '';
@@ -46,7 +52,7 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'get_units') {
 
 /* ================= EDIT FETCH ================= */
 if (isset($_GET['edit_id'])) {
-    $id = (int)$_GET['edit_id'] ?? '';
+    $id = (int)$_GET['edit_id'];
     $q = mysqli_query($db, "SELECT * FROM tenants WHERE id=$id");
     $editData = mysqli_fetch_assoc($q);
     $old_unit_id = $editData['unit_id'] ?? '';
@@ -54,39 +60,38 @@ if (isset($_GET['edit_id'])) {
 
 /* ================= ADD / UPDATE TENANT ================= */
 if (isset($_POST['save_tenant'])) {
+    $id              = $_POST['id'];
+    $name            = mysqli_real_escape_string($db, $_POST['name']);
+    $phone           = mysqli_real_escape_string($db, $_POST['phone']);
+    $email           = mysqli_real_escape_string($db, $_POST['email']);
+    $address         = mysqli_real_escape_string($db, $_POST['address']);
+    $family          = (int)$_POST['family'];
+    $building        = (int)$_POST['building'];
+    $unit            = (int)$_POST['unit'];
+    $start_tanent    = $_POST['start_tanent'];
+    $nid_no          = mysqli_real_escape_string($db, $_POST['nid_no']);
+    $status          = $_POST['status'];
+    $booking_month   = $_POST['booking_month'];
 
-    $id       = $_POST['id'];
-    $name     = $_POST['name'];
-    $phone    = $_POST['phone'];
-    $email    = $_POST['email'];
-    $address  = $_POST['address'];
-    $family   = $_POST['family'];
-    $building = $_POST['building'];
-    $unit     = $_POST['unit'];
-    $start_tanent = $_POST['start_tanent'];
-    $nid_no   = $_POST['nid_no'];
-    $status   = $_POST['status'];
-    $booking_month = $_POST['booking_month'];
-
-    $tenant_img = $_POST['old_tenant_image'];
+    $tenant_img = $_POST['old_tenant_image'] ?? '';
     if (!empty($_FILES['tenant_image']['name'])) {
         $tenant_img = time().'_'.$_FILES['tenant_image']['name'];
         move_uploaded_file($_FILES['tenant_image']['tmp_name'], "public/uploads/tenants/".$tenant_img);
     }
 
-    $nid_img = $_POST['old_nid_image'];
+    $nid_img = $_POST['old_nid_image'] ?? '';
     if (!empty($_FILES['nid_image']['name'])) {
         $nid_img = time().'_'.$_FILES['nid_image']['name'];
         move_uploaded_file($_FILES['nid_image']['tmp_name'], "public/uploads/nid/".$nid_img);
     }
 
     if ($id) {
-
-        if($unit != $old_unit_id && !empty($unit)){
+        // UPDATE
+        if ($unit != $old_unit_id && !empty($unit)) {
             mysqli_query($db, "UPDATE unit SET status='Available' WHERE id=$old_unit_id");
             mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");
         }
-        // UPDATE TENANT
+
         mysqli_query($db, "
             UPDATE tenants SET
                 name='$name',
@@ -104,18 +109,18 @@ if (isset($_POST['save_tenant'])) {
                 unit_id='$unit'
             WHERE id=$id
         ");
-
         $message = "<div class='alert alert-success'>Tenant updated successfully</div>";
     } else {
-        // ADD TENANT
+        // ADD
         mysqli_query($db, "
-            INSERT INTO tenants
+            INSERT INTO tenants 
             (name, phone, email, status, booking_month, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id, start_tanent, nid_no)
-            VALUES
+            VALUES 
             ('$name','$phone','$email', '$status', '$booking_month', '$address','$family','$tenant_img','$nid_img','$building','$unit','$start_tanent','$nid_no')
         ");
-
-        mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");
+        if ($unit > 0) {
+            mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");
+        }
         $message = "<div class='alert alert-success'>Tenant added successfully</div>";
     }
 }
@@ -130,55 +135,60 @@ if (isset($_POST['save_tenant'])) {
         <input type="hidden" name="old_tenant_image" value="<?= $editData['tenant_image'] ?? '' ?>">
         <input type="hidden" name="old_nid_image" value="<?= $editData['nid_image'] ?? '' ?>">
 
+        <!-- Common Fields -->
         <div class="col-md-6">
-            <label for="name" class="p-2 ">Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" class="form-control" value="<?= $editData['name'] ?? '' ?>" placeholder="Tenant Name" required>
+            <label class="p-2">Name <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($editData['name'] ?? '') ?>" required>
+        </div>
+        <div class="col-md-6">
+            <label class="p-2">Phone Number <span class="text-danger">*</span></label>
+            <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($editData['phone'] ?? '') ?>" required>
         </div>
 
         <div class="col-md-6">
-            <label for="phone" class="p-2 ">Phone Number <span class="text-danger">*</span></label>
-            <input type="text" name="phone" class="form-control" value="<?= $editData['phone'] ?? '' ?>" placeholder="Phone" required>
+            <label class="p-2">Email</label>
+            <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($editData['email'] ?? '') ?>">
         </div>
-
         <div class="col-md-6">
-            <label for="email" class="p-2 ">Email </label>
-            <input type="email" name="email" class="form-control" value="<?= $editData['email'] ?? '' ?>" placeholder="Email">
-        </div>
-
-        <div class="col-md-6">
-            <label for="family" class="p-2 ">Family Member</label>
-            <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>" placeholder="Family Member">
+            <label class="p-2">Family Member</label>
+            <input type="number" name="family" class="form-control" value="<?= $editData['family_member'] ?? '' ?>">
         </div>
 
         <div class="col-12">
-            <label for="address" class="p-2 ">Address</label>
-            <textarea name="address" class="form-control" placeholder="Permanent Address"><?= $editData['permanent_address'] ?? '' ?></textarea>
-        </div>
-        <div class="col-md-6">
-            <label for="start_tanent" class="p-2">Tenant Start Date <span class="text-danger">*</span> </label>
-            <input type="date" name="start_tanent" class="form-control" value="<?php echo $editData['start_tanent'] ?>" placeholder="Start Tenant" required>
-        </div>
-        <div class="col-md-6">
-            <label for="nid_no" class="p-2">NID Number </label>
-            <input type="text" name="nid_no" class="form-control" value="<?php echo $editData['nid_no'] ?? '' ?>" placeholder="NID Number" >
+            <label class="p-2">Permanent Address</label>
+            <textarea name="address" class="form-control"><?= htmlspecialchars($editData['permanent_address'] ?? '') ?></textarea>
         </div>
 
         <div class="col-md-6">
-            <label for="start_tanent" class="p-2">Status <span class="text-danger">*</span></label>
-            <select name="status" id="status" class="form-control custom-select" required>
-                <option value="Active" <?php if(isset($editData['status']) && $editData['status'] == 'Active'){echo 'selected';} ?> >Active</option>
-                <option value="Inactive" <?php if(isset($editData['status']) && $editData['status'] == 'Inactive'){echo 'selected';} ?> >Inactive</option>
-                <option value="Booked" <?php if(isset($editData['status']) && $editData['status'] == 'Booked'){echo 'selected';} ?> >Booked</option>
+            <label class="p-2">Tenant Start Date <span class="text-danger">*</span></label>
+            <input type="date" name="start_tanent" class="form-control" value="<?= $editData['start_tanent'] ?? '' ?>" required>
+        </div>
+        <div class="col-md-6">
+            <label class="p-2">NID Number</label>
+            <input type="text" name="nid_no" class="form-control" value="<?= htmlspecialchars($editData['nid_no'] ?? '') ?>">
+        </div>
+
+        <!-- Status & Booking Month - Hide in Edit Mode -->
+        <?php if (!$editData): ?>
+        <div class="col-md-6">
+            <label class="p-2">Status <span class="text-danger">*</span></label>
+            <select name="status" id="status" class="form-control" required>
+                <option value="Active" <?= (isset($editData['status']) && $editData['status']=='Active') ? 'selected' : '' ?>>Active</option>
+                <option value="Booked" <?= (isset($editData['status']) && $editData['status']=='Booked') ? 'selected' : '' ?>>Booked</option>
             </select>
         </div>
-
         <div class="col-md-6">
-            <label for="nid_no" class="p-2">Booking Month</label>
-            <input type="month" name="booking_month" value="<?php echo $editData['booking_month'] ?>" class="form-control" placeholder="Booking Month" >
+            <label class="p-2">Booking Month</label>
+            <input type="month" name="booking_month" value="<?= $editData['booking_month'] ?? '' ?>" class="form-control">
         </div>
+        <?php else: ?>
+            <!-- Hidden fields for Edit Mode -->
+            <input type="hidden" name="status" value="<?= htmlspecialchars($editData['status'] ?? 'Active') ?>">
+            <input type="hidden" name="booking_month" value="<?= $editData['booking_month'] ?? '' ?>">
+        <?php endif; ?>
 
         <div class="col-md-6">
-            <label for="building" class="p-2 ">Building <span class="text-danger">*</span></label>
+            <label class="p-2">Building <span class="text-danger">*</span></label>
             <select name="building" id="building" class="form-control" required>
                 <option value="">Select Building</option>
                 <?php
@@ -192,25 +202,26 @@ if (isset($_POST['save_tenant'])) {
         </div>
 
         <div class="col-md-6">
-            <label for="unit" class="p-2 ">Unit <span class="text-danger">*</span></label>
+            <label class="p-2">Unit <span class="text-danger">*</span></label>
             <select name="unit" id="unit" class="form-control" required>
                 <option value="">Select Unit</option>
             </select>
         </div>
 
+        <!-- Images -->
         <div class="col-md-6">
-            <label for="tenant_image" class="p-2">Tenant Image</label>
-            <?php if(!empty($editData['tenant_image'])){ ?>
-            <img src="<?php echo 'public/uploads/tenants/'.$editData['tenant_image'] ?? 'No Image Found!' ?>" alt="" style="width:40px; border-radius:50%; height: 40px;">
-            <?php } else {echo "<span class='text-danger'>Please Upload Image File!</span>";}?>
+            <label class="p-2">Tenant Image</label>
+            <?php if(!empty($editData['tenant_image'])): ?>
+                <img src="public/uploads/tenants/<?= $editData['tenant_image'] ?>" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+            <?php endif; ?>
             <input type="file" name="tenant_image" class="form-control">
         </div>
 
         <div class="col-md-6">
-            <label for="nid_image" class="p-2">Nid Image</label>
-            <?php if(!empty($editData['nid_image'])){ ?>
-            <img src="<?php echo 'public/uploads/nid/'.$editData['nid_image'] ?? 'No Image Found!' ?>" alt="" style="width:40px; border-radius:50%; height: 40px;">
-            <?php } else {echo "<span class='text-danger'>Please Upload Image File!</span>";}?>
+            <label class="p-2">NID Image</label>
+            <?php if(!empty($editData['nid_image'])): ?>
+                <img src="public/uploads/nid/<?= $editData['nid_image'] ?>" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+            <?php endif; ?>
             <input type="file" name="nid_image" class="form-control">
         </div>
 
@@ -223,28 +234,44 @@ if (isset($_POST['save_tenant'])) {
 </div>
 
 <script>
-    function loadUnits(buildingID, selectedUnit = 0) {
-        $('#unit').html('<option>Loading...</option>');
-        $.post('', {
-            ajax: 'get_units',
-            building_id: buildingID,
-            selected_unit: selectedUnit
-        }, function (data) {
-            $('#unit').html(data);
-        });
+function loadUnits(buildingID, selectedUnit = 0, status = 'Active') {
+    if (!buildingID) {
+        $('#unit').html('<option value="">Select Unit</option>');
+        return;
     }
+    $('#unit').html('<option>Loading...</option>');
 
-    $('#building').on('change', function () {
-        loadUnits($(this).val());
+    $.post('', {
+        ajax: 'get_units',
+        building_id: buildingID,
+        selected_unit: selectedUnit,
+        status: status
+    }, function(data) {
+        $('#unit').html(data);
     });
+}
 
-    /* ===== AUTO LOAD UNIT ON EDIT ===== */
-    <?php if ($editData): ?>
-    $(document).ready(function () {
-        loadUnits(
-            <?= (int)$editData['building_id'] ?>,
-            <?= (int)$editData['unit_id'] ?>
-        );
-    });
-    <?php endif; ?>
+// Building Change
+$('#building').on('change', function() {
+    const status = $('#status').length ? $('#status').val() : 'Active';
+    loadUnits($(this).val(), 0, status);
+});
+
+// Status Change (Only for Add Mode)
+$('#status').on('change', function() {
+    const building = $('#building').val();
+    if (building) {
+        loadUnits(building, 0, $(this).val());
+    }
+});
+
+// Edit Mode - Auto Load Units
+<?php if ($editData): ?>
+$(document).ready(function() {
+    loadUnits(
+        <?= (int)$editData['building_id'] ?>,
+        <?= (int)$editData['unit_id'] ?>
+    );
+});
+<?php endif; ?>
 </script>
