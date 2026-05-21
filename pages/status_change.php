@@ -4,11 +4,22 @@
         $q = mysqli_query($db, "SELECT * FROM tenants WHERE id=$id");
         $editData = mysqli_fetch_assoc($q);
         $old_unit_id = $editData['unit_id'] ?? '';
-
-
-
-
     }
+
+    if (isset($_POST['save_tenant'])) {
+        $status   = $_POST['status'];
+        $booking_month = $_POST['booking_month'];
+
+        if($status == 'Active'){
+            echo "this is Active";
+        }else if($status == 'Inactive'){
+            echo "this is Inactive";
+        }else if ($status == 'Booked'){
+            echo "this is Booked";
+        }
+    }
+
+
 ?>
 
 <div class="container mb-3 px-4">

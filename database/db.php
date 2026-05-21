@@ -1,7 +1,6 @@
 
 <?php
-// $db = mysqli_connect('localhost', 'root', '', 'adminction_portal');
-$db = mysqli_connect("127.0.0.1","root","","rent_management",3307);
+$db = mysqli_connect("127.0.0.1","root","","rent_manager");
 
 if(!$db){
     echo "Database connection Error!";
