@@ -234,44 +234,44 @@ if (isset($_POST['save_tenant'])) {
 </div>
 
 <script>
-function loadUnits(buildingID, selectedUnit = 0, status = 'Active') {
-    if (!buildingID) {
-        $('#unit').html('<option value="">Select Unit</option>');
-        return;
-    }
-    $('#unit').html('<option>Loading...</option>');
+    function loadUnits(buildingID, selectedUnit = 0, status = 'Active') {
+        if (!buildingID) {
+            $('#unit').html('<option value="">Select Unit</option>');
+            return;
+        }
+        $('#unit').html('<option>Loading...</option>');
 
-    $.post('', {
-        ajax: 'get_units',
-        building_id: buildingID,
-        selected_unit: selectedUnit,
-        status: status
-    }, function(data) {
-        $('#unit').html(data);
+        $.post('', {
+            ajax: 'get_units',
+            building_id: buildingID,
+            selected_unit: selectedUnit,
+            status: status
+        }, function(data) {
+            $('#unit').html(data);
+        });
+    }
+
+    // Building Change
+    $('#building').on('change', function() {
+        const status = $('#status').length ? $('#status').val() : 'Active';
+        loadUnits($(this).val(), 0, status);
     });
-}
 
-// Building Change
-$('#building').on('change', function() {
-    const status = $('#status').length ? $('#status').val() : 'Active';
-    loadUnits($(this).val(), 0, status);
-});
+    // Status Change (Only for Add Mode)
+    $('#status').on('change', function() {
+        const building = $('#building').val();
+        if (building) {
+            loadUnits(building, 0, $(this).val());
+        }
+    });
 
-// Status Change (Only for Add Mode)
-$('#status').on('change', function() {
-    const building = $('#building').val();
-    if (building) {
-        loadUnits(building, 0, $(this).val());
-    }
-});
-
-// Edit Mode - Auto Load Units
-<?php if ($editData): ?>
-$(document).ready(function() {
-    loadUnits(
-        <?= (int)$editData['building_id'] ?>,
-        <?= (int)$editData['unit_id'] ?>
-    );
-});
-<?php endif; ?>
+    // Edit Mode - Auto Load Units
+    <?php if ($editData): ?>
+    $(document).ready(function() {
+        loadUnits(
+            <?= (int)$editData['building_id'] ?>,
+            <?= (int)$editData['unit_id'] ?>
+        );
+    });
+    <?php endif; ?>
 </script>
