@@ -6,12 +6,8 @@
             document.write(new Date().getFullYear());
         </script>
     </p>
-    <p><span>powered by : <a target="_blank" href="https://gsc.co.com"
-                target="_blank">GSC</a></span> </p>
-    <div class="d-flex align-items-center gap-4">
-        <a href="" class="fs-11 fw-semibold text-uppercase">Help</a>
-        <a href="" class="fs-11 fw-semibold text-uppercase">Terms</a>
-        <a href="" class="fs-11 fw-semibold text-uppercase">Privacy</a>
-    </div>
+    <p><span>powered by : <a target="_blank" class="text-info" href="https://gsc.co.com"
+                target="_blank">GSC</a></span> 
+    </p>
 </footer>
 <!-- [ Footer ] end -->
