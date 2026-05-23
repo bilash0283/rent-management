@@ -64,8 +64,8 @@
                                     <td><?= $i; ?></td>
                                     <td><?= $unit_name; ?></td>
                                     <td>
-                                        <?php
-                                        $sql_tenant = mysqli_query($db, "SELECT * FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' ");
+                                        <?php 
+                                        $sql_tenant = mysqli_query($db, "SELECT * FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' AND status = 'Active' ");
                                         while ($tent_row = mysqli_fetch_assoc($sql_tenant)) {
                                             $name = $tent_row['name'];
                                             $tent_id = $tent_row['id'];

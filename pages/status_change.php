@@ -69,11 +69,11 @@
                         // === UPDATE UNIT STATUS ===
                         mysqli_query($db, "
                             UPDATE unit 
-                            SET status = 'Active' 
+                            SET status = 'Rented' 
                             WHERE id = '$unit_id'
                         ");
 
-                        $message = "<div class='alert alert-success'>Tenant status updated successfully (Active).</div>";
+                        $message = "<div class='alert alert-success'>Tenant status updated successfully (Rented).</div>";
                     }
 
                 } 
