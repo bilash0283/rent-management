@@ -188,7 +188,7 @@ if ($calculated_due <= 0) {
                     <div class="bank-card p-3 rounded-3">
                         <p class="bank-title mb-1">BANK TRANSFER DETAILS</p>
                         <h6 class="fw-bold mb-0">MD MUSTAFIZUR RAHMAN</h6>
-                        <p class="account-number my-1">1503101624157001</p>
+                        <p class="text-info fw-bold" style="letter-spacing: 1px;">A/C: 1503101624157001</p>
                         <p class="small text-muted mb-0">BRAC BANK LTD | Moghbazar Branch</p>
                     </div>
                 </div>

@@ -216,6 +216,7 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                             Please complete the payment within <strong>7 days</strong> and share your deposit slip via WhatsApp at <strong>01715482363</strong>.
                         </p>
                         <div class="card border-0 p-3 bg-light rounded-3">
+                            <p class="text-primary fw-bold mb-1">BANK TRANSFER DETAILS</p>
                             <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
                             <div class="text-info fw-bold" style="letter-spacing: 1px;">A/C: 1503101624157001</div>
                             <small class="text-muted text-uppercase">BRAC BANK LTD | Moghbazar Branch</small>
