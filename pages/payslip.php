@@ -93,9 +93,14 @@ if ($calculated_due <= 0) {
             <?php endif; ?>
 
             <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4" style="position: relative; z-index: 2;">
-                <div>
-                    <h2 class="building-title mb-1"><?= $building_name_db; ?></h2>
-                    <p class="text-muted small mb-0 fw-600">PREMIUM HOUSING & PROPERTY MANAGEMENT</p>
+                <div class="d-flex">
+                    <div>
+                        <img src="public/assets/images/logo-full.png" alt="logo" style="width:60px; height:60px; border-radius:50%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <h2 class="building-title text-info mb-1"><?= $building_name_db; ?></h2>
+                        <p class="text-muted small mb-0 fw-600">PREMIUM HOUSING & PROPERTY MANAGEMENT</p>
+                    </div>
                 </div>
                 <div class="text-end">
                     <h1 class="payslip-label mb-0">PAY SLIP</h1>
@@ -161,7 +166,7 @@ if ($calculated_due <= 0) {
                         </div>
                         <div class="d-flex justify-content-between mb-2 border-top pt-2">
                             <span class="text-muted">Total Paid :</span>
-                            <span class="fw-bold text-primary"><?= number_format($calculated_total_paid, 0); ?> ৳</span>
+                            <span class="fw-bold text-info"><?= number_format($calculated_total_paid, 0); ?> ৳</span>
                         </div>
                         <?php if ($calculated_due > 0){ ?>
                             <div class="d-flex justify-content-between pt-2 border-top">

@@ -32,7 +32,7 @@ $building_name_db = $building_row['name'];
 $tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id'");
 while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
     $tent_name = $tent_row['name'];
-    $tent_id = $tent_row['id'];
+    $tenant_id = $tent_row['id'];
 }
 
 // ৪. ইনভয়েসের তথ্য আনা
@@ -47,13 +47,13 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $Gas_month_db = $pay_info_sh['Gas_month'];
     $Water_month_db = $pay_info_sh['Water_month'];
     $Electricity_month_db = $pay_info_sh['Electricity_month'];
-    $Others_month_db = $pay_info_sh['Others_month']; // ফিক্সড ভ্যারিয়েবল নাম
+    $Others_month_db = $pay_info_sh['Others_month']; 
     $created_at_db = $pay_info_sh['created_at'];
 }
 
 // ৫. অ্যাডভান্স বকেয়া হিসেব
 $total_advance_paid = 0;
-$advance_sql = mysqli_query($db, "SELECT SUM(paid_amount) as total FROM `advance` WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
+$advance_sql = mysqli_query($db, "SELECT SUM(paid_amount) as total FROM `advance` WHERE tenant_id = '$tenant_id' AND unit_id = '$unit_id'");
 $advance_res = mysqli_fetch_assoc($advance_sql);
 $total_advance_paid = $advance_res['total'] ?? 0;
 $payable_advance = max($advance - $total_advance_paid, 0);
@@ -70,21 +70,28 @@ $payable_advance = max($advance - $total_advance_paid, 0);
             <button id="generatePdfBtn" class="btn btn-success btn-sm">
                 <i class="feather-icon icon-download me-2"></i> Download
             </button>
-            <a href="admin.php?page=editbill&unit_id=<?= $unit_id ?>" class="btn btn-primary btn-sm">
+            <a href="admin.php?page=editbill&tenant_id=<?= $tenant_id ?>" class="btn btn-info btn-sm">
                 <i class="feather-icon icon-arrow-left me-1"></i>Back
             </a>
         </div>
     </div>
 
     <div class="mb-4">
-        <div id="pdf-content" class="agreement-paper bg-white border" style="padding:80px;">
-            <div class="card shadow-sm border-0">
+        <div id="pdf-content" class="agreement-paper bg-white border position-relative" style="padding:80px;">
+            <!-- লোগো ওয়াটারমার্ক (Watermark) -->
+            <div class="invoice-watermark">
+                <img src="public/assets/images/logo-full.png" alt="watermark">
+            </div>
+
+            <div class="card shadow-sm border-0 bg-transparent position-relative" style="z-index: 1;">
                 <div class="pt-4 px-4 d-flex justify-content-between align-items-start border-bottom pb-3">
-                    <div>
-                        <h4 class="fw-bold mb-1 text-uppercase"><?= $building_name_db ?? 'Building Name' ?></h4>
+                    <!-- টপ লেফট কোণায় ছোট রাউন্ডেড লোগো -->
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="public/assets/images/logo-full.png" alt="logo" style="width:60px; height:60px; border-radius:50%; object-fit: cover;">
+                        <h4 class="fw-bold mb-1 text-info text-uppercase m-0"><?= $building_name_db ?? 'Building Name' ?></h4>
                     </div>
                     <div>
-                        <h5 class="fw-bold text-primary mb-1">INVOICE</h5>
+                        <h5 class="fw-bold text-info mb-1">INVOICE</h5>
                         <small>ID : #INV-<?= $invoice_id ?></small>
                     </div>
                     <div class="text-end">
@@ -130,20 +137,16 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                                 foreach ($bill_items as $item) {
                                     $label = $item[0];
                                     $amount = $item[1];
-                                    $month_or_desc = $item[2]; // এটি এখন মাস অথবা বর্ণনা (Description) হতে পারে
+                                    $month_or_desc = $item[2]; 
 
                                     if (!empty($amount) && $amount > 0) {
                                         $current_month_total += $amount;
                                         
-                                        // চেক করা হচ্ছে এটি কি তারিখ নাকি সাধারণ টেক্সট
                                         if (!empty($month_or_desc)) {
-                                            //strtotime দিয়ে চেক করা হচ্ছে এটি বৈধ ডেট ফরম্যাট কি না
                                             $timestamp = strtotime($month_or_desc);
                                             if ($timestamp && (date('Y-m-d', $timestamp) === $month_or_desc || date('Y-m', $timestamp) === $month_or_desc || strlen($month_or_desc) <= 10)) {
-                                                // যদি তারিখ হয় (যেমন: 2024-05)
                                                 $display_text = date('M Y', $timestamp);
                                             } else {
-                                                // যদি সাধারণ টেক্সট হয় (যেমন: "Service Charge" বা অন্য কিছু)
                                                 $display_text = htmlspecialchars($month_or_desc);
                                             }
                                         } else {
@@ -161,9 +164,9 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                             </tbody>
                             <tfoot class="border-top">
                                 <tr class="table-light">
-                                    <td class="fw-bold py-2 text-primary">Current Month Total = </td>
+                                    <td class="fw-bold py-2 text-info">Current Month Total = </td>
                                     <td></td>
-                                    <td class="fw-bold py-2 text-end text-primary">৳ <?= number_format($current_month_total, 0) ?></td>
+                                    <td class="fw-bold py-2 text-end text-info">৳ <?= number_format($current_month_total, 0) ?></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -175,7 +178,7 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                             <?php
                             $total_old_due = 0;
                             $stmt = $db->prepare("SELECT id, billing_month, total_amount, paid_amount FROM invoices WHERE tenant_id = ? AND unit_id = ? AND id != ? ORDER BY billing_month ASC");
-                            $stmt->bind_param("iii", $tent_id, $unit_id, $invoice_id);
+                            $stmt->bind_param("iii", $tenant_id, $unit_id, $invoice_id);
                             $stmt->execute();
                             $stmt->bind_result($old_inv_id, $old_month, $old_total, $old_paid);
 
@@ -184,7 +187,7 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                                 if ($due > 0) {
                                     $total_old_due += $due;
                                     echo '<div class="d-flex justify-content-between mb-1" style="font-size: 0.8rem;">';
-                                    echo '<span class="text-danger"> Due (' . date("M Y", strtotime($old_month)) . ') <small class="text-primary">#INV-' . $old_inv_id . '</small></span>';
+                                    echo '<span class="text-danger"> Due (' . date("M Y", strtotime($old_month)) . ') <small class="text-info">#INV-' . $old_inv_id . '</small></span>';
                                     echo '<span class="text-danger fw-semibold">৳ ' . number_format($due, 0) . '</span>';
                                     echo '</div>';
                                 }
@@ -201,7 +204,7 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-3 p-3 bg-primary text-white rounded shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mt-3 p-3 bg-info text-white rounded shadow-sm">
                         <span class="h6 mb-0 text-white">Total Payable Amount = </span>
                         <span class="h5 mb-0 fw-bold text-white" id="finalPayableDisplay">
                             ৳ <?= number_format($current_month_total, 0) ?>
@@ -214,7 +217,7 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                         </p>
                         <div class="card border-0 p-3 bg-light rounded-3">
                             <h6 class="mb-1 fw-bold">MD MUSTAFIZUR RAHMAN</h6>
-                            <div class="text-primary fw-bold" style="letter-spacing: 1px;">A/C: 1503101624157001</div>
+                            <div class="text-info fw-bold" style="letter-spacing: 1px;">A/C: 1503101624157001</div>
                             <small class="text-muted text-uppercase">BRAC BANK LTD | Moghbazar Branch</small>
                         </div>
                     </div>
@@ -272,6 +275,28 @@ $payable_advance = max($advance - $total_advance_paid, 0);
     }
     .form-switch .form-check-input { width: 2.5em; height: 1.25em; cursor: pointer; }
     #pdf-content { color: #000; }
+    
+    /* ওয়াটারমার্ক স্টাইল */
+    .invoice-watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-15deg);
+        opacity: 0.04; /* খুব হালকা ওয়াটারমার্ক লুক দেওয়ার জন্য */
+        pointer-events: none;
+        user-select: none;
+        width: 400px;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .invoice-watermark img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
     @media print {
         body * { visibility: hidden; }
         #pdf-content, #pdf-content * { visibility: visible; }
