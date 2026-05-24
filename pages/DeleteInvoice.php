@@ -7,10 +7,10 @@
     }
 
     // Check Unit ID
-    if (!isset($_GET['unit_id']) || empty($_GET['unit_id'])) {
-        die("Unit Id not Found!");
+    if (!isset($_GET['tenant_id']) || empty($_GET['tenant_id'])) {
+        die("Tenant Id not Found!");
     } else {
-        $unit_id = intval($_GET['unit_id']);
+        $tenant_id = intval($_GET['tenant_id']);
     }
 
     // First check payment history exists or not
@@ -32,7 +32,7 @@
         echo "
         <script>
             alert('Invoice Deleted Successfully');
-            window.location.href='admin.php?page=editbill&unit_id=$unit_id';
+            window.location.href='admin.php?page=editbill&tenant_id=$tenant_id';
         </script>
         ";
 
@@ -41,7 +41,7 @@
         echo "
         <script>
             alert('Something Went Wrong!');
-            window.location.href='admin.php?page=editbill&unit_id=$unit_id';
+            window.location.href='admin.php?page=editbill&tenant_id=$tenant_id';
         </script>
         ";
 

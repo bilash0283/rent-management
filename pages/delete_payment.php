@@ -1,13 +1,13 @@
 <?php
 // ১. প্রয়োজনীয় প্যারামিটার চেক করা
-if (!isset($_GET['pay_his_id']) || !isset($_GET['unit_id']) || !isset($_GET['invoice_id'])) {
+if (!isset($_GET['pay_his_id']) || !isset($_GET['tenant_id']) || !isset($_GET['invoice_id'])) {
     echo "<script>alert('Invalid request. Missing parameters.'); window.history.back();</script>";
     exit;
 }
 
 $pay_his_id = mysqli_real_escape_string($db, $_GET['pay_his_id']);
 $invoice_id = mysqli_real_escape_string($db, $_GET['invoice_id']);
-$unit_id    = mysqli_real_escape_string($db, $_GET['unit_id']);
+$tenant_id    = mysqli_real_escape_string($db, $_GET['tenant_id']);
 
 // ২. পেমেন্ট রেকর্ডটি খুঁজে বের করা (ডিলিট করার আগে পেমেন্ট অ্যামাউন্ট জানা প্রয়োজন)
 $his_query = mysqli_query($db, "SELECT paid_amount FROM payment_history WHERE id = '$pay_his_id' LIMIT 1");
@@ -61,7 +61,7 @@ $delete_sql = mysqli_query($db, "DELETE FROM payment_history WHERE id = '$pay_hi
 if ($delete_sql) {
     echo "<script>
         alert('Success! Payment deleted and invoice paid amount adjusted.');
-        window.location.href='admin.php?page=editbill&unit_id=$unit_id';
+        window.location.href='admin.php?page=editbill&tenant_id=$tenant_id';
     </script>";
     exit();
 } else {

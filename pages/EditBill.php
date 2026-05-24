@@ -1,8 +1,8 @@
 <?php
 if (isset($_GET['tenant_id'])) {
-    $tent_id = $_GET['tenant_id'];
+    $tenant_id = $_GET['tenant_id'];
 
-    $tent_sqls = mysqli_query($db, "SELECT * FROM tenants WHERE id = '$tent_id' ");
+    $tent_sqls = mysqli_query($db, "SELECT * FROM tenants WHERE id = '$tenant_id' ");
     while ($tent_rows = mysqli_fetch_assoc($tent_sqls)) {
         $unit_id = $tent_rows['unit_id'];
         $tent_name = $tent_rows['name'];
@@ -40,11 +40,11 @@ if (isset($_POST['advance_save'])) {
     $advance_add_sql = mysqli_query($db, "
                     INSERT INTO `advance`
                     (`tenant_id`, `unit_id`, `paid_amount`, `date`)
-                    VALUES ('$tent_id', '$unit_id', '$advance_pay_amount', NOW())
+                    VALUES ('$tenant_id', '$unit_id', '$advance_pay_amount', NOW())
                 ");
 
     if ($advance_add_sql) {
-        header("Location: admin.php?page=editbill&unit_id=$unit_id");
+        header("Location: admin.php?page=editbill&tenant_id=$tenant_id");
         exit();
     }
 }
@@ -66,7 +66,7 @@ if (isset($_POST['create_invoice'])) {
     $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
 
 
-    $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tent_id' LIMIT 1 ");
+    $month_sql = mysqli_query($db, "SELECT * FROM invoices WHERE billing_month = '$billing_month' AND tenant_id = '$tenant_id' LIMIT 1 ");
     while ($ex_month_row = mysqli_fetch_assoc($month_sql)) {
         $id_db = $ex_month_row['id'];
         $old_total = intval($ex_month_row['total_amount']);
@@ -97,7 +97,7 @@ if (isset($_POST['create_invoice'])) {
         ) 
         VALUES 
         (
-            '$tent_id',
+            '$tenant_id',
             '$unit_id',
             '$rent_month',
             '$rent',
@@ -143,7 +143,7 @@ if (isset($_POST['save_bill'])) {
     $payment_date = date('Y-m-d H:i:s', strtotime($tren_date));
 
     // ১. ইনভয়েস চেক করা (নিশ্চিত হওয়া যে ইনভয়েসটি সঠিক)
-    $check_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id = '$invoice_id' AND tenant_id = '$tent_id' LIMIT 1");
+    $check_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id = '$invoice_id' AND tenant_id = '$tenant_id' LIMIT 1");
     $inv = mysqli_fetch_assoc($check_sql);
 
     if (!$inv) {
@@ -175,17 +175,17 @@ if (isset($_POST['save_bill'])) {
     $history_sql = "INSERT INTO payment_history 
         (invoice_id, tenant_id, bill_month, payment_method, paid_amount, note, payment_date, manager_paid,manager_payment_method, transaction_id, transaction_number) 
         VALUES 
-        ('$invoice_id','$tent_id', '$bill_month', '$payment_method', '$paid_amount', '$note', '$payment_date', '$manager_paid_amount', '$manager_payment_method', '$transaction_id', '$transaction_number')";
+        ('$invoice_id','$tenant_id', '$bill_month', '$payment_method', '$paid_amount', '$note', '$payment_date', '$manager_paid_amount', '$manager_payment_method', '$transaction_id', '$transaction_number')";
 
     if (mysqli_query($db, $history_sql)) {
-        echo "<script>alert('Payment Successful!'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
+        echo "<script>alert('Payment Successful!'); window.location.href='admin.php?page=editbill&tenant_id=$tenant_id';</script>";
     } else {
         echo "Error: " . mysqli_error($db);
     }
 }
 
 // monthly Invoice sql show
-$pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
+$pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tenant_id' AND unit_id = '$unit_id' ORDER BY billing_month ");
 while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $invoice_id = $pay_info_sh['id'];
     $billing_month_db = $pay_info_sh['billing_month'];
@@ -243,7 +243,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     // Total Advance Paid
                                     $total_paid = 0;
 
-                                    $advance_sql = mysqli_query($db, "SELECT * FROM `advance` WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id'");
+                                    $advance_sql = mysqli_query($db, "SELECT * FROM `advance` WHERE tenant_id = '$tenant_id' AND unit_id = '$unit_id'");
                                     while ($advance_his = mysqli_fetch_assoc($advance_sql)) {
                                         $total_paid += $advance_his['paid_amount'];
                                     }
@@ -550,7 +550,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                         class="p-1 btn btn-sm btn-info" title="Edit">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </a>
-                                                    <a href="admin.php?page=DeleteInvoice&unit_id=<?php echo $unit_id;?>&invoice_id=<?php echo $invoice_id_db; ?>"
+                                                    <a href="admin.php?page=DeleteInvoice&tenant_id=<?php echo $tenant_id;?>&invoice_id=<?php echo $invoice_id_db; ?>"
                                                         class="p-1 btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this Invoice?');">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
@@ -591,7 +591,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     $history_sql = mysqli_query($db, "SELECT ph.*, inv.total_amount, inv.billing_month 
                                                                     FROM `payment_history` ph 
                                                                     JOIN `invoices` inv ON ph.invoice_id = inv.id 
-                                                                    WHERE ph.tenant_id = '$tent_id' 
+                                                                    WHERE ph.tenant_id = '$tenant_id' 
                                                                     "); //ORDER BY ph.payment_date ASC, ph.id ASC
 
                                     $monthly_paid_tracker = [];
@@ -675,7 +675,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <div class="btn-group">
                                                     <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="p-1 btn btn-sm btn-success"><i class="bi bi-eye"></i></a>
                                                     <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id; ?>" class="p-1 btn btn-sm btn-info"><i class="bi bi-pencil-square"></i></a>
-                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id ?>&unit_id=<?= $unit_id ?>" 
+                                                    <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id ?>&tenant_id=<?= $tenant_id ?>" 
                                                         class="p-1 btn btn-sm btn-danger" 
                                                         onclick="return confirm('Are you sure you want to delete this payment?');">
                                                         <i class="bi bi-trash"></i>
