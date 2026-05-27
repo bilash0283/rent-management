@@ -13,6 +13,7 @@ if (!isset($_GET['unit_id']) || empty($_GET['unit_id'])) {
 $invoice_db_info = mysqli_query($db,"SELECT * FROM invoices WHERE id = '$invoice_id' ");
 $data = mysqli_fetch_assoc($invoice_db_info);
 
+$tenant_id = $data['tenant_id'];
 $billing_month_db = $data['billing_month'];
 $Rent_db = $data['Rent'];
 $Gas_db = $data['Gas'];
@@ -80,7 +81,7 @@ if (isset($_POST['update_invoice'])) {
         $result = mysqli_query($db, $update_query);
 
         if ($result) {
-            echo "<script>alert('Invoice Updated Successfully'); window.location.href='admin.php?page=editbill&unit_id=$unit_id';</script>";
+            echo "<script>alert('Invoice Updated Successfully'); window.location.href='admin.php?page=editbill&tenant_id=$tenant_id';</script>";
             exit;
         } else {
             echo "Error Updating Invoice: " . mysqli_error($db);
@@ -95,7 +96,7 @@ if (isset($_POST['update_invoice'])) {
             <h5 class="m-b-10">Update Invoice / #INV-<?php echo $invoice_id; ?></h5>
         </div>
         <div class="page-header-right">
-            <a href="admin.php?page=editbill&unit_id=<?php echo $unit_id; ?>" class="btn btn-primary">Back</a>
+            <a href="admin.php?page=editbill&tenant_id=<?php echo $tenant_id; ?>" class="btn btn-primary">Back</a>
         </div>
     </div>
 
