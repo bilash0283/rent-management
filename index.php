@@ -285,7 +285,7 @@ if (isset($_POST['sign_in'])) {
                     </button>
                 </form>
 
-                <a href="register.php" class="text-info">Register Now</a>
+                <small class="footer-text">Don't have an account? <a href="register.php" class="text-info">Sign Up</a></small> 
 
                 <!-- Footer -->
                 <div class="footer-text">
