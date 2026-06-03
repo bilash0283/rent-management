@@ -285,9 +285,7 @@ if (isset($_POST['sign_in'])) {
                     </button>
                 </form>
 
-                <div class="mt-4 mx-right">
-                    <a href="#" class="text-info text-mutied">Register Now</a>
-                </div>
+                <a href="register.php" class="text-info">Register Now</a>
 
                 <!-- Footer -->
                 <div class="footer-text">
