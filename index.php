@@ -257,7 +257,7 @@ if (isset($_POST['sign_in'])) {
                 <?php endif; ?>
 
                 <!-- Login Form -->
-                <form method="POST">
+                <form method="POST" class="mb-4">
                     <!-- Email -->
                     <div class="input-group">
                         <div class="input-group-prepend">
