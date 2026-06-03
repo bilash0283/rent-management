@@ -1,6 +1,5 @@
 <?php
 include "database/db.php";
-
 session_name("rant_manager");
 session_start();
 
