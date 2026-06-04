@@ -316,7 +316,7 @@ if (isset($_POST['sign_up'])) {
                 Already have an account?
 
                 <a href="index.php">
-                    Login Here
+                    Sign In 
                 </a>
 
             </div>
