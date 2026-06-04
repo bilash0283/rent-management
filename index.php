@@ -278,7 +278,6 @@ if (isset($_POST['sign_in'])) {
 
                     <!-- Login Button -->
                     <button type="submit" name="sign_in" class="login-btn">
-
                         Login
                         <i class="fas fa-sign-in-alt ml-1"></i>
                     </button>
@@ -287,7 +286,7 @@ if (isset($_POST['sign_in'])) {
                 <div class="footer-text ">
                     Don't have an account? 
                     <a href="signup.php" class="text-info">Sign Up</a>
-                </div> 
+                </div>
 
                 <!-- Footer -->
                 <div class="footer-text">
@@ -297,6 +296,7 @@ if (isset($_POST['sign_in'])) {
                         GSC
                     </a>
                 </div>
+
             </div>
         </div>
 
