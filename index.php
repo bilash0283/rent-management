@@ -33,7 +33,7 @@ if (isset($_POST['sign_in'])) {
         if ($input_password == $password && $role == 1 && $input_email == $email) {
 
             $_SESSION['id'] = $row['id'];
-            $_SESSION['name'] = $row['name'];
+            // $_SESSION['name'] = $row['name'];
             $_SESSION['email'] = $row['email'];
             $_SESSION['phone'] = $row['phone'];
             $_SESSION['role'] = $row['role'];
