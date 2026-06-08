@@ -57,8 +57,10 @@
                                         <?php 
                                             if($role == 1){
                                                 echo "<span class='bg-success text-white p-1 rounded-2'>Admin</span>";
+                                            }else if ($role == 2){
+                                                echo "<span class='bg-warning text-white p-1 rounded-2'>User</span>";
                                             }else{
-                                                echo "<span class='bg-warning text-white p-1 rounded-2'>Manager</span>";
+                                                echo "<span class='bg-secondary text-white p-1 rounded-2'>Unknown</span>";
                                             }
                                         ?>
                                     </td>
