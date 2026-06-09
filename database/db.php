@@ -10,6 +10,10 @@ if(!$db){
 }
 ?>
 
+<div>
+    <h1>This is a Database Connection Page</h1>
+    <p>Database connection status: <?php echo mysqli_get_charset($db) ? "Connected" : "Not connected"; ?></p>
+</div>
 
 
 
