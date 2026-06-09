@@ -70,7 +70,7 @@
                                             <a class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
-                                            <a class="btn btn-sm btn-outline-success" title="Invoice">
+                                            <a class="btn btn-sm btn-outline-success" title="View">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                         </div>
