@@ -28,11 +28,6 @@ $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_n
 $building_row = mysqli_fetch_assoc($building);
 $building_name_db = $building_row['name'];
 
-// $tent_sql = mysqli_query($db, "SELECT id,name FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' AND status = 'Active' ");
-// while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
-   
-// }
-
 // Advace Save SQL 
 if (isset($_POST['advance_save'])) {
     $advance_pay_amount = $_POST['advance_amount'];
@@ -283,9 +278,18 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 ?>
                                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                                     <small
-                                                        class="text-muted"><?= date("d-M-Y h:i A", strtotime($add_pay_date)) ?></small>
+                                                        class="text-muted"><?= date("d-M-Y h:i A", strtotime($add_pay_date)) ?>
+                                                    </small>
+
                                                     <span class="text-success fw-semibold">৳
-                                                        <?= number_format($add_paid_amount, 0) ?></span>
+                                                        <?= number_format($add_paid_amount, 0) ?>
+                                                    </span>
+
+                                                    <small>
+                                                        <a href="#"><i class="bi bi-pencil-square text-info text-small"></i></a>
+                                                        <a href="#"><i class="bi bi-trash text-danger text-small"></i></a>
+                                                    </small>
+                                                    
                                                 </div>
                                             <?php endwhile; ?>
 
