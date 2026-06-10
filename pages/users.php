@@ -45,13 +45,13 @@
                                 <tr>
                                     <td>
                                         <a href="admin.php?page=view_tenant&id=" class="text-secendary fw-bold">
-                                            <?= $name; ?>
+                                            <?= $name ?? 'N/A'; ?>
                                         </a>
                                     </td>
 
-                                    <td><?= $email; ?></td>
+                                    <td><?= $email ?? 'N/A'; ?></td>
 
-                                    <td><?= $phone ?></td>
+                                    <td><?= $phone ?? 'N/A'; ?></td>
 
                                     <td>
                                         <?php 
