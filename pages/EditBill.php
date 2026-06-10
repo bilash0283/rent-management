@@ -28,19 +28,41 @@ $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_n
 $building_row = mysqli_fetch_assoc($building);
 $building_name_db = $building_row['name'];
 
-// Advace Save SQL 
+// ==================== ADVANCE SAVE ====================
 if (isset($_POST['advance_save'])) {
     $advance_pay_amount = $_POST['advance_amount'];
 
-    $advance_add_sql = mysqli_query($db, "
-                    INSERT INTO `advance`
-                    (`tenant_id`, `unit_id`, `paid_amount`, `date`)
-                    VALUES ('$tenant_id', '$unit_id', '$advance_pay_amount', NOW())
-                ");
+    $check_sql = "SELECT SUM(paid_amount) as total_paid 
+                  FROM `advance` 
+                  WHERE tenant_id = '$tenant_id' 
+                  AND unit_id = '$unit_id'";
+    $check_result = mysqli_query($db, $check_sql);
+    $total_paid = mysqli_fetch_assoc($check_result)['total_paid'] ?? 0;
 
-    if ($advance_add_sql) {
-        header("Location: admin.php?page=editbill&tenant_id=$tenant_id");
-        exit();
+    $check_advance_sql = "SELECT advance FROM unit WHERE id = '$unit_id'";
+    $check_result = mysqli_query($db, $check_advance_sql);
+    $unit_advance = mysqli_fetch_assoc($check_result)['advance'] ?? 0;
+
+    if ($advance_pay_amount <= 0) {
+        echo "<script>alert('The advance amount must be greater than zero. Zero is not allowed.');</script>";
+    }
+    else if ($advance_pay_amount > $unit_advance) {
+        echo "<script>alert('Warning! This unit has remaining advance balance of $unit_advance taka. You can only make advance payment up to $unit_advance taka.');</script>";
+    }
+    else if ($total_paid >= $unit_advance) {
+        echo "<script>alert('This unit has already paid all its advance amounts. You cannot make any more advance payments.');</script>";
+    }
+    else {
+        $advance_add_sql = mysqli_query($db, "
+                        INSERT INTO `advance`
+                        (`tenant_id`, `unit_id`, `paid_amount`, `date`)
+                        VALUES ('$tenant_id', '$unit_id', '$advance_pay_amount', NOW())
+                    ");
+
+        if ($advance_add_sql) {
+            header("Location: admin.php?page=editbill&tenant_id=$tenant_id");
+            exit();
+        }
     }
 }
 
