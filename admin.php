@@ -118,6 +118,10 @@
             include 'pages/status_change.php';
         break;
 
+        case 'delete_advance':
+            include 'pages/delete_advance.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
         break;

@@ -28,9 +28,11 @@ $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_n
 $building_row = mysqli_fetch_assoc($building);
 $building_name_db = $building_row['name'];
 
+
 // ==================== ADVANCE SAVE ====================
 if (isset($_POST['advance_save'])) {
     $advance_pay_amount = $_POST['advance_amount'];
+    $date = $_POST['date'] ?? date('Y-m-d H:i:s');
 
     $check_sql = "SELECT SUM(paid_amount) as total_paid 
                   FROM `advance` 
@@ -47,7 +49,7 @@ if (isset($_POST['advance_save'])) {
         echo "<script>alert('The advance amount must be greater than zero. Zero is not allowed.');</script>";
     }
     else if ($advance_pay_amount > $unit_advance) {
-        echo "<script>alert('Warning! This unit has remaining advance balance of $unit_advance taka. You can only make advance payment up to $unit_advance taka.');</script>";
+        echo "<script>alert('Warning! This unit has advance balance of $unit_advance taka. You can only make advance payment up to $unit_advance taka.');</script>";
     }
     else if ($total_paid >= $unit_advance) {
         echo "<script>alert('This unit has already paid all its advance amounts. You cannot make any more advance payments.');</script>";
@@ -56,7 +58,7 @@ if (isset($_POST['advance_save'])) {
         $advance_add_sql = mysqli_query($db, "
                         INSERT INTO `advance`
                         (`tenant_id`, `unit_id`, `paid_amount`, `date`)
-                        VALUES ('$tenant_id', '$unit_id', '$advance_pay_amount', NOW())
+                        VALUES ('$tenant_id', '$unit_id', '$advance_pay_amount', '$date')
                     ");
 
         if ($advance_add_sql) {
@@ -295,6 +297,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             <?php
                                             mysqli_data_seek($advance_sql, 0); // rewind result to loop again
                                             while ($advance_his = mysqli_fetch_assoc($advance_sql)):
+                                                $advance_payment_id = $advance_his['id'];
                                                 $add_pay_date = $advance_his['date'];
                                                 $add_paid_amount = $advance_his['paid_amount'];
                                                 ?>
@@ -308,8 +311,11 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     </span>
 
                                                     <small>
-                                                        <a href="#"><i class="bi bi-pencil-square text-info text-small"></i></a>
-                                                        <a href="#"><i class="bi bi-trash text-danger text-small"></i></a>
+                                                        <a href="admin.php?page=delete_advance&advance_id=<?= $advance_payment_id ?>&tenant_id=<?= $tenant_id ?>&unit_id=<?= $unit_id ?>"
+                                                            class="btn btn-sm btn-danger" title="Delete"
+                                                        onclick="return confirm('Are you sure you want to delete this advance payment?');" <?= $advance_payment_id; ?> >
+                                                            <i class="bi bi-trash text-white "></i>
+                                                        </a>
                                                     </small>
                                                     
                                                 </div>
@@ -320,10 +326,16 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="card p-3">
+
+                                        <div class="mb-2">
+                                            <label>Payment Date & Time *</label>
+                                            <input type="datetime-local" class="form-control" name="date" value="<?= date('Y-m-d\TH:i'); ?>" required>
+                                        </div>
+
                                         <div>
                                             <label for="advance_amount">Advance Amount *</label>
                                             <input type="number" name="advance_amount" class="form-control mb-3"
-                                                placeholder="Advance Amount" required>
+                                                placeholder="Advance Amount" value="<?php echo $payable; ?>" required>
                                         </div>
 
                                         <button type="submit" name="advance_save" class="btn btn-success btn-sm">
