@@ -28,7 +28,6 @@ $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_n
 $building_row = mysqli_fetch_assoc($building);
 $building_name_db = $building_row['name'];
 
-
 // ==================== ADVANCE SAVE ====================
 if (isset($_POST['advance_save'])) {
     $advance_pay_amount = $_POST['advance_amount'];
@@ -45,11 +44,14 @@ if (isset($_POST['advance_save'])) {
     $check_result = mysqli_query($db, $check_advance_sql);
     $unit_advance = mysqli_fetch_assoc($check_result)['advance'] ?? 0;
 
+    // Remaining Payable Amount
+    $payable = max($advance - $total_paid, 0); // avoid negative
+
     if ($advance_pay_amount <= 0) {
         echo "<script>alert('The advance amount must be greater than zero. Zero is not allowed.');</script>";
     }
     else if ($advance_pay_amount > $unit_advance) {
-        echo "<script>alert('Warning! This unit has advance balance of $unit_advance taka. You can only make advance payment up to $unit_advance taka.');</script>";
+        echo "<script>alert('Warning! This unit has advance balance of $payable taka. You can only make advance payment up to $payable taka.');</script>";
     }
     else if ($total_paid >= $unit_advance) {
         echo "<script>alert('This unit has already paid all its advance amounts. You cannot make any more advance payments.');</script>";
@@ -261,12 +263,10 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     <?php
                                     // Total Advance Paid
                                     $total_paid = 0;
-
                                     $advance_sql = mysqli_query($db, "SELECT * FROM `advance` WHERE tenant_id = '$tenant_id' AND unit_id = '$unit_id'");
                                     while ($advance_his = mysqli_fetch_assoc($advance_sql)) {
                                         $total_paid += $advance_his['paid_amount'];
                                     }
-
                                     // Remaining Payable Amount
                                     $payable = max($advance - $total_paid, 0); // avoid negative
                                     ?>
