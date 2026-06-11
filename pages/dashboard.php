@@ -187,6 +187,7 @@ foreach ($monthly_totals as $month => $data) {
                                     <div class="progress mt-2" style="height: 4px;">
                                         <div class="progress-bar bg-primary" style="width: 100%"></div>
                                     </div>
+                                    <small class="text-muted">100% of <?= $total_invoices ?> invoices</small>
                                 </div>
                             </div>
 
