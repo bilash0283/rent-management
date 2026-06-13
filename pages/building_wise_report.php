@@ -190,9 +190,19 @@ $total_unit = mysqli_num_rows($result);
             </div>
         </div>
         <div class="col-md">
+            <div class="card shadow-sm border-0 bg-info text-white">
+                <div class="card-body text-left p-1 pl-4 mx-auto">
+                    <strong class="mb-1 text-white">Expense Summary</strong><br>
+                    <small>Admin Expense : ৳ <?= number_format($total_received, 0) ?></small><br>
+                    <small>Manager Expense : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
+                    <small>Total Expense : ৳ <?= number_format($manager_paid, 0) ?></small><br>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
             <div class="card shadow-sm border-0 bg-secondary text-white">
                 <div class="card-body text-left p-1 pl-4 mx-auto">
-                    <strong class="mb-1 text-white">Paid By Manager</strong><br>
+                    <strong class="mb-1 text-white">Manager Payment Details</strong><br>
                     <small>Total Rechive : ৳ <?= number_format($total_received, 0) ?></small><br>
                     <small>Paid to Admin : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
                     <small>Manager self  : ৳ <?= number_format($manager_paid, 0) ?></small><br>
@@ -522,16 +532,13 @@ $total_unit = mysqli_num_rows($result);
                                                     }
                                                 }
 
-                                            echo "</div>"; // কন্টেইনার শেষ
+                                            echo "</div>"; 
                                         }
                                         ?> 
                                     </td>
 
                                     <td>
                                         <div class="btn-group align-items-center">
-                                            <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button> -->
                                             <a href="admin.php?page=editbill&tenant_id=<?= $tent_id ?>"
                                                 class="text-end p-1 btn btn-sm btn-info" title="Invoice Create & Payment">
                                                 Details
@@ -539,7 +546,6 @@ $total_unit = mysqli_num_rows($result);
                                             <a href="admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>" onclick="sendWhatsApp()" class="p-1 btn btn-sm btn-success" title="Message Send with Copy">
                                                 <i class="bi bi-send"></i>
                                             </a>
-
                                         </div>
                                     </td>
                                 </tr>
