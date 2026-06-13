@@ -206,6 +206,7 @@ $total_unit = mysqli_num_rows($result);
                     <small>Total Rechive : ৳ <?= number_format($total_received, 0) ?></small><br>
                     <small>Paid to Admin : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
                     <small>Manager self  : ৳ <?= number_format($manager_paid, 0) ?></small><br>
+                    <small>Payable Amount : ৳ <?= number_format($manager_paid, 0) ?></small><br>
                 </div>
             </div>
         </div>
