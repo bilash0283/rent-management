@@ -222,7 +222,7 @@ $total_unit = mysqli_num_rows($result);
             <div class="card shadow-sm border-0 bg-secondary text-white">
                 <div class="card-body text-left p-1 pl-4 mx-auto">
                     <strong class="mb-1 text-white">Manager Payment Details</strong><br>
-                    <small>Total Rechive : ৳ <?= number_format($total_received, 0) ?></small><br>
+                    <small>Total Collected : ৳ <?= number_format($total_received, 0) ?></small><br>
                     <small>Paid to Admin : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
                     <!-- <small>Manager self  : ৳ <?= number_format($manager_self , 0) ?></small><br> -->
                     <small style="color: <?= ($payable < 0) ? 'red' : 'white'; ?>;">

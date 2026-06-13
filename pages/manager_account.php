@@ -124,32 +124,49 @@ $total_unit = mysqli_num_rows($result);
 
     $total_received = (float) ($summary['total_received'] ?? 0);
     $manager_paid_total = (float) ($summary['manager_paid_total'] ?? 0);
-    $manager_paid = $total_received - $manager_paid_total;
+    $manager_self = $total_received - $manager_paid_total;
     ?>
 
     <!-- Summary Cards -->
     <div class="row g-3 mb-4 mx-3">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 bg-info text-white">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 bg-primary text-white">
                 <div class="card-body text-center">
-                    <h6 class="mb-1 text-white">Total Paid by Manager</h6>
+                    <strong class="mb-1 text-white">Total Collected </strong>
                     <h4 class="mb-0 text-white">৳ <?= number_format($total_received, 0) ?></h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm border-0 bg-success">
                 <div class="card-body text-center">
-                    <h6 class="mb-1 text-white">Manager Paid to Admin</h6>
+                    <strong class="mb-1 text-white">Manager Paid to Admin</strong>
                     <h4 class="mb-0 text-white">৳ <?= number_format($manager_paid_total, 0) ?></h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <?php 
+                // 3. Manager Expense (Assuming 'expense_by' contains 'Manager')
+                $manager_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' AND expense_by = 'Manager'");
+                $manager_row = mysqli_fetch_assoc($manager_sql);
+                $manager_total = (float)($manager_row['total'] ?? 0);
+
+                // manager payalbe amount 
+                $payable = $manager_self-$manager_total;
+            ?>
+            <div class="card shadow-sm border-0 bg-info text-white">
+                <div class="card-body text-center px-0 mx-0">
+                    <strong class="mb-1 text-white">Total Expense</strong>
+                    <h4 class="mb-0 text-white">৳ <?= number_format(max($manager_total, 0), 0) ?></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card shadow-sm border-0 bg-warning text-white">
-                <div class="card-body text-center">
-                    <h6 class="mb-1 text-white">Manager self (Net Payable)</h6>
-                    <h4 class="mb-0 text-white">৳ <?= number_format(max($manager_paid, 0), 0) ?></h4>
+                <div class="card-body text-center px-0 mx-0">
+                    <strong class="mb-1 text-white">Manager self (Net Payable)</strong>
+                    <h4 class="mb-0" style="color: <?= ($payable < 0) ? 'red' : 'white'; ?>;">৳ <?= number_format($payable, 0) ?></h4>
                 </div>
             </div>
         </div>
@@ -310,7 +327,7 @@ $total_unit = mysqli_num_rows($result);
                                                 <?= number_format($manager_paid, 0) ?></small><br>
                                         <?php endif; ?>
 
-                                        <strong class="text-warning"> Self: ৳
+                                        <strong class="text-danger"> Self: ৳
                                             <?= number_format($manager_self ?? 0,) ?>
                                         </strong>
 
