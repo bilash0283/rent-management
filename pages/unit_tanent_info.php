@@ -82,11 +82,11 @@
                 : "public/uploads/tenants/no-image.png";
                 }
             ?>
-                <img src="<?= htmlspecialchars($building_image) ?>" style="width:50px; height:50px; object-fit:cover; border-radius:50%; border:2px solid #ddd;">
-                <?= htmlspecialchars($buil_name) ?> - (<?= $count_row ?>)
+                <img src="<?= htmlspecialchars($building_image) ?>" style="width:40px; height:40px; object-fit:cover; border-radius:50%; border:2px solid #ddd;">
+                <strong style="font-size: 14px;"><?= htmlspecialchars($buil_name) ?></strong>- <small style="font-size: 10px;">(<?= $count_row ?>)</small>
         </h5>
 
-        <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="p-1 btn btn-primary">
+        <a href="admin.php?page=CreateTenant&building_id=<?= $building_id_get; ?>" class="p-1 btn  btn-primary">
             <i class="feather-plus me-1"></i> Create Tenant
         </a>
     </div>
