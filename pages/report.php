@@ -50,6 +50,9 @@ $filter_condition = " ph.bill_month >= '$from_month' AND ph.bill_month <= '$to_m
 
 // invoices টেবিলের জন্য এলিয়াস inv সহ আলাদা কন্ডিশন
 $invoice_filter_condition = " inv.billing_month >= '$from_month' AND inv.billing_month <= '$to_month' ";
+
+// expenses টেবিলের জন্য এলিয়াস exp সহ আলাদা কন্ডিশন
+$expense_filter_condition = " exp.expense_month >= '$from_month' AND exp.expense_month <= '$to_month' ";
 ?>
 
 <div class="nxl-content">
@@ -258,7 +261,7 @@ $invoice_filter_condition = " inv.billing_month >= '$from_month' AND inv.billing
         $summary = mysqli_fetch_assoc($manager_summary);
         $total_received = (float) ($summary['total_received'] ?? 0);
         $manager_paid_total = (float) ($summary['manager_paid_total'] ?? 0);
-        $manager_paid = $total_received - $manager_paid_total;
+        $manager_self = $total_received - $manager_paid_total;
 
         // ==================== BILLING SUMMARY ====================
         $total_bill_amount = 0;
@@ -309,12 +312,61 @@ $invoice_filter_condition = " inv.billing_month >= '$from_month' AND inv.billing
             </div>
         </div>
         <div class="col-md">
+            <?php 
+                // 1. Total Expense
+                $total_sql = mysqli_query($db,
+                    "SELECT SUM(amount) AS total
+                    FROM expense exp
+                    WHERE building_id='$building_id'
+                    AND $expense_filter_condition"
+                );
+                $total_row = mysqli_fetch_assoc($total_sql);
+                $grand_total = (float)($total_row['total'] ?? 0);
+
+                // 2. Admin Expense (Assuming 'expense_by' contains 'Admin')
+                $admin_sql = mysqli_query($db,
+                    "SELECT SUM(amount) AS total
+                    FROM expense exp
+                    WHERE building_id='$building_id'
+                    AND $expense_filter_condition
+                    AND expense_by = 'Admin'"
+                );
+                $admin_row = mysqli_fetch_assoc($admin_sql);
+                $admin_total = (float)($admin_row['total'] ?? 0);
+
+                // 3. Manager Expense (Assuming 'expense_by' contains 'Manager')
+                $manager_sql = mysqli_query($db,
+                    "SELECT SUM(amount) AS total
+                    FROM expense exp
+                    WHERE building_id='$building_id'
+                    AND $expense_filter_condition
+                    AND expense_by = 'Manager'"
+                );
+                $manager_row = mysqli_fetch_assoc($manager_sql);
+                $manager_total = (float)($manager_row['total'] ?? 0);
+
+                // manager payalbe amount 
+                $payable = $manager_self - $manager_total;
+            ?>
+            <div class="card shadow-sm border-0 bg-info text-white">
+                <div class="card-body text-left p-1 pl-4 mx-auto">
+                    <strong class="mb-1 text-white">Expense Summary</strong><br>
+                    <small>Admin Expense : ৳ <?= number_format($admin_total, 0) ?></small><br>
+                    <small>Manager Expense : ৳ <?= number_format($manager_total, 0) ?></small><br>
+                    <small>Total Expense : ৳ <?= number_format($grand_total, 0) ?></small><br>
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
             <div class="card shadow-sm border-0 bg-secondary text-white">
                 <div class="card-body text-left p-1 pl-4 mx-auto">
                     <strong class="mb-1 text-white">Paid By Manager</strong><br>
                     <small>Total Received : ৳ <?= number_format($total_received, 0) ?></small><br>
                     <small>Paid to Admin : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
-                    <small>Manager self : ৳ <?= number_format($manager_paid, 0) ?></small><br>
+                    <!-- <small>Manager self : ৳ <?= number_format($manager_paid, 0) ?></small><br> -->
+                    <small style="color: <?= ($payable < 0) ? 'red' : 'white'; ?>;">
+                        Self (Net Payable) : ৳ <?= number_format($payable, 0) ?>
+                    </small><br>
                 </div>
             </div>
         </div>
