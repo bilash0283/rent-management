@@ -138,7 +138,7 @@ $total_unit = mysqli_num_rows($result);
 
         $total_received = (float) ($summary['total_received'] ?? 0);
         $manager_paid_total = (float) ($summary['manager_paid_total'] ?? 0);
-        $manager_paid = $total_received - $manager_paid_total;
+        $manager_self = $total_received - $manager_paid_total;
     ?>
 
     <!-- Summary Cards -->
@@ -190,12 +190,31 @@ $total_unit = mysqli_num_rows($result);
             </div>
         </div>
         <div class="col-md">
+            <?php 
+                // 1. Total Expense
+                $total_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month'");
+                $total_row = mysqli_fetch_assoc($total_sql);
+                $grand_total = (float)($total_row['total'] ?? 0);
+
+                // 2. Admin Expense (Assuming 'expense_by' contains 'Admin')
+                $admin_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' AND expense_by = 'Admin'");
+                $admin_row = mysqli_fetch_assoc($admin_sql);
+                $admin_total = (float)($admin_row['total'] ?? 0);
+
+                // 3. Manager Expense (Assuming 'expense_by' contains 'Manager')
+                $manager_sql = mysqli_query($db, "SELECT SUM(amount) AS total FROM `expense` WHERE building_id='$building_id' AND expense_month='$this_month' AND expense_by = 'Manager'");
+                $manager_row = mysqli_fetch_assoc($manager_sql);
+                $manager_total = (float)($manager_row['total'] ?? 0);
+
+                // manager payalbe amount 
+                $payable = $manager_self - $manager_total;
+            ?>
             <div class="card shadow-sm border-0 bg-info text-white">
                 <div class="card-body text-left p-1 pl-4 mx-auto">
                     <strong class="mb-1 text-white">Expense Summary</strong><br>
-                    <small>Admin Expense : ৳ <?= number_format($total_received, 0) ?></small><br>
-                    <small>Manager Expense : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
-                    <small>Total Expense : ৳ <?= number_format($manager_paid, 0) ?></small><br>
+                    <small>Admin Expense : ৳ <?= number_format($admin_total, 0) ?></small><br>
+                    <small>Manager Expense : ৳ <?= number_format($manager_total, 0) ?></small><br>
+                    <small>Total Expense : ৳ <?= number_format($grand_total, 0) ?></small><br>
                 </div>
             </div>
         </div>
@@ -205,8 +224,10 @@ $total_unit = mysqli_num_rows($result);
                     <strong class="mb-1 text-white">Manager Payment Details</strong><br>
                     <small>Total Rechive : ৳ <?= number_format($total_received, 0) ?></small><br>
                     <small>Paid to Admin : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
-                    <small>Manager self  : ৳ <?= number_format($manager_paid, 0) ?></small><br>
-                    <small>Payable Amount : ৳ <?= number_format($manager_paid, 0) ?></small><br>
+                    <!-- <small>Manager self  : ৳ <?= number_format($manager_self , 0) ?></small><br> -->
+                    <small style="color: <?= ($payable < 0) ? 'red' : 'white'; ?>;">
+                        Self (Net Payable) : ৳ <?= number_format($payable, 0) ?>
+                    </small><br>
                 </div>
             </div>
         </div>
