@@ -21,9 +21,9 @@
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
        
-        <h5 class="mb-0">
-            <?= $building_name_db ?? ''; ?> <span style="background:#28a745;color:#fff;padding:6px 14px;border-radius:50px;font-size:13px;font-weight:500;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.15);"><?= $totla_unit ?? ''; ?></span> / Bill Month (<?php echo date('M - Y') ?>)
-        </h5>
+        <strong class="mb-0 text-black">
+            <?= $building_name_db ?? ''; ?> <span style="background:#28a745;color:#fff;padding:4px 5px;border-radius:50px;font-size:8px;font-weight:500;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.15);"><?= $totla_unit ?? ''; ?></span> / Bill Month <small>(<?php echo date('M - Y') ?>)</small>
+        </strong>
        
         <!-- <a href="admin.php?page=CreateTenant" class="btn btn-primary">
             <i class="feather-plus me-1"></i> Create Bill
