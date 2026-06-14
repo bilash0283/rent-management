@@ -172,15 +172,19 @@
                                         <?= htmlspecialchars($row['phone']) ?>
                                     </td>
 
-                                    <td>
+                                    <td title="<?php echo $address; ?>">
                                         Nid - <?= htmlspecialchars($row['nid_no']); ?> <br>
-                                        Address - 
-                                        <?php 
-                                            $address = $row['permanent_address'];
-                                            if (mb_strlen($address) > 20) {
-                                                echo htmlspecialchars(mb_substr($address, 0, 20)) . '... <a href="#">Read More</a>';
+                                        Address -
+                                        <?php
+                                            $address = htmlspecialchars($row['permanent_address']);
+                                            if (mb_strlen($row['permanent_address']) > 20) {
+                                        ?>
+                                            <span class="short-address" title="<?php echo $address; ?>"><?= mb_substr($address, 0, 20) ?>...</span>
+                                            <span class="full-address" style="display:none;" title="<?php echo $address; ?>"><?= $address ?></span>
+                                            <a href="javascript:void(0);" onclick="showAddress(this)" title="<?php echo $address; ?>">Read More</a>
+                                        <?php
                                             } else {
-                                                echo htmlspecialchars($address);
+                                                echo $address;
                                             }
                                         ?>
                                     </td>
