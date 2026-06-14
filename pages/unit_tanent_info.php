@@ -174,7 +174,15 @@
 
                                     <td>
                                         Nid - <?= htmlspecialchars($row['nid_no']); ?> <br>
-                                        Address - <?= htmlspecialchars($row['permanent_address']); ?>
+                                        Address - 
+                                        <?php 
+                                            $address = $row['permanent_address'];
+                                            if (mb_strlen($address) > 20) {
+                                                echo htmlspecialchars(mb_substr($address, 0, 20)) . '... <a href="#">Read More</a>';
+                                            } else {
+                                                echo htmlspecialchars($address);
+                                            }
+                                        ?>
                                     </td>
 
                                     <td>
@@ -221,19 +229,16 @@
                                             </a>
                                         </div>
                                     </td>
-
                                 </tr>
-
                             <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
-                                    No Data found !
-                                </td>
-                            </tr>
-                        <?php endif; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">
+                                        No Data found !
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
-
                     </table>
                 </div>
             </div>
