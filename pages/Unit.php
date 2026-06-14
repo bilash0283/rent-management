@@ -108,7 +108,20 @@
                                         <?= htmlspecialchars($row['unit_name']) ?>                                        
                                     </td>
                                     
-                                    <td><?= htmlspecialchars($row['floor'] ?? '-') ?></td>
+                                    <td>
+                                         <?php
+                                            $address = htmlspecialchars($row['floor']);
+                                            if (mb_strlen($row['floor']) > 20) {
+                                        ?>
+                                            <span class="short-address" title="<?php echo $address; ?>"><?= mb_substr($address, 0, 20) ?>...</span>
+                                            <span class="full-address" style="display:none;" title="<?php echo $address; ?>"><?= $address ?></span>
+                                            <a href="javascript:void(0);" onclick="showAddress(this)" title="<?php echo $address; ?>">See More</a>
+                                        <?php
+                                            } else {
+                                                echo $address;
+                                            }
+                                        ?>
+                                    </td>
                                     <td>
                                         Advance : ৳ <?= number_format($row['advance'], 0) ?><br>
                                         Rent    : ৳ <?= number_format($row['rent'], 0) ?><br>
@@ -163,4 +176,10 @@
         </div>
     </div>
 </div>
-
+<script>
+    function showAddress(link) {
+        link.previousElementSibling.style.display = 'inline'; // full address
+        link.previousElementSibling.previousElementSibling.style.display = 'none'; // short address
+        link.style.display = 'none'; // hide Read More
+    }
+</script>
