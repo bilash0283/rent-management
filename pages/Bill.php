@@ -358,6 +358,13 @@ if(isset($_GET['unit_id'])) {
 function sendWhatsApp() 
 {
     <?php 
+        $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_id' AND unit_id = '$unit_id'");
+        while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
+            $tent_name = $tent_row['name'];
+            $tent_id = $tent_row['id'];
+            $tent_phone = $tent_row['phone'];
+        }
+        
         $message = "$tent_name          INVOICE\n";
         $message .= "Flat No : $unit_name\n";
         $message .= "$building_name_db\n\n";
@@ -391,8 +398,8 @@ function sendWhatsApp()
         $total_display = !empty($total_bill_mess) ? $total_bill_mess : $rent_mess;
         $message .= "TOTAL                   =" . $total_display . "/-";
     ?>
-    let message = <?php echo json_encode($message); ?>;
-    let phone = <?php echo json_encode($tent_phone); ?>;
+    let message = <?php echo json_encode($message) ?? ''; ?>;
+    let phone = <?php echo json_encode($tent_phone) ?? ''; ?>;
     let redirectUrl = "admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_id ?>";
 
     // Copy
