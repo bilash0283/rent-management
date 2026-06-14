@@ -172,7 +172,7 @@
                                         <?= htmlspecialchars($row['phone']) ?>
                                     </td>
 
-                                    <td title="<?php echo $address; ?>">
+                                    <td style="max-width:300px;">
                                         Nid - <?= htmlspecialchars($row['nid_no']); ?> <br>
                                         Address -
                                         <?php
