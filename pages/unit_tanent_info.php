@@ -228,7 +228,7 @@
                         <?php else: ?>
                             <tr>
                                 <td colspan="7" class="text-center py-4 text-muted">
-                                    No tenants found
+                                    No Data found !
                                 </td>
                             </tr>
                         <?php endif; ?>
