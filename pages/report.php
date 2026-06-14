@@ -363,7 +363,7 @@ $expense_filter_condition = " exp.expense_month >= '$from_month' AND exp.expense
                     <strong class="mb-1 text-white">Paid By Manager</strong><br>
                     <small>Total Received : ৳ <?= number_format($total_received, 0) ?></small><br>
                     <small>Paid to Admin : ৳ <?= number_format($manager_paid_total, 0) ?></small><br>
-                    <!-- <small>Manager self : ৳ <?= number_format($manager_paid, 0) ?></small><br> -->
+                    <!-- <small>Manager self : ৳ <?= number_format($manager_self, 0) ?></small><br> -->
                     <small style="color: <?= ($payable < 0) ? 'red' : 'white'; ?>;">
                         Self (Net Payable) : ৳ <?= number_format($payable, 0) ?>
                     </small><br>
