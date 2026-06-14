@@ -174,7 +174,7 @@ if (mysqli_num_rows($result) > 0) {
                                                 ?>
                                                     <div class="activity-item mb-3">
                                                         <h6 class="mb-1"><?= date(' M Y', strtotime($billing_month_db)) ?> <small class="text-success">(#INV-<?= $invoice_id; ?>)</small></h6>
-                                                        <span class="text-muted small mb-0">🟡 <small>৳ </small><?= $total_amount ?></span> 🟢 <small>৳ </small><?= $paid_amount_db ?></span> <span class="text-muted small mb-0">🔴 <small>৳ </small> <?= $due_amount_db ?></span>
+                                                        <span class="text-muted small mb-0">🟡 <small>৳ </small><?= number_format($total_amount ?? 0, 0) ?></span> 🟢 <small>৳ </small><?= number_format($paid_amount_db ?? 0, 0) ?></span> <span class="text-muted small mb-0">🔴 <small>৳ </small> <?= number_format($due_amount_db ?? 0, 0) ?></span>
                                                     </div>
                                                 <?php } ?>
                                             </div>
