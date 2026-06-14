@@ -15,22 +15,21 @@
             $building_name_db = $buli_name['name'];
         }
     }
+
+    function formatMonth($date){
+        return !empty($date) ? date("M-y", strtotime($date)) : '';
+    }
 ?>
 
 <div class="nxl-content">
-    <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between">
        
         <strong class="mb-0 text-black">
             <?= $building_name_db ?? ''; ?> <span style="background:#28a745;color:#fff;padding:4px 5px;border-radius:50px;font-size:8px;font-weight:500;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.15);"><?= $totla_unit ?? ''; ?></span> / Bill Month <small>(<?php echo date('M - Y') ?>)</small>
         </strong>
        
-        <!-- <a href="admin.php?page=CreateTenant" class="btn btn-primary">
-            <i class="feather-plus me-1"></i> Create Bill
-        </a> -->
-    </div>
+        </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="card shadow-sm">
 
@@ -50,7 +49,7 @@
                         </thead>
                         <tbody>
                             <?php
-                            $i = '';
+                            $i = 0;
                             while ($row = mysqli_fetch_assoc($result)) {
                                 $i++;
                                 $unit_id = $row['id'];
@@ -59,21 +58,27 @@
                                 $unit_name = $row['unit_name'];
                                 $building_name = $row['building_name'];
                                 $size = $row['size'];
+                                
+                                // Reset tenant variables for this loop iteration
+                                $name = '';
+                                $tent_id = 0;
+                                $tent_phone = '';
+                                $image = "public/uploads/tenants/no-image.png";
+
+                                $sql_tenant = mysqli_query($db, "SELECT * FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' AND status = 'Active' ");
+                                while ($tent_row = mysqli_fetch_assoc($sql_tenant)) {
+                                    $name = $tent_row['name'];
+                                    $tent_id = $tent_row['id'];
+                                    $tent_phone = $tent_row['phone'];
+                                    if(!empty($tent_row['tenant_image'])) {
+                                        $image = "public/uploads/tenants/" . $tent_row['tenant_image'];
+                                    }
+                                }
                                 ?>
                                 <tr>
                                     <td><?= $i; ?></td>
                                     <td><?= $unit_name; ?></td>
                                     <td>
-                                        <?php 
-                                        $sql_tenant = mysqli_query($db, "SELECT * FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' AND status = 'Active' ");
-                                        while ($tent_row = mysqli_fetch_assoc($sql_tenant)) {
-                                            $name = $tent_row['name'];
-                                            $tent_id = $tent_row['id'];
-                                            $image = !empty($tent_row['tenant_image'])
-                                            ? "public/uploads/tenants/" . $tent_row['tenant_image']
-                                            : "public/uploads/tenants/no-image.png";
-                                        }
-                                        ?>
                                         <div class="d-flex flex-column align-items-center text-center col-span">
                                             <img src="<?= htmlspecialchars($image) ?>"
                                                 width="50" height="50"
@@ -87,7 +92,7 @@
                                             <?php if (!empty($size)): ?>
                                                 <small class="text-muted">Ele.M.N : <?= $size; ?></small>
                                             <?php endif; ?>
-                                        </div>                                        
+                                        </div>                                       
                                     </td>
 
                                     <td style="font-size: 10px; line-height: 1.4;">
@@ -102,31 +107,26 @@
                                         // Remaining Payable Amount
                                         $payable = max($advance - $total_paid, 0); // avoid negative
                                     
-                                        // Show Advance and Paid
-                                        // echo '<span style="color: #0d6efd; font-weight: 600;">Advance = ৳ ' . $advance . '</span><br>';  // Blue
-                                        // echo '<span style="color: #198754; font-weight: 600;">Paid    = ৳ ' . $total_paid . '</span><br>'; // Green
-                                    
                                         // Show Due only if payable > 0
                                         if ($payable > 0) {
-                                            echo '<span style="color: #dc3545; font-weight: 600;">Advance     = <small> ৳ </small>' . $payable . '</span><br>'; // Red
+                                            echo '<span style="color: #dc3545; font-weight: 600;">Advance      = <small> ৳ </small>' . $payable . '</span><br>'; // Red
                                         }
                                         ?>
 
-                                        <!-- <?php 
-                                            if(!empty($rent)){ ?>
-                                                <span class="fw-semibold text-dark">
-                                            Rent = ৳ <?= number_format($rent, 0) ?? '' ?>
-                                            </span><br>
-                                        <?php } ?>  -->
-
                                         <?php
+                                        // Dynamic Invoice Message Setup for WhatsApp Button
+                                        $Gas_mess = 0; $Water_mess = 0; $Electricity_mess = 0; $Others_mess = 0;
+                                        $billing_month_db = ''; $Gas_month_db_mess = ''; $Water_month_db_mess = ''; $Electricity_month_db_mess = ''; $Others_month_db_mess = '';
+                                        $total_bill_mess = $rent;
+
                                         $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
                                         if (!mysqli_num_rows($pay_info) > 0) {
                                             echo '<span class="fw-bold text-danger">';
                                             echo 'Due = ৳ ' . number_format($rent, 2);
                                             echo '</span>';
+                                            $status = 'Unpaid';
                                         } else {
-                                            mysqli_data_seek($pay_info, 0); // rewind result to loop again
+                                            mysqli_data_seek($pay_info, 0); 
                                             while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 $billing_month_db = $pay_info_sh['billing_month'];
                                                 $total_amount_db = $pay_info_sh['total_amount'];
@@ -135,40 +135,19 @@
                                                 $created_at = $pay_info_sh['created_at'];
                                                 $status = $pay_info_sh['status'];
 
-                                                $Gas = $pay_info_sh['Gas'];
-                                                $Water = $pay_info_sh['Water'];
-                                                $Electricity = $pay_info_sh['Electricity'];
-                                                $Others = $pay_info_sh['Others'];
+                                                $Gas_mess = $pay_info_sh['Gas'];
+                                                $Water_mess = $pay_info_sh['Water'];
+                                                $Electricity_mess = $pay_info_sh['Electricity'];
+                                                $Others_mess = $pay_info_sh['Others'];
+
+                                                $Gas_month_db_mess = $pay_info_sh['Gas_month'];
+                                                $Water_month_db_mess = $pay_info_sh['Water_month'];
+                                                $Electricity_month_db_mess = $pay_info_sh['Electricity_month'];
+                                                $Others_month_db_mess = $pay_info_sh['Others_month'];
+
+                                                $total_bill_mess = $rent + $Gas_mess + $Water_mess + $Electricity_mess + $Others_mess;
                                                 ?>     
                                                 
-                                                <!-- <?php 
-                                                    if(!empty($Water)){ ?>
-                                                        <span class="fw-semibold text-dark">
-                                                    Water = <small>৳ </small> <?= number_format($Water, 0) ?? '' ?>
-                                                    </span><br>
-                                                <?php } ?> 
-
-                                                <?php 
-                                                    if(!empty($Gas)){ ?>
-                                                        <span class="fw-semibold text-dark">
-                                                    Gas = <small>৳ </small> <?= number_format($Gas, 0) ?? '' ?>
-                                                    </span><br>
-                                                <?php } ?> 
-
-                                                <?php 
-                                                    if(!empty($Electricity)){ ?>
-                                                        <span class="fw-semibold text-dark">
-                                                    Electricity = <small>৳ </small> <?= number_format($Electricity, 0) ?? '' ?>
-                                                    </span><br>
-                                                <?php } ?>
-
-                                                <?php 
-                                                    if(!empty($Others)){ ?>
-                                                        <span class="fw-semibold text-dark">
-                                                    Others = <small>৳ </small> <?= number_format($Others, 0) ?? '' ?>
-                                                    </span><br>
-                                                <?php } ?> -->
-
                                                 <span class="fw-semibold text-primary">
                                                     Total = <small>৳ </small> <?= number_format($total_amount_db, 0) ?? '' ?>
                                                 </span><br>
@@ -185,7 +164,31 @@
                                                     </span><br>
                                                 <?php }
                                             }
-                                        } ?>
+                                        } 
+
+                                        // Creating dynamic WhatsApp message format for this row
+                                        $msg = "$name          INVOICE\n";
+                                        $msg .= "Flat No : $unit_name\n";
+                                        $msg .= "$building_name_db\n\n";
+
+                                        if (!empty($rent)) {
+                                            $msg .= "Rent (" . formatMonth($billing_month_db ?: $this_month) . ")           ={$rent}/-\n";
+                                        }
+                                        if (!empty($Gas_mess)) {
+                                            $msg .= "Gash (" . formatMonth($Gas_month_db_mess) . ")        ={$Gas_mess}/-\n";
+                                        }
+                                        if (!empty($Electricity_mess)) {
+                                            $msg .= "Current (" . formatMonth($Electricity_month_db_mess) . ")    ={$Electricity_mess}/-\n";
+                                        }
+                                        if (!empty($Water_mess)) {
+                                            $msg .= "Washa (" . formatMonth($Water_month_db_mess) . ")     ={$Water_mess}/-\n";
+                                        }
+                                        if (!empty($Others_mess)) {
+                                            $msg .= "Others (" . formatMonth($Others_month_db_mess) . ")    ={$Others_mess}/-\n";
+                                        }
+                                        $msg .= "TOTAL                   =" . $total_bill_mess . "/-";
+                                        $json_message = json_encode($msg);
+                                        ?>
                                     </td>
 
                                     <td>
@@ -216,41 +219,33 @@
                                         } else {
                                             $manager_paid_total = 0;
                                             $manager_self = 0;
+                                            $pay_method_his = ''; $transaction_id_db = ''; $manager_payment_method = ''; $transaction_date = ''; $transaction_number = '';
                                             
-                                            // তথ্য সংগ্রহের লুপ
                                             while ($pay_history = mysqli_fetch_assoc($history_sql)) {
                                                 $pay_method_his = $pay_history['payment_method'];
                                                 $transaction_id_db = $pay_history['transaction_id'];
                                                 $manager_payment_method = $pay_history['manager_payment_method'];
                                                 $transaction_date = $pay_history['payment_date'];
                                                 $transaction_number = $pay_history['transaction_number'];
-                                                $paid_amount_calcu = $pay_history['paid_amount'];
                                             }
-
 
                                             $manager_acount_sql = mysqli_query($db, "SELECT * FROM `payment_history` WHERE `tenant_id` = '$tent_id' AND bill_month = '$this_month' AND payment_method = 'Manager' ");
                                             while($manger_ac = mysqli_fetch_assoc($manager_acount_sql)){
-
                                                 $paid_amu = $manger_ac['paid_amount'];
                                                 $manager_paid_total += (float)$manger_ac['manager_paid'];  
                                                 $manager_self = (float)$paid_amu-$manager_paid_total;
                                             }
 
-                                            // কন্টেইনার শুরু (গ্যাপ কমানোর জন্য CSS ব্যবহার করা হয়েছে)
                                             echo '<div style="display: flex; flex-direction: column; line-height: 1.2; gap: 1px;">';
-
-                                                // পেমেন্ট মেথড
                                                 echo "<small class='text-success fw-bold' style='font-size: 11px;'>$pay_method_his</small>";
 
                                                 if ($manager_paid_total > 0) {
-                                                    echo "<small class='text-dark' style='font-size: 9px;'><b>Manager (Paid):  ৳</b> " . number_format($manager_paid_total, 0) . "</small>";
+                                                    echo "<small class='text-dark' style='font-size: 9px;'><b>Manager (Paid):   ৳</b> " . number_format($manager_paid_total, 0) . "</small>";
                                                 }
-
                                                 if ($manager_self > 0) {
-                                                    echo "<small class='text-danger' style='font-size: 9px;'><b>Manager (Self):  ৳</b> " . number_format($manager_self, 0) . "</small>";
+                                                    echo "<small class='text-danger' style='font-size: 9px;'><b>Manager (Self):   ৳</b> " . number_format($manager_self, 0) . "</small>";
                                                 }
 
-                                                // ট্রানজেকশন ডাটা এরে
                                                 $details = [
                                                     ['Txn ID', $transaction_id_db],
                                                     ['Payment Method', $manager_payment_method],
@@ -263,25 +258,20 @@
                                                         echo "<small style='font-size: 8.5px; color: #666;'>{$detail[0]}: {$detail[1]}</small>";
                                                     }
                                                 }
-
-                                            echo "</div>"; // কন্টেইনার শেষ
+                                            echo "</div>"; 
                                         }
                                         ?> 
                                     </td>
 
                                     <td>
                                         <div class="btn-group align-items-center">
-                                            <!-- <button class="btn btn-sm btn-outline-primary" title="Edit">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </button> -->
                                             <a href="admin.php?page=editbill&tenant_id=<?= $tent_id ?>"
                                                 class="text-end p-1 btn btn-sm btn-info" title="Invoice Create & Payment">
                                                 Details
                                             </a>
-                                            <a href="admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>" onclick="sendWhatsApp()" class="p-1 btn btn-sm btn-success" title="Message Send with Copy">
+                                            <a href="javascript:void(0);" onclick='sendWhatsApp(<?= $json_message ?>, "<?= $tent_phone ?>", "admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_name ?>")' class="p-1 btn btn-sm btn-success" title="Message Send with Copy">
                                                 <i class="bi bi-send"></i>
                                             </a>
-
                                         </div>
                                     </td>
                                 </tr>
@@ -294,127 +284,31 @@
     </div>
 </div>
 
-<!-- whatsapp message send code  -->
-<?php
-if(isset($_GET['unit_id'])) {
-    $unit_id = $_GET['unit_id'];
-
-    $query = "SELECT * FROM unit wHERE id = '$unit_id'";
-    $result = mysqli_query($db, $query);
-    $building_name = $building_name_db ?? 0;
-    while ($row = mysqli_fetch_assoc($result)) {
-        $unit_id = $row['id'];
-        $unit_name = $row['unit_name'];
-        $advance = $row['advance'];
-        $size = $row['size'];
-        $rent_mess = $row['rent'];
-        $water = $row['water'];
-        $gas = $row['gas'];
-        $building_name = $row['building_name'];
-        $unit_type = $row['unit_type'];
-        $Electricity_meter_no = $row['size'];
-    }
-
-    $building = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_id' ");
-    $building_row = mysqli_fetch_assoc($building);
-    $building_name_db = $building_row['name'] ?? '';
-
-    $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_id' AND unit_id = '$unit_id'");
-    while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
-        $tent_name = $tent_row['name'];
-        $tent_id = $tent_row['id'];
-        $tent_phone = $tent_row['phone'];
-    }
-
-    $tent_id = $tent_id ?? 0; // default to 0 if not set
-    $pay_info = mysqli_query($db, "SELECT * FROM invoices WHERE tenant_id = '$tent_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
-
-    while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
-        $billing_month_db = $pay_info_sh['billing_month'];
-        $paid_amount_db = $pay_info_sh['paid_amount'];
-        $due_amount_db = $pay_info_sh['due_amount'];
-        $created_at = $pay_info_sh['created_at'];
-        $status = $pay_info_sh['status'];
-
-        $Gas_mess = $pay_info_sh['Gas'];
-        $Water_mess = $pay_info_sh['Water'];
-        $Electricity_mess = $pay_info_sh['Electricity'];
-        $Others_mess = $pay_info_sh['Others'];
-
-        $Gas_month_db_mess = $pay_info_sh['Gas_month'];
-        $Water_month_db_mess = $pay_info_sh['Water_month'];
-        $Electricity_month_db_mess = $pay_info_sh['Electricity_month'];
-        $Others_month_db_mess = $pay_info_sh['Others_month'];
-
-        $total_bill_mess = $rent_mess+$Gas_mess+$Water_mess+$Electricity_mess+$Others_mess;
-    }
-
-    function formatMonth($date){
-        return date("M-y", strtotime($date));
-    }
-}
-?>
 <script>
-function sendWhatsApp() 
+function sendWhatsApp(message, phone, redirectUrl) 
 {
-    <?php 
-        $tent_sql = mysqli_query($db, "SELECT id,name,phone FROM tenants WHERE building_id = '$building_id' AND unit_id = '$unit_id'");
-        while ($tent_row = mysqli_fetch_assoc($tent_sql)) {
-            $tent_name = $tent_row['name'];
-            $tent_id = $tent_row['id'];
-            $tent_phone = $tent_row['phone'];
-        }
-        
-        $message = "$tent_name          INVOICE\n";
-        $message .= "Flat No : $unit_name\n";
-        $message .= "$building_name_db\n\n";
+    // Copy to clipboard
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(message);
+    } else {
+        let textarea = document.createElement("textarea");
+        textarea.value = message;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+    }
 
-        // Rent
-        if (!empty($rent_mess)) {
-            $message .= "Rent (" . formatMonth($billing_month_db) . ")          ={$rent_mess}/-\n";
-        }
-
-        // Gas
-        if (!empty($Gas_mess)) {
-            $message .= "Gash (" . formatMonth($Gas_month_db_mess) . ")        ={$Gas_mess}/-\n";
-        }
-
-        // Electricity
-        if (!empty($Electricity_mess)) {
-            $message .= "Current (" . formatMonth($Electricity_month_db_mess) . ")    ={$Electricity_mess}/-\n";
-        }
-
-        // Water
-        if (!empty($Water_mess)) {
-            $message .= "Washa (" . formatMonth($Water_month_db_mess) . ")     ={$Water_mess}/-\n";
-        }
-
-        // Others
-        if (!empty($Others_mess)) {
-            $message .= "Others (" . formatMonth($Others_month_db_mess) . ")    ={$Others_mess}/-\n";
-        }
-
-        // Total
-        $total_display = !empty($total_bill_mess) ? $total_bill_mess : $rent_mess;
-        $message .= "TOTAL                   =" . $total_display . "/-";
-    ?>
-    let message = <?php echo json_encode($message) ?? ''; ?>;
-    let phone = <?php echo json_encode($tent_phone) ?? ''; ?>;
-    let redirectUrl = "admin.php?page=bill&unit_id=<?= $unit_id ?>&id=<?= $building_id ?>";
-
-    // Copy
-    navigator.clipboard.writeText(message);
-
-    // Encode
+    // Encode Message
     let encodedMessage = encodeURIComponent(message);
 
-    // WhatsApp open
+    // WhatsApp url
     let url = `https://wa.me/${phone}?text=${encodedMessage}`;
     window.open(url, '_blank');
 
-    // ⏳ 1 second পরে redirect (important)
+    // Redirect
     setTimeout(function() {
         window.location.href = redirectUrl;
-    });
+    }, 500); // 500ms delay ensures window.open runs smoothly
 }
 </script>
