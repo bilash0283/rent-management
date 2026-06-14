@@ -181,7 +181,7 @@
                                         ?>
                                             <span class="short-address" title="<?php echo $address; ?>"><?= mb_substr($address, 0, 20) ?>...</span>
                                             <span class="full-address" style="display:none;" title="<?php echo $address; ?>"><?= $address ?></span>
-                                            <a href="javascript:void(0);" onclick="showAddress(this)" title="<?php echo $address; ?>">Read More</a>
+                                            <a href="javascript:void(0);" onclick="showAddress(this)" title="<?php echo $address; ?>">See More</a>
                                         <?php
                                             } else {
                                                 echo $address;
