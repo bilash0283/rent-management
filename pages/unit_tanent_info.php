@@ -249,3 +249,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    function showAddress(link) {
+        link.previousElementSibling.style.display = 'inline'; // full address
+        link.previousElementSibling.previousElementSibling.style.display = 'none'; // short address
+        link.style.display = 'none'; // hide Read More
+    }
+</script>
