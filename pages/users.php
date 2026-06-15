@@ -34,7 +34,7 @@
                         </thead>
                         <tbody>
                             <?php
-                            $user_sql = mysqli_query($db,"SELECT * FROM `users` ORDER BY id DESC ");
+                            $user_sql = mysqli_query($db,"SELECT * FROM `users` WHERE role IN (1,2) ORDER BY id DESC ");
                              while ($row = mysqli_fetch_assoc($user_sql)) {
                                 $unit_id = $row['id'];
                                 $name = $row['name'];
