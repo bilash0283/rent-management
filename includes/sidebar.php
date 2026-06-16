@@ -29,7 +29,7 @@ while($row = mysqli_fetch_assoc($result)) {
                 <li class="nxl-item nxl-hasmenu">
                     <a href="admin.php" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-airplay text-info"></i></span>
-                        <span class="nxl-mtext">Dashboards <?php echo $_SESSION['role']; ?></span>
+                        <span class="nxl-mtext">Dashboards</span>
                     </a>
                 </li>
 
