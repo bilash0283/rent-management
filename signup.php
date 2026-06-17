@@ -277,7 +277,7 @@ if (isset($_POST['sign_up'])) {
                                 <i class="fas fa-phone"></i>
                             </span>
                         </div>
-                        <input type="text" name="phone" class="form-control" placeholder="Phone Number" required>
+                        <input type="text" name="phone" class="form-control" placeholder="Phone Number" value="+880" required>
                     </div>
 
                     <!-- Password -->
