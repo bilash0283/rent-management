@@ -1,7 +1,7 @@
 <?php 
 $user_id = $_SESSION['id'];
 
-$sql = mysqli_query($db,"SELECT * FROM `users` WHERE id = '$user_id' ");
+$sql = mysqli_query($db,"SELECT * FROM `tenants` WHERE id = '$user_id' ");
 $user_row = mysqli_fetch_assoc($sql);
 
 $name     = $user_row['name'];
@@ -9,7 +9,7 @@ $role     = $user_row['role'];
 $email    = $user_row['email'];
 $phone    = $user_row['phone'];
 $password = $user_row['password'];
-$old_image= $user_row['image'];
+$old_image= $user_row['tenant_image'];
 
 if(isset($_POST['btn'])){
 
@@ -17,10 +17,10 @@ if(isset($_POST['btn'])){
     $email = mysqli_real_escape_string($db, $_POST['email']);
     $phone = mysqli_real_escape_string($db, $_POST['phone']);
 
-    $image_path = "public/uploads/users/";
+    $image_path = "public/uploads/tenants/";
     $new_image_name = $old_image; // default old image থাকবে
 
-    // যদি নতুন image upload করা হয়
+    // যদি নতুন image upload করা হয়
     if(isset($_FILES['image']) && $_FILES['image']['name'] != ''){
 
         $image_name = $_FILES['image']['name'];
@@ -35,9 +35,9 @@ if(isset($_POST['btn'])){
             if(in_array($ext, $allowed)){
 
                 // unique name create
-                $new_image_name = "user_" . time() . "." . $ext;
+                $new_image_name = "tenant_" . time() . "." . $ext;
 
-                // পুরানো image delete (default.png ছাড়া)
+                // পুরানো image delete (default.png ছাড়া)
                 if(!empty($old_image) && file_exists($image_path.$old_image)){
                     unlink($image_path.$old_image);
                 }
@@ -50,11 +50,11 @@ if(isset($_POST['btn'])){
     }
 
     // UPDATE QUERY (IMPORTANT: WHERE condition অবশ্যই দিতে হবে)
-    $update_sql = mysqli_query($db,"UPDATE `users` 
+    $update_sql = mysqli_query($db,"UPDATE `tenants` 
         SET `name`='$name',
             `email`='$email',
             `phone`='$phone',
-            `image`='$new_image_name'
+            `tenant_image`='$new_image_name'
         WHERE `id`='$user_id'
     ");
 
@@ -74,7 +74,7 @@ if(isset($_POST['btn'])){
             <div class="row">
                 <div class="col-md-4 border-right">
                     <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img
-                            class="rounded-circle mt-5" src="<?php echo $old_image ? 'public/uploads/users/'.$old_image : 'public/uploads/users/no-image.png' ?>" width="90">
+                            class="rounded-circle mt-5" src="<?php echo $old_image ? 'public/uploads/tenants/'.$old_image : 'public/uploads/tenants/no-image.png' ?>" width="90">
                         <span class="font-weight-bold fw-bold mt-3"><?= $name ?? '' ?></span>
                         <span class="text-black-50"><?= $email ?? '' ?></span><span><?= $phone ?? '' ?></span>
                     </div>
