@@ -3,7 +3,7 @@ include "database/db.php";
 session_name("rant_manager");
 session_start();
 
-if (!empty($_SESSION["role"]) || !empty($_SESSION['email']) || !empty($_SESSION['id'])) {
+if (!empty($_SESSION["role"]) || !empty($_SESSION['phone']) || !empty($_SESSION['id'])) {
     header('location:admin.php');
     exit;
 }
@@ -12,28 +12,46 @@ $error = '';
 
 if (isset($_POST['sign_in'])) {
 
-    $input_email = mysqli_real_escape_string($db, $_POST['email']);
+    // User input
+    $input_phone = trim($_POST['phone']);
     $input_password = md5($_POST['password']);
 
-    $select_user = "SELECT * FROM users WHERE email='$input_email' LIMIT 1";
+    // Remove spaces and special characters
+    $input_phone = preg_replace('/[^0-9+]/', '', $input_phone);
+
+    // Normalize phone number
+    if (strpos($input_phone, '+880') === 0) {
+        $input_phone = substr($input_phone, 4);
+    } elseif (strpos($input_phone, '880') === 0) {
+        $input_phone = substr($input_phone, 3);
+    }
+
+    if (substr($input_phone, 0, 1) != '0') {
+        $input_phone = '0' . $input_phone;
+    }
+
+    // Database format (+880XXXXXXXXXX)
+    $db_phone = '+88' . $input_phone;
+
+    $db_phone = mysqli_real_escape_string($db, $db_phone);
+
+    $select_user = "SELECT * FROM tenants WHERE phone='$db_phone' LIMIT 1";
     $user_sql = mysqli_query($db, $select_user);
 
     if (mysqli_num_rows($user_sql) < 1) {
 
-        $error = "Email not Found!";
+        $error = "User Not Found!";
 
     } else {
 
         $row = mysqli_fetch_assoc($user_sql);
 
-        $email = $row['email'];
-        $password = $row['password'];
-        $role = $row['role'];
-
-        if ($input_password == $password && in_array($role, [1, 2]) && $input_email == $email) {
+        if (
+            $input_password === $row['password'] &&
+            in_array($row['role'], ['Admin', 'Tenant', 'Manager'])
+        ) {
 
             $_SESSION['id'] = $row['id'];
-            // $_SESSION['name'] = $row['name'];
             $_SESSION['email'] = $row['email'];
             $_SESSION['phone'] = $row['phone'];
             $_SESSION['role'] = $row['role'];
@@ -43,7 +61,8 @@ if (isset($_POST['sign_in'])) {
 
         } else {
 
-            $error = "Invalid Email or Password";
+            $error = "Invalid Phone or Password";
+
         }
     }
 }
@@ -264,7 +283,7 @@ if (isset($_POST['sign_in'])) {
                                 <i class="fas fa-envelope"></i>
                             </span>
                         </div>
-                        <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+                        <input type="text" name="phone" class="form-control" placeholder="Phone Number" required>
                     </div>
                     <!-- Password -->
                     <div class="input-group">
