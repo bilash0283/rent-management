@@ -6,36 +6,82 @@ $success = '';
 
 if (isset($_POST['sign_up'])) {
 
-    $name = mysqli_real_escape_string($db, $_POST['name']);
-    $email = mysqli_real_escape_string($db, $_POST['email']);
-    $phone = mysqli_real_escape_string($db, $_POST['phone']);
+    $name  = mysqli_real_escape_string($db, trim($_POST['name']));
+    $email = mysqli_real_escape_string($db, trim($_POST['email']));
+    $phone = trim($_POST['phone']);
+
     $password = md5($_POST['password']);
     $confirm_password = md5($_POST['confirm_password']);
 
-    if ($password != $confirm_password) {
+    // Phone Normalize
+    $phone = str_replace([' ', '-'], '', $phone);
+
+    if (strpos($phone, '+880') === 0) {
+        $phone = substr($phone, 4);
+    } elseif (strpos($phone, '880') === 0) {
+        $phone = substr($phone, 3);
+    }
+
+    // Must start with 0
+    if (substr($phone, 0, 1) != '0') {
+        $phone = '0' . $phone;
+    }
+
+    // Bangladesh Mobile Validation
+    if (!preg_match('/^01[3-9][0-9]{8}$/', $phone)) {
+
+        $error = "Please enter a valid Bangladesh mobile number!";
+
+    } elseif ($password != $confirm_password) {
 
         $error = "Password does not match!";
 
     } else {
 
-        $check = mysqli_query($db, "SELECT * FROM users WHERE email='$email'");
+        // Final database format
+        $db_phone = '+88' . $phone;
 
-        if (mysqli_num_rows($check) > 0) {
+        $email = mysqli_real_escape_string($db, $email);
+        $db_phone = mysqli_real_escape_string($db, $db_phone);
+
+        // Check Email
+        $check_email = mysqli_query(
+            $db,
+            "SELECT id FROM tenants WHERE email='$email' LIMIT 1"
+        );
+
+        if (mysqli_num_rows($check_email) > 0) {
 
             $error = "Email already exists!";
 
         } else {
 
-            $insert = mysqli_query($db, "INSERT INTO users(name,email,phone,password,role)
-            VALUES('$name','$email','$phone','$password',2)");
+            // Check Phone
+            $check_phone = mysqli_query(
+                $db,
+                "SELECT id FROM tenants WHERE phone='$db_phone' LIMIT 1"
+            );
 
-            if ($insert) {
+            if (mysqli_num_rows($check_phone) > 0) {
 
-                $success = "Registration successful!";
+                $error = "Phone Number already exists!";
 
             } else {
 
-                $error = "Something went wrong!";
+                $insert = mysqli_query(
+                    $db,
+                    "INSERT INTO tenants(name,email,phone,password,role)
+                    VALUES('$name','$email','$db_phone','$password','Tenant')"
+                );
+
+                if ($insert) {
+
+                    $success = "Registration successful!";
+
+                } else {
+
+                    $error = "Something went wrong!";
+                }
             }
         }
     }
@@ -267,7 +313,7 @@ if (isset($_POST['sign_up'])) {
                                 <i class="fas fa-envelope"></i>
                             </span>
                         </div>
-                        <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+                        <input type="email" name="email" class="form-control" placeholder="Email Address" >
                     </div>
 
                     <!-- Phone -->
