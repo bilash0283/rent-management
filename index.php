@@ -1,7 +1,6 @@
 <?php
+include "database/session_manage.php";
 include "database/db.php";
-session_name("rant_manager");
-session_start();
 
 if (!empty($_SESSION["role"]) || !empty($_SESSION['phone']) || !empty($_SESSION['id'])) {
     header('location:admin.php');

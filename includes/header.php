@@ -1,24 +1,23 @@
 <?php
-ob_start();
-session_name("rant_manager");
-session_start();
+include "database/session_manage.php";
 include "database/db.php";
+
 date_default_timezone_set('Asia/Dhaka');
 if (empty($_SESSION["role"]) || empty($_SESSION['email']) || empty($_SESSION['id'])) {
     header('location:index.php');
 }
+
 $this_month = date("Y-m");
 $user_id = $_SESSION['id'];
-$sql = mysqli_query($db,"SELECT * FROM `users` WHERE id = '$user_id' ");
+$sql = mysqli_query($db,"SELECT * FROM `tenants` WHERE id = '$user_id' ");
 $user_row = mysqli_fetch_assoc($sql);
 $user_name     = $user_row['name'];
 $user_email = $user_row['email'];
-$old_image= $user_row['image'];
+$old_image= $user_row['tenant_image'];
 ?>
 
 <!DOCTYPE html>
 <html lang="zxx">
-
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="IE=edge" />
