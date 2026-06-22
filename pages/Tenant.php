@@ -2,8 +2,10 @@
 
     if(!isset($_GET['status'])){
         echo '<div class="alert alert-danger">Tenant Status Not Found !</div>';
-    }else{
+    }else if(isset($_GET['status'])){
         $status = $_GET['status'];
+    }else{
+        $status = 'Active';
     }
 
     $message = "";

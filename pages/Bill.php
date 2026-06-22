@@ -25,7 +25,7 @@
     <div class="page-header d-flex align-items-center justify-content-between">
        
         <strong class="mb-0 text-black">
-            <?= $building_name_db ?? ''; ?> <span style="background:#28a745;color:#fff;padding:4px 5px;border-radius:50px;font-size:8px;font-weight:500;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.15);"><?= $totla_unit ?? ''; ?></span> / Bill Month <small>(<?php echo date('M - Y') ?>)</small>
+            <?= $building_name_db ?? ''; ?> <span class="bg-info" style="color:#fff;padding:4px 5px;border-radius:50px;font-size:8px;font-weight:500;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.15);"><?= $totla_unit ?? ''; ?></span> / Bill Month <small>(<?php echo date('M - Y') ?>)</small>
         </strong>
        
         </div>
