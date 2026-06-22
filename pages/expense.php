@@ -130,8 +130,8 @@
                             <h6 class="text-muted mb-1 text-uppercase small fw-bold">Manager Expense</h6>
                             <h3 class="mb-0 fw-bold">৳ <?= number_format($manager_total, 0) ?></h3>
                         </div>
-                        <div class="bg-warning text-dark p-2 rounded-3">
-                            <i class="bi bi-person-gear fs-4"></i>
+                        <div class="bg-warning text-white p-2 rounded-3">
+                            <i class="bi bi-person-badge fs-4"></i>
                         </div>
                     </div>
                 </div>
