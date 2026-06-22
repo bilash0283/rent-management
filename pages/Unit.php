@@ -54,7 +54,7 @@
                 while($buil = mysqli_fetch_assoc($result_building)){
                 $buil_id   = $buil['id'];
                 $buil_name = $buil['name'];
-                echo $buil_name.' - '.$count_row.' / Unit Manage';
+                echo $buil_name.' - '.$count_row;
                 }
             ?>
         </h5>
