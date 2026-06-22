@@ -1,52 +1,52 @@
 <?php
-// Default values
-$building_id = '';
-$this_month_only = date('m'); // বর্তমান মাস (01-12)
-$this_year = date('Y');       // বর্তমান বছর (YYYY)
+    // Default values
+    $building_id = '';
+    $this_month_only = date('m'); // বর্তমান মাস (01-12)
+    $this_year = date('Y');       // বর্তমান বছর (YYYY)
 
-// Handle POST Filter
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['year']) && !empty($_POST['year'])) {
-        $this_year = mysqli_real_escape_string($db, $_POST['year']);
+    // Handle POST Filter
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['year']) && !empty($_POST['year'])) {
+            $this_year = mysqli_real_escape_string($db, $_POST['year']);
+        }
+        if (isset($_POST['month']) && !empty($_POST['month'])) {
+            $this_month_only = mysqli_real_escape_string($db, $_POST['month']);
+        }
+        if (isset($_POST['building']) && !empty($_POST['building'])) {
+            $building_id = mysqli_real_escape_string($db, $_POST['building']);
+        }
     }
-    if (isset($_POST['month']) && !empty($_POST['month'])) {
-        $this_month_only = mysqli_real_escape_string($db, $_POST['month']);
+
+    // Database query এর জন্য YYYY-MM ফরম্যাট তৈরি
+    $this_month = $this_year . '-' . str_pad($this_month_only, 2, '0', STR_PAD_LEFT);
+
+    // If no POST, get building_id from URL
+    if (empty($building_id)) {
+        if (!isset($_GET['id']) || empty($_GET['id'])) {
+            echo '<div class="alert alert-danger">Invalid Building ID</div>';
+            exit;
+        }
+        $building_id = mysqli_real_escape_string($db, $_GET['id']);
     }
-    if (isset($_POST['building']) && !empty($_POST['building'])) {
-        $building_id = mysqli_real_escape_string($db, $_POST['building']);
-    }
-}
 
-// Database query এর জন্য YYYY-MM ফরম্যাট তৈরি
-$this_month = $this_year . '-' . str_pad($this_month_only, 2, '0', STR_PAD_LEFT);
+    // Fetch Building Name
+    $buil_sql = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_id'");
+    $building_row = mysqli_fetch_assoc($buil_sql);
+    $building_name_db = $building_row['name'] ?? 'Unknown Building';
 
-// If no POST, get building_id from URL
-if (empty($building_id)) {
-    if (!isset($_GET['id']) || empty($_GET['id'])) {
-        echo '<div class="alert alert-danger">Invalid Building ID</div>';
-        exit;
-    }
-    $building_id = mysqli_real_escape_string($db, $_GET['id']);
-}
+    // Fetch all rented units for this building
+    $query = "SELECT * FROM unit 
+            WHERE building_name = '$building_id' 
+                AND status = 'Rented'";
 
-// Fetch Building Name
-$buil_sql = mysqli_query($db, "SELECT name FROM building WHERE id = '$building_id'");
-$building_row = mysqli_fetch_assoc($buil_sql);
-$building_name_db = $building_row['name'] ?? 'Unknown Building';
-
-// Fetch all rented units for this building
-$query = "SELECT * FROM unit 
-          WHERE building_name = '$building_id' 
-            AND status = 'Rented'";
-
-$result = mysqli_query($db, $query);
-$total_unit = mysqli_num_rows($result);
+    $result = mysqli_query($db, $query);
+    $total_unit = mysqli_num_rows($result);
 ?>
 
 <div class="nxl-content">
     <!-- Page Header -->
     <div class="page-header d-flex flex-wrap align-items-center justify-content-between p-4 mb-4 bg-white shadow-sm rounded-3">
-        <div class="d-flex align-items-center mb-2 mb-lg-0">
+        <div class="d-flex align-items-center mb-3 mb-lg-0">
             <div class="icon-box bg-primary-soft text-primary me-3 p-3 rounded-circle"
                 style="background: rgba(13, 110, 253, 0.1);">
                 <i class="fas fa-file-invoice-dollar fs-4"></i>
@@ -56,7 +56,7 @@ $total_unit = mysqli_num_rows($result);
                     <?= htmlspecialchars($building_name_db) ?>
                 </h4>
                 <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">
+                    <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1 rounded-pill">
                         <i class="fas fa-door-open me-1"></i> Total Units: <?= $total_unit ?>
                     </span>
                     <span class="text-muted small">
@@ -67,55 +67,68 @@ $total_unit = mysqli_num_rows($result);
         </div>
 
         <!-- Filter Form -->
-        <form method="POST" class="d-flex flex-wrap gap-2 align-items-center">
-            <!-- Year Selector -->
-            <div class="input-group input-group-sm shadow-sm" style="width: 120px;">
-                <span class="input-group-text bg-white border-end-0"><i class="far fa-calendar text-muted"></i></span>
-                <select name="year" class="form-select border-start-0 ps-0 fw-medium">
-                    <?php 
-                    $startYear = 2025; // আপনি চাইলে এটা পরিবর্তন করতে পারেন
-                    $endYear = date('Y') + 1;
-                    for ($y = $startYear; $y <= $endYear; $y++): ?>
-                        <option value="<?= $y ?>" <?= $y == $this_year ? 'selected' : '' ?>><?= $y ?></option>
-                    <?php endfor; ?>
-                </select>
+        <form method="POST" class="row g-2">
+            <div class="col-6 col-md-auto">
+                <div class="input-group input-group-sm shadow-sm w-100">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="far fa-calendar text-muted"></i>
+                    </span>
+                    <select name="year" class="form-select border-start-0 ps-0 fw-medium">
+                        <?php 
+                        $startYear = 2025;
+                        $endYear = date('Y') + 1;
+                        for ($y = $startYear; $y <= $endYear; $y++): ?>
+                            <option value="<?= $y ?>" <?= $y == $this_year ? 'selected' : '' ?>>
+                                <?= $y ?>
+                            </option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
             </div>
 
-            <!-- Month Selector -->
-            <div class="input-group input-group-sm shadow-sm" style="width: 140px;">
-                <span class="input-group-text bg-white border-end-0"><i class="far fa-calendar-check text-muted"></i></span>
-                <select name="month" class="form-select border-start-0 ps-0 fw-medium">
-                    <?php 
-                    for ($m = 1; $m <= 12; $m++): 
-                        $monthValue = str_pad($m, 2, '0', STR_PAD_LEFT);
-                        $displayText = date('F', mktime(0, 0, 0, $m, 1));
-                    ?>
-                        <option value="<?= $monthValue ?>" <?= $m == (int)$this_month_only ? 'selected' : '' ?>>
-                            <?= $displayText ?>
-                        </option>
-                    <?php endfor; ?>
-                </select>
+            <div class="col-6 col-md-auto">
+                <div class="input-group input-group-sm shadow-sm w-100">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="far fa-calendar-check text-muted"></i>
+                    </span>
+                    <select name="month" class="form-select border-start-0 ps-0 fw-medium">
+                        <?php 
+                        for ($m = 1; $m <= 12; $m++): 
+                            $monthValue = str_pad($m, 2, '0', STR_PAD_LEFT);
+                            $displayText = date('F', mktime(0, 0, 0, $m, 1));
+                        ?>
+                            <option value="<?= $monthValue ?>" <?= $m == (int)$this_month_only ? 'selected' : '' ?>>
+                                <?= $displayText ?>
+                            </option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
             </div>
 
-            <div class="input-group input-group-sm shadow-sm" style="width: 200px;">
-                <span class="input-group-text bg-white border-end-0"><i class="fas fa-building text-muted"></i></span>
-                <select name="building" class="form-select border-start-0 ps-0 fw-medium">
-                    <?php
-                    $buildings_sql = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
-                    while ($buil = mysqli_fetch_assoc($buildings_sql)) {
-                        $b_id = $buil['id'];
-                        $b_name = $buil['name'];
-                        $selected = ($b_id == $building_id) ? 'selected' : '';
-                        echo "<option value='$b_id' $selected>$b_name</option>";
-                    }
-                    ?>
-                </select>
+            <div class="col-6 col-md-auto">
+                <div class="input-group input-group-sm shadow-sm w-100">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="fas fa-building text-muted"></i>
+                    </span>
+                    <select name="building" class="form-select border-start-0 ps-0 fw-medium">
+                        <?php
+                        $buildings_sql = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
+                        while ($buil = mysqli_fetch_assoc($buildings_sql)) {
+                            $selected = ($buil['id'] == $building_id) ? 'selected' : '';
+                            echo "<option value='{$buil['id']}' $selected>{$buil['name']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-success btn-sm px-3 shadow-sm d-flex align-items-center gap-2">
-                <i class="fas fa-filter"></i>
-                <span>Filter</span>
-            </button>
+            <div class="col-6 col-md-auto">
+                <button type="submit"
+                    class="btn btn-success btn-sm shadow-sm w-100 h-100 d-flex align-items-center justify-content-center gap-2">
+                    <i class="fas fa-filter"></i>
+                    <span>Filter</span>
+                </button>
+            </div>
         </form>
     </div>
 </div>
