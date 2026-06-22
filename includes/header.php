@@ -162,13 +162,13 @@ $old_image= $user_row['tenant_image'];
                     <div class="dropdown nxl-h-item">
                         <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button"
                             data-bs-auto-close="outside">
-                            <img src="<?php echo $old_image ? 'public/uploads/users/'.$old_image : 'public/uploads/users/no-image.png' ?>" alt="<?= $old_image ?>"
+                            <img src="<?php echo $old_image ? 'public/uploads/tenants/'.$old_image : 'public/uploads/tenants/no-image.png' ?>" alt="<?= $old_image ?>"
                                 class="img-fluid user-avtar me-0" />
                         </a>
                         <div class="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">
                             <div class="dropdown-header">
                                 <div class="d-flex align-items-center">
-                                    <img src="<?php echo $old_image ? 'public/uploads/users/'.$old_image : 'public/uploads/users/no-image.png' ?>" alt="user-image"
+                                    <img src="<?php echo $old_image ? 'public/uploads/tenants/'.$old_image : 'public/uploads/tenants/no-image.png' ?>" alt="user-image"
                                         class="img-fluid user-avtar" />
                                     <div>
                                         <h6 class="text-dark mb-0"><?php echo $user_name ?? '' ?> <span
