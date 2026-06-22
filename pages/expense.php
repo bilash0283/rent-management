@@ -56,14 +56,22 @@
 
 <div class="nxl-content">
     <!-- Header Section -->
-    <div class="page-header d-flex align-items-center justify-content-between pb-3 pt-3">
-        <div>
+    <div class="page-header d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-3 pb-3 pt-3">
+        <!-- Left Side -->
+        <div class="w-100">
             <h4 class="fw-bold mb-0">Expense Reports</h4>
-            <small class="text-muted">Building: <span class="text-primary fw-bold"><?= $active_building_name ?></span></small>
+            <small class="text-muted">
+                Building:
+                <span class="text-primary fw-bold"><?= $active_building_name ?></span>
+            </small>
         </div>
-        <div class="d-flex align-items-center gap-3">
-            <form method="POST" class="d-flex gap-2">
-                <select name="month" class="form-select form-select-sm" style="width: 140px;">
+
+        <!-- Right Side -->
+        <div class="w-100 w-lg-auto">
+            <form method="POST"
+                class="d-flex flex-column flex-md-row gap-3 mb-2 mb-lg-0">
+                <select name="month"
+                    class="form-select form-select-sm">
                     <?php
                     for ($m = 1; $m <= 12; $m++) {
                         $m_val = date('Y') . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
@@ -73,7 +81,9 @@
                     }
                     ?>
                 </select>
-                <select name="building" class="form-select form-select-sm" style="width: 170px;">
+
+                <select name="building"
+                    class="form-select form-select-sm">
                     <?php
                     $b_list = mysqli_query($db, "SELECT id, name FROM building ORDER BY name ASC");
                     while ($b = mysqli_fetch_assoc($b_list)) {
@@ -82,11 +92,16 @@
                     }
                     ?>
                 </select>
-                <button type="submit" class="btn btn-sm btn-dark">Filter</button>
+
+                <button type="submit"
+                    class="btn btn-sm btn-dark py-3">
+                    Filter
+                </button>
+                <a href="admin.php?page=create_expense"
+                    class="btn btn-primary btn-sm py-3">
+                    <i class="bi bi-plus-lg"></i> Create Expense
+                </a>
             </form>
-            <a href="admin.php?page=create_expense" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Create Expense
-            </a>
         </div>
     </div>
 
