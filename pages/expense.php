@@ -54,9 +54,9 @@
     }
 ?>
 
-<div class="nxl-content mx-3">
+<div class="nxl-content">
     <!-- Header Section -->
-    <div class="page-header d-flex align-items-center justify-content-between pb-3">
+    <div class="page-header d-flex align-items-center justify-content-between pb-3 pt-3">
         <div>
             <h4 class="fw-bold mb-0">Expense Reports</h4>
             <small class="text-muted">Building: <span class="text-primary fw-bold"><?= $active_building_name ?></span></small>
@@ -84,14 +84,14 @@
                 </select>
                 <button type="submit" class="btn btn-sm btn-dark">Filter</button>
             </form>
-            <a href="admin.php?page=create_expense" class="btn btn-sm btn-primary">
+            <a href="admin.php?page=create_expense" class="btn btn-primary">
                 <i class="bi bi-plus-lg"></i> Create Expense
             </a>
         </div>
     </div>
 
     <!-- Summary Cards Section -->
-    <div class="row g-3 mt-2">
+    <div class="row g-3 mt-2 mx-3">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm overflow-hidden">
                 <div class="card-body bg-light-primary" style="border-left: 5px solid #0d6efd;">
@@ -140,7 +140,7 @@
     </div>
 
     <!-- Data Table Section -->
-    <div class="card mt-4 border-0 shadow-sm">
+    <div class="card mt-2 border-0 shadow-sm mx-3">
         <div class="card-header bg-white border-bottom py-3">
             <h6 class="mb-0 fw-bold"><i class="bi bi-list-ul me-2"></i>Detailed Expense List</h6>
         </div>
