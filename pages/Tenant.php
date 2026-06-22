@@ -1,9 +1,8 @@
 <?php
-
-    if(!isset($_GET['status'])){
-        $status = 'Active';
-    }else if(isset($_GET['status'])){
+    if(isset($_GET['status'])){
         $status = $_GET['status'];
+    }else {
+         $status = 'Active';
     }
 
     $message = "";
