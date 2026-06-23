@@ -163,13 +163,13 @@ $old_image= $user_row['tenant_image'];
                         <a href="javascript:void(0);" data-bs-toggle="dropdown" role="button"
                             data-bs-auto-close="outside">
                             <img src="<?php echo $old_image ? 'public/uploads/tenants/'.$old_image : 'public/uploads/tenants/no-image.png' ?>" alt="<?= $old_image ?>"
-                                class="img-fluid user-avtar me-0" />
+                                class="img-fluid user-avtar me-0" style="width:40px; height: 40px;"/>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">
                             <div class="dropdown-header">
                                 <div class="d-flex align-items-center">
                                     <img src="<?php echo $old_image ? 'public/uploads/tenants/'.$old_image : 'public/uploads/tenants/no-image.png' ?>" alt="user-image"
-                                        class="img-fluid user-avtar" />
+                                        class="img-fluid user-avtar" style="width:40px; height: 40px;" />
                                     <div>
                                         <h6 class="text-dark mb-0"><?php echo $user_name ?? '' ?> <span
                                                 class="badge bg-soft-success text-success ms-1">PRO</span></h6>

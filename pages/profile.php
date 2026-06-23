@@ -74,7 +74,7 @@ if(isset($_POST['btn'])){
             <div class="row">
                 <div class="col-md-4 border-right">
                     <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img
-                            class="rounded-circle mt-5" src="<?php echo $old_image ? 'public/uploads/tenants/'.$old_image : 'public/uploads/tenants/no-image.png' ?>" width="90">
+                            class="rounded-circle mt-5" src="<?php echo $old_image ? 'public/uploads/tenants/'.$old_image : 'public/uploads/tenants/no-image.png' ?>" width="90" style="width:90px; height: 90px;">
                         <span class="font-weight-bold fw-bold mt-3"><?= $name ?? '' ?></span>
                         <span class="text-black-50"><?= $email ?? '' ?></span><span><?= $phone ?? '' ?></span>
                     </div>
