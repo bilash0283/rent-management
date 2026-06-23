@@ -24,7 +24,7 @@ $building_name_db = $unit_data['building_name_db'];
 $unit_type = $unit_data['unit_type'];
 
 // ২. টেন্যান্ট তথ্য সংগ্রহ
-$tent_sql = mysqli_query($db, "SELECT name FROM tenants WHERE unit_id = '$unit_id' LIMIT 1");
+$tent_sql = mysqli_query($db, "SELECT name FROM tenants WHERE role IN ('Tenant') AND unit_id = '$unit_id' LIMIT 1");
 $tent_row = mysqli_fetch_assoc($tent_sql);
 $tent_name = $tent_row['name'] ?? 'N/A';
 

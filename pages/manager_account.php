@@ -130,7 +130,7 @@ $total_unit = mysqli_num_rows($result);
                 SUM(ph.manager_paid) as manager_paid_total
             FROM payment_history ph
             JOIN tenants t ON ph.tenant_id = t.id
-            WHERE t.building_id = '$building_id' 
+            WHERE t.role IN ('Tenant') AND t.building_id = '$building_id' 
             AND ph.bill_month = '$this_month' 
             AND ph.payment_method = 'Manager'
         ");
@@ -219,7 +219,7 @@ $total_unit = mysqli_num_rows($result);
                             // Tenant Info
                             $tenant_query = mysqli_query($db, "
                                 SELECT * FROM tenants
-                                WHERE building_id = '$building_id'
+                                WHERE role IN ('Tenant') AND building_id = '$building_id'
                                 AND unit_id = '$unit_id'
                                 LIMIT 1
                             ");

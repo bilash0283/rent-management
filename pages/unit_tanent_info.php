@@ -17,7 +17,7 @@
     if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete_id'])) {
 
         $id = (int) $_GET['delete_id'];
-        $sql = "SELECT tenant_image, nid_image, unit_id FROM tenants WHERE id = $id";
+        $sql = "SELECT tenant_image, nid_image, unit_id FROM tenants WHERE role IN ('Tenant') AND id = $id";
         $result = mysqli_query($db, $sql);
         if ($result && $row = mysqli_fetch_assoc($result)) {
 
@@ -35,7 +35,7 @@
             mysqli_query($db, "UPDATE unit SET status='Available' WHERE id=".$row['unit_id']);
         }
 
-        if (mysqli_query($db, "DELETE FROM tenants WHERE id=$id")) {
+        if (mysqli_query($db, "DELETE FROM tenants WHERE role IN ('Tenant') AND id=$id")) {
             $delete_advace = mysqli_query($db,"DELETE FROM `advance` WHERE tenant_id = $id ");
             $message = '
             <div class="alert alert-success alert-dismissible fade show mx-5 mt-2 mb-0">
@@ -60,7 +60,7 @@
     FROM unit u
     JOIN building b ON u.building_name = b.id
     LEFT JOIN tenants t ON t.unit_id = u.id
-    WHERE u.building_name = '$building_id_get'
+    WHERE u.building_name = '$building_id_get' AND t.role IN ('Tenant')
     ;
     ";
     $result = mysqli_query($db, $query);

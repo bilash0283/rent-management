@@ -11,7 +11,7 @@
     if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['delete_id'])) {
 
         $id = (int) $_GET['delete_id'];
-        $sql = "SELECT tenant_image, nid_image, unit_id FROM tenants WHERE id = $id";
+        $sql = "SELECT tenant_image, nid_image, unit_id FROM tenants WHERE role IN ('Tenant') AND id = $id";
         $result = mysqli_query($db, $sql);
         if ($result && $row = mysqli_fetch_assoc($result)) {
 
@@ -29,7 +29,7 @@
             mysqli_query($db, "UPDATE unit SET status='Available' WHERE id=".$row['unit_id']);
         }
 
-        if (mysqli_query($db, "DELETE FROM tenants WHERE id=$id")) {
+        if (mysqli_query($db, "DELETE FROM tenants WHERE role IN ('Tenant') AND id=$id")) {
             mysqli_query($db, "DELETE FROM payment_history WHERE tenant_id=$id");
             mysqli_query($db, "DELETE FROM invoices WHERE tenant_id=$id");
             $delete_advace = mysqli_query($db,"DELETE FROM `advance` WHERE tenant_id = $id ");
@@ -48,7 +48,7 @@
     }
 
     /* ================= FETCH TENANTS ================= */
-    $query = "SELECT * FROM tenants WHERE ";
+    $query = "SELECT * FROM tenants WHERE role IN ('Tenant') AND ";
     if(isset($_POST['filter_btn'])){
         if($_POST['select_building'] != 'all'){
             $select_building = $_POST['select_building'];

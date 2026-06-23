@@ -53,7 +53,7 @@ if (isset($_POST['ajax']) && $_POST['ajax'] === 'get_units') {
 /* ================= EDIT FETCH ================= */
 if (isset($_GET['edit_id'])) {
     $id = (int)$_GET['edit_id'];
-    $q = mysqli_query($db, "SELECT * FROM tenants WHERE id=$id");
+    $q = mysqli_query($db, "SELECT * FROM tenants WHERE role IN ('Tenant') AND id=$id");
     $editData = mysqli_fetch_assoc($q);
     $old_unit_id = $editData['unit_id'] ?? '';
 }
@@ -114,9 +114,9 @@ if (isset($_POST['save_tenant'])) {
         // ADD
         mysqli_query($db, "
             INSERT INTO tenants 
-            (name, phone, email, status, booking_month, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id, start_tanent, nid_no)
+            (name, phone, email, status, role, booking_month, permanent_address, family_member, tenant_image, nid_image, building_id, unit_id, start_tanent, nid_no)
             VALUES 
-            ('$name','$phone','$email', '$status', '$booking_month', '$address','$family','$tenant_img','$nid_img','$building','$unit','$start_tanent','$nid_no')
+            ('$name','$phone','$email', '$status', 'Tenant', '$booking_month', '$address','$family','$tenant_img','$nid_img','$building','$unit','$start_tanent','$nid_no')
         ");
         if ($unit > 0) {
             mysqli_query($db, "UPDATE unit SET status='Rented' WHERE id=$unit");

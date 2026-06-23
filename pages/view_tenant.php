@@ -14,7 +14,7 @@ $query = "
         FROM tenants t
         JOIN building b ON t.building_id = b.id
         JOIN unit u ON t.unit_id = u.id
-        WHERE t.id = $tenant_id ORDER BY t.id DESC
+        WHERE t.role IN ('Tenant') AND t.id = $tenant_id ORDER BY t.id DESC
     ";
 $result = mysqli_query($db, $query);
 ?>

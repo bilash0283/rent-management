@@ -5,7 +5,7 @@
     if (isset($_GET['edit_id'])) {
         $id = (int)$_GET['edit_id'];
 
-        $q = mysqli_query($db, "SELECT * FROM tenants WHERE id = $id");
+        $q = mysqli_query($db, "SELECT * FROM tenants WHERE role IN ('Tenant') AND id = $id");
         $editData = mysqli_fetch_assoc($q);
 
         if ($editData) {
@@ -26,7 +26,7 @@
         } else {
 
             // Get current tenant data
-            $current = mysqli_fetch_assoc(mysqli_query($db, "SELECT unit_id, status FROM tenants WHERE id = $id"));
+            $current = mysqli_fetch_assoc(mysqli_query($db, "SELECT unit_id, status FROM tenants WHERE role IN ('Tenant') AND id = $id"));
             $unit_id = $current['unit_id'] ?? '';
 
             if (empty($unit_id)) {
@@ -41,7 +41,7 @@
                     $checkActive = mysqli_query($db, "
                         SELECT id, name 
                         FROM tenants 
-                        WHERE unit_id = '$unit_id' 
+                        WHERE role IN ('Tenant') AND unit_id = '$unit_id' 
                         AND status = 'Active' 
                         AND id != '$id'
                         LIMIT 1
@@ -63,7 +63,7 @@
                             UPDATE tenants 
                             SET status = 'Active', 
                                 booking_month = '$booking_month' 
-                            WHERE id = '$id'
+                            WHERE role IN ('Tenant') AND id = '$id'
                         ");
 
                         // === UPDATE UNIT STATUS ===
@@ -87,7 +87,7 @@
                         UPDATE tenants 
                         SET status = '$status', 
                             booking_month = '$booking_month' 
-                        WHERE id = '$id'
+                        WHERE role IN ('Tenant') AND id = '$id'
                     ");
 
                     // UPDATE UNIT TO AVAILABLE
