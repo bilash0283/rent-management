@@ -137,7 +137,7 @@
 
                         <!-- Action Button -->
                         <div class="filter-field-group field-button">
-                            <button type="submit" class="btn btn-primary w-100 btn-filter-submit shadow-sm d-flex align-items-center justify-content-center gap-2 fw-medium transition-all">
+                            <button type="submit" class="btn btn-success w-100 btn-filter-submit shadow-sm d-flex align-items-center justify-content-center gap-2 fw-medium transition-all">
                                 <i class="fas fa-filter fs-7"></i> <span>Filter</span>
                             </button>
                         </div>
