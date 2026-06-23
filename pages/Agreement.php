@@ -8,7 +8,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $tenant_id = (int) $_GET['id'];
 
-$query = "SELECT * FROM tenants WHERE id = $tenant_id LIMIT 1";
+$query = "SELECT * FROM tenants WHERE role IN ('Tenant') AND id = $tenant_id LIMIT 1";
 $result = mysqli_query($db, $query);   // $conn from your header
 
 if (!$result || mysqli_num_rows($result) === 0) {
