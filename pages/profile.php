@@ -97,11 +97,11 @@ if(isset($_POST['btn'])){
                                 <div class="col-md-12"><input type="text" name="email" class="form-control" placeholder="Email"
                                         value="<?= $email ?? '' ?>"></div>
                             </div>
-                            <div class="row mt-3">
+                            <!-- <div class="row mt-3">
                                 <div class="col-md-12"><input type="text" name="phone" class="form-control" placeholder="Phone"
                                         value="<?= $phone ?>"></div>
                                 <div class="col-md-6"></div>
-                            </div>
+                            </div> -->
                             <div class="row mt-3">
                                 <div class="col-md-12"><input type="file" name="image" class="form-control" ></div>
                                 <div class="col-md-6"></div>
