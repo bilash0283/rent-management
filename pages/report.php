@@ -250,7 +250,7 @@
                     SUM(ph.manager_paid) as manager_paid_total
                 FROM payment_history ph
                 JOIN tenants t ON ph.tenant_id = t.id
-                WHERE t.building_id = '$building_id' 
+                WHERE  t.role IN ('Tenant') AND t.building_id = '$building_id' 
                 AND $filter_condition 
                 AND ph.payment_method = 'Manager'
             ");
@@ -271,7 +271,7 @@
                     SUM(paid_amount) as total_paid
                 FROM invoices inv
                 JOIN tenants t ON inv.tenant_id = t.id
-                WHERE t.building_id = '$building_id' 
+                WHERE t.role IN ('Tenant') AND t.building_id = '$building_id' 
                 AND $invoice_filter_condition
             ");
 
@@ -375,7 +375,7 @@
                 SELECT ph.payment_method, COALESCE(SUM(ph.paid_amount), 0) as method_total
                 FROM payment_history ph
                 JOIN tenants t ON ph.tenant_id = t.id
-                WHERE t.building_id = '$building_id' AND $filter_condition
+                WHERE t.role IN ('Tenant') AND t.building_id = '$building_id' AND $filter_condition
                 GROUP BY ph.payment_method ORDER BY method_total DESC";
             $pm_result = mysqli_query($db, $pm_query);
             $payment_methods = [];
@@ -438,7 +438,7 @@
                                 $building_name = $row['building_name'];
                                 $size = $row['size'];
 
-                                $sql_tenant = mysqli_query($db, "SELECT * FROM tenants WHERE building_id = '$building_name' AND unit_id = '$unit_id' LIMIT 1");
+                                $sql_tenant = mysqli_query($db, "SELECT * FROM tenants WHERE role IN ('Tenant') AND building_id = '$building_name' AND unit_id = '$unit_id' LIMIT 1");
                                 $tent_row = mysqli_fetch_assoc($sql_tenant);
                                 $name = $tent_row['name'] ?? 'N/A';
                                 $tent_id = $tent_row['id'] ?? 0;
