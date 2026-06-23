@@ -15,8 +15,8 @@ while($row = mysqli_fetch_assoc($result)) {
         <div class="m-header" style="border-bottom: none;">
             <a href="admin.php" class="mx-auto my-3" style="width:100px;height:100px;">
                 <!-- ========   change your logo hear   ============ -->
-                <img src="public/assets/images/logo-full.png" alt="" class="logo logo-lg img-fluid" />
-                <img src="public/assets/images/logo-abbr.png" alt="" class="logo logo-sm" />
+                <img src="public/assets/images/logo-full.png" alt="" class="logo logo-lg img-fluid" style="margin-top: 7px;" />
+                <img src="public/assets/images/logo-abbr.png" alt="" class="logo logo-sm" style="margin-top:20px; width: 50px;" />
             </a>
         </div>
         

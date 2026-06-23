@@ -82,7 +82,7 @@ if ($calculated_due <= 0) {
         </button>
     </div>
 
-    <div class="mb-5 pb-5">
+    <div class="mb-3">
         <div id="pdf-content" class="payslip-wrapper bg-white shadow-lg mx-auto position-relative">
             
             <!-- Watermark -->
