@@ -387,7 +387,7 @@
         ?>
 
         <div class="mb-2">
-            <h5 class="mb-2">Payment Method Wise Ratio (Selected Period)</h5>
+            <h5 class="mb-2">Payment Method Wise Ratio</h5>
             <?php if (empty($payment_methods)): ?>
                 <div class="alert alert-light text-center border shadow-sm rounded-3 py-2">No payment data found.</div>
             <?php else: ?>
