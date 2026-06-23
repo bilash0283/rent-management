@@ -16,11 +16,11 @@ $unit_q = mysqli_query($db, "SELECT * FROM unit");
 $total_unit = mysqli_num_rows($unit_q);
 
 // ৩. টেন্যান্ট ডাটা
-$tenant_q = mysqli_query($db, "SELECT * FROM tenants");
+$tenant_q = mysqli_query($db, "SELECT * FROM tenants WHERE role IN ('Tenant') ORDER BY id DESC");
 $total_tenant = mysqli_num_rows($tenant_q);
 
 // users list data 
-$user_sql = mysqli_query($db,"SELECT * FROM `users` ");
+$user_sql = mysqli_query($db,"SELECT * FROM `tenants` WHERE role IN ('Admin','Manager') ORDER BY id DESC ");
 $total_users = mysqli_num_rows($user_sql);
 
 // ৪. বর্তমান মাসের সামারি (Bill, Paid, Due Calculation)

@@ -34,7 +34,7 @@
                         </thead>
                         <tbody>
                             <?php
-                            $user_sql = mysqli_query($db,"SELECT * FROM `users` WHERE role IN (1,2) ORDER BY id DESC ");
+                            $user_sql = mysqli_query($db,"SELECT * FROM `tenants` WHERE role IN ('Admin','Manager') ORDER BY id DESC ");
                              while ($row = mysqli_fetch_assoc($user_sql)) {
                                 $unit_id = $row['id'];
                                 $name = $row['name'];
@@ -53,17 +53,7 @@
 
                                     <td><?= $phone ?? 'N/A'; ?></td>
 
-                                    <td>
-                                        <?php 
-                                            if($role == 1){
-                                                echo "<span class='bg-success text-white p-1 rounded-2'>Admin</span>";
-                                            }else if ($role == 2){
-                                                echo "<span class='bg-warning text-white p-1 rounded-2'>User</span>";
-                                            }else{
-                                                echo "<span class='bg-secondary text-white p-1 rounded-2'>Unknown</span>";
-                                            }
-                                        ?>
-                                    </td>
+                                    <td><span class="bg-<?php if($role == 'Admin') { echo 'success'; } elseif($role == 'Manager') { echo 'warning'; } else { echo 'secondary'; } ?> p-1 rounded-2 text-white"><?= $role ?? 'N/A'; ?></span></td>
 
                                     <td>
                                         <div class="btn-group align-items-center">
