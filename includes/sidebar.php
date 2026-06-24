@@ -33,6 +33,7 @@ while($row = mysqli_fetch_assoc($result)) {
                     </a>
                 </li>
 
+                <?php if($_SESSION['role'] === 'Admin'): ?>
                 <li class="nxl-item nxl-hasmenu">
                     <a href="javascript:void(0);" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-home text-info"></i></span>
@@ -174,7 +175,7 @@ while($row = mysqli_fetch_assoc($result)) {
 
                     </ul>
                 </li>
-                
+                <?php endif; ?>
             </ul>
         </div>
     </div>

@@ -15,7 +15,6 @@ if(isset($_POST['btn'])){
 
     $name  = mysqli_real_escape_string($db, $_POST['name']);
     $email = mysqli_real_escape_string($db, $_POST['email']);
-    $phone = mysqli_real_escape_string($db, $_POST['phone']);
 
     $image_path = "public/uploads/tenants/";
     $new_image_name = $old_image; // default old image থাকবে
@@ -53,7 +52,6 @@ if(isset($_POST['btn'])){
     $update_sql = mysqli_query($db,"UPDATE `tenants` 
         SET `name`='$name',
             `email`='$email',
-            `phone`='$phone',
             `tenant_image`='$new_image_name'
         WHERE `id`='$user_id'
     ");
@@ -97,11 +95,6 @@ if(isset($_POST['btn'])){
                                 <div class="col-md-12"><input type="text" name="email" class="form-control" placeholder="Email"
                                         value="<?= $email ?? '' ?>"></div>
                             </div>
-                            <!-- <div class="row mt-3">
-                                <div class="col-md-12"><input type="text" name="phone" class="form-control" placeholder="Phone"
-                                        value="<?= $phone ?>"></div>
-                                <div class="col-md-6"></div>
-                            </div> -->
                             <div class="row mt-3">
                                 <div class="col-md-12"><input type="file" name="image" class="form-control" ></div>
                                 <div class="col-md-6"></div>
