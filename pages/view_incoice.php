@@ -61,17 +61,17 @@ $payable_advance = max($advance - $total_advance_paid, 0);
 
 <div class="nxl-content">
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
-        <h5 class="mb-0">Monthly Invoice</h5>
+        <h6 class="mb-0" style="border:none;">Monthly Invoice</h6>
         <div class="d-flex align-items-center gap-3">
-            <div class="form-check form-switch mb-0">
+            <div class="form-check form-switch mb-0 d-flex align-items-center gap-3">
                 <input class="form-check-input" type="checkbox" id="includeDueBtn">
-                <label class="form-check-label fw-bold" for="includeDueBtn" style="cursor:pointer;">Include Previous Due</label>
+                <small class="form-check-label fw-bold" for="includeDueBtn" style="cursor:pointer;">Include Previous Due</small>
             </div>
-            <button id="generatePdfBtn" class="btn btn-success btn-sm">
-                <i class="feather-icon icon-download me-2"></i> Download
+            <button id="generatePdfBtn" class="bg-success p-1 rounded-2 text-white border-0" style="font-size:8px;">
+                 Download
             </button>
-            <a href="admin.php?page=editbill&tenant_id=<?= $tenant_id ?>" class="btn btn-info btn-sm">
-                <i class="feather-icon icon-arrow-left me-1"></i>Back
+            <a href="admin.php?page=editbill&tenant_id=<?= $tenant_id ?>" class="bg-info p-1 rounded-2 text-white border-0" style="font-size:8px;">
+                Back
             </a>
         </div>
     </div>
