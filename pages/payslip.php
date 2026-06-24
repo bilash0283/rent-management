@@ -28,11 +28,11 @@ $tent_sql = mysqli_query($db, "SELECT name FROM tenants WHERE role IN ('Tenant')
 $tent_row = mysqli_fetch_assoc($tent_sql);
 $tent_name = $tent_row['name'] ?? 'N/A';
 
-// ৩. বর্তমান পেমেন্ট স্লিপ এবং ইনভয়েসের বিস্তারিত তথ্য (JOIN সহ)
+// ৩. বর্তমান পেমেন্ট স্লিপ এবং ইনভয়েসের বিস্তারিত তথ্য (JOIN সহ)
 $history_query = mysqli_query($db, "SELECT ph.*, inv.total_amount, inv.billing_month 
-                                    FROM `payment_history` ph 
-                                    JOIN `invoices` inv ON ph.invoice_id = inv.id 
-                                    WHERE ph.id = '$pay_slip_id'");
+                                     FROM `payment_history` ph 
+                                     JOIN `invoices` inv ON ph.invoice_id = inv.id 
+                                     WHERE ph.id = '$pay_slip_id'");
 $pay_history = mysqli_fetch_assoc($history_query);
 
 if (!$pay_history) {
@@ -49,7 +49,7 @@ $pay_date_his = $pay_history['payment_date'];
 $transaction_id_db = $pay_history['transaction_id'];
 $transaction_number_db = $pay_history['transaction_number'];
 
-// ৪. এই ইনভয়েসের জন্য এ পর্যন্ত মোট কত পেইড হয়েছে তা বের করা (Running Total)
+// ৪. এই ইনভয়েসের জন্য এ পর্যন্ত মোট কত পেইড হয়েছে তা বের করা (Running Total)
 $total_paid_query = mysqli_query($db, "SELECT SUM(paid_amount) as total_paid_till_now 
                                        FROM payment_history 
                                        WHERE invoice_id = '$invoice_id' 
@@ -59,7 +59,7 @@ $total_paid_row = mysqli_fetch_assoc($total_paid_query);
 $calculated_total_paid = (float)$total_paid_row['total_paid_till_now'];
 $calculated_due = $total_bill_amount - $calculated_total_paid;
 
-// ৫. ওয়াটারমার্ক লজিক
+// ৫. ওয়াটারমার্ক লজিক
 $watermark_text = "";
 $watermark_class = "";
 
@@ -76,16 +76,15 @@ if ($calculated_due <= 0) {
 
 <div class="nxl-content">
     <div class="page-header d-flex align-items-center justify-content-between mb-4 px-4 mt-3">
-        <h5 class="mb-0 fw-bold text-secondary">RENTAL MANAGEMENT SYSTEM</h5>
+        <h5 class="mb-0 fw-bold text-secondary">RENT MANAGER</h5>
         <button id="generatePdfBtn" class="btn btn-dark shadow-sm px-4 rounded-pill">
-            <i class="feather-icon icon-download me-2"></i> DOWNLOAD RECEIPT
+            <i class="feather-icon icon-download me-2"></i> Download
         </button>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3" style="overflow-x: auto; width: 100%;">
         <div id="pdf-content" class="payslip-wrapper bg-white shadow-lg mx-auto position-relative">
             
-            <!-- Watermark -->
             <?php if (!empty($watermark_text)): ?>
                 <div class="watermark-container <?= $watermark_class ?>">
                     <?= $watermark_text ?>
@@ -94,7 +93,7 @@ if ($calculated_due <= 0) {
 
             <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4" style="position: relative; z-index: 2;">
                 <div class="d-flex">
-                    <div>
+                    <div class="me-3">
                         <img src="public/assets/images/logo-full.png" alt="logo" style="width:60px; height:60px; border-radius:50%; object-fit: cover;">
                     </div>
                     <div>
@@ -117,7 +116,7 @@ if ($calculated_due <= 0) {
                     <p class="mb-0 text-secondary">Invoice No : <strong>#INV-<?= $invoice_id ?></strong></p>
                 </div>
                 <div class="col-6 ps-4">
-                    <p class="label-heading text-end text-sm-start">PAYMENT DETAILS</p>
+                    <p class="label-heading text-start">PAYMENT DETAILS</p>
                     <div class="d-flex justify-content-between mb-1">
                         <span class="text-muted small">Method:</span>
                         <span class="fw-bold small text-uppercase"><?= $pay_method_his ?: 'N/A'; ?></span>
@@ -216,8 +215,10 @@ if ($calculated_due <= 0) {
         font-family: 'Inter', sans-serif;
         color: #2d3436;
         padding: 50px;
-        max-width: 850px;
+        width: 850px; /* উইডথ ফিক্সড করা হয়েছে */
+        min-width: 850px; /* মোবাইলের জন্য মিনিমাম উইডথ ফিক্সড রাখা হয়েছে */
         background: white;
+        box-sizing: border-box;
     }
     .building-title { font-weight: 800; color: #0984e3; font-size: 1.8rem; }
     .payslip-label { font-weight: 300; letter-spacing: 10px; color: #b2bec3; font-size: 1.5rem; }
@@ -246,18 +247,35 @@ if ($calculated_due <= 0) {
 document.getElementById('generatePdfBtn').addEventListener('click', function () {
     const element = document.getElementById('pdf-content');
     const btn = this;
-    btn.innerText = 'PROCESSING...';
     
+    btn.innerText = 'PROCESSING...';
+    btn.disabled = true; // প্রসেসিং এর সময় বাটনে ডাবল ক্লিক ব্লক করার জন্য
+    
+    // ইমেজ জেনারেট করার সময় যেন কোন স্ক্রলবার স্ক্রিনশটে না আসে তা নিশ্চিত করা হলো
+    const originalWidth = element.style.width;
+    element.style.width = '850px'; 
+
     html2canvas(element, {
-        scale: 3, 
+        scale: 3, // হাই কোয়ালিটি ডাউনলোডের জন্য (পিক্সেল ফাটবে না)
         useCORS: true,
         backgroundColor: "#ffffff",
+        width: 850, // ক্যানভাসের উইডথ ফিক্সড ৮৫০ পিক্সেল নির্ধারণ
+        height: element.offsetHeight,
+        windowWidth: 850 // ব্রাউজারকে বাধ্য করা হচ্ছে ৮৫০ পিক্সেল উইন্ডো সাইজে রেন্ডার করতে
     }).then(canvas => {
         let link = document.createElement('a');
         link.download = 'Receipt_<?= $invoice_id ?>_<?= addslashes($tent_name) ?>.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
-        btn.innerHTML = '<i class="feather-icon icon-download me-2"></i> DOWNLOAD RECEIPT';
+        
+        // রিসেট ওল্ড স্টাইল 
+        element.style.width = originalWidth;
+        btn.innerHTML = '<i class="feather-icon icon-download me-2"></i> Download';
+        btn.disabled = false;
+    }).catch(err => {
+        console.error(err);
+        btn.innerHTML = '<i class="feather-icon icon-download me-2"></i> Download';
+        btn.disabled = false;
     });
 });
 </script>
