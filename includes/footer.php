@@ -1,13 +1,24 @@
-<!-- [ Footer ] start -->
-<footer class="footer mb-0 pb-1">
-    <p class="fs-11 text-muted fw-medium text-uppercase mb-0 copyright">
-        <span>Copyright ©</span>
-        <script>
-            document.write(new Date().getFullYear());
-        </script>
-    </p>
-    <p><span>powered by : <a target="_blank" class="text-info" href="https://gsc.co.com"
-                target="_blank">GSC</a></span> 
-    </p>
+<!-- [ Footer ] Start -->
+<footer class="footer py-3 border-top">
+    <div class="container text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+        <div class="text-muted small mb-1">
+            © <span id="year"></span> All Rights Reserved.
+        </div>
+
+        <div class="small">
+            Powered by
+            <a href="https://gsc.co.com" target="_blank"
+                class="fw-semibold text-primary text-decoration-none">
+                GSC
+            </a>
+            <i class="bi bi-lightning-charge-fill text-warning ms-1"></i>
+        </div>
+
+    </div>
 </footer>
-<!-- [ Footer ] end -->
+
+<script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+<!-- [ Footer ] End -->
