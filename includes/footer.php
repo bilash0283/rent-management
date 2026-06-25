@@ -1,6 +1,6 @@
 <!-- [ Footer ] Start -->
 <footer class="footer py-3 border-top">
-    <div class="container text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
+    <div class="container text-center d-flex justify-content-between align-items-center">
 
         <div class="text-muted small mb-1">
             © <span id="year"></span> All Rights Reserved.
