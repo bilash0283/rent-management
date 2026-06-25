@@ -87,6 +87,7 @@ foreach ($monthly_totals as $month => $data) {
 
 <div class="nxl-content">
     <div class="main-content">
+        <?php if($_SESSION['role'] == 'Admin') { ?>
         <div class="row">
             <!-- Building Card -->
             <div class="col-lg-3">
@@ -223,6 +224,7 @@ foreach ($monthly_totals as $month => $data) {
                 </div>
             </div>
         </div>
+        <?php } ?>
     </div>
 </div>
 
