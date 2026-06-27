@@ -225,6 +225,90 @@ foreach ($monthly_totals as $month => $data) {
             </div>
         </div>
         <?php } ?>
+
+        <?php if($_SESSION['role'] == 'Tenant') { ?>
+            <div class="row">
+                <!-- Building Card -->
+                <div class="col-lg-3">
+                    <a href="admin.php?page=building" class="text-decoration-none">
+                        <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-circle bg-primary-subtle text-primary">
+                                        <i class="fas fa-building fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">Total Buildings</h6>
+                                        <small class="text-muted">All registered buildings</small>
+                                    </div>
+                                </div>
+                                <h3 class="fw-bold text-primary mb-0"><?= $total_building ?></h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Unit Card -->
+                <div class="col-lg-3">
+                    <a href="admin.php?page=unit&id=<?php echo $buill_id; ?>" class="text-decoration-none">
+                        <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-circle bg-success-subtle text-success">
+                                        <i class="fas fa-door-open fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">Total Units</h6>
+                                        <small class="text-muted">Available & Occupied</small>
+                                    </div>
+                                </div>
+                                <h3 class="fw-bold text-success mb-0"><?= $total_unit ?></h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Tenant Card -->
+                <div class="col-lg-3">
+                    <a href="admin.php?page=tenant&building_id=<?php echo $buill_id; ?>" class="text-decoration-none">
+                        <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-circle bg-warning-subtle text-warning">
+                                        <i class="fas fa-users fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">Total Tenants</h6>
+                                        <small class="text-muted">Currently Active</small>
+                                    </div>
+                                </div>
+                                <h3 class="fw-bold text-warning mb-0"><?= $total_tenant ?></h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Users Card -->
+                <div class="col-lg-3">
+                    <a href="admin.php?page=users" class="text-decoration-none">
+                        <div class="card dashboard-card shadow-sm border-0 rounded-4 mb-4">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-circle bg-info-subtle text-info">
+                                        <i class="fas fa-user fa-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">Total Users</h6>
+                                        <small class="text-muted">Currently Active Users</small>
+                                    </div>
+                                </div>
+                                <h3 class="fw-bold text-info mb-0 ml-2"><?= $total_users ?></h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        <?php } ?>
     </div>
 </div>
 
