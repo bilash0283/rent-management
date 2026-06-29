@@ -194,6 +194,24 @@
                             </li>
                         </ul>
                     </li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="javascript:void(0);" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-settings text-info"></i></span>
+                            <span class="nxl-mtext">Settings</span>
+                            <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
+                        </a>
+
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item">
+                                <a class="nxl-link" href="admin.php?page=profile">
+                                    <span class="nxl-micon"> <i class="feather-user text-info"></i></span>
+                                    <span class="nxl-mtext">Profile</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                 <?php endif; ?>
             </ul>
         </div>
