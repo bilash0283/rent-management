@@ -50,10 +50,11 @@ if (isset($_POST['sign_in'])) {
             in_array($row['role'], ['Admin', 'Tenant', 'Manager'])
         ) {
 
-            $_SESSION['id'] = $row['id'];
-            $_SESSION['email'] = $row['email'];
-            $_SESSION['phone'] = $row['phone'];
-            $_SESSION['role'] = $row['role'];
+            $_SESSION['id']     = $row['id'];
+            $_SESSION['email']  = $row['email'];
+            $_SESSION['phone']  = $row['phone'];
+            $_SESSION['role']   = $row['role'];
+            $_SESSION['status'] = $row['status'];
 
             header('location:admin.php');
             exit;

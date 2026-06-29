@@ -226,7 +226,13 @@ foreach ($monthly_totals as $month => $data) {
             </div>
         <?php } ?>
 
-        <?php if ($_SESSION['role'] == 'Tenant') { ?>
+        <?php if ($_SESSION['role'] == 'Tenant' && $_SESSION['status'] == 'Active') { ?>
+            <?php
+                // tenant data query
+                $tenant_id = $_SESSION['id'];
+                $tenant_q = mysqli_query($db, "SELECT * FROM tenants WHERE id = '$tenant_id'");
+                $tenant_info = mysqli_fetch_assoc($tenant_q);
+            ?>
             <div class="row">
                 <!-- Building -->
                 <div class="col-6 col-lg-3 mb-3">
