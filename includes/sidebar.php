@@ -29,7 +29,7 @@
                 <li class="nxl-item nxl-hasmenu">
                     <a href="admin.php" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-airplay text-info"></i></span>
-                        <span class="nxl-mtext">Dashboards</span>
+                        <span class="nxl-mtext">Dashboard</span>
                     </a>
                 </li>
 
@@ -179,20 +179,24 @@
 
                 <?php if($_SESSION['role'] === 'Tenant'): ?>
                     <li class="nxl-item nxl-hasmenu">
-                        <a href="javascript:void(0);" class="nxl-link">
-                            <span class="nxl-micon"><i class="feather-settings text-info"></i></span>
-                            <span class="nxl-mtext">Settings</span>
-                            <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
+                        <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
+                            <span class="nxl-micon"><i class="far fa-credit-card text-info "></i></span>
+                            <span class="nxl-mtext">Rent & Invoice</span>
                         </a>
+                    </li>
 
-                        <ul class="nxl-submenu">
-                            <li class="nxl-item">
-                                <a class="nxl-link" href="admin.php?page=profile">
-                                    <span class="nxl-micon"> <i class="feather-user text-info"></i></span>
-                                    <span class="nxl-mtext">Profile</span>
-                                </a>
-                            </li>
-                        </ul>
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
+                            <span class="nxl-micon"><i class="feather-dollar-sign text-info"></i></span>
+                            <span class="nxl-mtext">Payment Details</span>
+                        </a>
+                    </li>
+
+                    <li class="nxl-item nxl-hasmenu">
+                        <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
+                            <span class="nxl-micon"><i class="far fa-file-alt text-info"></i></span>
+                            <span class="nxl-mtext">Documents</span>
+                        </a>
                     </li>
 
                     <li class="nxl-item nxl-hasmenu">
@@ -211,7 +215,7 @@
                             </li>
                         </ul>
                     </li>
-
+                    
                 <?php endif; ?>
             </ul>
         </div>

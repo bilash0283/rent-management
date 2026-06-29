@@ -240,7 +240,7 @@ foreach ($monthly_totals as $month => $data) {
 
             <div class="mb-4">
                 <h2 class="fw-bold text-dark m-0">Welcome back, <?= htmlspecialchars($tenant_name ?? 'Alex') ?></h2>
-                <p class="text-muted small m-0">Here's what's happening with your unit at Haven Properties.</p>
+                <p class="text-muted small m-0">Here's what's happening with your unit at Rent-Manager.</p>
             </div>
 
             <div class="row g-3 mb-4">
