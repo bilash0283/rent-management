@@ -226,108 +226,203 @@ foreach ($monthly_totals as $month => $data) {
             </div>
         <?php } ?>
 
-        <?php if ($_SESSION['role'] == 'Tenant' && $_SESSION['status'] == 'Active') { ?>
+        <?php if ($_SESSION['role'] == 'Tenant') { ?>
             <?php
-                // tenant data query
-                $tenant_id = $_SESSION['id'];
-                $tenant_q = mysqli_query($db, "SELECT * FROM tenants WHERE id = '$tenant_id'");
-                $tenant_info = mysqli_fetch_assoc($tenant_q);
+            // tenant data 
+            $tenant_id = $_SESSION['id'];
+            $tenant_q = mysqli_query($db, "SELECT * FROM tenants WHERE id = '$tenant_id'");
+            $tenant_info = mysqli_fetch_assoc($tenant_q);
+            $buill_id = $tenant_info['building_id'];
+            $unit_id = $tenant_info['unit_id'];
+            $status = $tenant_info['status'];
+            $tenant_name = $tenant_info['name'];
             ?>
-            <div class="row">
-                <!-- Building -->
-                <div class="col-6 col-lg-3 mb-3">
-                    <a href="admin.php?page=building" class="text-decoration-none">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-3">
-                                <div>
-                                    <span class="badge badge-primary p-3 rounded-circle">
-                                        <i class="fas fa-building fa-lg"></i>
-                                    </span>
-                                </div>
-                                <h3 class="font-weight-bold text-primary mb-1">
-                                    <?= $total_building ?>
-                                </h3>
-                                <h6 class="font-weight-bold text-dark mb-0">
-                                    Buildings
-                                </h6>
-                                <small class="text-muted d-none d-lg-block">
-                                    All Registered
-                                </small>
-                            </div>
+
+            <div class="mb-4">
+                <h2 class="fw-bold text-dark m-0">Welcome back, <?= htmlspecialchars($tenant_name ?? 'Alex') ?></h2>
+                <p class="text-muted small m-0">Here's what's happening with your unit at Haven Properties.</p>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="text-muted small fw-semibold">Next Rent Due</span>
+                            <i class="far fa-credit-card text-muted fs-5"></i>
                         </div>
-                    </a>
+                        <h3 class="fw-bold mb-1">$2,150.00</h3>
+                        <small class="text-muted"><i class="far fa-calendar-alt me-1"></i> Due Apr 1, 2026</small>
+                    </div>
                 </div>
 
-                <!-- Unit -->
-                <div class="col-6 col-lg-3 mb-3">
-                    <a href="admin.php?page=unit&id=<?php echo $buill_id; ?>" class="text-decoration-none">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-3">
-                                <div>
-                                    <span class="badge badge-success p-3 rounded-circle">
-                                        <i class="fas fa-door-open fa-lg"></i>
-                                    </span>
-                                </div>
-                                <h3 class="font-weight-bold text-success mb-1">
-                                    <?= $total_unit ?>
-                                </h3>
-                                <h6 class="font-weight-bold text-dark mb-0">
-                                    Units
-                                </h6>
-                                <small class="text-muted d-none d-lg-block">
-                                    Available & Occupied
-                                </small>
-                            </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="text-muted small fw-semibold">Lease Status</span>
+                            <i class="far fa-file-alt text-muted fs-5"></i>
                         </div>
-                    </a>
+                        <h3 class="fw-bold mb-2 text-dark">Active</h3>
+                        <div class="progress mb-1" style="height: 6px;">
+                            <div class="progress-bar bg-primary" role="progressbar"
+                                style="width: 65%; background-color: #0d6efd !important;" aria-valuenow="65"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted text-truncate">Expires Aug 31, 2026</small>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Tenant -->
-                <div class="col-6 col-lg-3 mb-3">
-                    <a href="admin.php?page=tenant&building_id=<?php echo $buill_id; ?>" class="text-decoration-none">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-3">
-                                <div>
-                                    <span class="badge badge-warning p-3 rounded-circle">
-                                        <i class="fas fa-users fa-lg"></i>
-                                    </span>
-                                </div>
-                                <h3 class="font-weight-bold text-warning mb-1">
-                                    <?= $total_tenant ?>
-                                </h3>
-                                <h6 class="font-weight-bold text-dark mb-0">
-                                    Tenants
-                                </h6>
-                                <small class="text-muted d-none d-lg-block">
-                                    Currently Active
-                                </small>
-                            </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="text-muted small fw-semibold">Open Requests</span>
+                            <i class="fas fa-wrench text-muted fs-5"></i>
                         </div>
-                    </a>
+                        <h3 class="fw-bold mb-1">2</h3>
+                        <small class="text-success"><i class="fas fa-arrow-down me-1"></i> 1 less than last month</small>
+                    </div>
                 </div>
 
-                <!-- Users -->
-                <div class="col-6 col-lg-3 mb-3">
-                    <a href="admin.php?page=users" class="text-decoration-none">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-1">
-                                <div>
-                                    <span class="badge badge-info p-3 rounded-circle">
-                                        <i class="fas fa-user fa-lg"></i>
-                                    </span>
-                                </div>
-                                <h3 class="font-weight-bold text-info mb-1">
-                                    <?= $total_users ?>
-                                </h3>
-                                <h6 class="font-weight-bold text-dark mb-0">
-                                    Users
-                                </h6>
-                                <small class="text-muted d-none d-lg-block">
-                                    Active Users
-                                </small>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="text-muted small fw-semibold">Balance</span>
+                            <i class="fas fa-chart-line text-muted fs-5"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1">$0.00</h3>
+                        <small class="text-success"><i class="far fa-check-circle me-1"></i> All caught up</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-12 col-lg-8">
+                    <div class="card border-0 shadow-sm p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-1">Payment History</h5>
+                        <p class="text-muted small mb-4">Your monthly rent payments over the last 6 months</p>
+                        <div class="d-flex justify-content-between align-items-end pt-4 px-2"
+                            style="height: 220px; border-bottom: 2px solid #f1f1f1;">
+                            <div class="d-flex flex-column align-items-center w-100">
+                                <div class="bg-primary rounded-top w-50"
+                                    style="height: 180px; background-color: #1a568c !important;"></div>
+                                <span class="text-muted small mt-2">Oct</span>
+                            </div>
+                            <div class="d-flex flex-column align-items-center w-100">
+                                <div class="bg-primary rounded-top w-50"
+                                    style="height: 180px; background-color: #1a568c !important;"></div>
+                                <span class="text-muted small mt-2">Nov</span>
+                            </div>
+                            <div class="d-flex flex-column align-items-center w-100">
+                                <div class="bg-primary rounded-top w-50"
+                                    style="height: 180px; background-color: #1a568c !important;"></div>
+                                <span class="text-muted small mt-2">Dec</span>
+                            </div>
+                            <div class="d-flex flex-column align-items-center w-100">
+                                <div class="bg-primary rounded-top w-50"
+                                    style="height: 180px; background-color: #1a568c !important;"></div>
+                                <span class="text-muted small mt-2">Jan</span>
+                            </div>
+                            <div class="d-flex flex-column align-items-center w-100">
+                                <div class="bg-primary rounded-top w-50"
+                                    style="height: 180px; background-color: #1a568c !important;"></div>
+                                <span class="text-muted small mt-2">Feb</span>
+                            </div>
+                            <div class="d-flex flex-column align-items-center w-100">
+                                <div class="bg-primary rounded-top w-50"
+                                    style="height: 180px; background-color: #1a568c !important;"></div>
+                                <span class="text-muted small mt-2">Mar</span>
                             </div>
                         </div>
-                    </a>
+                    </div>
+
+                    <div class="card border-0 shadow-sm p-4">
+                        <h5 class="fw-bold text-dark mb-1">Recent Activity</h5>
+                        <p class="text-muted small mb-4">Your latest actions and updates</p>
+
+                        <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+                            <div class="d-flex gap-3">
+                                <div class="bg-light-success text-success p-2 rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 35px; height: 35px; background-color: #e6f7ed;">
+                                    <i class="fas fa-check-circle small"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-semibold text-dark small">Payment Received</p>
+                                    <p class="mb-0 text-muted small">March rent payment of $2,150.00</p>
+                                </div>
+                            </div>
+                            <small class="text-muted text-nowrap ms-2">Mar 1, 2026</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex gap-3">
+                                <div class="bg-light-warning text-warning p-2 rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 35px; height: 35px; background-color: #fff9e6;">
+                                    <i class="fas fa-clock small"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-semibold text-dark small">Maintenance Request</p>
+                                    <p class="mb-0 text-muted small">Kitchen faucet leak - In Progress</p>
+                                </div>
+                            </div>
+                            <small class="text-muted text-nowrap ms-2">Feb 27, 2026</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="card border-0 shadow-sm p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-1">Announcements</h5>
+                        <p class="text-muted small mb-4">Latest from property management</p>
+
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex align-items-start gap-2 mb-1">
+                                <i class="fas fa-info-circle text-primary mt-1 small"></i>
+                                <h6 class="mb-0 fw-bold text-dark small">Pool Maintenance Schedule</h6>
+                            </div>
+                            <p class="text-muted small mb-1" style="font-size: 0.85rem;">The pool will be closed for
+                                cleaning March 8-10. We apologize for any inconvenience.</p>
+                            <small class="text-muted" style="font-size: 0.75rem;">Mar 3, 2026</small>
+                        </div>
+
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex align-items-start gap-2 mb-1">
+                                <i class="fas fa-exclamation-circle text-warning mt-1 small"></i>
+                                <h6 class="mb-0 fw-bold text-dark small">Rent Payment Reminder</h6>
+                            </div>
+                            <p class="text-muted small mb-1" style="font-size: 0.85rem;">March rent is due on the 1st. A
+                                late fee applies after the 5th.</p>
+                            <small class="text-muted" style="font-size: 0.75rem;">Feb 28, 2026</small>
+                        </div>
+
+                        <div class="mb-0">
+                            <div class="d-flex align-items-start gap-2 mb-1">
+                                <i class="fas fa-info-circle text-primary mt-1 small"></i>
+                                <h6 class="mb-0 fw-bold text-dark small">Fire Alarm Testing</h6>
+                            </div>
+                            <p class="text-muted small mb-1" style="font-size: 0.85rem;">Annual fire alarm testing will take
+                                place on March 15th from 10am-2pm.</p>
+                            <small class="text-muted" style="font-size: 0.75rem;">Feb 25, 2026</small>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm p-4">
+                        <h5 class="fw-bold text-dark mb-1">Quick Actions</h5>
+                        <p class="text-muted small mb-4">Common tasks at your fingertips</p>
+
+                        <a href="#"
+                            class="btn btn-primary w-100 d-flex justify-content-between align-items-center py-2 px-3 mb-3 text-start border-0"
+                            style="background-color: #1a568c;">
+                            <span><i class="fas fa-wallet me-2"></i> Pay Rent</span>
+                            <i class="fas fa-arrow-right small"></i>
+                        </a>
+
+                        <a href="#"
+                            class="btn btn-light w-100 d-flex justify-content-between align-items-center py-2 px-3 text-start bg-white border"
+                            style="color: #495057;">
+                            <span><i class="fas fa-tools me-2"></i> Submit Maintenance Request</span>
+                            <i class="fas fa-arrow-right small text-muted"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         <?php } ?>
