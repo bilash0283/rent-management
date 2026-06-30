@@ -236,6 +236,14 @@ foreach ($monthly_totals as $month => $data) {
             $unit_id = $tenant_info['unit_id'];
             $status = $tenant_info['status'];
             $tenant_name = $tenant_info['name'];
+
+            //building info 
+            $buliding_q = mysqli_query($db,"SELECT * FROM building WHERE id = '$buill_id'");
+            $building_info = mysqli_fetch_assoc($buliding_q);
+            $building_name = $building_info['name'];
+
+            //unit info
+            $unit_q = mysqli_
             ?>
 
             <div class="mb-4">
