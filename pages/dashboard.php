@@ -227,25 +227,7 @@ foreach ($monthly_totals as $month => $data) {
         <?php } ?>
 
         <?php if ($_SESSION['role'] == 'Tenant') { ?>
-            <?php
-            // tenant data 
-            $tenant_id = $_SESSION['id'];
-            $tenant_q = mysqli_query($db, "SELECT * FROM tenants WHERE id = '$tenant_id'");
-            $tenant_info = mysqli_fetch_assoc($tenant_q);
-            $buill_id = $tenant_info['building_id'];
-            $unit_id = $tenant_info['unit_id'];
-            $status = $tenant_info['status'];
-            $tenant_name = $tenant_info['name'];
-
-            //building info 
-            $buliding_q = mysqli_query($db,"SELECT * FROM building WHERE id = '$buill_id'");
-            $building_info = mysqli_fetch_assoc($buliding_q);
-            $building_name = $building_info['name'];
-
-            //unit info
-            $unit_q = mysqli_
-            ?>
-
+            <?php include 'tenant_query.php';?>
             <div class="mb-4">
                 <h2 class="fw-bold text-dark m-0">Welcome back, <?= htmlspecialchars($tenant_name ?? 'Alex') ?></h2>
                 <p class="text-muted small m-0">Here's what's happening with your unit at Rent-Manager.</p>
