@@ -237,7 +237,7 @@ foreach ($monthly_totals as $month => $data) {
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card h-100 border-0 shadow-sm p-3">
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="text-muted small fw-semibold">Next Rent Due</span>
+                            <span class="text-muted small fw-semibold">Rent Due</span>
                             <i class="far fa-credit-card text-muted fs-5"></i>
                         </div>
                         <?php if(mysqli_num_rows($invoice_q) > 0) { ?>
@@ -253,29 +253,26 @@ foreach ($monthly_totals as $month => $data) {
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card h-100 border-0 shadow-sm p-3">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="text-muted small fw-semibold">Lease Status</span>
+                            <span class="text-muted small fw-semibold">Advance Due</span>
                             <i class="far fa-file-alt text-muted fs-5"></i>
                         </div>
-                        <h3 class="fw-bold mb-2 text-dark">Active</h3>
-                        <div class="progress mb-1" style="height: 6px;">
-                            <div class="progress-bar bg-primary" role="progressbar"
-                                style="width: 65%; background-color: #0d6efd !important;" aria-valuenow="65"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <small class="text-muted text-truncate">Expires Aug 31, 2026</small>
-                        </div>
+                        <?php if($unit_advance > 0) { ?>
+                            <h3 class="fw-bold mb-1">$<?= number_format($unit_advance, 2) ?></h3>
+                        <?php } else { ?>
+                            <h3 class="fw-bold mb-1">$0.00</h3>
+                            <small class="text-muted"><i class="far fa-calendar-alt me-1"></i><?php echo date('M , Y', strtotime($this_month)); ?> Invoice not found</small>
+                        <?php } ?>
                     </div>
                 </div>
 
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card h-100 border-0 shadow-sm p-3">
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="text-muted small fw-semibold">Open Requests</span>
+                            <span class="text-muted small fw-semibold">Status</span>
                             <i class="fas fa-wrench text-muted fs-5"></i>
                         </div>
-                        <h3 class="fw-bold mb-1">2</h3>
-                        <small class="text-success"><i class="fas fa-arrow-down me-1"></i> 1 less than last month</small>
+                        <h3 class="fw-bold mb-1 text-<?php if($status == 'Active') echo 'success'; else if($status == 'Inactive') echo 'danger'; else if ($status == 'Booked') echo 'primary'; ?>"><?php echo $status; ?></h3>
+                        <small class="text-success"><i class="fas fa-arrow-down me-1"></i> Tenant Status</small>
                     </div>
                 </div>
 
