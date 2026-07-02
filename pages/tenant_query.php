@@ -25,7 +25,8 @@ $advance_info = mysqli_fetch_assoc($advance_q);
 $paid_amount = $advance_info['paid_amount'] ?? '';
 
 //invoice info 
-$invoice_q = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tenant_id' AND unit_id = '$unit_id'");
-
+$invoice_q = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tenant_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
+mysqli_num_rows($invoice_q) > 0 ? $invoice_info = mysqli_fetch_assoc($invoice_q) : $invoice_info = [];
+$total_rent = $invoice_info['total_amount'] ?? '';
 
 ?>

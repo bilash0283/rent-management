@@ -240,8 +240,13 @@ foreach ($monthly_totals as $month => $data) {
                             <span class="text-muted small fw-semibold">Next Rent Due</span>
                             <i class="far fa-credit-card text-muted fs-5"></i>
                         </div>
-                        <h3 class="fw-bold mb-1">$2,150.00</h3>
-                        <small class="text-muted"><i class="far fa-calendar-alt me-1"></i> Due Apr 1, 2026</small>
+                        <?php if(mysqli_num_rows($invoice_q) > 0) { ?>
+                            <h3 class="fw-bold mb-1">$<?= number_format($total_rent, 2) ?></h3>
+                            <small class="text-muted"><i class="far fa-calendar-alt me-1"></i> Due <?= date('M j, Y', strtotime($invoice_info['billing_date'])) ?></small>
+                        <?php } else { ?>
+                            <h3 class="fw-bold mb-1">$0.00</h3>
+                            <small class="text-muted"><i class="far fa-calendar-alt me-1"></i><?php echo date('M , Y', strtotime($this_month)); ?> Invoice not found</small>
+                        <?php } ?>
                     </div>
                 </div>
 
