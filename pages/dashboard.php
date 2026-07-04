@@ -296,34 +296,40 @@ foreach ($monthly_totals as $month => $data) {
                         <div class="d-flex justify-content-between align-items-end pt-4 px-2"
                             style="height: 220px; border-bottom: 2px solid #f1f1f1;">
                             <div class="d-flex flex-column align-items-center w-100">
-                                <div class="bg-primary rounded-top w-50"
+                                <div class="bg-primary rounded-top w-50" title="This is a Oct Rent Payment"
                                     style="height: 180px; background-color: #1a568c !important;"></div>
                                 <span class="text-muted small mt-2">Oct</span>
+                                <small class="text-success fw-semibold">$1,200.00</small>
                             </div>
                             <div class="d-flex flex-column align-items-center w-100">
                                 <div class="bg-primary rounded-top w-50"
                                     style="height: 180px; background-color: #1a568c !important;"></div>
                                 <span class="text-muted small mt-2">Nov</span>
+                                <small class="text-success fw-semibold">$1,200.00</small>
                             </div>
                             <div class="d-flex flex-column align-items-center w-100">
                                 <div class="bg-primary rounded-top w-50"
                                     style="height: 180px; background-color: #1a568c !important;"></div>
                                 <span class="text-muted small mt-2">Dec</span>
+                                <small class="text-success fw-semibold">$1,200.00</small>
                             </div>
                             <div class="d-flex flex-column align-items-center w-100">
                                 <div class="bg-primary rounded-top w-50"
                                     style="height: 180px; background-color: #1a568c !important;"></div>
                                 <span class="text-muted small mt-2">Jan</span>
+                                <small class="text-success fw-semibold">$1,200.00</small>
                             </div>
                             <div class="d-flex flex-column align-items-center w-100">
                                 <div class="bg-primary rounded-top w-50"
                                     style="height: 180px; background-color: #1a568c !important;"></div>
                                 <span class="text-muted small mt-2">Feb</span>
+                                <small class="text-success fw-semibold">$1,200.00</small>
                             </div>
                             <div class="d-flex flex-column align-items-center w-100">
                                 <div class="bg-primary rounded-top w-50"
                                     style="height: 180px; background-color: #1a568c !important;"></div>
                                 <span class="text-muted small mt-2">Mar</span>
+                                <small class="text-success fw-semibold">$1,200.00</small>
                             </div>
                         </div>
                     </div>
