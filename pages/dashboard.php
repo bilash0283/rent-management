@@ -362,7 +362,7 @@ foreach ($monthly_totals as $month => $data) {
                                             <small class="text-muted" style="font-size: 0.8rem;">Paid on <?php echo date('j F Y h:i A', strtotime($pay_date_his)); ?></small>
                                         </div>
                                     </div>
-                                    <div class="">
+                                    <div class="w-100">
                                         <div class="row g-2 g-md-0 text-start text-md-end align-items-center">
                                             <!-- Total -->
                                             <div class="col-4 col-md-auto px-md-4">
@@ -416,7 +416,7 @@ foreach ($monthly_totals as $month => $data) {
                         <h5 class="fw-bold text-dark mb-1">Confirm Payment</h5>
                         <p class="text-muted small mb-4">Common tasks at your fingertips</p>
 
-                        <a href="admin.php?page=tenant_inv_pay&type=invoice"
+                        <a href="admin.php?page=tenant_inv_pay&type=payment"
                             class="btn btn-primary w-100 d-flex justify-content-between align-items-center py-2 px-3 mb-3 text-start border-0"
                             style="background-color: #1a568c;">
                             <span><i class="fas fa-wallet me-2"></i> Pay Rent</span>

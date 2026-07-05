@@ -76,7 +76,7 @@ if ($calculated_due <= 0) {
 
 <div class="nxl-content">
     <div class="page-header d-flex align-items-center justify-content-between mb-4 px-4 mt-3">
-        <h5 class="mb-0 fw-bold text-secondary">RENT MANAGER</h5>
+        <h5 class="mb-0 fw-bold text-secondary">PAYMENT RECEIPT</h5>
         <button id="generatePdfBtn" class="btn btn-dark shadow-sm px-4 rounded-pill">
             <i class="feather-icon icon-download me-2"></i> Download
         </button>

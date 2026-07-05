@@ -70,9 +70,15 @@ $payable_advance = max($advance - $total_advance_paid, 0);
             <button id="generatePdfBtn" class="bg-success p-1 rounded-2 text-white border-0" style="font-size:8px;">
                  Download
             </button>
-            <a href="admin.php?page=editbill&tenant_id=<?= $tenant_id ?>" class="bg-info p-1 rounded-2 text-white border-0" style="font-size:8px;">
-                Back
-            </a>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'Admin'){ ?>
+                <a href="admin.php?page=editbill&tenant_id=<?= $tenant_id ?>" class="bg-info p-1 rounded-2 text-white border-0" style="font-size:8px;">
+                    Back
+                </a>
+            <?php }else if (isset($_SESSION['role']) && $_SESSION['role'] === 'Tenant'){ ?>
+                <a href="admin.php?page=tenant_inv_pay&type=invoice" class="bg-info p-1 rounded-2 text-white border-0" style="font-size:8px;">
+                    Back
+                </a>
+            <?php } ?>
         </div>
     </div>
 
