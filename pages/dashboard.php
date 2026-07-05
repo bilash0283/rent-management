@@ -303,35 +303,86 @@ foreach ($monthly_totals as $month => $data) {
                     </div>
 
                     <div class="card border-0 shadow-sm p-4">
-                        <h5 class="fw-bold text-dark mb-1">Recent Activity</h5>
-                        <p class="text-muted small mb-4">Your latest actions and updates</p>
+                        <h5 class="fw-bold text-dark mb-1">Recent Payment </h5>
+                        <p class="text-muted small mb-4">Your latest Payment History</p>
 
-                        <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
-                            <div class="d-flex gap-3">
-                                <div class="bg-light-success text-success p-2 rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 35px; height: 35px; background-color: #e6f7ed;">
-                                    <i class="fas fa-check-circle small"></i>
+                        <div class="border-bottom ">
+                             <?php
+                                    // JOIN ব্যবহার করা হয়েছে যাতে invoices টেবিল থেকে total_amount এবং billing_month পাওয়া যায়
+                                    $history_sql = mysqli_query($db, "SELECT ph.*, inv.total_amount, inv.billing_month 
+                                                                    FROM `payment_history` ph 
+                                                                    JOIN `invoices` inv ON ph.invoice_id = inv.id 
+                                                                    WHERE ph.tenant_id = '$tenant_id' LIMIT 3
+                                                                    "); //ORDER BY ph.payment_date ASC, ph.id ASC
+
+                                    $monthly_paid_tracker = [];
+
+                                    while ($pay_history = mysqli_fetch_assoc($history_sql)) {
+                                        $pay_slip_id = $pay_history['id'];
+                                        $invoice_id = $pay_history['invoice_id'];
+                                        $bill_month = $pay_history['billing_month']; 
+                                        $total_bill_amount = (float)$pay_history['total_amount']; 
+                                        $current_paid_entry = (float)$pay_history['paid_amount'];
+                                        
+                                        // পেমেন্ট মেথড এবং ম্যানেজার সংক্রান্ত ডাটা
+                                        $pay_method_his = $pay_history['payment_method'];
+                                        $manager_paid_val = (float)$pay_history['manager_paid']; 
+                                        $manager_payment_method = $pay_history['manager_payment_method'];
+
+                                        // --- লজিক ফিক্স: যদি মেথড Manager হয় তবে self ক্যালকুলেট হবে ---
+                                        $manager_self = 0;
+                                        if ($pay_method_his == 'Manager') {
+                                            $manager_self = $current_paid_entry - $manager_paid_val;
+                                        }
+                                        // --------------------------------------------------------
+
+                                        // মাস ভিত্তিক পেইড অ্যামাউন্ট ট্র্যাক করা
+                                        if (!isset($monthly_paid_tracker[$invoice_id])) {
+                                            $monthly_paid_tracker[$invoice_id] = 0;
+                                        }
+                                        $monthly_paid_tracker[$invoice_id] += $current_paid_entry;
+
+                                        $calculated_total_paid = $monthly_paid_tracker[$invoice_id];
+                                        $calculated_due = $total_bill_amount - $calculated_total_paid;
+
+                                        $note_his = $pay_history['note'];
+                                        $pay_date_his = $pay_history['payment_date'];
+                                        $transaction_id_db = $pay_history['transaction_id'];
+                                        $transaction_number = $pay_history['transaction_number'];
+                                ?>
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <!-- আইকন বক্স -->
+                                    <div class="text-success flex-shrink-0 d-flex align-items-center justify-content-center bg-success bg-opacity-10" 
+                                        style="width: 40px; height: 40px; border-radius: 50%;">
+                                        <i class="fas fa-receipt text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 text-dark fw-semibold" style="font-size: 0.95rem;">Invoice #INV-<?php echo $invoice_id; ?></h6>
+                                        <small class="text-muted" style="font-size: 0.8rem;">Paid on <?php echo date('j F Y h:i A', strtotime($pay_date_his)); ?></small>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="mb-0 fw-semibold text-dark small">Payment Received</p>
-                                    <p class="mb-0 text-muted small">March rent payment of $2,150.00</p>
+                                <div class="">
+                                    <div class="row g-2 g-md-0 text-start text-md-end align-items-center">
+                                        <!-- Total -->
+                                        <div class="col-4 col-md-auto px-md-4">
+                                            <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.5px;">Total</span>
+                                            <span class="text-dark fw-medium" style="font-size: 0.7rem;">৳ <?= number_format($total_bill_amount, 0) ?></span>
+                                        </div>
+                                        <!-- Today Paid -->
+                                        <div class="col-4 col-md-auto border-start border-0 border-md-start px-3 px-md-4">
+                                            <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.5px;">Paid</span>
+                                            <span class="text-success fw-semibold" style="font-size: 0.7rem;">৳ <?= number_format($calculated_total_paid, 0) ?></span>
+                                        </div>
+                                        <!-- Due -->
+                                        <div class="col-4 col-md-auto border-start border-0 border-md-start px-3 px-md-4">
+                                            <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.5px;">Due</span>
+                                            <span class="text-danger fw-semibold" style="font-size: 0.7rem;">৳ <?= number_format($calculated_due, 0) ?></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <small class="text-muted text-nowrap ms-2">Mar 1, 2026</small>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="d-flex gap-3">
-                                <div class="bg-light-warning text-warning p-2 rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 35px; height: 35px; background-color: #fff9e6;">
-                                    <i class="fas fa-clock small"></i>
-                                </div>
-                                <div>
-                                    <p class="mb-0 fw-semibold text-dark small">Maintenance Request</p>
-                                    <p class="mb-0 text-muted small">Kitchen faucet leak - In Progress</p>
-                                </div>
-                            </div>
-                            <small class="text-muted text-nowrap ms-2">Feb 27, 2026</small>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
@@ -360,7 +411,7 @@ foreach ($monthly_totals as $month => $data) {
                     </div>
 
                     <div class="card border-0 shadow-sm p-4">
-                        <h5 class="fw-bold text-dark mb-1">Quick Actions</h5>
+                        <h5 class="fw-bold text-dark mb-1">Confirm Payment</h5>
                         <p class="text-muted small mb-4">Common tasks at your fingertips</p>
 
                         <a href="#"
@@ -370,12 +421,12 @@ foreach ($monthly_totals as $month => $data) {
                             <i class="fas fa-arrow-right small"></i>
                         </a>
 
-                        <a href="#"
+                        <!-- <a href="#"
                             class="btn btn-light w-100 d-flex justify-content-between align-items-center py-2 px-3 text-start bg-white border"
                             style="color: #495057;">
                             <span><i class="fas fa-tools me-2"></i> Submit Maintenance Request</span>
                             <i class="fas fa-arrow-right small text-muted"></i>
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </div>
