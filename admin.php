@@ -122,6 +122,10 @@
             include 'pages/delete_advance.php';
         break;
 
+        case 'tenant_inv_pay':
+            include 'pages/tenant_inv_pay.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
         break;

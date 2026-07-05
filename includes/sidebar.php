@@ -179,14 +179,14 @@
 
                 <?php if($_SESSION['role'] === 'Tenant'): ?>
                     <li class="nxl-item nxl-hasmenu">
-                        <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
+                        <a href="admin.php?page=tenant_inv_pay&type=invoice" class="nxl-link">
                             <span class="nxl-micon"><i class="far fa-credit-card text-info "></i></span>
                             <span class="nxl-mtext">Rent & Invoice</span>
                         </a>
                     </li>
 
                     <li class="nxl-item nxl-hasmenu">
-                        <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
+                        <a href="admin.php?page=tenant_inv_pay&type=payment" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-dollar-sign text-info"></i></span>
                             <span class="nxl-mtext">Payment Details</span>
                         </a>

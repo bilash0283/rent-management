@@ -350,40 +350,41 @@ foreach ($monthly_totals as $month => $data) {
                                         $transaction_id_db = $pay_history['transaction_id'];
                                         $transaction_number = $pay_history['transaction_number'];
                                 ?>
-                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
-                                <div class="d-flex align-items-center gap-3">
-                                    <!-- আইকন বক্স -->
-                                    <div class="text-success flex-shrink-0 d-flex align-items-center justify-content-center bg-success bg-opacity-10" 
-                                        style="width: 40px; height: 40px; border-radius: 50%;">
-                                        <i class="fas fa-receipt text-white"></i>
+                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <!-- আইকন বক্স -->
+                                        <div class="text-success flex-shrink-0 d-flex align-items-center justify-content-center bg-success bg-opacity-10" 
+                                            style="width: 40px; height: 40px; border-radius: 50%;">
+                                            <i class="fas fa-receipt text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 text-dark fw-semibold" style="font-size: 0.95rem;">Invoice #INV-<?php echo $invoice_id; ?></h6>
+                                            <small class="text-muted" style="font-size: 0.8rem;">Paid on <?php echo date('j F Y h:i A', strtotime($pay_date_his)); ?></small>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h6 class="mb-0 text-dark fw-semibold" style="font-size: 0.95rem;">Invoice #INV-<?php echo $invoice_id; ?></h6>
-                                        <small class="text-muted" style="font-size: 0.8rem;">Paid on <?php echo date('j F Y h:i A', strtotime($pay_date_his)); ?></small>
+                                    <div class="">
+                                        <div class="row g-2 g-md-0 text-start text-md-end align-items-center">
+                                            <!-- Total -->
+                                            <div class="col-4 col-md-auto px-md-4">
+                                                <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.6px;">Total</span>
+                                                <span class="text-primary fw-medium" style="font-size: 0.7rem;">৳ <?= number_format($total_bill_amount, 0) ?></span>
+                                            </div>
+                                            <!-- Today Paid -->
+                                            <div class="col-4 col-md-auto border-start border-0 border-md-start px-3 px-md-4">
+                                                <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.6px;">Paid</span>
+                                                <span class="text-success fw-semibold" style="font-size: 0.7rem;">৳ <?= number_format($calculated_total_paid, 0) ?></span>
+                                            </div>
+                                            <!-- Due -->
+                                            <div class="col-4 col-md-auto border-start border-0 border-md-start px-3 px-md-4">
+                                                <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.6px;">Due</span>
+                                                <span class="text-danger fw-semibold" style="font-size: 0.7rem;">৳ <?= number_format($calculated_due, 0) ?></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="">
-                                    <div class="row g-2 g-md-0 text-start text-md-end align-items-center">
-                                        <!-- Total -->
-                                        <div class="col-4 col-md-auto px-md-4">
-                                            <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.5px;">Total</span>
-                                            <span class="text-dark fw-medium" style="font-size: 0.7rem;">৳ <?= number_format($total_bill_amount, 0) ?></span>
-                                        </div>
-                                        <!-- Today Paid -->
-                                        <div class="col-4 col-md-auto border-start border-0 border-md-start px-3 px-md-4">
-                                            <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.5px;">Paid</span>
-                                            <span class="text-success fw-semibold" style="font-size: 0.7rem;">৳ <?= number_format($calculated_total_paid, 0) ?></span>
-                                        </div>
-                                        <!-- Due -->
-                                        <div class="col-4 col-md-auto border-start border-0 border-md-start px-3 px-md-4">
-                                            <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.5px;">Due</span>
-                                            <span class="text-danger fw-semibold" style="font-size: 0.7rem;">৳ <?= number_format($calculated_due, 0) ?></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <?php } ?>
                         </div>
+                        <a href="admin.php?page=tenant_inv_pay&type=invoice" class="text-muted mt-2">View All <i class="fas fa-arrow-right small"></i></a>
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
@@ -400,7 +401,7 @@ foreach ($monthly_totals as $month => $data) {
                             <small class="text-muted" style="font-size: 0.75rem;">Mar 3, 2026</small>
                         </div>
 
-                        <div class="mb-3 pb-3 border-bottom">
+                        <div class="mb-3 border-bottom">
                             <div class="d-flex align-items-start gap-2 mb-1">
                                 <i class="fas fa-exclamation-circle text-warning  small"></i>
                                 <h6 class="mb-0 fw-bold text-dark small">Payment Pending</h6>
@@ -408,13 +409,14 @@ foreach ($monthly_totals as $month => $data) {
                             <p class="text-muted small mb-1" style="font-size: 0.85rem;">Your Payment for March is still pending.</p>
                             <small class="text-muted" style="font-size: 0.75rem;">Feb 28, 2026</small>
                         </div>
+                        <a href="" class="text-muted">View All Notifications <i class="fas fa-arrow-right small"></i></a>
                     </div>
 
                     <div class="card border-0 shadow-sm p-4">
                         <h5 class="fw-bold text-dark mb-1">Confirm Payment</h5>
                         <p class="text-muted small mb-4">Common tasks at your fingertips</p>
 
-                        <a href="#"
+                        <a href="admin.php?page=tenant_inv_pay&type=invoice"
                             class="btn btn-primary w-100 d-flex justify-content-between align-items-center py-2 px-3 mb-3 text-start border-0"
                             style="background-color: #1a568c;">
                             <span><i class="fas fa-wallet me-2"></i> Pay Rent</span>
