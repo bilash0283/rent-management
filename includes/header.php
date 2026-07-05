@@ -33,6 +33,7 @@ $old_image= $user_row['tenant_image'];
     <link rel="stylesheet" type="text/css" href="public/assets/css/theme.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="public/assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!--for tenent dashboard chart -->
 </head>
 
 <body>

@@ -291,46 +291,13 @@ foreach ($monthly_totals as $month => $data) {
 
             <div class="row g-4">
                 <div class="col-12 col-lg-8">
-                    <div class="card border-0 shadow-sm p-4 mb-4">
-                        <h5 class="fw-bold text-dark mb-1">Payment History</h5>
-                        <p class="text-muted small mb-4">Your monthly rent payments over the last 6 months</p>
-                        <div class="d-flex justify-content-between align-items-end pt-4 px-2"
-                            style="height: 220px; border-bottom: 2px solid #f1f1f1;">
-                            <div class="d-flex flex-column align-items-center w-100">
-                                <div class="bg-primary rounded-top w-50" title="This is a Oct Rent Payment"
-                                    style="height: 180px; background-color: #1a568c !important;"></div>
-                                <span class="text-muted small mt-2">Oct</span>
-                                <small class="text-success fw-semibold">$1,200.00</small>
-                            </div>
-                            <div class="d-flex flex-column align-items-center w-100">
-                                <div class="bg-primary rounded-top w-50"
-                                    style="height: 180px; background-color: #1a568c !important;"></div>
-                                <span class="text-muted small mt-2">Nov</span>
-                                <small class="text-success fw-semibold">$1,200.00</small>
-                            </div>
-                            <div class="d-flex flex-column align-items-center w-100">
-                                <div class="bg-primary rounded-top w-50"
-                                    style="height: 180px; background-color: #1a568c !important;"></div>
-                                <span class="text-muted small mt-2">Dec</span>
-                                <small class="text-success fw-semibold">$1,200.00</small>
-                            </div>
-                            <div class="d-flex flex-column align-items-center w-100">
-                                <div class="bg-primary rounded-top w-50"
-                                    style="height: 180px; background-color: #1a568c !important;"></div>
-                                <span class="text-muted small mt-2">Jan</span>
-                                <small class="text-success fw-semibold">$1,200.00</small>
-                            </div>
-                            <div class="d-flex flex-column align-items-center w-100">
-                                <div class="bg-primary rounded-top w-50"
-                                    style="height: 180px; background-color: #1a568c !important;"></div>
-                                <span class="text-muted small mt-2">Feb</span>
-                                <small class="text-success fw-semibold">$1,200.00</small>
-                            </div>
-                            <div class="d-flex flex-column align-items-center w-100">
-                                <div class="bg-primary rounded-top w-50"
-                                    style="height: 180px; background-color: #1a568c !important;"></div>
-                                <span class="text-muted small mt-2">Mar</span>
-                                <small class="text-success fw-semibold">$1,200.00</small>
+                    <div class="card">
+                        <div class="card-header ">
+                            <h5 class="card-title mb-0">Monthly Invoice vs Payment Status (<?php echo $current_year; ?>)</h5>
+                        </div>
+                        <div class="card-body">
+                            <div style="position: relative; height:350px; width:100%">
+                                <canvas id="tenantFinancialChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -370,37 +337,25 @@ foreach ($monthly_totals as $month => $data) {
                 </div>
                 <div class="col-12 col-lg-4">
                     <div class="card border-0 shadow-sm p-4 mb-4">
-                        <h5 class="fw-bold text-dark mb-1">Announcements</h5>
-                        <p class="text-muted small mb-4">Latest from property management</p>
+                        <h5 class="fw-bold text-dark mb-1"><i class="fas fa-bell text-warning text-small"></i>  Notifications</h5>
+                        <p class="text-muted small mb-4">Latest Notifications from Rent-Manager Admin</p>
 
                         <div class="mb-3 pb-3 border-bottom">
                             <div class="d-flex align-items-start gap-2 mb-1">
-                                <i class="fas fa-info-circle text-primary mt-1 small"></i>
-                                <h6 class="mb-0 fw-bold text-dark small">Pool Maintenance Schedule</h6>
+                                <i class="fas fa-circle-check text-success small"></i>
+                                <h6 class="mb-0 fw-bold text-dark small">Payment Successful</h6>
                             </div>
-                            <p class="text-muted small mb-1" style="font-size: 0.85rem;">The pool will be closed for
-                                cleaning March 8-10. We apologize for any inconvenience.</p>
+                                    <p class="text-muted small mb-1" style="font-size: 0.85rem;">Your payment of $1,200 for March has been processed successfully.</p>
                             <small class="text-muted" style="font-size: 0.75rem;">Mar 3, 2026</small>
                         </div>
 
                         <div class="mb-3 pb-3 border-bottom">
                             <div class="d-flex align-items-start gap-2 mb-1">
-                                <i class="fas fa-exclamation-circle text-warning mt-1 small"></i>
-                                <h6 class="mb-0 fw-bold text-dark small">Rent Payment Reminder</h6>
+                                <i class="fas fa-exclamation-circle text-warning  small"></i>
+                                <h6 class="mb-0 fw-bold text-dark small">Payment Pending</h6>
                             </div>
-                            <p class="text-muted small mb-1" style="font-size: 0.85rem;">March rent is due on the 1st. A
-                                late fee applies after the 5th.</p>
+                            <p class="text-muted small mb-1" style="font-size: 0.85rem;">Your Payment for March is still pending.</p>
                             <small class="text-muted" style="font-size: 0.75rem;">Feb 28, 2026</small>
-                        </div>
-
-                        <div class="mb-0">
-                            <div class="d-flex align-items-start gap-2 mb-1">
-                                <i class="fas fa-info-circle text-primary mt-1 small"></i>
-                                <h6 class="mb-0 fw-bold text-dark small">Fire Alarm Testing</h6>
-                            </div>
-                            <p class="text-muted small mb-1" style="font-size: 0.85rem;">Annual fire alarm testing will take
-                                place on March 15th from 10am-2pm.</p>
-                            <small class="text-muted" style="font-size: 0.75rem;">Feb 25, 2026</small>
                         </div>
                     </div>
 
@@ -427,58 +382,65 @@ foreach ($monthly_totals as $month => $data) {
         <?php } ?>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 <script>
-    const ctx = document.getElementById('paymentChartCanvas').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: <?= json_encode($chart_labels) ?>,
-            datasets: [
-                {
-                    label: 'Bill',
-                    data: <?= json_encode($chart_bills) ?>,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                    tension: 0.4,
-                    fill: true
-                },
-                {
-                    label: 'Paid',
-                    data: <?= json_encode($chart_paids) ?>,
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                    tension: 0.4,
-                    fill: true
-                },
-                {
-                    label: 'Due',
-                    data: <?= json_encode($chart_dues) ?>,
-                    borderColor: '#ef4444',
-                    backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                    tension: 0.4,
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: true, position: 'top' },
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            return context.dataset.label + ': ৳ ' + (context.parsed.y * 1000).toLocaleString();
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('tenantFinancialChart').getContext('2d');
+        
+        // PHP থেকে ডাটা জাভাস্ক্রিপ্ট অ্যারেতে নেওয়া
+        const invoiceData = [<?php echo $chart_bills; ?>];
+        const paymentData = [<?php echo $chart_paids; ?>];
+        
+        const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        new Chart(ctx, {
+            type: 'bar', // বার চার্ট (পাশাপাশি তুলনা করার জন্য বেস্ট)
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Total Invoice Amount',
+                        data: invoiceData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)', // হালকা নীল
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Total Paid Amount',
+                        data: paymentData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)', // হালকা সবুজ/টিয়া
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Amount (BDT/Currency)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Months'
                         }
                     }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
                 }
-            },
-            scales: {
-                y: { beginAtZero: true, grid: { drawBorder: false } },
-                x: { grid: { display: false } }
             }
-        }
+        });
     });
 </script>
