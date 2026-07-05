@@ -9,9 +9,12 @@ $status = $tenant_info['status'] ?? '';
 $tenant_name = $tenant_info['name'] ?? '';
 
 //advance paid info
-$advance_q = mysqli_query($db,"SELECT paid_amount FROM advance WHERE tenant_id  = '$tenant_id' AND unit_id = '$unit_id'");
-$advance_info = mysqli_fetch_assoc($advance_q);
-$paid_amount = $advance_info['paid_amount'] ?? '';
+$advance_q = mysqli_query($db,"SELECT * FROM advance WHERE tenant_id  = '$tenant_id' AND unit_id = '$unit_id'");
+$paid_amount = 0;
+while($advance_info = mysqli_fetch_assoc($advance_q)){
+    $paid_amount += $advance_info['paid_amount'] ?? '';
+    $advance_paid_date = $advance_info['date'];
+}
 
 //invoice info 
 $invoice_q = mysqli_query($db,"SELECT * FROM invoices WHERE tenant_id = '$tenant_id' AND unit_id = '$unit_id' AND billing_month = '$this_month' ");
@@ -30,5 +33,6 @@ $unit_info = mysqli_fetch_assoc($unit_q);
 $unit_name = $unit_info['unit_name'] ?? '';
 $unit_rent = $unit_info['rent'] ?? '';
 $unit_advance = $unit_info['advance'] ?? '';
+$unit_type = $unit_info['unit_type'] ?? '';
 
 ?>

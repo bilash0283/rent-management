@@ -258,10 +258,11 @@ foreach ($monthly_totals as $month => $data) {
                         </div>
                         <?php if($unit_advance > 0) { ?>
                             <h3 class="fw-bold mb-1"><small>৳ </small><?= number_format($unit_advance, 0) ?></h3>
-                        <?php } else { ?>
-                            <h3 class="fw-bold mb-1"><small>৳ </small>0.00</h3>
-                            <small class="text-muted"><i class="far fa-calendar-alt me-1"></i><?php echo date('M , Y', strtotime($this_month)); ?> Invoice not found</small>
-                        <?php } ?>
+                        <?php }?>
+                        <div class="d-flex justify-content-between align-item-center">
+                            <h6 class="fw-bold mb-1 text-success">Paid - <small>৳ </small><?= number_format($paid_amount,0) ?></h6>
+                            <small class="text-muted"><i class="far fa-calendar-alt me-1"></i><?php echo date('M , Y', strtotime($advance_paid_date ?? $this_month)); ?></small>
+                        </div>
                     </div>
                 </div>
 
@@ -279,11 +280,11 @@ foreach ($monthly_totals as $month => $data) {
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="card h-100 border-0 shadow-sm p-3">
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="text-muted small fw-semibold">Balance</span>
-                            <i class="fas fa-chart-line text-muted fs-5"></i>
+                            <span class="text-muted small fw-semibold">Building Info</span>
+                            <i class="fas fa-building text-muted fs-5"></i>
                         </div>
-                        <h3 class="fw-bold mb-1">$0.00</h3>
-                        <small class="text-success"><i class="far fa-check-circle me-1"></i> All caught up</small>
+                        <h4 class="fw-bold mb-1"><?= $building_name ?></h4>
+                        <small class="text-success"><?= $unit_type ?? 'Unit' ?> : <?= $unit_name ?></small>
                     </div>
                 </div>
             </div>
