@@ -241,10 +241,10 @@ foreach ($monthly_totals as $month => $data) {
                             <i class="far fa-credit-card text-muted fs-5"></i>
                         </div>
                         <?php if(mysqli_num_rows($invoice_q) > 0) { ?>
-                            <h3 class="fw-bold mb-1">$<?= number_format($total_rent, 0) ?></h3>
+                            <h3 class="fw-bold mb-1"><small>৳ </small><?= number_format($total_rent, 0) ?></h3>
                             <small class="text-muted"><i class="far fa-calendar-alt me-1"></i> Due <?= date('M j, Y', strtotime($bill_month ?? $this_month )) ?></small>
                         <?php } else { ?>
-                            <h3 class="fw-bold mb-1">$00</h3>
+                            <h3 class="fw-bold mb-1"><small>৳ </small>00</h3>
                             <small class="text-muted"><i class="far fa-calendar-alt me-1"></i><?php echo $bill_month ?? $this_month; ?> Invoice not found</small>
                         <?php } ?>
                     </div>
@@ -257,9 +257,9 @@ foreach ($monthly_totals as $month => $data) {
                             <i class="far fa-file-alt text-muted fs-5"></i>
                         </div>
                         <?php if($unit_advance > 0) { ?>
-                            <h3 class="fw-bold mb-1">$<?= number_format($unit_advance, 2) ?></h3>
+                            <h3 class="fw-bold mb-1"><small>৳ </small><?= number_format($unit_advance, 0) ?></h3>
                         <?php } else { ?>
-                            <h3 class="fw-bold mb-1">$0.00</h3>
+                            <h3 class="fw-bold mb-1"><small>৳ </small>0.00</h3>
                             <small class="text-muted"><i class="far fa-calendar-alt me-1"></i><?php echo date('M , Y', strtotime($this_month)); ?> Invoice not found</small>
                         <?php } ?>
                     </div>
