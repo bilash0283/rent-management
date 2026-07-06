@@ -140,10 +140,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     <?php if($type == 'invoice') { ?>
     <!-- Invoice history  -->
     <div class="card mx-4 mt-3">
-        <div class="card-header">
-            <h6 class="fw-bold text-info">Monthly (invoice history)</h6>
-        </div>
         <div class="card-body">
+            <h6 class="fw-bold text-info mb-4">Monthly (invoice history)</h6>
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
