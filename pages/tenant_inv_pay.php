@@ -211,107 +211,167 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     </div>
     <?php }else if($type == 'payment') { ?>
     <!-- confirm payment  -->
-    <div class="mx-4 mt-3">
-        <form method="POST" enctype="multipart/form-data" id="paymentForm">
-            <div class="card p-3">
-                <h6>Confirm Payment :</h6>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Pay For Invoice*</label>
-                        <select name="invoice_id" id="invoice_select" class="form-control form-select" required onchange="updateDueAmount()">
-                            <option value="">Select Invoice</option>
-                            <?php 
-                            // শুধুমাত্র যেগুলোর বিল বাকি আছে সেগুলো দেখাবে
-                            mysqli_data_seek($pay_info, 0);
-                            while ($row = mysqli_fetch_assoc($pay_info)): 
-                                $invoice_id = $row['id'];
-                                $due = $row['total_amount'] - $row['paid_amount'];
-                                if($due > 0):
-                            ?>
-                                <option value="<?= $invoice_id; ?>" data-due="<?= $due; ?>">
-                                    <small>(INV-<?= $invoice_id; ?>)</small><?= date("M Y", strtotime($row['billing_month'])) ?> (Due: <?= $due ?>)
-                                </option>
-                            <?php 
-                                endif;
-                            endwhile; 
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Amount *</label>
-                        <input type="number" name="paid_amount" id="amount_input" class="form-control" required>
-                        <input type="hidden" id="max_due_limit" value="0">
-                    </div>
-                </div>
-
-                <div class="row mt-2">
-                    <div class="col-md-6">
-                        <label>Transaction Time *</label>
-                        <input type="datetime-local" class="form-control" name="payment_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Payment Method *</label>
-                        <select name="payment_method" id="payment_method" class="form-control form-select" required onchange="togglePaymentFields()">
-                            <option value="" selected disabled>Select One</option>
-                            <!-- <option value="Cash">Cash</option> -->
-                            <option value="Bkash">Bkash</option>
-                            <option value="Nagad">Nagad</option>
-                            <option value="Rocket">Rocket</option>
-                            <option value="Bank Transfer">Bank Transfer</option>
-                            <option value="Card">Card</option>
-                            <!-- <option value="Manager">Manager</option> -->
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Manager Payment Section -->
-                <div id="manager_fields" class="mt-2" style="display: none;">
+    <div class="row mx-2 mt-3">
+        <div class="col-md-7">
+            <form method="POST" enctype="multipart/form-data" id="paymentForm">
+                <div class="card p-3">
+                    <h6 class="fw-bold text-info mb-3">Confirm Payment </h6>
                     <div class="row">
                         <div class="col-md-6">
-                            <label style="color: blue;">Manager paid to Admin</label>
-                            <input type="text" class="form-control" name="manager_paid_amount" placeholder="Manager Paid Amount">
+                            <label>Pay For Invoice*</label>
+                            <select name="invoice_id" id="invoice_select" class="form-control form-select" required onchange="updateDueAmount()">
+                                <option value="">Select Invoice</option>
+                                <?php 
+                                // শুধুমাত্র যেগুলোর বিল বাকি আছে সেগুলো দেখাবে
+                                mysqli_data_seek($pay_info, 0);
+                                while ($row = mysqli_fetch_assoc($pay_info)): 
+                                    $invoice_id = $row['id'];
+                                    $due = $row['total_amount'] - $row['paid_amount'];
+                                    if($due > 0):
+                                ?>
+                                    <option value="<?= $invoice_id; ?>" data-due="<?= $due; ?>">
+                                        <small>(INV-<?= $invoice_id; ?>)</small><?= date("M Y", strtotime($row['billing_month'])) ?> (Due: <?= $due ?>)
+                                    </option>
+                                <?php 
+                                    endif;
+                                endwhile; 
+                                ?>
+                            </select>
                         </div>
                         <div class="col-md-6">
-                            <label style="color: blue;">Manager Payment Method</label>
-                            <select name="manager_payment_method" class="form-control form-select" id="">
+                            <label>Amount *</label>
+                            <input type="number" name="paid_amount" id="amount_input" class="form-control" required>
+                            <input type="hidden" id="max_due_limit" value="0">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <label>Transaction Time *</label>
+                            <input type="datetime-local" class="form-control" name="payment_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Payment Method *</label>
+                            <select name="payment_method" id="payment_method" class="form-control form-select" required onchange="togglePaymentFields()">
                                 <option value="" selected disabled>Select One</option>
                                 <!-- <option value="Cash">Cash</option> -->
                                 <option value="Bkash">Bkash</option>
-                                <option value="Nagad">Nagad</option>
-                                <option value="Rocket">Rocket</option>
+                                <!-- <option value="Nagad">Nagad</option> -->
+                                <!-- <option value="Rocket">Rocket</option> -->
                                 <option value="Bank Transfer">Bank Transfer</option>
                                 <option value="Card">Card</option>
+                                <!-- <option value="Manager">Manager</option> -->
                             </select>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>Transaction ID</label>
-                        <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control">
+                    <!-- Manager Payment Section -->
+                    <div id="manager_fields" class="mt-2" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label style="color: blue;">Manager paid to Admin</label>
+                                <input type="text" class="form-control" name="manager_paid_amount" placeholder="Manager Paid Amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label style="color: blue;">Manager Payment Method</label>
+                                <select name="manager_payment_method" class="form-control form-select" id="">
+                                    <option value="" selected disabled>Select One</option>
+                                    <!-- <option value="Cash">Cash</option> -->
+                                    <option value="Bkash">Bkash</option>
+                                    <option value="Nagad">Nagad</option>
+                                    <option value="Rocket">Rocket</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                    <option value="Card">Card</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label>Transaction Number</label>
-                        <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Transaction ID</label>
+                            <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Transaction Number</label>
+                            <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <label>Note</label>
+                        <input type="text" name="note" placeholder="Note for Payment" class="form-control">
+                    </div>
+
+                    <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3 w-100">Confirm Payment</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-md-5 mb-4">
+            <div class="payment-card pb-3 bg-white shadow-sm border-0 rounded-4">
+                <div class="row m-0 align-items-stretch g-0">
+                    <!-- Bank Transfer Section -->
+                    <div class="col-12 col-sm-7 p-3 border-end border-light">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="public/assets/images/bank/brac.png" 
+                                alt="BRAC Bank Logo" 
+                                style="height: 23px;" 
+                                class="me-2">
+                            <span class="fw-bold fs-6 text-primary">BRAC BANK</span>
+                        </div>
+                        
+                        <h6 class="fw-bold text-dark mb-1 ">MD MUSTAFIZUR RAHMAN</h6>
+                        <div class="fw-bold fs-5 text-primary mb-1">1503101624157001</div>
+                        <div class="text-black small mb-3">Account Number</div>
+                        
+                        <small class="text-secondary fw-semibold text-uppercase d-block" 
+                            style="font-size: 0.75rem; letter-spacing: 0.6px;">
+                            BRAC BANK LTD | MOGHBAZAR BRANCH
+                        </small>
+                    </div>
+
+                    <!-- bKash Section -->
+                    <div class="col-12 col-sm-5 p-3 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex align-items-center justify-content mb-3">
+                                <span style="color:#CC1D50;" class="fs-5">b</span><span class="fs-5 text-black">Kash</span>
+                                <img src="public/assets/images/bank/bkash.png" 
+                                    alt="bKash Logo" 
+                                    style="height: 23px;">
+                            </div>
+                            
+                            <h6 class="fw-bold text-dark mb-1 ">MD MUSTAFIZUR RAHMAN</h6>
+                            <div class="fw-bold fs-5  mb-1 "  style="color:#CC1D50;">01715482363</div>
+                            <div class="text-muted small mb-3 "><span style="color:#CC1D50;">b</span><span class="text-black">Kash</span> Number</div>
+                        </div>
+                        
+                        <small class="text-secondary fw-semibold text-uppercase  d-block mt-auto" 
+                            style="font-size: 0.75rem; letter-spacing: 0.6px;">
+                            BKASH PERSONAL
+                        </small>
                     </div>
                 </div>
 
-                <div class="mt-2">
-                    <label>Note</label>
-                    <input type="text" name="note" placeholder="Note for Payment" class="form-control">
+                <!-- Warning Box -->
+                <div class=" mx-2">
+                    <div class="warning-box d-flex align-items-start bg-danger bg-opacity-10 p-3 rounded-3 border border-danger border-opacity-25">
+                        <i class="bi bi-exclamation-triangle-fill text-white me-3 mt-1 fs-5"></i>
+                        <p class="mb-0 fw-normal small text-white">
+                            পেমেন্ট নির্দেশনা,<br>
+                            অনুগ্রহ করে নিজ দায়িত্বে পেমেন্ট সম্পন্ন করে পেমেন্ট স্লিপ আপলোড করুন। আপনার পেমেন্ট সর্বোচ্চ ৪৮ ঘণ্টার মধ্যে যাচাই করে এডমিন অনুমোদন করবেন।
+                           <br> দ্রষ্টব্য: ভুল নম্বর বা অ্যাকাউন্টে অর্থ প্রেরণ করলে তার দায়ভার সম্পূর্ণ প্রেরণকারীর। এ ক্ষেত্রে কর্তৃপক্ষ দায়ী থাকবে না।
+                        </p>
+                    </div>
                 </div>
-
-                <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3 w-100">Confirm Payment</button>
             </div>
-        </form>
+        </div>
     </div>
     <!-- payment History  -->
     <div class="card mx-4">
-        <div class="card-header">
-            <h6 class="fw-bold text-info">Payment history </h6>
-        </div>
         <div class="card-body">
+            <h6 class="fw-bold text-info mb-4">Payment history </h6>
+
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">

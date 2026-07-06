@@ -435,6 +435,61 @@ foreach ($monthly_totals as $month => $data) {
         <?php } ?>
     </div>
 </div>
+<!-- chart for admin  -->
+<script>
+    const ctx = document.getElementById('paymentChartCanvas').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: <?= json_encode($chart_labels) ?>,
+            datasets: [
+                { 
+                    label: 'Bill', 
+                    data: <?= json_encode($chart_bills) ?>, 
+                    borderColor: '#3b82f6', 
+                    backgroundColor: 'rgba(59, 130, 246, 0.05)', 
+                    tension: 0.4, 
+                    fill: true 
+                },
+                { 
+                    label: 'Paid', 
+                    data: <?= json_encode($chart_paids) ?>, 
+                    borderColor: '#10b981', 
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)', 
+                    tension: 0.4, 
+                    fill: true 
+                },
+                { 
+                    label: 'Due', 
+                    data: <?= json_encode($chart_dues) ?>, 
+                    borderColor: '#ef4444', 
+                    backgroundColor: 'rgba(239, 68, 68, 0.05)', 
+                    tension: 0.4, 
+                    fill: true 
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: true, position: 'top' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ৳ ' + (context.parsed.y * 1000).toLocaleString();
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { drawBorder: false } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+<!-- chart for tenant  -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const ctx = document.getElementById('tenantFinancialChart').getContext('2d');
