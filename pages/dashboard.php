@@ -351,31 +351,31 @@ foreach ($monthly_totals as $month => $data) {
                                         $transaction_number = $pay_history['transaction_number'];
                                 ?>
                                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
-                                    <div class="d-flex align-items-center gap-3">
+                                    <div class="w-20 d-flex align-items-center gap-3">
                                         <!-- আইকন বক্স -->
                                         <div class="text-success flex-shrink-0 d-flex align-items-center justify-content-center bg-success bg-opacity-10" 
                                             style="width: 40px; height: 40px; border-radius: 50%;">
                                             <i class="fas fa-receipt text-white"></i>
                                         </div>
                                         <div>
-                                            <h6 class="mb-0 text-dark fw-semibold" style="font-size: 0.95rem;">Invoice #INV-<?php echo $invoice_id; ?></h6>
+                                            <strong class="mb-0 text-dark fw-semibold" style="font-size: 0.95rem;">Invoice #INV-<?php echo $invoice_id; ?></strong> <br>
                                             <small class="text-muted" style="font-size: 0.8rem;">Paid on <?php echo date('j F Y h:i A', strtotime($pay_date_his)); ?></small>
                                         </div>
                                     </div>
-                                    <div class="w-100">
-                                        <div class="row g-2 g-md-0 text-start text-md-end align-items-center">
+                                    <div class="w-80">
+                                        <div class=" d-flex justify-content-between align-items-center gap-3">
                                             <!-- Total -->
-                                            <div class="col-4 col-md-auto px-md-4">
+                                            <div class=" px-md-4">
                                                 <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.6px;">Total</span>
                                                 <span class="text-primary fw-medium" style="font-size: 0.7rem;">৳ <?= number_format($total_bill_amount, 0) ?></span>
                                             </div>
                                             <!-- Today Paid -->
-                                            <div class="col-4 col-md-auto border-start border-0 border-md-start px-3 px-md-4">
+                                            <div class="border-start border-0 border-md-start px-3 px-md-4">
                                                 <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.6px;">Paid</span>
                                                 <span class="text-success fw-semibold" style="font-size: 0.7rem;">৳ <?= number_format($calculated_total_paid, 0) ?></span>
                                             </div>
                                             <!-- Due -->
-                                            <div class="col-4 col-md-auto border-start border-0 border-md-start px-3 px-md-4">
+                                            <div class="border-start border-0 border-md-start px-3 px-md-4">
                                                 <span class="text-muted d-block text-uppercase" style="font-size: 0.5rem; letter-spacing: 0.6px;">Due</span>
                                                 <span class="text-danger fw-semibold" style="font-size: 0.7rem;">৳ <?= number_format($calculated_due, 0) ?></span>
                                             </div>
