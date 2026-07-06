@@ -251,12 +251,9 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                 <!-- Advance manage  -->
                 <div class="card">
-                    <div class="card-header">
-                        <h6 class="fw-bold mb-2 text-info">Advance & Payment Summary</h6>
-                    </div>
                     <form method="POST" enctype="multipart/form-data">
                         <div class="card-body px-3 general-info">
-
+                            <h6 class="fw-bold mb-4 text-info">Advance & Payment Summary</h6>
                             <!-- Unit Name -->
                             <div class="row">
                                 <div class="col-lg-6">
@@ -527,10 +524,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                 <!-- Invoice history  -->
                 <div class="card">
-                    <div class="card-header">
-                        <h6 class="fw-bold text-info">Monthly (invoice history)</h6>
-                    </div>
                     <div class="card-body">
+                        <h6 class="fw-bold mb-4 text-info">Monthly (invoice history)</h6>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
@@ -604,10 +599,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                 <!-- payment History  -->
                 <div class="card">
-                    <div class="card-header">
-                        <h6 class="fw-bold text-info">Payment history </h6>
-                    </div>
                     <div class="card-body">
+                        <h6 class="fw-bold mb-4 text-info">Payment history </h6>
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
