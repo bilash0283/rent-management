@@ -23,15 +23,21 @@ $tenant = mysqli_fetch_assoc($result);
 
     <!-- Page Header -->
     <div class="page-header d-flex align-items-center justify-content-between mb-4">
-        <h5 class="mb-0">Tenant Agreement</h5>
+        <h5 class="mb-0">Agreement</h5>
         <div class="text-end mb-3">
             <button id="generatePdfBtn" class="btn btn-success btn-sm pl-5">
                 <i class="feather-icon icon-download me-2"></i> Download PDF
             </button>
         </div>
-        <a href="admin.php?page=tenant&building_id=<?= $tenant['building_id'] ?>" class="btn btn-primary">
-            <i class="feather-icon icon-arrow-left me-1"></i>Back
-        </a>
+        <?php if($_SESSION['role'] == 'Admin'){ ?>
+            <a href="admin.php?page=tenant&building_id=<?= $tenant['building_id'] ?>" class="btn btn-primary">
+                <i class="feather-icon icon-arrow-left me-1"></i>Back
+            </a>
+        <?php }else if($_SESSION['role'] == 'Tenant'){ ?>
+            <a href="admin.php?page=dashboard" class="btn btn-primary">
+                <i class="feather-icon icon-arrow-left me-1"></i>Back
+            </a>
+        <?php } ?>
     </div>
 
     <div class="mb-4">

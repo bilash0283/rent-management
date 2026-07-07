@@ -177,7 +177,12 @@
                     </li>
                 <?php endif; ?>
 
-                <?php if($_SESSION['role'] === 'Tenant'): ?>
+                <?php if($_SESSION['role'] === 'Tenant'): 
+                    if (isset($_SESSION['id'])) {
+                        $tenant_id = $_SESSION['id'];
+                    }
+                    ?>
+                    
                     <li class="nxl-item nxl-hasmenu">
                         <a href="admin.php?page=tenant_inv_pay&type=invoice" class="nxl-link">
                             <span class="nxl-micon"><i class="far fa-credit-card text-info "></i></span>
@@ -193,7 +198,7 @@
                     </li>
 
                     <li class="nxl-item nxl-hasmenu">
-                        <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
+                        <a href="admin.php?page=Agreement&id=<?php echo isset($tenant_id) ? $tenant_id : ''; ?>" class="nxl-link">
                             <span class="nxl-micon"><i class="far fa-file-alt text-info"></i></span>
                             <span class="nxl-mtext">Documents</span>
                         </a>
