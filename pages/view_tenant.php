@@ -74,10 +74,15 @@ if (mysqli_num_rows($result) > 0) {
                             <p class="text-muted mb-3"><?= $phone ?></p>
                             <p class="text-muted mb-3"><?= $email ?></p>
                             <div class="d-flex justify-content-center gap-2 mb-4">
+                                <?php if($_SESSION['role'] === 'admin') { ?>
                                 <a href="admin.php?page=editbill&tenant_id=<?= $id; ?>" class="btn btn-outline-primary">
                                     <i class="fas fa-credit-card me-2"></i>Payment
                                 </a>
-
+                                <?php }else if($_SESSION['role'] === 'Tenant') { ?>
+                                    <a href="admin.php?page=tenant_inv_pay&type=payment" class="btn btn-outline-primary">
+                                    <i class="fas fa-credit-card me-2"></i>Payment
+                                </a>
+                                <?php } ?>
                                 <a href="admin.php?page=Agreement&id=<?= $id; ?>" class="btn btn-primary">
                                     <i class="fas fa-file-contract me-2"></i>Agreement
                                 </a>
