@@ -213,7 +213,7 @@
 
                         <ul class="nxl-submenu">
                             <li class="nxl-item">
-                                <a class="nxl-link" href="admin.php?page=profile">
+                                <a class="nxl-link" href="admin.php?page=view_tenant&id=<?php echo isset($tenant_id) ? $tenant_id : ''; ?>">
                                     <span class="nxl-micon"> <i class="feather-user text-info"></i></span>
                                     <span class="nxl-mtext">Profile</span>
                                 </a>

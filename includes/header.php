@@ -179,18 +179,18 @@ $old_image= $user_row['tenant_image'];
                                 </div>
                             </div>
 
+                            <?php if($_SESSION['role'] == 'Admin'){ ?>
                             <a href="admin.php?page=profile" class="dropdown-item">
                                 <i class="feather-user"></i>
                                 <span>Profile Details</span>
                             </a>
-                            <!-- <a href="javascript:void(0);" class="dropdown-item">
-                                <i class="feather-bell"></i>
-                                <span>Notifications</span>
-                            </a> -->
-                            <!-- <a href="javascript:void(0);" class="dropdown-item">
-                                <i class="feather-settings"></i>
-                                <span>Settings</span>
-                            </a> -->
+                            <?php }else if($_SESSION['role'] == 'Tenant'){ ?>
+                            <a href="admin.php?page=view_tenant&id=<?php echo isset($tenant_id) ? $tenant_id : ''; ?>" class="dropdown-item">
+                                <i class="feather-user"></i>
+                                <span>Profile Details</span>
+                            </a>
+                            <?php } ?>
+                            
                             <div class="dropdown-divider"></div>
                             <a href="pages/logout.php" class="dropdown-item">
                                 <i class="feather-log-out"></i>

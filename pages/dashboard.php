@@ -312,7 +312,7 @@ foreach ($monthly_totals as $month => $data) {
                                     $history_sql = mysqli_query($db, "SELECT ph.*, inv.total_amount, inv.billing_month 
                                                                     FROM `payment_history` ph 
                                                                     JOIN `invoices` inv ON ph.invoice_id = inv.id 
-                                                                    WHERE ph.tenant_id = '$tenant_id' LIMIT 3
+                                                                    WHERE ph.tenant_id = '$tenant_id' ORDER BY ph.id DESC LIMIT 3
                                                                     "); //ORDER BY ph.payment_date ASC, ph.id ASC
 
                                     $monthly_paid_tracker = [];
@@ -384,7 +384,7 @@ foreach ($monthly_totals as $month => $data) {
                                 </div>
                             <?php } ?>
                         </div>
-                        <a href="admin.php?page=tenant_inv_pay&type=invoice" class="text-muted mt-2">View All <i class="fas fa-arrow-right small"></i></a>
+                        <a href="admin.php?page=tenant_inv_pay&type=payment" class="text-muted mt-2">View All <i class="fas fa-arrow-right small"></i></a>
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
