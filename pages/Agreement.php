@@ -1,12 +1,45 @@
 <?php
-// Assuming this file is included inside your layout (header & footer already present)
-
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     echo "<div class='alert alert-danger'>Invalid tenant ID</div>";
     exit;
 }
-
 $tenant_id = (int) $_GET['id'];
+
+$query = "
+        SELECT 
+            t.*, 
+            b.name AS building_name, b.address AS address,
+            u.unit_name, u.unit_type AS unit_type,
+            u.status
+        FROM tenants t
+        JOIN building b ON t.building_id = b.id
+        JOIN unit u ON t.unit_id = u.id
+        WHERE t.role IN ('Tenant') AND t.id = $tenant_id ORDER BY t.id DESC
+    ";
+$result = mysqli_query($db, $query);
+
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $image = !empty($row['tenant_image'])
+            ? "public/uploads/tenants/" . $row['tenant_image']
+            : "public/uploads/tenants/no-image.png";
+
+        $nid = !empty($row['nid_image'])
+            ? "public/uploads/nid/" . $row['nid_image']
+            : "public/uploads/tenants/no-image.png";
+
+        $id = $row['id'];
+        $phone = $row['phone'];
+        $building_name = $row['building_name'];
+        $unit_name = $row['unit_name'];
+        $unit_type = $row['unit_type'];
+        $name = $row['name'];
+        $email = $row['email'];
+        $unit_id = $row['unit_id'];
+        $building_id = $row['building_id'];
+        $building_address = $row['address'];
+    }
+}
 
 $query = "SELECT * FROM tenants WHERE role IN ('Tenant') AND id = $tenant_id LIMIT 1";
 $result = mysqli_query($db, $query);   // $conn from your header
@@ -61,8 +94,8 @@ $tenant = mysqli_fetch_assoc($result);
             <!-- Parties -->
             <h5 class="section-title">1. THE PARTIES</h5>
             <div class="mb-4">
-                <p><strong>Landlord:</strong> [Your Company / Landlord Name]</p>
-                <p><strong>Address:</strong> [Landlord Full Address]</p>
+                <p><strong>Landlord:</strong> <?= $building_name ?? 'N/A' ?></p>
+                <p><strong>Address:</strong> <?= htmlspecialchars($building_address ?? 'N/A') ?></p>
             </div>
 
             <div class="mb-4">
@@ -82,9 +115,9 @@ $tenant = mysqli_fetch_assoc($result);
             <!-- Property -->
             <h5 class="section-title">2. PROPERTY DETAILS</h5>
             <div class="mb-4">
-                <p><strong>Building ID:</strong> <span
-                        class="fw-bold"><?= htmlspecialchars($tenant['building_id']) ?></span></p>
-                <p><strong>Unit ID:</strong> <span class="fw-bold"><?= htmlspecialchars($tenant['unit_id']) ?></span>
+                <p><strong>Building :</strong> <span
+                        class="fw-bold"><?= $building_name ?? 'N/A' ?></span></p>
+                <p><strong><?= $unit_type ?? 'Unit' ?> :</strong> <span class="fw-bold"><?= $unit_name ?? 'N/A' ?></span>
                 </p>
                 <!-- Add more property info if you have it in another table -->
             </div>

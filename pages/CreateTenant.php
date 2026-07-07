@@ -187,6 +187,7 @@ if (isset($_POST['save_tenant'])) {
             <input type="hidden" name="booking_month" value="<?= $editData['booking_month'] ?? '' ?>">
         <?php endif; ?>
 
+        <?php if($_SESSION['role']=='Admin'){ ?>
         <div class="col-md-6">
             <label class="p-2">Building <span class="text-danger">*</span></label>
             <select name="building" id="building" class="form-control" required>
@@ -207,6 +208,10 @@ if (isset($_POST['save_tenant'])) {
                 <option value="">Select Unit</option>
             </select>
         </div>
+        <?php }else if ($_SESSION['role'] == 'Tenant') { ?>
+            <input type="hidden" name="building" value="<?= $editData['building_id'] ?>">
+            <input type="hidden" name="unit" value="<?= $editData['unit_id'] ?>">
+        <?php } ?>
 
         <!-- Images -->
         <div class="col-md-6">
