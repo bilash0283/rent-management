@@ -228,7 +228,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                     if($due > 0):
                                 ?>
                                     <option value="<?= $invoice_id; ?>" data-due="<?= $due; ?>">
-                                        <small>(INV-<?= $invoice_id; ?>)</small><?= date("M Y", strtotime($row['billing_month'])) ?> (Due: <?= $due ?>)
+                                        <small>(INV-<?= $invoice_id; ?>) </small><?= date("M Y", strtotime($row['billing_month'])) ?> (Due: <?= $due ?>)
                                     </option>
                                 <?php 
                                     endif;
@@ -314,7 +314,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                         <div class="d-flex align-items-center mb-3">
                             <img src="public/assets/images/bank/brac.png" 
                                 alt="BRAC Bank Logo" 
-                                style="height: 23px;" 
+                                style="height: 20px;" 
                                 class="me-2">
                             <span class="fw-bold fs-6 text-primary">BRAC BANK</span>
                         </div>
