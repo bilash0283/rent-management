@@ -284,7 +284,17 @@ foreach ($monthly_totals as $month => $data) {
                             <i class="fas fa-building text-muted fs-5"></i>
                         </div>
                         <h4 class="fw-bold mb-1"><?= $building_name ?></h4>
-                        <small class="text-success"><?= $unit_type ?? 'Unit' ?> : <?= $unit_name ?></small>
+                        
+                        <div class="d-inline-flex align-items-center px-3 py-2 rounded-3 shadow-sm"
+                            style="background:linear-gradient(90deg,#198754,#20c997); color:#fff;">
+                            <i class="fas fa-building me-2"></i>
+                            <span class="fw-bold">
+                                <?= htmlspecialchars($unit_type ?? 'Unit') ?> :
+                            </span>
+                            <span class="ms-2">
+                                <?= htmlspecialchars($unit_name) ?>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
