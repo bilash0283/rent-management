@@ -56,7 +56,7 @@ if (isset($_POST['save_bill'])) {
     $manager_paid_amount = (int) ($_POST['manager_paid_amount'] ?? 0);
     $manager_payment_method = mysqli_real_escape_string($db, $_POST['manager_payment_method'] ?? '');
 
-    $tren_date = $_POST['payment_date'] ?? date('Y-m-d H:i:s');
+    $tren_date = date('Y-m-d H:i:s');
     $payment_date = date('Y-m-d H:i:s', strtotime($tren_date));
 
     // ১. ইনভয়েস চেক করা (নিশ্চিত হওয়া যে ইনভয়েসটি সঠিক)
@@ -245,8 +245,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
 
                     <div class="row mt-2">
                         <div class="col-md-6">
-                            <label>Transaction Time *</label>
-                            <input type="datetime-local" class="form-control" name="payment_date" value="<?= date('Y-m-d\TH:i'); ?>" required>
+                            <label>Transaction Slip/Screenshort *</label>
+                            <input type="file" class="form-control" name="transaction_slip" accept="image/*" required>
                         </div>
                         <div class="col-md-6">
                             <label>Payment Method *</label>
