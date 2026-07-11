@@ -50,7 +50,12 @@ if (isset($_POST['save_bill'])) {
     $transaction_slip_tmp = $_FILES['transaction_slip']['tmp_name'] ?? '';
     $file_ext = pathinfo($transaction_slip, PATHINFO_EXTENSION);
     $slipname = basename($transaction_slip.'_'.time() . '_' . rand(1000, 9999) . '.' . $file_ext );
-
+    //only allow certain file types for security
+    $allowed_types = ['jpg', 'jpeg', 'png', 'pdf'];
+    if (!in_array($file_ext, $allowed_types)) {
+        echo "<script>alert('Error: Only JPG, JPEG, PNG, and PDF files are allowed for the transaction slip.'); window.history.back();</script>";
+        exit;
+    }
 
     // billing_month query 
     $bill_mon_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id='$invoice_id' ");
@@ -369,7 +374,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                             <th scope="col" class="text-end">Payment Method</th>
                             <th scope="col" class="text-end">Payment Amount</th>
                             <th scope="col" class="text-end">Bill Summary</th>
-                            <!-- <th scope="col" class="text-end">Manager Paid to Admin</th> -->
+                            <th scope="col" class="text-end">Status</th>
                             <th scope="col" class="text-center">Note</th>
                             <th scope="col" class="text-center">Action</th>
                         </tr>
@@ -391,6 +396,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                             $bill_month = $pay_history['billing_month']; 
                             $total_bill_amount = (float)$pay_history['total_amount']; 
                             $current_paid_entry = (float)$pay_history['paid_amount'];
+                            $status = $pay_history['status'];
                             
                             // পেমেন্ট মেথড এবং ম্যানেজার সংক্রান্ত ডাটা
                             $pay_method_his = $pay_history['payment_method'];
@@ -448,15 +454,9 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         <small>Due: ৳ </small><?= number_format($calculated_due, 0) ?>
                                     </span>
                                 </td>
-                                <!-- <td class="text-end text-success">
-                                    <?php if ($pay_method_his == 'Manager'): ?>
-                                        <small>Paid : ৳ <?= number_format($manager_paid_val, 0) ?></small><br>
-                                        <small class="text-danger">Self : ৳ <?= number_format($manager_self, 0) ?></small><br>
-                                        <small style="font-size:10px;" class="text-dark">Method : <?= $manager_payment_method ?></small><br>
-                                    <?php else: ?>
-                                        -
-                                    <?php endif; ?>
-                                </td> -->
+                                <td>
+                                    <small class="p-1 bg-<?php if($status == 'Approved'){echo 'success';}elseif($status == 'Pending'){echo 'warning';}else{echo 'secondary';} ?> rounded-2 text-white fs-8"><?php echo $status ?? 'N/A'; ?></small>
+                                </td>
                                 <td class="text-center">
                                     <small class="text-secondary"><?= $note_his ?></small>
                                 </td>
