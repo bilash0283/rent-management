@@ -46,6 +46,11 @@ if (isset($_POST['save_bill'])) {
     $note = mysqli_real_escape_string($db, $_POST['note']);
     $transaction_id = mysqli_real_escape_string($db, $_POST['transaction_id'] ?? '');
     $transaction_number = mysqli_real_escape_string($db, $_POST['transaction_number'] ?? '');
+    $transaction_slip = $_FILES['transaction_slip']['name'] ?? '';
+    $transaction_slip_tmp = $_FILES['transaction_slip']['tmp_name'] ?? '';
+    $file_ext = pathinfo($transaction_slip, PATHINFO_EXTENSION);
+    $slipname = basename($transaction_slip.'_'.time() . '_' . rand(1000, 9999) . '.' . $file_ext );
+
 
     // billing_month query 
     $bill_mon_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id='$invoice_id' ");
@@ -90,12 +95,18 @@ if (isset($_POST['save_bill'])) {
 
     // ৩. পেমেন্ট হিস্ট্রি ইনসার্ট (কলামের নাম ঠিক করা হয়েছে)
     $history_sql = "INSERT INTO payment_history 
-        (invoice_id, tenant_id, bill_month, payment_method, paid_amount, note, payment_date, manager_paid,manager_payment_method, transaction_id, transaction_number) 
+        (invoice_id, tenant_id, bill_month, payment_method, paid_amount, note, payment_date, manager_paid,manager_payment_method, transaction_id, transaction_number, transaction_slip, status) 
         VALUES 
-        ('$invoice_id','$tenant_id', '$bill_month', '$payment_method', '$paid_amount', '$note', '$payment_date', '$manager_paid_amount', '$manager_payment_method', '$transaction_id', '$transaction_number')";
+        ('$invoice_id','$tenant_id', '$bill_month', '$payment_method', '$paid_amount', '$note', '$payment_date', '$manager_paid_amount', '$manager_payment_method', '$transaction_id', '$transaction_number', '$slipname' , 'Pending')";
 
     if (mysqli_query($db, $history_sql)) {
-        echo "<script>alert('Payment Successful!'); window.location.href='admin.php?page=editbill&tenant_id=$tenant_id';</script>";
+        // ৪. ফাইল আপলোড
+        if (!empty($transaction_slip)) {
+            $upload_dir = 'public/uploads/payment_slip/';
+            $target_file = $upload_dir . $slipname;
+            move_uploaded_file($transaction_slip_tmp, $target_file);
+        }
+        echo "<script>alert('Payment Pending waiting for approval!'); window.location.href='admin.php?page=dashboard';</script>";
     } else {
         echo "Error: " . mysqli_error($db);
     }
@@ -263,36 +274,14 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                         </div>
                     </div>
 
-                    <!-- Manager Payment Section -->
-                    <div id="manager_fields" class="mt-2" style="display: none;">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label style="color: blue;">Manager paid to Admin</label>
-                                <input type="text" class="form-control" name="manager_paid_amount" placeholder="Manager Paid Amount">
-                            </div>
-                            <div class="col-md-6">
-                                <label style="color: blue;">Manager Payment Method</label>
-                                <select name="manager_payment_method" class="form-control form-select" id="">
-                                    <option value="" selected disabled>Select One</option>
-                                    <!-- <option value="Cash">Cash</option> -->
-                                    <option value="Bkash">Bkash</option>
-                                    <option value="Nagad">Nagad</option>
-                                    <option value="Rocket">Rocket</option>
-                                    <option value="Bank Transfer">Bank Transfer</option>
-                                    <option value="Card">Card</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="row">
                         <div class="col-md-6">
-                            <label>Transaction ID</label>
-                            <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control">
+                            <label>Transaction ID *</label>
+                            <input type="text" name="transaction_id" placeholder="Transaction Id" class="form-control" required>
                         </div>
                         <div class="col-md-6">
-                            <label>Transaction Number</label>
-                            <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control">
+                            <label>Transaction Number *</label>
+                            <input type="text" name="transaction_number" placeholder="Transaction Number" class="form-control" required>
                         </div>
                     </div>
 
