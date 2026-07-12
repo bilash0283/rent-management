@@ -158,17 +158,13 @@ if (isset($_POST['save_bill'])) {
     $slipname = null;
 
     if (!empty($transaction_slip)) {
-
         $file_ext = strtolower(pathinfo($transaction_slip, PATHINFO_EXTENSION));
-
         // only allow certain file types for security
         $allowed_types = ['jpg', 'jpeg', 'png', 'pdf'];
-
         if (!in_array($file_ext, $allowed_types)) {
             echo "<script>alert('Error: Only JPG, JPEG, PNG, and PDF files are allowed for the transaction slip.'); window.history.back();</script>";
             exit;
         }
-
         $slipname = time() . '_' . rand(1000, 9999) . '.' . $file_ext;
     }
 
@@ -249,24 +245,21 @@ if (isset($_POST['save_bill'])) {
     )";
 
     if (mysqli_query($db, $history_sql)) {
-
         if (!empty($transaction_slip) && $slipname !== null) {
-
             $upload_dir = 'public/uploads/payment_slip/';
-
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
-
             move_uploaded_file($transaction_slip_tmp, $upload_dir . $slipname);
         }
 
+        $description = "Payment of $paid_amount ৳ Received for Invoice #INV-$invoice_id for the month of " . date("M Y", strtotime($bill_month)) . ".";
+        
+        mysqli_query($db, "INSERT INTO `notification`(`tenant_id`, `title`, `description`, `status`, `reed`) VALUES ('$tenant_id','Payment Successful','$description','Approved','Yes')");
+
         echo "<script>alert('Payment Successful!'); window.location.href='admin.php?page=editbill&tenant_id=$tenant_id';</script>";
-
     } else {
-
         echo "Error: " . mysqli_error($db);
-
     }
 }
 

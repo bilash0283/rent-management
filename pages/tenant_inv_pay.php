@@ -111,6 +111,11 @@ if (isset($_POST['save_bill'])) {
             $target_file = $upload_dir . $slipname;
             move_uploaded_file($transaction_slip_tmp, $target_file);
         }
+
+        $description = "Payment of $paid_amount ৳ Pending for Invoice #INV-$invoice_id for the month of " . date("M Y", strtotime($bill_month)) . ".";
+
+        mysqli_query($db, "INSERT INTO `notification`(`tenant_id`, `title`, `description`, `status`, `reed`) VALUES ('$tenant_id','Payment Pending','$description','Pending','No')");
+
         echo "<script>alert('Payment Pending waiting for approval!'); window.location.href='admin.php?page=dashboard';</script>";
     } else {
         echo "Error: " . mysqli_error($db);
@@ -397,6 +402,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                             $total_bill_amount = (float)$pay_history['total_amount']; 
                             $current_paid_entry = (float)$pay_history['paid_amount'];
                             $status = $pay_history['status'];
+                            $transaction_slip = $pay_history['transaction_slip'];
                             
                             // পেমেন্ট মেথড এবং ম্যানেজার সংক্রান্ত ডাটা
                             $pay_method_his = $pay_history['payment_method'];
@@ -469,6 +475,20 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             onclick="return confirm('Are you sure you want to delete this payment?');">
                                             <i class="bi bi-trash"></i>
                                         </a> -->
+                                        <?php if (!empty($transaction_slip)) { ?>
+                                            <a href="admin.php?page=view_photo&file=<?php echo $transaction_slip; ?>" 
+                                            class="p-1 btn btn-sm btn-primary" 
+                                            title="Transaction Slip">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        <?php } else { ?>
+                                            <a href="javascript:void(0);" 
+                                            onclick="alert('Transaction Slip not found!')" 
+                                            class="p-1 btn btn-sm btn-primary" 
+                                            title="Transaction Slip">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        <?php } ?>
                                     </div>
                                 </td>
                             </tr>
