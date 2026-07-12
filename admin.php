@@ -126,6 +126,10 @@
             include 'pages/tenant_inv_pay.php';
         break;
 
+        case 'view_photo':
+            include 'pages/view_photo.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
         break;

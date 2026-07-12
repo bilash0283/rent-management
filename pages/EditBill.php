@@ -144,6 +144,7 @@ if (isset($_POST['create_invoice'])) {
 
 // Confirm Payment Logic
 if (isset($_POST['save_bill'])) {
+
     $invoice_id = mysqli_real_escape_string($db, $_POST['invoice_id']);
     $paid_amount = (int)$_POST['paid_amount'];
     $payment_method = mysqli_real_escape_string($db, $_POST['payment_method']);
@@ -151,11 +152,31 @@ if (isset($_POST['save_bill'])) {
     $transaction_id = mysqli_real_escape_string($db, $_POST['transaction_id'] ?? '');
     $transaction_number = mysqli_real_escape_string($db, $_POST['transaction_number'] ?? '');
 
-    // billing_month query 
-    $bill_mon_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id='$invoice_id' ");
+    // Transaction Slip
+    $transaction_slip = $_FILES['transaction_slip']['name'] ?? '';
+    $transaction_slip_tmp = $_FILES['transaction_slip']['tmp_name'] ?? '';
+    $slipname = null;
+
+    if (!empty($transaction_slip)) {
+
+        $file_ext = strtolower(pathinfo($transaction_slip, PATHINFO_EXTENSION));
+
+        // only allow certain file types for security
+        $allowed_types = ['jpg', 'jpeg', 'png', 'pdf'];
+
+        if (!in_array($file_ext, $allowed_types)) {
+            echo "<script>alert('Error: Only JPG, JPEG, PNG, and PDF files are allowed for the transaction slip.'); window.history.back();</script>";
+            exit;
+        }
+
+        $slipname = time() . '_' . rand(1000, 9999) . '.' . $file_ext;
+    }
+
+    // billing_month query
+    $bill_mon_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id='$invoice_id'");
     $pay_info_for_pay = mysqli_fetch_assoc($bill_mon_sql);
     $bill_month = $pay_info_for_pay['billing_month'];
-    
+
     // Manager logic
     $manager_paid_amount = (int)($_POST['manager_paid_amount'] ?? 0);
     $manager_payment_method = mysqli_real_escape_string($db, $_POST['manager_payment_method'] ?? '');
@@ -163,8 +184,8 @@ if (isset($_POST['save_bill'])) {
     $tren_date = $_POST['payment_date'] ?? date('Y-m-d H:i:s');
     $payment_date = date('Y-m-d H:i:s', strtotime($tren_date));
 
-    // ১. ইনভয়েস চেক করা (নিশ্চিত হওয়া যে ইনভয়েসটি সঠিক)
-    $check_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id = '$invoice_id' AND tenant_id = '$tenant_id' LIMIT 1");
+    // Invoice check
+    $check_sql = mysqli_query($db, "SELECT * FROM invoices WHERE id='$invoice_id' AND tenant_id='$tenant_id' LIMIT 1");
     $inv = mysqli_fetch_assoc($check_sql);
 
     if (!$inv) {
@@ -177,7 +198,7 @@ if (isset($_POST['save_bill'])) {
         exit;
     }
 
-    // ডিউ চেক করার মেইন লজিক
+    // Due check
     $current_due = $inv['total_amount'] - $inv['paid_amount'];
 
     if ($paid_amount > $current_due) {
@@ -189,19 +210,63 @@ if (isset($_POST['save_bill'])) {
     $new_due = $inv['total_amount'] - $new_paid_total;
     $status = ($new_due <= 0) ? 'Paid' : 'Partial';
 
-    // ২. ইনভয়েস টেবিল আপডেট
-    mysqli_query($db, "UPDATE invoices SET paid_amount = '$new_paid_total', status = '$status' WHERE id = '$invoice_id'");
+    // Update invoice
+    mysqli_query($db, "UPDATE invoices SET paid_amount='$new_paid_total', status='$status' WHERE id='$invoice_id'");
 
-    // ৩. পেমেন্ট হিস্ট্রি ইনসার্ট (কলামের নাম ঠিক করা হয়েছে)
-    $history_sql = "INSERT INTO payment_history 
-        (invoice_id, tenant_id, bill_month, payment_method, paid_amount, note, payment_date, manager_paid,manager_payment_method, transaction_id, transaction_number) 
-        VALUES 
-        ('$invoice_id','$tenant_id', '$bill_month', '$payment_method', '$paid_amount', '$note', '$payment_date', '$manager_paid_amount', '$manager_payment_method', '$transaction_id', '$transaction_number')";
+    // Transaction slip value
+    $slip_value = ($slipname !== null) ? "'$slipname'" : "NULL";
+
+    // Payment history insert
+    $history_sql = "INSERT INTO payment_history
+    (
+        invoice_id,
+        tenant_id,
+        bill_month,
+        payment_method,
+        paid_amount,
+        note,
+        payment_date,
+        manager_paid,
+        manager_payment_method,
+        transaction_id,
+        transaction_number,
+        transaction_slip
+    )
+    VALUES
+    (
+        '$invoice_id',
+        '$tenant_id',
+        '$bill_month',
+        '$payment_method',
+        '$paid_amount',
+        '$note',
+        '$payment_date',
+        '$manager_paid_amount',
+        '$manager_payment_method',
+        '$transaction_id',
+        '$transaction_number',
+        $slip_value
+    )";
 
     if (mysqli_query($db, $history_sql)) {
+
+        if (!empty($transaction_slip) && $slipname !== null) {
+
+            $upload_dir = 'public/uploads/payment_slip/';
+
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+
+            move_uploaded_file($transaction_slip_tmp, $upload_dir . $slipname);
+        }
+
         echo "<script>alert('Payment Successful!'); window.location.href='admin.php?page=editbill&tenant_id=$tenant_id';</script>";
+
     } else {
+
         echo "Error: " . mysqli_error($db);
+
     }
 }
 
@@ -510,9 +575,14 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         </div>
                                     </div>
 
-                                    <div class="mt-2">
+                                    <div class="mt-1">
                                         <label>Note</label>
                                         <input type="text" name="note" placeholder="Note for Payment" class="form-control">
+                                    </div>
+
+                                    <div class="mt-1">
+                                        <label>Transaction Slip/Screenshort </label>
+                                        <input type="file" class="form-control" name="transaction_slip" accept="image/*" >
                                     </div>
 
                                     <button type="submit" name="save_bill" class="btn btn-success btn-sm mt-3 w-100">Confirm Payment</button>
@@ -712,7 +782,20 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <div class="btn-group">
                                                     <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="p-1 btn btn-sm btn-success"><i class="bi bi-eye"></i></a>
                                                     <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id; ?>" class="p-1 btn btn-sm btn-info"><i class="bi bi-pencil-square"></i></a>
-                                                    <a href="public/uploads/payment_slip/<?= $transaction_slip ?>" target="_blank" class="p-1 btn btn-sm btn-primary" title="Transaction Slip"><i class="bi bi-eye"></i></a>
+                                                    <?php if (!empty($transaction_slip)) { ?>
+                                                        <a href="admin.php?page=view_photo&file=<?php echo $transaction_slip; ?>" 
+                                                        class="p-1 btn btn-sm btn-primary" 
+                                                        title="Transaction Slip">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                    <?php } else { ?>
+                                                        <a href="javascript:void(0);" 
+                                                        onclick="alert('Transaction Slip not found!')" 
+                                                        class="p-1 btn btn-sm btn-primary" 
+                                                        title="Transaction Slip">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                    <?php } ?>
                                                     <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id ?>&tenant_id=<?= $tenant_id ?>" 
                                                         class="p-1 btn btn-sm btn-danger" 
                                                         onclick="return confirm('Are you sure you want to delete this payment?');">
