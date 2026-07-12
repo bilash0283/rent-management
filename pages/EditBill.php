@@ -758,7 +758,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             </td>
                                             <td>
                                                 <?php if ($status == 'Pending') { ?>
-                                                    <a href="admin.php?page=approve_notification&notification_id=<?= $notification_id ?>" onclick="return confirm('Are you sure you want to approve this Payment ?');"><span class="badge bg-warning text-dark small">Pending</span></a>
+                                                    <a href="admin.php?page=approve_payment&payslip_id=<?= $pay_slip_id ?>" onclick="return confirm('Are you sure you want to approve this Payment ?');"><span class="badge bg-warning text-dark small">Pending</span></a>
                                                 <?php } elseif ($status == 'Approved') { ?>
                                                     <span class="badge bg-success small">Approved</span>
                                                 <?php } ?>

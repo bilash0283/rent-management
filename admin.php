@@ -134,8 +134,8 @@
             include 'pages/notification.php';   
         break;
 
-        case 'approve_notification':
-            include 'pages/approve_notification.php';
+        case 'approve_payment':
+            include 'pages/approve_payment.php';
         break;
 
         default:

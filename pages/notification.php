@@ -49,11 +49,11 @@ while ($notification = mysqli_fetch_assoc($notification_sql)) {
             </div>
             <?php if ($_SESSION['role'] == 'Admin') { ?>
             <div class="col-md-2">
-                <?php if ($status == 'Pending') { ?>
-                    <a href="admin.php?page=approve_notification&notification_id=<?= $notification_id ?>" onclick="return confirm('Are you sure you want to approve this Payment ?');"><span class="badge bg-warning text-dark small">Pending</span></a>
+                <!-- <?php if ($status == 'Pending') { ?>
+                   <span class="badge bg-warning text-dark small">Pending</span>
                 <?php } elseif ($status == 'Approved') { ?>
                     <span class="badge bg-success small">Approved</span>
-                <?php } ?>
+                <?php } ?> -->
                 <a href="admin.php?page=editbill&tenant_id=<?= $tenant_id ?>" class="bg-info p-1 rounded-2 fs-10">Details</a>
             </div>
             <?php } ?>
