@@ -611,6 +611,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         <th scope="col" class="text-end">Payment Method</th>
                                         <th scope="col" class="text-end">Payment Amount</th>
                                         <th scope="col" class="text-end">Bill Summary</th>
+                                        <th scope="col" class="text-end">Status</th>
                                         <th scope="col" class="text-end">Manager Paid to Admin</th>
                                         <th scope="col" class="text-center">Note</th>
                                         <th scope="col" class="text-center">Action</th>
@@ -633,6 +634,8 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                         $bill_month = $pay_history['billing_month']; 
                                         $total_bill_amount = (float)$pay_history['total_amount']; 
                                         $current_paid_entry = (float)$pay_history['paid_amount'];
+                                        $status = $pay_history['status'];
+                                        $transaction_slip = $pay_history['transaction_slip'];
                                         
                                         // পেমেন্ট মেথড এবং ম্যানেজার সংক্রান্ত ডাটা
                                         $pay_method_his = $pay_history['payment_method'];
@@ -690,6 +693,9 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                     <small>Due: ৳ </small><?= number_format($calculated_due, 0) ?>
                                                 </span>
                                             </td>
+                                            <td>
+                                                <small class="p-1 bg-<?php if($status == 'Approved'){echo 'success';}elseif($status == 'Pending'){echo 'warning';}else{echo 'secondary';} ?> rounded-2 text-white fs-8"><?php echo $status ?? 'N/A'; ?></small>
+                                            </td>
                                             <td class="text-end text-success">
                                                 <?php if ($pay_method_his == 'Manager'): ?>
                                                     <small>Paid : ৳ <?= number_format($manager_paid_val, 0) ?></small><br>
@@ -706,6 +712,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 <div class="btn-group">
                                                     <a href="admin.php?page=payslip&unit_id=<?= $unit_id; ?>&id=<?= $pay_slip_id; ?>" class="p-1 btn btn-sm btn-success"><i class="bi bi-eye"></i></a>
                                                     <a href="admin.php?page=update_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id; ?>" class="p-1 btn btn-sm btn-info"><i class="bi bi-pencil-square"></i></a>
+                                                    <a href="public/uploads/payment_slip/<?= $transaction_slip ?>" target="_blank" class="p-1 btn btn-sm btn-primary" title="Transaction Slip"><i class="bi bi-eye"></i></a>
                                                     <a href="admin.php?page=delete_payment&pay_his_id=<?= $pay_slip_id ?>&invoice_id=<?= $invoice_id ?>&tenant_id=<?= $tenant_id ?>" 
                                                         class="p-1 btn btn-sm btn-danger" 
                                                         onclick="return confirm('Are you sure you want to delete this payment?');">
