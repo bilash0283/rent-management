@@ -130,6 +130,14 @@
             include 'pages/view_photo.php';
         break;
 
+        case 'notification':
+            include 'pages/notification.php';   
+        break;
+
+        case 'approve_notification':
+            include 'pages/approve_notification.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
         break;

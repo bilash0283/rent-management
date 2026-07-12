@@ -757,7 +757,11 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                                 </span>
                                             </td>
                                             <td>
-                                                <small class="p-1 bg-<?php if($status == 'Approved'){echo 'success';}elseif($status == 'Pending'){echo 'warning';}else{echo 'secondary';} ?> rounded-2 text-white fs-8"><?php echo $status ?? 'N/A'; ?></small>
+                                                <?php if ($status == 'Pending') { ?>
+                                                    <a href="admin.php?page=approve_notification&notification_id=<?= $notification_id ?>" onclick="return confirm('Are you sure you want to approve this Payment ?');"><span class="badge bg-warning text-dark small">Pending</span></a>
+                                                <?php } elseif ($status == 'Approved') { ?>
+                                                    <span class="badge bg-success small">Approved</span>
+                                                <?php } ?>
                                             </td>
                                             <td class="text-end text-success">
                                                 <?php if ($pay_method_his == 'Manager'): ?>

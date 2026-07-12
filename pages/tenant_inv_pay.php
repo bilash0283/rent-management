@@ -112,7 +112,7 @@ if (isset($_POST['save_bill'])) {
             move_uploaded_file($transaction_slip_tmp, $target_file);
         }
 
-        $description = "Payment of $paid_amount ৳ Pending for Invoice #INV-$invoice_id for the month of " . date("M Y", strtotime($bill_month)) . ".";
+        $description = "Payment of $paid_amount ৳ Received for Invoice #INV-$invoice_id for the month of " . date("M Y", strtotime($bill_month)) . ".";
 
         mysqli_query($db, "INSERT INTO `notification`(`tenant_id`, `title`, `description`, `status`, `reed`) VALUES ('$tenant_id','Payment Pending','$description','Pending','No')");
 
