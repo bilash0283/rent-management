@@ -402,23 +402,35 @@ foreach ($monthly_totals as $month => $data) {
                         <h5 class="fw-bold text-dark mb-1"><i class="fas fa-bell text-warning text-small"></i>  Notifications</h5>
                         <p class="text-muted small mb-4">Latest Notifications from Rent-Manager Admin</p>
 
+                        <?php 
+                            $notification_sql = mysqli_query($db, "SELECT * FROM `notification` WHERE tenant_id = '$tenant_id' ORDER BY id DESC LIMIT 3");
+                            while ($notification = mysqli_fetch_assoc($notification_sql)) {
+                                $notification_title = $notification['title'];
+                                $notification_description = $notification['description'];
+                                $notification_date = date('M j, Y', strtotime($notification['date']));
+                                $status = $notification['status'];
+                            
+                        ?>
+
                         <div class="mb-3 pb-3 border-bottom">
                             <div class="d-flex align-items-start gap-2 mb-1">
-                                <i class="fas fa-circle-check text-success small"></i>
-                                <h6 class="mb-0 fw-bold text-dark small">Payment Successful</h6>
+                                <?php 
+                                    if($status == 'Approved') {
+                                        echo '<i class="fas fa-check-circle text-success small"></i>';
+                                    } elseif ($status == 'Pending') {
+                                        echo '<i class="fas fa-exclamation-circle text-warning small"></i>';
+                                    } elseif ($status == 'Rejected') {
+                                        echo '<i class="fas fa-times-circle text-danger small"></i>';
+                                    } else {
+                                        echo '<i class="fas fa-info-circle text-muted small"></i>';
+                                    }
+                                ?>
+                                <h6 class="mb-0 fw-bold text-dark small"><?= $notification_title ?></h6>
                             </div>
-                                    <p class="text-muted small mb-1" style="font-size: 0.85rem;">Your payment of $1,200 for March has been processed successfully.</p>
-                            <small class="text-muted" style="font-size: 0.75rem;">Mar 3, 2026</small>
+                            <p class="text-muted small mb-1" style="font-size: 0.85rem;"><?= $notification_description ?></p>
+                            <small class="text-muted" style="font-size: 0.75rem;"><?= $notification_date ?></small>
                         </div>
-
-                        <div class="mb-3 border-bottom">
-                            <div class="d-flex align-items-start gap-2 mb-1">
-                                <i class="fas fa-exclamation-circle text-warning  small"></i>
-                                <h6 class="mb-0 fw-bold text-dark small">Payment Pending</h6>
-                            </div>
-                            <p class="text-muted small mb-1" style="font-size: 0.85rem;">Your Payment for March is still pending.</p>
-                            <small class="text-muted" style="font-size: 0.75rem;">Feb 28, 2026</small>
-                        </div>
+                        <?php } ?>
                         <a href="" class="text-muted">View All Notifications <i class="fas fa-arrow-right small"></i></a>
                     </div>
 
