@@ -32,7 +32,6 @@
                         <span class="nxl-mtext">Dashboard</span>
                     </a>
                 </li>
-
                 <?php if($_SESSION['role'] === 'Admin'): ?>
                     <li class="nxl-item nxl-hasmenu">
                         <a href="javascript:void(0);" class="nxl-link">
@@ -112,6 +111,12 @@
                                 <a class="nxl-link" href="admin.php?page=profile">
                                     <span class="nxl-micon"> <i class="feather-user text-info"></i></span>
                                     <span class="nxl-mtext">Profile</span>
+                                </a>
+                            </li>
+                            <li class="nxl-item">
+                                <a class="nxl-link" href="admin.php?page=change_password">
+                                    <span class="nxl-micon"> <i class="feather-key text-info"></i></span>
+                                    <span class="nxl-mtext">Change Password</span>
                                 </a>
                             </li>
                             <li class="nxl-item">
@@ -219,8 +224,15 @@
                                 </a>
                             </li>
                         </ul>
+                        <ul class="nxl-submenu">
+                            <li class="nxl-item">
+                                <a class="nxl-link" href="admin.php?page=change_password">
+                                    <span class="nxl-micon"> <i class="feather-key text-info"></i></span>
+                                    <span class="nxl-mtext">Change Password</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    
                 <?php endif; ?>
             </ul>
         </div>

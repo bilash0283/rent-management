@@ -138,6 +138,10 @@
             include 'pages/approve_payment.php';
         break;
 
+        case 'change_password':
+            include 'pages/change_password.php';
+        break;
+
         default:
             include 'pages/dashboard.php';
         break;
