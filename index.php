@@ -302,10 +302,10 @@ if (isset($_POST['sign_in'])) {
                     </button>
                 </form>
 
-                <div class="footer-text ">
+                <!-- <div class="footer-text ">
                     Don't have an account? 
                     <a href="signup.php" class="text-info">Sign Up</a>
-                </div>
+                </div> -->
 
                 <!-- Footer -->
                 <div class="footer-text">

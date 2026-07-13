@@ -29,7 +29,7 @@ $old_image= $user_row['tenant_image'];
     <link rel="shortcut icon" type="image/x-icon" href="public/assets/images/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="public/assets/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="public/assets/vendors/css/vendors.min.css" />
-    <!-- <link rel="stylesheet" type="text/css" href="public/assets/vendors/css/daterangepicker.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="public/assets/vendors/css/daterangepicker.min.css" />
     <link rel="stylesheet" type="text/css" href="public/assets/css/theme.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="public/assets/css/style.css">

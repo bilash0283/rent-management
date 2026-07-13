@@ -28,7 +28,7 @@ if (isset($_POST['sign_up'])) {
     }
 
     // Bangladesh Mobile Validation
-    if (!preg_match('/^01[3-9][0-9]{8}$/', $phone)) {
+    if (!preg_match('/^01[1-9][0-9]{9}$/', $phone)) {
 
         $error = "Please enter a valid Bangladesh mobile number!";
 
