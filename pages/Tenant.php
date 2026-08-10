@@ -124,7 +124,9 @@
                                     <td>
                                         <?php
                                             // Message থাকলে এখানে লিখুন
-                                            $profile_message = "Available From Jan-27";
+                                            $unit = mysqli_query($db,"SELECT unit_name, available_from_date FROM unit WHERE id = '$unit_id' ");
+                                            $unit_row = mysqli_fetch_assoc($unit);
+                                            $profile_message = $unit_row['available_from_date'] ? "Available From: " . date('M-y', strtotime($unit_row['available_from_date'])) : "";
                                             ?>
                                             <?php if (!empty($profile_message)): ?>
                                                 <div class="profile-notice">
@@ -140,8 +142,6 @@
 
                                     <td>
                                         <?php 
-                                            $unit = mysqli_query($db,"SELECT unit_name FROM unit WHERE id = '$unit_id' ");
-                                            $unit_row = mysqli_fetch_assoc($unit);
                                             echo $unit_row['unit_name'];
                                         ?>
                                     </td>
