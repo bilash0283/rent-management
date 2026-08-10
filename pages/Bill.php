@@ -84,7 +84,7 @@
                                         <div class="d-flex flex-column align-items-start text-start col-span">
                                             <?php
                                             // Message থাকলে এখানে লিখুন
-                                            $profile_message = "Available From Jan-27";
+                                            $profile_message = $row['available_from_date'] ? "Available From: " . date('M-y', strtotime($row['available_from_date'])) : "";
                                             ?>
                                             <?php if (!empty($profile_message)): ?>
                                                 <div class="profile-notice">
