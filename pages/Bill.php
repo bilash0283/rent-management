@@ -77,22 +77,49 @@
                                 ?>
                                 <tr>
                                     <td><?= $i; ?></td>
-                                    <td><?= $unit_name; ?></td>
-                                    <td>
-                                        <div class="d-flex flex-column align-items-center text-center col-span">
-                                            <img src="<?= htmlspecialchars($image) ?>"
-                                                width="50" height="50"
-                                                style="object-fit:cover;border-radius:50%;"
-                                                class="mb-2">
 
-                                            <a href="admin.php?page=view_tenant&id=<?= $tent_id ?>" 
-                                            class="text-secondary fw-bold" style="font-size:12px;" >
-                                                <?= $name; ?>
-                                            </a>
-                                            <?php if (!empty($size)): ?>
-                                                <small class="text-muted">Ele.M.N : <?= $size; ?></small>
+                                    <td><?= $unit_name; ?></td>
+
+                                    <td>
+                                        <div class="d-flex flex-column align-items-start text-start col-span">
+                                            <?php
+                                            // Message থাকলে এখানে লিখুন
+                                            $profile_message = "Available From Jan-27";
+                                            ?>
+                                            <?php if (!empty($profile_message)): ?>
+                                                <div class="profile-notice">
+                                                    <span class="notice-dot"></span>
+                                                    <?= htmlspecialchars($profile_message, ENT_QUOTES, 'UTF-8'); ?>
+                                                </div>
                                             <?php endif; ?>
-                                        </div>                                       
+
+                                            <!-- Profile Picture -->
+                                            <img
+                                                src="<?= htmlspecialchars($image); ?>"
+                                                width="50"
+                                                height="50"
+                                                style="object-fit:cover;border-radius:50%;"
+                                                class="mb-2"
+                                                alt="Profile"
+                                            >
+
+                                            <!-- Tenant Name -->
+                                            <a
+                                                href="admin.php?page=view_tenant&id=<?= $tent_id ?>"
+                                                class="text-secondary fw-bold"
+                                                style="font-size:12px;"
+                                            >
+                                                <?= htmlspecialchars($name); ?>
+                                            </a>
+
+                                            <!-- Meter Number -->
+                                            <?php if (!empty($size)): ?>
+                                                <small class="text-muted">
+                                                    Ele.M.N : <?= htmlspecialchars($size); ?>
+                                                </small>
+                                            <?php endif; ?>
+
+                                        </div>                                    
                                     </td>
 
                                     <td style="font-size: 10px; line-height: 1.4;">

@@ -101,3 +101,80 @@
             left: -7px;
             top: 5px;
         }
+
+
+/* abable notification style  */
+.profile-notice {
+    position: relative;
+    display: inline-block;
+    background: #fff;
+    color: #444;
+    border: 1px solid #ff7043;
+    border-radius: 5px;
+    padding: 3px 7px;
+    margin-bottom: 8px;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+    animation: noticeLoop 1.8s ease-in-out infinite;
+}
+
+
+/* Bubble arrow */
+.profile-notice::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 20%;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-right: 1px solid #ff7043;
+    border-bottom: 1px solid #ff7043;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+
+/* Green notification dot */
+.notice-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background: #28a745;
+    border-radius: 50%;
+    margin-right: 4px;
+    animation: dotLoop 1s ease-in-out infinite;
+}
+
+
+/* Bubble animation */
+@keyframes noticeLoop {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-2px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+/* Dot animation */
+@keyframes dotLoop {
+    0% {
+        opacity: .4;
+        transform: scale(.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: .4;
+        transform: scale(.8);
+    }
+}
