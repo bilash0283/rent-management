@@ -109,7 +109,7 @@
                                                     <?= htmlspecialchars($profile_message, ENT_QUOTES, 'UTF-8'); ?>
                                                 </div>
                                         <?php endif; ?><br>
-                                        
+
                                         <img src="<?= htmlspecialchars($image) ?>"
                                              width="40" height="40"
                                              style="object-fit:cover;border-radius:6px;">
@@ -157,6 +157,17 @@
 
                                     <td>
                                         <div class="btn-group">
+                                            <!-- Collapse Button -->
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-primary"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#updateRow<?= $row['id']; ?>"
+                                                aria-expanded="false"
+                                            >
+                                                Update
+                                            </button>
+
                                             <a href="admin.php?page=CreateUnit&edit_id=<?= $row['id'] ?>&building_id=<?php echo $building_id; ?>"
                                             class="btn btn-sm btn-light-primary">
                                                 <i class="feather-edit"></i>
@@ -167,6 +178,60 @@
                                             onclick="return confirm('Are you sure?');">
                                                 <i class="feather-trash-2"></i>
                                             </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Collapsible Row -->
+                                <tr class="collapse" id="updateRow<?= $row['id']; ?>">
+                                    <td colspan="4">
+                                        <div class="p-3 bg-light border rounded">
+                                            <form method="POST">
+                                                <!-- Row ID -->
+                                                <input
+                                                    type="hidden"
+                                                    name="row_id"
+                                                    value="<?= $row['id']; ?>"
+                                                >
+                                                <div class="row g-2 align-items-end">
+                                                    <!-- Input 1 -->
+                                                    <div class="col-md-5">
+                                                        <label class="form-label mb-1">
+                                                            First Value
+                                                        </label>
+
+                                                        <input
+                                                            type="text"
+                                                            name="value_one"
+                                                            class="form-control form-control-sm"
+                                                            placeholder="Enter value"
+                                                        >
+
+                                                    </div>
+                                                    <!-- Input 2 -->
+                                                    <div class="col-md-5">
+                                                        <label class="form-label mb-1">
+                                                            Second Value
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            name="value_two"
+                                                            class="form-control form-control-sm"
+                                                            placeholder="Enter value"
+                                                        >
+                                                    </div>
+                                                    <!-- Update -->
+                                                    <div class="col-md-2">
+                                                        <button
+                                                            type="submit"
+                                                            name="update_row"
+                                                            class="btn btn-sm btn-success w-100"
+                                                        >
+                                                            Update
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
