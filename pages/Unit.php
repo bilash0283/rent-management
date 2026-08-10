@@ -188,14 +188,11 @@
                                         <div class="border-top border-bottom px-2 py-1">
                                             <form method="POST" class="m-0">
                                                 <!-- Row ID -->
-                                                <input
-                                                    type="hidden"
-                                                    name="update_id"
-                                                    value="<?= $row['id']; ?>"
-                                                >
-                                                <div class="row g-1 align-items-center">
-                                                    <!-- Available From -->
-                                                    <div class="col-md-5" style="padding: 0 !important;">
+                                                <input type="hidden" name="update_id" value="<?= $row['id']; ?>">
+                                                <!-- D-flex & flex-nowrap ensure kore je eta mobile e o nicher line e jabe na -->
+                                                <div class="d-flex align-items-center gap-2 flex-nowrap" style="margin: 5px 286px;">
+                                                    <!-- Available From (Input field) -->
+                                                    <div style="flex: 1; min-width: 0;">
                                                         <?php
                                                         // Current month = minimum allowed month
                                                         $minMonth = date('Y-m');
@@ -203,21 +200,21 @@
                                                         <input
                                                             type="month"
                                                             name="value_one"
-                                                            class="form-control form-control-sm compact-control"
+                                                            class="form-control form-control-sm compact-control w-100"
                                                             min="<?= date('Y-m'); ?>"
                                                             value="<?= !empty($row['available_from_date']) ? date('Y-m', strtotime($row['available_from_date'])) : date('Y-m'); ?>"
                                                             required
                                                         >
                                                     </div>
 
-                                                    <!-- Buttons -->
-                                                    <div class="col-md-2">
+                                                    <!-- Buttons Group -->
+                                                    <div style="flex-shrink: 0;">
                                                         <div class="d-flex gap-1">
-                                                            <!-- Clear -->
+                                                            <!-- Clear & Update -->
                                                             <button
                                                                 type="submit"
                                                                 name="clear_row"
-                                                                class="btn btn-sm btn-outline-secondary compact-control flex-fill"
+                                                                class="btn btn-sm btn-outline-info compact-control"
                                                             >
                                                                 Clear & Update
                                                             </button>
@@ -226,7 +223,7 @@
                                                             <button
                                                                 type="submit"
                                                                 name="update_row"
-                                                                class="btn btn-sm btn-success compact-control flex-fill"
+                                                                class="btn btn-sm btn-success compact-control text-nowrap"
                                                             >
                                                                 Update
                                                             </button>
