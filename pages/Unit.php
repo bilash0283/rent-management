@@ -101,7 +101,7 @@
                                     <td>
                                         <?php
                                             // Message থাকলে এখানে লিখুন
-                                            $profile_message = "Available From Jan-27";
+                                            $profile_message = $row['available_from_date'] ? "Available From: " . date('M-y', strtotime($row['available_from_date'])) : "";
                                             ?>
                                             <?php if (!empty($profile_message)): ?>
                                                 <div class="profile-notice">
@@ -160,12 +160,12 @@
                                             <!-- Collapse Button -->
                                             <button
                                                 type="button"
-                                                class="btn btn-sm btn-primary"
+                                                class="btn btn-sm btn-light-success"
                                                 data-bs-toggle="collapse"
                                                 data-bs-target="#updateRow<?= $row['id']; ?>"
                                                 aria-expanded="false"
                                             >
-                                                Update
+                                               <i class="bi bi-calendar2-week"></i>
                                             </button>
 
                                             <a href="admin.php?page=CreateUnit&edit_id=<?= $row['id'] ?>&building_id=<?php echo $building_id; ?>"
@@ -182,59 +182,89 @@
                                     </td>
                                 </tr>
 
-                                <!-- Collapsible Row -->
+                                <!-- Compact Update Row -->
                                 <tr class="collapse" id="updateRow<?= $row['id']; ?>">
-                                    <td colspan="4">
-                                        <div class="p-3 bg-light border rounded">
-                                            <form method="POST">
+                                    <td colspan="12" class="p-0 align-center">
+                                        <div class="border-top border-bottom px-2 py-1">
+                                            <form method="POST" class="m-0">
                                                 <!-- Row ID -->
                                                 <input
                                                     type="hidden"
-                                                    name="row_id"
+                                                    name="update_id"
                                                     value="<?= $row['id']; ?>"
                                                 >
-                                                <div class="row g-2 align-items-end">
-                                                    <!-- Input 1 -->
-                                                    <div class="col-md-5">
-                                                        <label class="form-label mb-1">
-                                                            First Value
-                                                        </label>
-
+                                                <div class="row g-1 align-items-center">
+                                                    <!-- Available From -->
+                                                    <div class="col-md-5" style="padding: 0 !important;">
+                                                        <?php
+                                                        // Current month = minimum allowed month
+                                                        $minMonth = date('Y-m');
+                                                        ?>
                                                         <input
-                                                            type="text"
+                                                            type="month"
                                                             name="value_one"
-                                                            class="form-control form-control-sm"
-                                                            placeholder="Enter value"
+                                                            class="form-control form-control-sm compact-control"
+                                                            min="<?= date('Y-m'); ?>"
+                                                            value="<?= !empty($row['available_from_date']) ? date('Y-m', strtotime($row['available_from_date'])) : date('Y-m'); ?>"
+                                                            required
                                                         >
+                                                    </div>
 
-                                                    </div>
-                                                    <!-- Input 2 -->
-                                                    <div class="col-md-5">
-                                                        <label class="form-label mb-1">
-                                                            Second Value
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            name="value_two"
-                                                            class="form-control form-control-sm"
-                                                            placeholder="Enter value"
-                                                        >
-                                                    </div>
-                                                    <!-- Update -->
+                                                    <!-- Buttons -->
                                                     <div class="col-md-2">
-                                                        <button
-                                                            type="submit"
-                                                            name="update_row"
-                                                            class="btn btn-sm btn-success w-100"
-                                                        >
-                                                            Update
-                                                        </button>
+                                                        <div class="d-flex gap-1">
+                                                            <!-- Clear -->
+                                                            <button
+                                                                type="submit"
+                                                                name="clear_row"
+                                                                class="btn btn-sm btn-outline-secondary compact-control flex-fill"
+                                                            >
+                                                                Clear & Update
+                                                            </button>
+
+                                                            <!-- Update -->
+                                                            <button
+                                                                type="submit"
+                                                                name="update_row"
+                                                                class="btn btn-sm btn-success compact-control flex-fill"
+                                                            >
+                                                                Update
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
+
+                                <?php
+                                    if(isset($_POST['update_row']) && isset($_POST['update_id']) && isset($_POST['value_one'])) {
+                                        $update_id = (int) $_POST['update_id'];
+                                        $value_one = mysqli_real_escape_string($db, $_POST['value_one']);
+
+                                        // Update the database
+                                        $update_query = "UPDATE unit SET available_from_date = '$value_one' WHERE id = $update_id";
+                                        if(mysqli_query($db, $update_query)) {
+                                            echo '<script>alert("Unit Available Date updated successfully!"); window.location.href="admin.php?page=unit&id=' . $building_id . '";</script>';
+                                        } else {
+                                            echo '<script>alert("Error updating unit: ' . mysqli_error($db) . '");</script>';
+                                        }
+                                    }
+
+                                    if(isset($_POST['clear_row']) && isset($_POST['update_id'])) {
+                                        $update_id = (int) $_POST['update_id'];
+
+                                        // Clear the available_from_date in the database
+                                        $clear_query = "UPDATE unit SET available_from_date = NULL WHERE id = $update_id";
+                                        if(mysqli_query($db, $clear_query)) {
+                                            echo '<script>alert("Unit Available Date cleared successfully!"); window.location.href="admin.php?page=unit&id=' . $building_id . '";</script>';
+                                        } else {
+                                            echo '<script>alert("Error clearing unit: ' . mysqli_error($db) . '");</script>';
+                                        }
+                                    }
+                                ?>
+
 
                             <?php endwhile; ?>
                             <?php else: ?>

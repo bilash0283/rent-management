@@ -178,3 +178,25 @@
         transform: scale(.8);
     }
 }
+
+
+/* abable time input fild css unit manage table  */
+ /* Same height for all controls */
+    .compact-control {
+        height: 31px !important;
+        min-height: 31px !important;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        line-height: 1.2 !important;
+    }
+
+
+    .btn-outline-secondary:hover {
+        color: #6c757d !important;
+        border-color: #6c757d !important;
+    }
+
+    .btn-success:hover {
+        border-color: #198754 !important;
+        color: #fff !important;
+    }
