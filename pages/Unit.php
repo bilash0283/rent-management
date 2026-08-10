@@ -99,6 +99,17 @@
 
                                 <tr>
                                     <td>
+                                        <?php
+                                            // Message থাকলে এখানে লিখুন
+                                            $profile_message = "Available From Jan-27";
+                                            ?>
+                                            <?php if (!empty($profile_message)): ?>
+                                                <div class="profile-notice">
+                                                    <span class="notice-dot"></span>
+                                                    <?= htmlspecialchars($profile_message, ENT_QUOTES, 'UTF-8'); ?>
+                                                </div>
+                                        <?php endif; ?><br>
+                                        
                                         <img src="<?= htmlspecialchars($image) ?>"
                                              width="40" height="40"
                                              style="object-fit:cover;border-radius:6px;">
