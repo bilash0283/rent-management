@@ -129,7 +129,7 @@
                                             <?php if (!empty($profile_message)): ?>
                                                 <div class="profile-notice">
                                                     <span class="notice-dot"></span>
-                                                    <?= htmlspecialchars($profile_message, ENT_QUOTES, 'UTF-8'); ?>
+                                                    <span class="text-danger"><?= htmlspecialchars($profile_message, ENT_QUOTES, 'UTF-8'); ?></span>
                                                 </div>
                                         <?php endif; ?>
 
