@@ -21,6 +21,7 @@ $Water_db = $data['Water'];
 $Electricity_db = $data['Electricity'];
 $Others_db = $data['Others'];
 $paid_amount_db = $data['paid_amount'];
+$note_db = $data['note'];
 
 $total_amount_db = $Rent_db + $Gas_db + $Water_db + $Electricity_db + $Others_db;
 
@@ -38,6 +39,7 @@ if (isset($_POST['update_invoice'])) {
     $Water = intval($_POST['Water']);
     $Electricity = intval($_POST['Electricity']);
     $Others = intval($_POST['Others']);
+    $note = $_POST['note'] ?? '';
 
     $rent_month = mysqli_real_escape_string($db, $_POST['rent_month']);
     $Gas_month = mysqli_real_escape_string($db, $_POST['Gas_month']);
@@ -75,7 +77,8 @@ if (isset($_POST['update_invoice'])) {
             `Others`            = '$Others',
             `Others_month`      = '$Others_month',
             `total_amount`      = '$total_amount',
-            `status`            = '$status'
+            `status`            = '$status',
+            `note`              = '$note'
             WHERE `id`          = '$invoice_id'";
 
         $result = mysqli_query($db, $update_query);
@@ -161,6 +164,10 @@ if (isset($_POST['update_invoice'])) {
                                     <small class="fw-semibold">Others Amount</small>
                                     <input type="number" name="Others" value="<?php echo $Others_db; ?>" class="form-control">
                                 </div>
+                            </div>
+                            <div class="mt-1">
+                                <label>Note</label>
+                                <input type="text" name="note" value="<?php echo htmlspecialchars($note_db); ?>" placeholder="Note for Invoice" class="form-control">
                             </div>
 
                             <button type="submit" name="update_invoice" class="btn btn-success btn-sm mt-3">

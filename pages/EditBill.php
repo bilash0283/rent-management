@@ -84,6 +84,7 @@ if (isset($_POST['create_invoice'])) {
     $Others_month = $_POST['Others_month'];
     $rent_month = $_POST['rent_month'];
     $rent = intval($_POST['rent']);
+    $note = $_POST['note'] ?? '';
     $total_amount = $rent + $Gas + $Water + $Electricity + $Others;
 
 
@@ -114,6 +115,7 @@ if (isset($_POST['create_invoice'])) {
             `Others_month`,
             `total_amount`,
             `status`,
+            `note`,
             `created_at`
         ) 
         VALUES 
@@ -132,6 +134,7 @@ if (isset($_POST['create_invoice'])) {
             '$Others_month',
             '$total_amount',
             '$status',
+            '$note',
             now()
         )");
 
@@ -473,6 +476,10 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
                                             <small class="fw-semibold" for="status">Others Amount</small>
                                             <input type="text" name="Others" value="" class="form-control">
                                         </div>
+                                    </div>
+                                    <div class="mt-1">
+                                        <label>Note</label>
+                                        <input type="text" name="note" placeholder="Note for Invoice" class="form-control">
                                     </div>
                                     <button type="submit" name="create_invoice" class="btn btn-success btn-sm mt-3">
                                         Create Invoice

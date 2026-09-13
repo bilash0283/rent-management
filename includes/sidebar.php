@@ -23,7 +23,7 @@
         <div class="navbar-content">
             <ul class="nxl-navbar">
                 <li class="nxl-item nxl-caption">
-                    <label>Navigation</label>
+                    <label>Navigation</label> 
                 </li>
                 
                 <li class="nxl-item nxl-hasmenu">

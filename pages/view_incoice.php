@@ -49,6 +49,7 @@ while ($pay_info_sh = mysqli_fetch_assoc($pay_info)) {
     $Electricity_month_db = $pay_info_sh['Electricity_month'];
     $Others_month_db = $pay_info_sh['Others_month']; 
     $created_at_db = $pay_info_sh['created_at'];
+    $note_db = $pay_info_sh['note'];
 }
 
 // ৫. অ্যাডভান্স বকেয়া হিসেব
@@ -133,7 +134,7 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                                 $current_month_total = 0;
                                 
                                 $bill_items = [
-                                    ['House Rent', $Rent_db, $billing_month_db],
+                                    ['Rent', $Rent_db, $billing_month_db],
                                     ['Gas Bill', $Gas_db, $Gas_month_db],
                                     ['Water Bill', $Water_db, $Water_month_db],
                                     ['Electricity Bill (' . $size . ')', $Electricity_db, $Electricity_month_db],
@@ -176,6 +177,10 @@ $payable_advance = max($advance - $total_advance_paid, 0);
                                 </tr>
                             </tfoot>
                         </table>
+                    </div>
+
+                    <div class="alert alert-warning mb-0 mt-3" style="font-size: 0.8rem; border-radius: 8px;">
+                        <b>Note :</b> <?php echo htmlspecialchars($note_db); ?>
                     </div>
 
                     <div id="due-section" style="display: none;">
