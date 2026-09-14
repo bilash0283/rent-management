@@ -56,7 +56,7 @@ if (isset($_POST['sign_in'])) {
             $_SESSION['role']   = $row['role'];
             $_SESSION['status'] = $row['status'];
 
-            header('location:admin.php');
+            header('location:admin.php?page=dashboard');
             exit;
 
         } else {

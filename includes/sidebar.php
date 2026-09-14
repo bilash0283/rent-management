@@ -26,14 +26,14 @@
                     <label>Navigation</label> 
                 </li>
                 
-                <li class="nxl-item nxl-hasmenu">
-                    <a href="admin.php" class="nxl-link">
+                <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'dashboard') ? 'active' : ''; ?>">
+                    <a href="admin.php?page=dashboard" class="nxl-link">
                         <span class="nxl-micon"><i class="feather-airplay text-info"></i></span>
                         <span class="nxl-mtext">Dashboard</span>
                     </a>
                 </li>
                 <?php if($_SESSION['role'] === 'Admin'): ?>
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'unitinfo') ? 'active' : ''; ?>">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-home text-info"></i></span>
                             <span class="nxl-mtext">Building</span>
@@ -53,7 +53,7 @@
                         </ul>
                     </li>
 
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'bill') ? 'active' : ''; ?>">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-dollar-sign text-info"></i></span>
                             <span class="nxl-mtext">Bills</span>
@@ -73,7 +73,7 @@
                         </ul>
                     </li>
 
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'building_report' || $_GET['page'] === 'report') ? 'active' : ''; ?>">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-pie-chart text-info"></i></span>
                             <span class="nxl-mtext">Report</span>
@@ -85,21 +85,21 @@
                         </ul>
                     </li>
 
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'manager_account') ? 'active' : ''; ?>">
                         <a href="admin.php?page=manager_account&unit_id=0&id=<?= htmlspecialchars($id) ?>" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-dollar-sign text-info"></i></span>
                             <span class="nxl-mtext">Manager Accounts</span>
                         </a>
                     </li>
 
-                    <li class="nxl-item">
+                    <li class="nxl-item <?= ($_GET['page'] === 'Expense') ? 'active' : ''; ?>">
                         <a class="nxl-link" href="admin.php?page=Expense&id=<?= htmlspecialchars($id) ?>">
                             <span class="nxl-micon"> <i class="feather-pocket text-info"></i></span>
                             <span class="nxl-mtext">Expense</span>
                         </a>
                     </li>
                     
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'profile' || $_GET['page'] === 'change_password' || $_GET['page'] === 'users' || $_GET['page'] === 'building' || $_GET['page'] === 'unit' || $_GET['page'] === 'tenant') ? 'active' : ''; ?>">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-settings text-info"></i></span>
                             <span class="nxl-mtext">Settings</span>
@@ -107,33 +107,33 @@
                         </a>
 
                         <ul class="nxl-submenu">
-                            <li class="nxl-item">
+                            <li class="nxl-item <?= ($_GET['page'] === 'profile') ? 'active' : ''; ?>">
                                 <a class="nxl-link" href="admin.php?page=profile">
                                     <span class="nxl-micon"> <i class="feather-user text-info"></i></span>
                                     <span class="nxl-mtext">Profile</span>
                                 </a>
                             </li>
-                            <li class="nxl-item">
+                            <li class="nxl-item <?= ($_GET['page'] === 'change_password') ? 'active' : ''; ?>">
                                 <a class="nxl-link" href="admin.php?page=change_password">
                                     <span class="nxl-micon"> <i class="feather-key text-info"></i></span>
                                     <span class="nxl-mtext">Change Password</span>
                                 </a>
                             </li>
-                            <li class="nxl-item">
+                            <li class="nxl-item <?= ($_GET['page'] === 'users') ? 'active' : ''; ?>">
                                 <a class="nxl-link" href="admin.php?page=users">
                                     <span class="nxl-micon"> <i class="feather-users text-info"></i></span>
                                     <span class="nxl-mtext">Users</span>
                                 </a>
                             </li>
 
-                            <li class="nxl-item">
+                            <li class="nxl-item <?= ($_GET['page'] === 'building') ? 'active' : ''; ?>">
                                 <a href="admin.php?page=building" class="nxl-link">
                                     <span class="nxl-micon"><i class="feather-home text-info"></i></span>
                                     <span class="nxl-mtext">Building</span>
                                 </a>
                             </li>
 
-                            <li class="nxl-item nxl-hasmenu">
+                            <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'unit') ? 'active' : ''; ?>">
                                 <a href="javascript:void(0);" class="nxl-link">
                                     <span class="nxl-micon"><i class="feather-layout text-info"></i>  </span>
                                     <span class="nxl-mtext">Unit</span>
@@ -153,24 +153,24 @@
                                 </ul>
                             </li>
 
-                            <li class="nxl-item nxl-hasmenu">
+                            <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'tenant') ? 'active' : ''; ?>">
                                 <a href="javascript:void(0);" class="nxl-link">
                                     <span class="nxl-micon"><i class="feather-users text-info"></i></span>
                                     <span class="nxl-mtext">Tenant</span>
                                     <span class="nxl-arrow"><i class="feather-chevron-right text-info"></i></span>
                                 </a>
                                 <ul class="nxl-submenu">
-                                    <li class="nxl-item nxl-hasmenu">
+                                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'tenant' && isset($_GET['status']) && $_GET['status'] === 'Active') ? 'active' : ''; ?>">
                                         <a href="admin.php?page=tenant&status=Active" class="nxl-link">
                                             <span class="nxl-mtext">Active Tenant</span>
                                         </a>
                                     </li>
-                                    <li class="nxl-item nxl-hasmenu">
+                                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'tenant' && isset($_GET['status']) && $_GET['status'] === 'Inactive') ? 'active' : ''; ?>">
                                         <a href="admin.php?page=tenant&status=Inactive" class="nxl-link">
                                             <span class="nxl-mtext">Inactive Tenant</span>
                                         </a>
                                     </li>
-                                    <li class="nxl-item nxl-hasmenu">
+                                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'tenant' && isset($_GET['status']) && $_GET['status'] === 'Booked') ? 'active' : ''; ?>">
                                         <a href="admin.php?page=tenant&status=Booked" class="nxl-link">
                                             <span class="nxl-mtext">Booked Tenant</span>
                                         </a>
@@ -188,28 +188,28 @@
                     }
                     ?>
                     
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'tenant_inv_pay' && isset($_GET['type']) && $_GET['type'] === 'invoice') ? 'active' : ''; ?>">
                         <a href="admin.php?page=tenant_inv_pay&type=invoice" class="nxl-link">
                             <span class="nxl-micon"><i class="far fa-credit-card text-info "></i></span>
                             <span class="nxl-mtext">Rent & Invoice</span>
                         </a>
                     </li>
 
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'tenant_inv_pay' && isset($_GET['type']) && $_GET['type'] === 'payment') ? 'active' : ''; ?> ">
                         <a href="admin.php?page=tenant_inv_pay&type=payment" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-dollar-sign text-info"></i></span>
                             <span class="nxl-mtext">Payment Details</span>
                         </a>
                     </li>
 
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'Agreement') ? 'active' : ''; ?>">
                         <a href="admin.php?page=Agreement&id=<?php echo isset($tenant_id) ? $tenant_id : ''; ?>" class="nxl-link">
                             <span class="nxl-micon"><i class="far fa-file-alt text-info"></i></span>
                             <span class="nxl-mtext">Documents</span>
                         </a>
                     </li>
 
-                    <li class="nxl-item nxl-hasmenu">
+                    <li class="nxl-item nxl-hasmenu <?= ($_GET['page'] === 'view_tenant' || $_GET['page'] === 'change_password' || $_GET['page'] === 'CreateTenant') ? 'active' : ''; ?>">
                         <a href="javascript:void(0);" class="nxl-link">
                             <span class="nxl-micon"><i class="feather-settings text-info"></i></span>
                             <span class="nxl-mtext">Settings</span>
@@ -217,7 +217,7 @@
                         </a>
 
                         <ul class="nxl-submenu">
-                            <li class="nxl-item">
+                            <li class="nxl-item <?= ($_GET['page'] === 'view_tenant') ? 'active' : ''; ?>">
                                 <a class="nxl-link" href="admin.php?page=view_tenant&id=<?php echo isset($tenant_id) ? $tenant_id : ''; ?>">
                                     <span class="nxl-micon"> <i class="feather-user text-info"></i></span>
                                     <span class="nxl-mtext">Profile</span>
@@ -225,7 +225,7 @@
                             </li>
                         </ul>
                         <ul class="nxl-submenu">
-                            <li class="nxl-item">
+                            <li class="nxl-item <?= ($_GET['page'] === 'change_password') ? 'active' : ''; ?>">
                                 <a class="nxl-link" href="admin.php?page=change_password">
                                     <span class="nxl-micon"> <i class="feather-key text-info"></i></span>
                                     <span class="nxl-mtext">Change Password</span>
